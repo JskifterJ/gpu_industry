@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GPU Industry Dashboard Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f6f2ea;
+      --ink: #1f2a33;
+      --muted: #5f6b73;
+      --line: #d7d0c4;
+      --card: #fffdf8;
+      --track-a: #0d6e6e;
+      --track-b: #8f4e18;
+      --accent: #1d4ed8;
+      --ok: #157f55;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Space Grotesk", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 14%, rgba(13, 110, 110, 0.12), transparent 35%),
+        radial-gradient(circle at 88% 22%, rgba(143, 78, 24, 0.13), transparent 34%),
+        linear-gradient(180deg, #fdf9f2 0%, var(--bg) 100%);
+      min-height: 100vh;
+    }
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 34px 20px 56px;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(1.7rem, 3vw, 2.8rem);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+    }
+    .sub {
+      margin: 12px 0 0;
+      max-width: 860px;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.97rem;
+    }
+    .top {
+      padding: 20px 0 24px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 22px;
+    }
+    .grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(12, 1fr);
+    }
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+    }
+    .panel h2 {
+      margin: 0 0 8px;
+      font-size: 1.05rem;
+    }
+    .panel p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.55;
+    }
+    .col-6 { grid-column: span 6; }
+    .col-12 { grid-column: span 12; }
+    .badge {
+      display: inline-block;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 999px;
+      margin-bottom: 8px;
+      border: 1px solid;
+    }
+    .a { color: var(--track-a); border-color: rgba(13,110,110,.35); background: rgba(13,110,110,.08); }
+    .b { color: var(--track-b); border-color: rgba(143,78,24,.35); background: rgba(143,78,24,.08); }
+    .card-list {
+      list-style: none;
+      padding: 0;
+      margin: 10px 0 0;
+      display: grid;
+      gap: 10px;
+    }
+    .item {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px;
+      background: #fff;
+    }
+    .item strong {
+      display: block;
+      margin-bottom: 3px;
+      font-size: 0.95rem;
+    }
+    .item .meta {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.73rem;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+    .item p {
+      margin: 0 0 8px;
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+    .links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    a.btn {
+      text-decoration: none;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.72rem;
+      border-radius: 8px;
+      padding: 6px 9px;
+      border: 1px solid #bcc9d4;
+      color: var(--accent);
+      background: #f5faff;
+    }
+    a.btn:hover { background: #e8f2ff; }
+    .mapping {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.86rem;
+      margin-top: 8px;
+    }
+    .mapping th,
+    .mapping td {
+      border: 1px solid var(--line);
+      padding: 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+    .mapping th {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: #f7f3eb;
+    }
+    .ok { color: var(--ok); font-weight: 700; }
+    @media (max-width: 900px) {
+      .col-6 { grid-column: span 12; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="top">
+      <h1>GPU Industry Dashboard Hub</h1>
+      <p class="sub">
+        One launch surface for your current dashboards, organized into two working modes: learning and strategy.
+        This page keeps all original files intact while giving you a coherent information architecture and a canonical naming map for cleanup.
+      </p>
+    </section>
+
+    <section class="grid">
+      <article class="panel col-6">
+        <span class="badge a">Track A · Learning</span>
+        <h2>Conceptual + Technical Walkthroughs</h2>
+        <p>Use this sequence when onboarding new people or building shared technical intuition before strategic decisions.</p>
+        <ul class="card-list">
+          <li class="item">
+            <strong>Prompt-to-Answer Journey</strong>
+            <div class="meta">Foundational flow</div>
+            <p>Tokenization, memory loading, attention, KV cache, sampling, and streaming explained step by step.</p>
+            <div class="links">
+              <a class="btn" href="learning_prompt_to_answer.html" target="_blank">Open Dashboard</a>
+            </div>
+          </li>
+          <li class="item">
+            <strong>Inference Compute Deep Dive</strong>
+            <div class="meta">Long-form educational explainer</div>
+            <p>Detailed compute mechanics, memory math, batching behavior, and pipeline internals.</p>
+            <div class="links">
+              <a class="btn" href="learning_inference_compute_master.html" target="_blank">Open Dashboard</a>
+            </div>
+          </li>
+          <li class="item">
+            <strong>Cluster End-to-End Architecture</strong>
+            <div class="meta">Infra and storage path</div>
+            <p>End-to-end request path through CPU/GPU/network/storage with bottleneck framing.</p>
+            <div class="links">
+              <a class="btn" href="learning_cluster_architecture.html" target="_blank">Open Dashboard</a>
+            </div>
+          </li>
+          <li class="item">
+            <strong>Stack × Inference Matrix</strong>
+            <div class="meta">Layered system map</div>
+            <p>Cross-reference of stack layers versus inference stages, with model responsibility overlays.</p>
+            <div class="links">
+              <a class="btn" href="learning_stack_inference_matrix.html" target="_blank">Open Dashboard</a>
+            </div>
+          </li>
+        </ul>
+      </article>
+
+      <article class="panel col-6">
+        <span class="badge b">Track B · Strategy</span>
+        <h2>Market, Positioning, and Economics</h2>
+        <p>Use this sequence for leadership reviews, competitor analysis, and pricing/positioning decisions.</p>
+        <ul class="card-list">
+          <li class="item">
+            <strong>GPU Value Chain by Strategy</strong>
+            <div class="meta">Business model landscape</div>
+            <p>Comprehensive stack ownership map, archetypes, market views, and company-level analysis.</p>
+            <div class="links">
+              <a class="btn" href="strategy_value_chain_master.html" target="_blank">Open Dashboard</a>
+            </div>
+          </li>
+          <li class="item">
+            <strong>Cloud Competitor Intelligence</strong>
+            <div class="meta">Head-to-head and matrix views</div>
+            <p>Criteria matrix, provider comparison, and stack coverage views for direct competitor assessment.</p>
+            <div class="links">
+              <a class="btn" href="strategy_competitor_intelligence.html" target="_blank">Open Dashboard</a>
+            </div>
+          </li>
+          <li class="item">
+            <strong>Inference Economics Explorer</strong>
+            <div class="meta">Cost and hardware tradeoffs</div>
+            <p>Interactive model/GPU/network economics with throughput, latency, and total cost implications.</p>
+            <div class="links">
+              <a class="btn" href="strategy_inference_economics.html" target="_blank">Open Dashboard</a>
+            </div>
+          </li>
+          <li class="item">
+            <strong>Abstraction Layers Reference</strong>
+            <div class="meta">Taxonomy lens</div>
+            <p>WaaS/MLaaS/GPUaaS/BMaaS framing for strategic segmentation and messaging consistency.</p>
+            <div class="links">
+              <a class="btn" href="strategy_abstraction_taxonomy.html" target="_blank">Open Dashboard</a>
+            </div>
+          </li>
+        </ul>
+      </article>
+
+      <article class="panel col-12">
+        <h2>Canonical Naming Map (Implemented)</h2>
+        <p>The suite now uses the canonical names below.</p>
+        <table class="mapping">
+          <thead>
+            <tr>
+              <th>Current File</th>
+              <th>Proposed Canonical Name</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>learning_prompt_to_answer.html</td><td>learning_prompt_to_answer.html</td><td class="ok">Live</td></tr>
+            <tr><td>learning_inference_compute_master.html</td><td>learning_inference_compute_master.html</td><td class="ok">Live</td></tr>
+            <tr><td>learning_cluster_architecture.html</td><td>learning_cluster_architecture.html</td><td class="ok">Live</td></tr>
+            <tr><td>learning_stack_inference_matrix.html</td><td>learning_stack_inference_matrix.html</td><td class="ok">Live</td></tr>
+            <tr><td>strategy_value_chain_master.html</td><td>strategy_value_chain_master.html</td><td class="ok">Live</td></tr>
+            <tr><td>strategy_competitor_intelligence.html</td><td>strategy_competitor_intelligence.html</td><td class="ok">Live</td></tr>
+            <tr><td>strategy_inference_economics.html</td><td>strategy_inference_economics.html</td><td class="ok">Live</td></tr>
+            <tr><td>strategy_abstraction_taxonomy.html</td><td>strategy_abstraction_taxonomy.html</td><td class="ok">Live</td></tr>
+          </tbody>
+        </table>
+      </article>
+    </section>
+  </main>
+</body>
+</html>
