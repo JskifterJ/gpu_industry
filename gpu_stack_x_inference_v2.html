@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GPU Stack × Inference Journey — Interactive Reference</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & BASE ─────────────────────────────────────────────── */
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#F7F5F0; --surface:#FFFFFF; --ink:#1A1714; --muted:#7A7570;
+  --rule:#E0DCD6; --rule2:#C8C4BE;
+  --panel-w:400px;
+  --row-h:72px;
+  --label-w:214px;
+}
+body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--ink);
+  padding:40px 36px 80px;min-width:980px;}
+
+/* ── HEADER ───────────────────────────────────────────────────── */
+.hdr{display:flex;justify-content:space-between;align-items:flex-end;
+  border-bottom:2.5px solid var(--ink);padding-bottom:18px;margin-bottom:24px;gap:16px;flex-wrap:wrap;}
+.eyebrow{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+h1{font-family:'Syne',sans-serif;font-size:clamp(18px,2.2vw,30px);font-weight:700;
+  letter-spacing:-.02em;line-height:1.1;}
+.hdr-sub{font-size:12px;color:var(--muted);max-width:380px;line-height:1.6;text-align:right;}
+
+/* ── PATH SELECTOR ────────────────────────────────────────────── */
+.path-selector{margin-bottom:16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.ps-label{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;
+  letter-spacing:.14em;color:var(--muted);white-space:nowrap;}
+.path-btns{display:flex;gap:6px;flex-wrap:wrap;}
+.path-btn{
+  font-family:'DM Mono',monospace;font-size:10.5px;padding:6px 13px;border-radius:6px;
+  border:1.5px solid var(--rule2);background:var(--surface);color:var(--ink);
+  cursor:pointer;transition:all .18s;white-space:nowrap;position:relative;
+}
+.path-btn:hover{border-color:var(--ink);background:#F0EDE8;}
+.path-btn.active{color:#fff;border-color:transparent;}
+.path-btn .pb-code{font-weight:500;margin-right:4px;}
+.pb-preview{
+  position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);
+  background:var(--ink);color:#fff;border-radius:8px;padding:12px 14px;
+  width:260px;font-family:'DM Sans',sans-serif;font-size:11.5px;line-height:1.5;
+  pointer-events:none;opacity:0;transition:opacity .15s;z-index:200;
+  box-shadow:0 8px 24px rgba(0,0,0,.25);
+}
+.pb-preview::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);
+  border:6px solid transparent;border-top-color:var(--ink);}
+.path-btn:hover .pb-preview{opacity:1;}
+.pb-title{font-weight:600;font-size:12.5px;margin-bottom:5px;}
+.pb-row{display:flex;justify-content:space-between;gap:8px;margin-top:3px;font-size:11px;}
+.pb-key{color:rgba(255,255,255,.6);}
+.pb-val{color:#fff;text-align:right;}
+.pb-divider{border:none;border-top:1px solid rgba(255,255,255,.15);margin:7px 0;}
+.pb-providers{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px;}
+.pb-chip{background:rgba(255,255,255,.15);border-radius:4px;padding:2px 6px;
+  font-size:10px;font-family:'DM Mono',monospace;}
+
+/* ── THREE-COLUMN LAYOUT ──────────────────────────────────────── */
+.three-col{display:flex;align-items:stretch;gap:0;transition:all .3s ease;}
+
+/* ── Y-AXIS LAYER LABELS ──────────────────────────────────────── */
+.layer-labels-col{flex-shrink:0;width:var(--label-w);display:flex;flex-direction:column;}
+.ll-spacer{flex-shrink:0;} /* height set by JS to match headers */
+.layer-label{
+  height:var(--row-h);display:flex;flex-direction:column;justify-content:center;
+  padding:0 12px 0 0;border-right:2.5px solid var(--rule);cursor:pointer;
+  transition:background .15s;border-radius:4px 0 0 4px;padding-left:4px;
+}
+.layer-label:hover{background:rgba(0,0,0,.03);}
+.ll-id{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:1px;}
+.ll-name{font-family:'DM Mono',monospace;font-size:8.5px;color:#5A5550;
+  line-height:1.35;letter-spacing:.02em;}
+.ll-desc{font-size:9.5px;color:#9A9490;margin-top:2px;line-height:1.3;}
+.ll-click-hint{font-size:8.5px;color:var(--muted);font-style:italic;
+  opacity:0;transition:opacity .15s;margin-top:3px;}
+.layer-label:hover .ll-click-hint{opacity:1;}
+
+/* ── GRID AREA ────────────────────────────────────────────────── */
+.grid-area{flex:1;min-width:0;overflow-x:auto;}
+
+/* Stage group headers */
+.stage-groups{display:grid;grid-template-columns:3fr 4fr 1fr 2fr;gap:2px;margin-bottom:2px;}
+.sg{display:flex;align-items:center;justify-content:center;
+  font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+  border-radius:4px 4px 0 0;padding:5px 4px;white-space:nowrap;overflow:hidden;}
+.sg-request{background:#E8EEF8;color:#3A5A9A;}
+.sg-inf{background:#ECFAEE;color:#2A5A34;border:1.5px dashed #A2D8A6;border-bottom:none;}
+.sg-compute{background:#FDEEDE;color:#8A4A18;}
+.sg-return{background:#F3E5F5;color:#6A1A9A;}
+
+/* Stage column headers */
+.stage-headers{display:grid;grid-template-columns:repeat(10,1fr);
+  border-bottom:1.5px solid var(--rule2);}
+.sh{padding:5px 3px 6px;text-align:center;border-right:1px solid var(--rule);
+  display:flex;flex-direction:column;align-items:center;gap:1px;cursor:pointer;
+  transition:background .15s;}
+.sh:last-child{border-right:none;}
+.sh:hover{background:rgba(0,0,0,.04);}
+.sh-num{font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:.06em;}
+.sh-label{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;
+  color:var(--ink);line-height:1.3;text-align:center;}
+.sh-sub{font-size:8.5px;color:var(--muted);font-style:italic;}
+.sh-hint{font-size:8px;color:var(--muted);font-style:italic;
+  opacity:0;transition:opacity .15s;margin-top:1px;}
+.sh:hover .sh-hint{opacity:1;}
+
+/* The cell grid */
+.cell-grid{display:grid;grid-template-columns:repeat(10,1fr);
+  grid-template-rows:repeat(7,var(--row-h));position:relative;
+  border-bottom:1.5px solid var(--rule2);}
+.cell{border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);
+  display:flex;align-items:center;justify-content:center;position:relative;
+  transition:filter .15s;}
+.cell:hover{filter:brightness(.91);}
+.cell.inactive{background:#FAFAF8 !important;}
+.cell.dimmed{opacity:.18 !important;}
+.cell-dot{width:11px;height:11px;border-radius:50%;pointer-events:none;}
+.cell-dot.secondary{opacity:.35;}
+
+/* Inference path columns — dashed border */
+.cell.inf-col{border-right:1px dashed var(--rule2);}
+.cell.inf-col-last{border-right:1px solid var(--rule);}
+
+/* SVG overlay */
+#journey-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible;}
+
+/* 4D storage marker */
+.storage-marker{
+  position:absolute;bottom:-40px;right:0;
+  display:flex;align-items:center;gap:6px;
+  font-family:'DM Mono',monospace;font-size:9.5px;color:var(--muted);
+  background:var(--surface);border:1.5px solid var(--rule);
+  border-radius:6px;padding:5px 10px;white-space:nowrap;
+  opacity:0;transition:opacity .3s;pointer-events:none;
+}
+.storage-marker.visible{opacity:1;}
+.storage-icon{width:16px;height:16px;background:var(--muted);border-radius:3px;
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:9px;}
+
+/* ── DETAIL PANEL ──────────────────────────────────────────────── */
+.detail-panel{
+  flex-shrink:0;width:0;overflow:hidden;
+  transition:width .3s ease;
+  border-left:2px solid var(--rule);
+  background:var(--surface);
+  display:flex;flex-direction:column;
+}
+.detail-panel.open{width:var(--panel-w);}
+.panel-inner{
+  width:var(--panel-w);overflow-y:auto;height:100%;padding:20px 22px 32px;
+  display:flex;flex-direction:column;gap:0;
+}
+.panel-close{
+  align-self:flex-end;background:none;border:1px solid var(--rule);
+  border-radius:6px;padding:4px 10px;font-family:'DM Mono',monospace;font-size:10px;
+  cursor:pointer;color:var(--muted);transition:all .15s;margin-bottom:14px;
+}
+.panel-close:hover{background:var(--rule);color:var(--ink);}
+.panel-type{font-family:'DM Mono',monospace;font-size:9.5px;text-transform:uppercase;
+  letter-spacing:.14em;color:var(--muted);margin-bottom:4px;}
+.panel-id{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;
+  letter-spacing:-.02em;margin-bottom:2px;}
+.panel-name{font-size:13px;color:var(--muted);font-weight:500;margin-bottom:14px;
+  line-height:1.4;}
+.panel-accent-bar{height:3px;border-radius:2px;margin-bottom:18px;}
+.panel-section{margin-bottom:18px;}
+.ps-title{font-family:'DM Mono',monospace;font-size:9.5px;text-transform:uppercase;
+  letter-spacing:.12em;color:var(--muted);margin-bottom:7px;
+  display:flex;align-items:center;gap:6px;}
+.ps-title::after{content:'';flex:1;height:1px;background:var(--rule);}
+.ps-body{font-size:12.5px;line-height:1.6;color:var(--ink);}
+.ps-body p+p{margin-top:8px;}
+.ps-tech{font-size:11.5px;line-height:1.5;color:#5A5550;font-family:'DM Mono',monospace;
+  background:#F7F5F0;border-radius:6px;padding:10px 12px;margin-top:8px;}
+.ps-warn{font-size:11.5px;line-height:1.5;color:#7A4A0A;background:#FEF3E8;
+  border-radius:6px;padding:10px 12px;margin-top:8px;
+  border-left:3px solid #D97706;}
+.ps-warn-title{font-weight:600;margin-bottom:3px;font-size:11px;
+  font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.06em;}
+
+/* Stage badge chips in panel */
+.stage-badges{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;}
+.stage-badge{font-family:'DM Mono',monospace;font-size:9.5px;padding:3px 8px;
+  border-radius:4px;background:#F0EDE8;color:var(--ink);border:1px solid var(--rule);}
+.stage-badge.active-badge{color:#fff;}
+
+/* Vendor chips in panel */
+.vendor-groups{display:flex;flex-direction:column;gap:10px;}
+.vg-label{font-family:'DM Mono',monospace;font-size:9.5px;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--muted);margin-bottom:5px;}
+.vendor-chips{display:flex;flex-wrap:wrap;gap:5px;}
+.vchip{font-family:'DM Mono',monospace;font-size:10px;padding:3px 9px;
+  border-radius:14px;border:1px solid currentColor;white-space:nowrap;}
+.vchip-hs{background:#EBF3FF;color:#1A4B8C;border-color:#C2D8F5;}
+.vchip-nc{background:#FFF3E8;color:#7A2E08;border-color:#F5CEAA;}
+.vchip-lab{background:#FEF3F2;color:#7A1A1A;border-color:#FCCACA;}
+.vchip-oss{background:#F0F0F0;color:#3A3A3A;border-color:#D0D0D0;}
+.vchip-tool{background:#F0FFF4;color:#1A5A2A;border-color:#B8E8CC;}
+
+/* ── LEGEND ────────────────────────────────────────────────────── */
+.legend{margin-top:16px;padding:12px 18px;background:var(--surface);
+  border-radius:8px;border:1px solid var(--rule);
+  display:flex;flex-wrap:wrap;gap:8px 24px;align-items:center;}
+.legend-group{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.lg-label{font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;
+  letter-spacing:.14em;color:var(--muted);}
+.li{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--ink);}
+.li-dot{width:11px;height:11px;border-radius:50%;}
+.li-dot-faint{width:11px;height:11px;border-radius:50%;opacity:.35;}
+.li-empty{width:18px;height:14px;background:#FAFAF8;border:1px solid var(--rule);border-radius:2px;}
+.li-line{width:28px;height:3px;border-radius:2px;background:var(--ink);}
+.lg-sep{width:1px;height:18px;background:var(--rule);margin:0 4px;}
+.legend-note{font-size:10.5px;color:var(--muted);font-style:italic;width:100%;}
+
+/* ── RESPONSIBILITY STRIP ──────────────────────────────────────── */
+.resp-legend{display:flex;gap:18px;flex-wrap:wrap;align-items:center;
+  margin-bottom:12px;padding:10px 14px;background:var(--surface);
+  border-radius:7px;border:1px solid var(--rule);}
+.resp-legend-title{font-family:'DM Mono',monospace;font-size:9.5px;
+  text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin-right:4px;}
+.resp-li{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--ink);}
+.resp-li-swatch{width:36px;height:14px;border-radius:3px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Mono',monospace;font-size:8px;font-weight:500;letter-spacing:.04em;}
+.resp-section{margin-top:32px;}
+.resp-hdr{margin-bottom:10px;}
+.resp-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;
+  letter-spacing:-.01em;margin-bottom:3px;}
+.resp-sub{font-size:12px;color:var(--muted);}
+.resp-wrap{display:flex;gap:0;}
+.resp-labels{flex-shrink:0;width:var(--label-w);padding-right:12px;
+  border-right:2.5px solid var(--rule);display:flex;flex-direction:column;}
+.resp-layer-row{height:40px;display:flex;align-items:center;gap:8px;
+  font-family:'DM Mono',monospace;font-size:10px;color:var(--ink);}
+.rl-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+.resp-grid-col{flex:1;display:flex;flex-direction:column;gap:0;}
+.resp-model-headers{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:4px;}
+.rmh{text-align:center;padding:7px 5px;border-radius:6px;
+  font-family:'DM Mono',monospace;font-size:10px;font-weight:500;line-height:1.4;}
+.resp-vendor-row{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:6px;}
+.rvr-cell{padding:8px 10px;border-radius:5px;display:flex;flex-direction:column;gap:6px;
+  border:1px solid var(--rule);}
+.rvr-cat-label{font-family:'DM Mono',monospace;font-size:8.5px;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--muted);margin-bottom:2px;}
+.rvr-chips{display:flex;flex-wrap:wrap;gap:3px;}
+.rvr-chip{font-family:'DM Mono',monospace;font-size:9px;padding:2px 7px;
+  border-radius:10px;white-space:nowrap;}
+.rvr-chip-hs{background:#EBF3FF;color:#1A4B8C;border:1px solid #C2D8F5;}
+.rvr-chip-nc{background:#FFF3E8;color:#7A2E08;border:1px solid #F5CEAA;}
+.rvr-chip-lab{background:#FEF3F2;color:#7A1A1A;border:1px solid #FCCACA;}
+.rvr-chip-other{background:#F0F0F0;color:#3A3A3A;border:1px solid #D0D0D0;}
+.resp-rows{display:flex;flex-direction:column;gap:4px;}
+.resp-row{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;height:40px;}
+.rc{border-radius:4px;display:flex;align-items:center;justify-content:center;
+  font-family:'DM Mono',monospace;font-size:9px;font-weight:500;
+  text-transform:uppercase;letter-spacing:.04em;}
+.rc-cust{color:var(--ink);}
+.rc-prov{background:#EDEBE8;color:#7A7570;}
+.rc-shared{color:#5A5550;
+  background:repeating-linear-gradient(135deg,transparent 0 4px,rgba(0,0,0,.04) 4px 8px);}
+
+/* ── CELL TOOLTIP ──────────────────────────────────────────────── */
+#cell-tooltip{
+  position:fixed;background:var(--ink);color:#fff;border-radius:8px;
+  padding:11px 14px;max-width:260px;font-size:11.5px;line-height:1.5;
+  pointer-events:none;opacity:0;transition:opacity .15s;z-index:300;
+  box-shadow:0 8px 24px rgba(0,0,0,.3);}
+#cell-tooltip.visible{opacity:1;}
+.ct-layer{font-family:'DM Mono',monospace;font-size:9.5px;
+  opacity:.7;margin-bottom:4px;letter-spacing:.04em;}
+.ct-body{margin-bottom:7px;}
+.ct-vendors{display:flex;flex-wrap:wrap;gap:3px;}
+.ct-chip{background:rgba(255,255,255,.15);border-radius:4px;padding:2px 6px;
+  font-family:'DM Mono',monospace;font-size:9px;}
+
+/* ── INTRO GUIDE ───────────────────────────────────────────────── */
+#guide{position:fixed;inset:0;z-index:1000;pointer-events:none;}
+#guide.active{pointer-events:all;}
+#guide-backdrop{position:absolute;inset:0;background:rgba(15,12,10,.72);
+  backdrop-filter:blur(2px);opacity:0;transition:opacity .3s;
+  z-index:1;cursor:pointer;}
+#guide.active #guide-backdrop{opacity:1;}
+#guide-highlight{position:absolute;border-radius:8px;
+  box-shadow:0 0 0 4000px rgba(15,12,10,.72);
+  border:2px solid rgba(255,255,255,.5);
+  transition:all .35s cubic-bezier(.4,0,.2,1);pointer-events:none;
+  z-index:2;}
+#guide-card{
+  position:absolute;background:var(--surface);border-radius:12px;
+  padding:20px 22px;width:320px;
+  box-shadow:0 20px 48px rgba(0,0,0,.35);
+  transition:all .35s cubic-bezier(.4,0,.2,1);
+  z-index:3;}
+.gc-step{font-family:'DM Mono',monospace;font-size:9.5px;text-transform:uppercase;
+  letter-spacing:.14em;color:var(--muted);margin-bottom:6px;}
+.gc-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;
+  letter-spacing:-.01em;margin-bottom:8px;line-height:1.2;}
+.gc-body{font-size:12.5px;line-height:1.6;color:#3A3530;margin-bottom:16px;}
+.gc-nav{display:flex;align-items:center;justify-content:space-between;}
+.gc-dots{display:flex;gap:5px;}
+.gc-dot{width:7px;height:7px;border-radius:50%;background:var(--rule);transition:background .2s;}
+.gc-dot.active{background:var(--ink);}
+.gc-btns{display:flex;gap:8px;}
+.gc-btn{font-family:'DM Mono',monospace;font-size:10.5px;padding:6px 14px;
+  border-radius:6px;border:1.5px solid var(--rule);background:none;
+  cursor:pointer;transition:all .15s;color:var(--ink);}
+.gc-btn:hover{background:var(--rule);}
+.gc-btn.primary{background:var(--ink);color:#fff;border-color:var(--ink);}
+.gc-btn.primary:hover{background:#3A3530;}
+.gc-skip{font-size:10.5px;color:var(--muted);cursor:pointer;font-family:'DM Mono',monospace;
+  background:none;border:none;text-decoration:underline;}
+.gc-skip:hover{color:var(--ink);}
+</style>
+</head>
+<body>
+
+<!-- ── INTRO GUIDE ── -->
+<div id="guide">
+  <div id="guide-backdrop" onclick="closeGuide()"></div>
+  <div id="guide-highlight"></div>
+  <div id="guide-card">
+    <div class="gc-step"></div>
+    <div class="gc-title"></div>
+    <div class="gc-body"></div>
+    <div class="gc-nav">
+      <div class="gc-dots"></div>
+      <div class="gc-btns">
+        <button class="gc-skip" onclick="closeGuide()">Skip tour</button>
+        <button class="gc-btn" id="gc-prev" onclick="advanceGuide(-1)">Back</button>
+        <button class="gc-btn primary" id="gc-next" onclick="advanceGuide(1)">Next →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── CELL TOOLTIP ── -->
+<div id="cell-tooltip">
+  <div class="ct-layer" id="ct-layer"></div>
+  <div class="ct-body" id="ct-body"></div>
+  <div class="ct-vendors" id="ct-vendors"></div>
+</div>
+
+<!-- ── MAIN PAGE ── -->
+<div id="page">
+
+  <header class="hdr">
+    <div>
+      <div class="eyebrow">GPU Compute Stack × Inference Journey · Interactive Reference</div>
+      <h1>Where Does a Prompt Live<br>in the GPU Stack?</h1>
+    </div>
+    <div class="hdr-sub">
+      Rows = layers of the GPU compute stack (L7 = application, L1 = physical hardware).
+      Columns = stages of the inference journey. Select a path to trace data flow.
+      Click any row or column label for detail.
+    </div>
+  </header>
+
+  <!-- Path selector -->
+  <div class="path-selector">
+    <span class="ps-label">Inference path →</span>
+    <div class="path-btns" id="pathBtns"></div>
+  </div>
+
+  <!-- Three-column layout -->
+  <div class="three-col" id="threeCol">
+
+    <!-- Y-axis labels -->
+    <div class="layer-labels-col" id="layerLabelsCol">
+      <div class="ll-spacer" id="llSpacer"></div>
+      <div id="layerLabels"></div>
+    </div>
+
+    <!-- Matrix -->
+    <div class="grid-area" id="gridArea">
+      <div class="stage-groups" id="stageGroups"></div>
+      <div id="gridHeaders">
+        <div class="stage-headers" id="stageHeaders"></div>
+      </div>
+      <div class="cell-grid" id="cellGrid">
+        <svg id="journey-svg"></svg>
+      </div>
+      <div class="storage-marker" id="storageMarker">
+        <div class="storage-icon">▦</div>
+        4D results → Object Storage (S3 / GCS) — not streamed to user
+      </div>
+    </div>
+
+    <!-- Detail panel -->
+    <div class="detail-panel" id="detailPanel">
+      <div class="panel-inner" id="panelInner"></div>
+    </div>
+
+  </div><!-- /three-col -->
+
+  <!-- Legend -->
+  <div class="legend" id="legend"></div>
+
+  <!-- Responsibility strip -->
+  <div class="resp-section">
+    <div class="resp-hdr">
+      <div class="resp-title">Customer vs. Provider Responsibility by Deployment Model</div>
+      <div class="resp-sub">How far down the GPU stack the customer is responsible depends on which inference path they choose.</div>
+    </div>
+    <div class="resp-wrap">
+      <div class="resp-labels" id="respLabels"></div>
+      <div class="resp-grid-col" id="respGridCol">
+        <div class="resp-legend">
+          <span class="resp-legend-title">Responsibility</span>
+          <div class="resp-li">
+            <div class="resp-li-swatch" style="background:#E8EEF8;border:1px solid #5A7FC0;color:#2A4A80;">CUST</div>
+            Customer manages
+          </div>
+          <div class="resp-li">
+            <div class="resp-li-swatch" style="background:#EDEBE8;color:#7A7570;border:1px solid #C8C4BE;">PROV</div>
+            Provider manages
+          </div>
+          <div class="resp-li">
+            <div class="resp-li-swatch" style="background:repeating-linear-gradient(135deg,#F0EDE8 0 4px,#E0DCD6 4px 8px);border:1px solid #C8C4BE;color:#5A5550;">SHAR</div>
+            Shared responsibility
+          </div>
+          <div style="margin-left:16px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;">
+            <span class="resp-legend-title" style="margin-right:0;">Vendor type</span>
+            <div class="resp-li"><span class="rvr-chip rvr-chip-hs">Hyperscaler</span></div>
+            <div class="resp-li"><span class="rvr-chip rvr-chip-nc">Neocloud</span></div>
+            <div class="resp-li"><span class="rvr-chip rvr-chip-lab">AI Lab</span></div>
+            <div class="resp-li"><span class="rvr-chip rvr-chip-other">Platform / Other</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+// ════════════════════════════════════════════════════════════════
+// DATA
+// ════════════════════════════════════════════════════════════════
+
+const LAYERS = [
+  {
+    id:'L7', name:'Application & End-User Interface',
+    desc:'Chat UIs · copilots · enterprise apps · developer APIs',
+    bg:'#F3E5F5', border:'#9333EA', text:'#6A1A9A',
+    plain:'The interface the human sees and interacts with. Includes the chat UI, enterprise applications, and the developer APIs that connect everything together. L7 is where business value is created or destroyed — poor prompt design or irrelevant answers mean no adoption, regardless of the sophistication of the layers below.',
+    technical:'Prompt composition: system prompt + user message + session context assembled into a context window. The SDK layer (Anthropic SDK, OpenAI SDK, LangChain) wraps the API call and manages retries, streaming, and error handling.',
+    breaks:'Poor prompt engineering, missing guardrails, or weak context injection at this layer means the model receives insufficient information. No amount of hardware optimisation below compensates for a badly constructed prompt.',
+    vendors:{
+      'Enterprise apps':['Microsoft Copilot','Salesforce Einstein','Glean','Notion AI','Guru'],
+      'SDKs & frameworks':['Anthropic SDK','OpenAI SDK','LangChain','LlamaIndex','Semantic Kernel'],
+    }
+  },
+  {
+    id:'L6', name:'Control Plane · FinOps · Security',
+    desc:'Gateway · routing · auth · observability · cost attribution',
+    bg:'#FFF3E0', border:'#D97706', text:'#924E05',
+    plain:'The nervous system of the AI stack — performing two distinct roles at different stages. At the <strong>entry side</strong> (Stage ③), it authenticates requests, routes them to the right model, and checks whether a cached answer already exists. At the <strong>exit side</strong> (Stage ⑧), it logs every call, attributes cost to the right team or project, and maintains the audit trail needed for GDPR, SOC2 Type II, and EU AI Act compliance.',
+    technical:'LLM Gateway: normalises API formats across providers (Anthropic, OpenAI, Azure). Model router: cost/latency/capability-based selection. Semantic cache: embedding similarity check against recent queries to bypass GPU computation entirely. Observability: token count, latency, cost per team, compliance trace.',
+    breaks:'Without L6, spend becomes unattributable (no cost visibility), any user can call any model at any cost (no governance), and there is no audit evidence for compliance officers or regulators.',
+    vendors:{
+      'Gateways & routing':['LiteLLM','PortKey','Kong AI Gateway','AWS Bedrock Converse API'],
+      'Observability':['LangFuse','Helicone','Arize Phoenix','Weights & Biases'],
+      'Cost & compliance':['OpenCost','CloudZero','Datadog'],
+      'Auth & IAM':['AWS IAM','Azure AD','Okta'],
+    }
+  },
+  {
+    id:'L5', name:'Data Pipelines & Serving Infrastructure',
+    desc:'RAG · vector DBs · inference engines (vLLM, TGI, TensorRT)',
+    bg:'#E0F7FA', border:'#0891B2', text:'#065A72',
+    plain:'Two distinct functions share this layer. Before inference: the <strong>data enrichment pipeline</strong> retrieves relevant company context via RAG (vector search) and MCP tool calls (live data from Google Workspace, Slack, CRM). After GPU computation: the <strong>inference serving infrastructure</strong> (vLLM, TGI, TensorRT-LLM) assembles the token stream and delivers it back to the gateway.',
+    technical:'RAG pipeline: embedding model converts query to vector → nearest-neighbor search in vector DB returns top-k chunks → chunks injected into context window. Serving: PagedAttention (vLLM) enables efficient KV cache reuse. Continuous batching increases GPU utilisation from ~30% to >80%.',
+    breaks:'Stale vector embeddings mean the model answers from outdated company data. A poorly configured inference engine (wrong batch size, insufficient KV cache) creates latency spikes even when the GPU below is running efficiently.',
+    vendors:{
+      'Vector databases':['Pinecone','Weaviate','pgvector','Qdrant','MongoDB Atlas'],
+      'RAG frameworks':['LlamaIndex','LangChain','Cohere Embed','Vertex AI Search'],
+      'Inference engines':['vLLM','TGI (Hugging Face)','TensorRT-LLM','SGLang'],
+      'MCP integrations':['Google Workspace','Slack','Salesforce','Confluence','SharePoint'],
+    }
+  },
+  {
+    id:'L4', name:'Workload Execution',
+    desc:'Model inference · training & fine-tuning execution',
+    bg:'#E8EEF8', border:'#5A7FC0', text:'#2A4A80',
+    plain:'Where the model actually runs. This layer contains the logic that executes the neural network forward pass — taking the enriched prompt and producing token probabilities. For each inference path, what runs here is identical in kind (transformer forward pass) but differs in who controls the model weights and the execution environment.',
+    technical:'Transformer forward pass: attention mechanisms compute pairwise token relationships (O(n²) complexity), FFN layers transform representations. Precision: FP16 for speed, INT8/INT4 quantisation for throughput. KV cache stores intermediate states for long-context reuse. Token sampling: temperature, top-p, top-k parameters applied to logit distribution.',
+    breaks:'Model version mismatches, insufficient GPU memory (OOM errors), or incorrect quantisation precision cause silent degradation in output quality or hard crashes. These failures are difficult to debug because they manifest as nonsensical outputs rather than error codes.',
+    vendors:{
+      'Frameworks':['PyTorch','JAX','NVIDIA TensorRT','DeepSpeed','Megatron-LM'],
+      'Models (foundation)':['Claude 3.5 / 3.7 Sonnet','GPT-4o','Gemini 2.0','Llama 3','Mistral'],
+      'Fine-tuning tools':['Hugging Face PEFT','Axolotl','Unsloth','Modal'],
+    }
+  },
+  {
+    id:'L3', name:'Virtualisation & Orchestration',
+    desc:'Kubernetes · containers · job schedulers (Slurm) · MIG',
+    bg:'#E5F5E7', border:'#5AB86A', text:'#276A32',
+    plain:'The software layer that isolates workloads from each other on shared hardware and schedules jobs across a cluster. Kubernetes handles containerised inference services with auto-scaling; Slurm manages batch training jobs in HPC environments. MIG (Multi-Instance GPU) partitions a single H100 into up to 7 independent smaller instances for smaller workloads.',
+    technical:'GPU Operator: installs and manages NVIDIA drivers and device plugins in Kubernetes. Pod scheduling: resource requests (GPU count, memory) matched to node capacity. Slurm-on-Kubernetes (SUNK from CoreWeave, Soperator from Nebius) merges HPC and cloud-native scheduling. MIG partitioning creates hardware-isolated GPU slices.',
+    breaks:'Poor GPU bin-packing wastes expensive compute (a half-used H100 still costs the same). Missing GPU Operator causes pods to ignore available GPUs entirely. Slurm misconfiguration causes job starvation — some teams receive no compute allocation for hours during peak usage.',
+    vendors:{
+      'Kubernetes distributions':['AWS EKS','Google GKE','Azure AKS','CoreWeave K8s'],
+      'GPU scheduling':['NVIDIA GPU Operator','Run:ai','Volcano','Kueue'],
+      'HPC schedulers':['Slurm','CoreWeave SUNK','Nebius Soperator','SchedMD Slinky'],
+    }
+  },
+  {
+    id:'L2', name:'Firmware, Drivers & Compute Libraries',
+    desc:'CUDA · ROCm · NCCL · cuDNN — typically provider-managed',
+    bg:'#E2F0FD', border:'#5AACE8', text:'#1A5A9A',
+    plain:'The translation layer between software and silicon. CUDA is NVIDIA\'s programming interface that lets PyTorch and vLLM talk to the GPU. NCCL handles high-speed communication between multiple GPUs during distributed inference. This layer is almost always managed by the infrastructure provider — but version mismatches here cause the most cryptic and difficult-to-diagnose bugs in the entire stack.',
+    technical:'CUDA runtime links model code to GPU hardware capabilities. NCCL AllReduce operations synchronise tensor shards across GPUs at up to 900 GB/s (NVLink) or 400 Gb/s (InfiniBand). cuDNN provides optimised implementations of attention, convolution, and normalisation. cuBLAS handles the GEMM (matrix multiplication) at the core of every transformer layer.',
+    breaks:'CUDA version mismatch between the driver (installed by the OS) and the runtime library (bundled with PyTorch) breaks everything above it with cryptic error messages. Wrong NCCL ring configuration causes distributed inference to silently produce wrong outputs or hang indefinitely at multi-GPU synchronisation points.',
+    vendors:{
+      'NVIDIA stack':['CUDA 12.x','cuDNN 9.x','NCCL 2.21','TensorRT','Nsight'],
+      'AMD stack':['ROCm 6.x','MIOpen','rccl'],
+      'Other':['Intel oneAPI','OpenCL','Triton (OpenAI)'],
+    }
+  },
+  {
+    id:'L1', name:'Physical Infrastructure',
+    desc:'Data center · GPU cluster · NVLink · InfiniBand 400G',
+    bg:'#FFF8D6', border:'#C8A800', text:'#7A6000',
+    plain:'The actual hardware: GPU chips, the high-speed networks connecting them, and the data center providing power and cooling. This layer\'s constraints — chip availability, power density, cooling capacity — propagate upward and determine what is possible at every software layer above. A shortage at L1 cannot be solved by software.',
+    technical:'H100 SXM5: 80GB HBM3 memory, 3.9 TB/s memory bandwidth, 3958 TFLOPS FP16. NVLink 4.0: 900 GB/s bidirectional between GPUs in same server. InfiniBand 400G NDR: inter-node fabric for multi-server clusters. Power: H100 DGX server draws ~10.2 kW — a 128-GPU cluster requires ~1.3 MW of power.',
+    breaks:'GPU supply shortages (driven by L0 manufacturing constraints) directly cap what is deployable. Power density limits in older data centers prevent running the latest GPU generations. InfiniBand misconfiguration or network congestion causes multi-node training to run at a fraction of expected speed — a problem invisible to application-layer monitoring.',
+    vendors:{
+      'GPU hardware':['NVIDIA H100 SXM5','NVIDIA B200','AMD MI300X','Google TPU v5','AWS Trainium2'],
+      'Hyperscaler compute':['AWS EC2 p5 (H100)','Azure ND H100 v5','Google A3 Mega (H100)'],
+      'Neoclouds':['CoreWeave','Lambda Labs','Nebius','Crusoe','Voltage Park','Ori Industries'],
+      'Data center operators':['Equinix','QTS','EdgeConneX','Cyxtera'],
+    }
+  },
+];
+
+const STAGES = [
+  {
+    id:'user', num:'①', label:'User\n& Prompt', group:'request', sub:'',
+    plain:'The employee types a question into a chat interface, copilot, or enterprise application. Before it leaves the device, the application layer invisibly wraps it in a system prompt that defines the AI\'s role, constraints, and output format. The user never sees this. The combined message is then sent to the enrichment and routing layers.',
+    technical:'Prompt composition: system prompt + user message + session history assembled into a context window. Handled by the application SDK layer. Token budget management: long conversation histories may be truncated or summarised before sending.',
+    connects:'Feeds into Stage ② (RAG/MCP enrichment) and Stage ③ (Gateway & Routing).',
+    layers:['L7 (primary)','L6 (auth initialised)'],
+    vendors:{
+      'Chat interfaces':['Microsoft Copilot','Glean','Notion AI','Perplexity Enterprise'],
+      'SDKs':['Anthropic SDK','OpenAI SDK','LangChain','LlamaIndex','Semantic Kernel'],
+    }
+  },
+  {
+    id:'rag', num:'②', label:'RAG /\nMCP Enrich', group:'request', sub:'',
+    plain:'Before the AI sees the question, it is enriched with relevant company information pulled from two sources: (1) a vector database search retrieves the most relevant document chunks based on semantic similarity; (2) MCP (Model Context Protocol) tool calls fetch live data from connected systems like Google Workspace, Slack, and CRM. Permission checks filter out data the user is not authorised to see.',
+    technical:'Embedding model (e.g. Cohere Embed, text-embedding-3-large) converts query to dense vector. Approximate nearest-neighbor search (HNSW index) returns top-k most similar document chunks. Chunks injected into system prompt context. MCP standardises the tool-call interface, enabling consistent integration across data sources.',
+    connects:'Receives enriched system prompt from Stage ①. Passes fully assembled context to Stage ③ (Gateway & Routing).',
+    layers:['L5 (primary — RAG pipeline, vector DB, MCP)','L6 (secondary — auth/permission checks)'],
+    vendors:{
+      'Vector databases':['Pinecone','Weaviate','pgvector','Qdrant','MongoDB Atlas'],
+      'RAG frameworks':['LlamaIndex','LangChain','Cohere Embed'],
+      'Connected data':['Google Workspace','Slack','Salesforce','Confluence','SharePoint'],
+    }
+  },
+  {
+    id:'gw', num:'③', label:'Gateway\n& Routing', group:'request', sub:'',
+    plain:'A traffic control layer that decides which AI provider or model receives the enriched request. It authenticates the calling application, applies rate limits and spend controls, and checks whether the same question was recently asked (semantic cache). If a cache hit is found, the GPU is bypassed entirely and a cached response is returned immediately — saving cost and reducing latency to milliseconds.',
+    technical:'LLM Gateway normalises API formats across providers (Anthropic, OpenAI, Azure, Vertex). Model router applies cost/latency/capability heuristics. Semantic cache uses embedding similarity with a cosine distance threshold (~0.95). Provisioned throughput routing for latency-sensitive workloads.',
+    connects:'Receives assembled context from Stage ②. Routes to one of four inference paths (4A/4B/4C/4D) — or returns cached response directly to Stage ⑨.',
+    layers:['L6 (primary — gateway, routing, cache, auth)'],
+    vendors:{
+      'Gateways':['LiteLLM','PortKey','Kong AI Gateway','AWS Bedrock Converse API'],
+      'Semantic cache':['GPTCache','Redis','Momento'],
+      'Auth':['Okta','AWS IAM','Azure AD'],
+    }
+  },
+  {
+    id:'4a', num:'4A', label:'Pre-Built\nModel API', group:'inf', sub:'WaaS',
+    plain:'The simplest inference path. The request is sent to a cloud provider\'s model catalog. The customer selects a model; the provider manages everything below L6 — serving infrastructure, hardware scheduling, auto-scaling, and model hosting. The customer pays per token consumed and has no visibility into the hardware running the model.',
+    technical:'Stateless HTTPS request to provider endpoint. Provider manages vLLM/TRT-LLM serving, auto-scaling, hardware scheduling. Provisioned throughput option: reserve a fixed tokens-per-minute rate at a discounted flat fee for predictable workloads.',
+    connects:'Receives routed request from Stage ③. Sends to GPU Computation (Stage ⑦) — entirely provider-managed.',
+    layers:['L5 (provider serves model)','L4 (provider runs model)'],
+    vendors:{
+      'Hyperscaler APIs':['Amazon Bedrock','Azure OpenAI Service','Google Vertex AI Model Garden'],
+      'AI Lab APIs':['Anthropic API','OpenAI API','Mistral API','Cohere API'],
+      'Routing platforms':['OpenRouter','Together AI','Fireworks AI'],
+    }
+  },
+  {
+    id:'4b', num:'4B', label:'Managed\nEndpoint', group:'inf', sub:'MLaaS',
+    plain:'The customer uploads their own fine-tuned model weights. The cloud provider manages the serving infrastructure around them — auto-scaling, load balancing, health checks — while the customer retains full control of the model itself. The customer pays per endpoint-hour regardless of traffic volume.',
+    technical:'BYOM (Bring Your Own Model): customer uploads weights to provider storage, provider wraps in managed serving container. Dedicated endpoint: fixed capacity, predictable latency. Serverless endpoint: scale-to-zero for variable traffic with slightly higher cold-start latency.',
+    connects:'Receives routed request from Stage ③. Customer model runs in provider-managed environment through to GPU Computation (Stage ⑦).',
+    layers:['L5 (customer serving config, provider serves)','L4 (customer weights, provider env)','L3 (provider K8s — not customer-managed)'],
+    vendors:{
+      'Hyperscaler endpoints':['AWS SageMaker Endpoints','Azure ML Online Endpoints','Google Vertex AI Endpoints'],
+      'Neocloud MLaaS':['Nebius','Nscale','FluidStack'],
+      'Platforms':['Modal','Lightning AI','Paperspace (DigitalOcean)'],
+    }
+  },
+  {
+    id:'4c', num:'4C', label:'Self-Hosted\nIaaS', group:'inf', sub:'GPUaaS',
+    plain:'The customer rents raw GPU servers and runs their own complete software stack on top — inference engine, Kubernetes cluster, CUDA configuration, and model weights. Maximum control and lowest unit cost at scale, but the engineering team must manage every layer from L5 down to L2.',
+    technical:'Customer deploys: Docker containers with CUDA/cuDNN → Kubernetes with NVIDIA GPU Operator → inference engine (vLLM, TGI, TensorRT-LLM) → model weights. Auto-scaling via KEDA or HPA. Monitoring via DCGM Exporter + Prometheus.',
+    connects:'Receives routed request from Stage ③. Customer manages the full path through to GPU Computation (Stage ⑦).',
+    layers:['L5 (customer — vLLM, TGI, TensorRT)','L4 (customer — model execution)','L3 (customer — Kubernetes, Slurm)','L2 (customer manages CUDA stack)'],
+    vendors:{
+      'Hyperscaler IaaS':['AWS EC2 p5 (H100)','Azure ND H100 v5','Google A3 Mega'],
+      'Neoclouds':['CoreWeave','Lambda Labs','Nebius','Voltage Park','Crusoe'],
+      'Inference engines':['vLLM','TGI','TensorRT-LLM','SGLang'],
+    }
+  },
+  {
+    id:'4d', num:'4D', label:'Batch\nWorkload', group:'inf', sub:'Offline',
+    plain:'Large volumes of requests are queued and processed offline on cheaper spot or preemptible compute. No live user is waiting for a response. Results land in object storage (S3, GCS) rather than streaming back in real time. Typically 50–80% cheaper than real-time inference. Suited to document summarisation, embedding generation, classification at scale.',
+    technical:'Async job queue → Slurm/Kubernetes scheduler → spot/preemptible instance assignment → batch inference run → results written to object storage. No SSE streaming. Pull-based retrieval by downstream application when job completes.',
+    connects:'Receives routed request from Stage ③. Processes offline through GPU Computation (Stage ⑦). Results written to storage — not delivered to Stage ⑨ in real time.',
+    layers:['L5 (job queue, batch serving)','L4 (model execution)','L3 (Slurm/K8s scheduler)'],
+    vendors:{
+      'Batch APIs':['Anthropic Batch API','OpenAI Batch API'],
+      'Hyperscaler batch':['AWS SageMaker Batch Transform','Google Vertex AI Batch Prediction','Azure ML Batch Endpoints'],
+      'Spot compute':['AWS Spot Instances','GCP Preemptible VMs','Azure Spot VMs'],
+    }
+  },
+  {
+    id:'gpu', num:'⑦', label:'GPU\nComputation', group:'compute', sub:'',
+    plain:'The actual mathematical work. Billions of matrix multiplications per second generate each word of the response, one token at a time. For large models, dozens of GPU chips work in parallel — connected within a server via NVLink and between servers via InfiniBand. This is the only stage where all four inference paths converge.',
+    technical:'Forward pass through transformer layers: multi-head attention (O(n²) for context length n), FFN projection layers (GEMM operations), logit computation. Tensor parallelism splits the model across GPUs (NVLink for intra-node). Pipeline parallelism splits layers across nodes (InfiniBand for inter-node). Mixed precision: BF16 for activations, FP8 for weights.',
+    connects:'Receives request from whichever inference path was selected (4A/4B/4C/4D). Returns computed tokens to L5 serving infrastructure, which assembles the stream for Stage ⑧ and ⑨.',
+    layers:['L4 (primary — model execution)','L3 (GPU isolation, container runtime)','L2 (primary — CUDA, NCCL, cuDNN)','L1 (primary — physical GPU hardware)'],
+    vendors:{
+      'GPU hardware':['NVIDIA H100 SXM5','NVIDIA B200','AMD MI300X','Google TPU v5'],
+      'Hyperscaler instances':['AWS EC2 p5','Azure ND H100 v5','Google A3 Mega'],
+      'Neoclouds':['CoreWeave','Lambda Labs','Crusoe','Nebius'],
+    }
+  },
+  {
+    id:'obs', num:'⑧', label:'Observ.\n& FinOps', group:'return', sub:'',
+    plain:'Every request is logged with token count, latency, model used, cost, and team tag. This feeds internal cost attribution dashboards and satisfies regulatory audit requirements under GDPR, SOC2 Type II, and the EU AI Act. GPU hardware metrics (utilisation, memory, temperature) are captured separately via DCGM. This stage runs in parallel with response delivery — it does not add to user-facing latency.',
+    technical:'LLM tracing: request/response pairs, latency percentiles (p50/p95/p99), token throughput (TPS). GPU metrics: utilisation %, memory pressure, SM occupancy via DCGM Exporter. Cost attribution: per-call tagging by team, project, environment. Compliance trace: immutable log stored for regulatory audit.',
+    connects:'Receives metrics from GPU Computation (Stage ⑦) and all inference paths. Feeds cost dashboards and compliance systems. Runs concurrently with Stage ⑨.',
+    layers:['L6 (primary — observability, FinOps, compliance)'],
+    vendors:{
+      'LLM observability':['LangFuse','Helicone','Arize Phoenix','Weights & Biases','Patronus AI'],
+      'GPU monitoring':['DCGM','Prometheus','Grafana','Datadog'],
+      'FinOps':['OpenCost','CloudZero','Apptio'],
+    }
+  },
+  {
+    id:'rsp', num:'⑨', label:'Response\nDelivery', group:'return', sub:'',
+    plain:'Words stream back to the user in real time, typically word by word, via Server-Sent Events (SSE). Before reaching the user, output passes through a safety filter (guardrails, PII detection). The response can also trigger automated downstream actions — filing a Jira ticket, updating a CRM record, sending a draft email — via agentic framework callbacks.',
+    technical:'SSE streaming: server pushes token chunks as `data:` events, client renders incrementally. Alternative: WebSocket for bidirectional streaming. Post-processing pipeline: guardrail checks (content policy), PII redaction, JSON schema validation, format parsing. Agentic tool calls: function signatures extracted from model output, dispatched to registered tools.',
+    connects:'Receives assembled token stream from L5 serving infrastructure. Final stage — response delivered to L7 application and end user.',
+    layers:['L7 (primary — application renders response)','L6 (safety filters, cost attribution)','L5 (secondary — SSE streaming, post-processing)'],
+    vendors:{
+      'Agentic frameworks':['LangChain','Microsoft AutoGen','CrewAI','LlamaIndex'],
+      'Guardrails':['Guardrails AI','NVIDIA NeMo Guardrails','Lakera Guard'],
+      'Streaming':['Server-Sent Events','WebSocket','gRPC streaming'],
+    }
+  },
+];
+
+// Activity matrix: LAYERS[0..6] (L7→L1) × STAGES[0..9]
+// 2 = primary, 1 = secondary, 0 = inactive
+const ACTIVITY = [
+  [2, 0, 0, 0, 0, 0, 0, 0, 0, 2],  // L7
+  [1, 1, 2, 0, 0, 0, 0, 0, 2, 1],  // L6
+  [0, 2, 0, 2, 2, 2, 2, 1, 0, 1],  // L5
+  [0, 0, 0, 2, 2, 2, 2, 2, 0, 0],  // L4
+  [0, 0, 0, 0, 1, 2, 2, 1, 0, 0],  // L3
+  [0, 0, 0, 0, 0, 1, 0, 2, 0, 0],  // L2
+  [0, 0, 0, 0, 0, 0, 0, 2, 0, 0],  // L1
+];
+
+// Cell tooltip content for active cells: key = "li-si"
+const CELL_TT = {
+  '0-0':'The employee interacts with a chat UI or enterprise app. The application wraps the message in a system prompt defining the AI\'s role and constraints.|Microsoft Copilot · Glean · Salesforce Einstein',
+  '0-9':'Tokens stream back word-by-word via SSE. The application renders the response and may trigger downstream agentic actions.|LangChain · AutoGen · CrewAI',
+  '1-0':'Authentication and session management initialised. LLM gateway client connects. IAM token validated.|AWS IAM · Azure AD · Okta',
+  '1-1':'Permission checks filter which documents the user is authorised to retrieve. Auth tokens passed to MCP tool calls.|Google Workspace permissions · Slack workspace access',
+  '1-2':'The LLM gateway receives the enriched request, authenticates it, applies rate limits, checks the semantic cache, and routes to the selected model or serves a cached response.|LiteLLM · PortKey · Kong AI Gateway · GPTCache',
+  '1-8':'Every call logged: token count, latency, model, cost, team tag. Feeds compliance audit trail for GDPR, SOC2, EU AI Act.|LangFuse · Helicone · Arize Phoenix · Datadog',
+  '1-9':'Safety filters check output, PII redaction runs, cost attributed to calling team.|Guardrails AI · NVIDIA NeMo Guardrails · LangFuse',
+  '2-1':'Embedding model converts query to vector. Nearest-neighbor search retrieves relevant document chunks. MCP tool calls fetch live data from connected systems.|Pinecone · Weaviate · pgvector · LlamaIndex · Google Workspace',
+  '2-3':'Provider\'s serving infrastructure handles the request — load balancing, auto-scaling, hardware scheduling. Customer has no visibility into this layer.|Amazon Bedrock · Azure OpenAI Service · Anthropic API',
+  '2-4':'Managed endpoint serves the customer\'s fine-tuned model weights. Auto-scaling and load balancing are provider-managed.|AWS SageMaker · Azure ML · Vertex AI Endpoints · Nebius',
+  '2-5':'Customer deploys and configures their own inference engine on rented GPU servers. Batching strategy, KV cache sizing, and concurrency limits are customer-managed.|vLLM · TGI · TensorRT-LLM · SGLang',
+  '2-6':'Async job queue manages incoming batch requests. Scheduler assigns jobs to spot instances. Results written to object storage on completion.|SageMaker Batch · Vertex AI Batch · Anthropic Batch API',
+  '2-7':'KV cache stores intermediate attention states enabling faster generation for long contexts. Memory management determines max batch size and throughput.|vLLM PagedAttention · TGI continuous batching',
+  '2-9':'Token stream assembled and delivered via SSE. Response post-processing: formatting, parsing, safety filtering.|vLLM streaming API · Anthropic SSE format',
+  '3-3':'Provider runs the forward pass through the neural network. Model, hardware, and execution environment entirely provider-managed.|Claude 3.5 Sonnet · GPT-4o · Gemini 2.0 · Llama 3 (Bedrock)',
+  '3-4':'Customer\'s fine-tuned model weights execute in provider\'s managed environment. Customer controls the model; provider controls the runtime.|Llama 3 fine-tune on SageMaker · Mistral fine-tune on Vertex AI',
+  '3-5':'Customer runs their chosen model on rented GPUs with full control over inference engine, precision settings, and optimisation config.|vLLM + Llama 3 · TGI + Mistral · TensorRT-LLM + custom model',
+  '3-6':'Offline model execution processes queued requests in bulk with larger batch sizes and no latency constraints.|OpenAI Batch API · Anthropic Batch API · SageMaker Batch Transform',
+  '3-7':'Transformer forward pass: attention mechanisms compute token relationships, FFN layers transform representations, logits determine next-token probabilities.|PyTorch · JAX · NVIDIA TensorRT · DeepSpeed',
+  '4-4':'Provider\'s Kubernetes cluster (with GPU operators) manages pod scheduling for the managed endpoint. Customer doesn\'t configure this.|AWS EKS · GKE Autopilot · NVIDIA GPU Operator',
+  '4-5':'Customer deploys and manages Kubernetes with NVIDIA GPU Operator, configuring pod scheduling, resource quotas, and auto-scaling policies.|CoreWeave K8s · EKS + GPU Operator · Run:ai · Volcano',
+  '4-6':'Job scheduler assigns batch workloads to available compute nodes. Slurm manages HPC-style jobs; Kubernetes manages containerised batch.|Slurm · Kubernetes Jobs · CoreWeave SUNK · Nebius Soperator',
+  '4-7':'Container runtime and GPU partitioning determine isolation between concurrent workloads. MIG partitions a single H100 into up to 7 independent instances.|NVIDIA MIG · containerd · NVIDIA GPU Operator',
+  '5-5':'Customer manages the CUDA/ROCm driver stack, NCCL configuration for multi-GPU communication, and cuDNN library versions. Version mismatches here cause the most cryptic bugs in the stack.|CUDA 12.x · NCCL 2.21 · cuDNN 9.x · ROCm 6.x',
+  '5-7':'CUDA translates high-level PyTorch/JAX operations into GPU instructions. NCCL coordinates multi-GPU tensor operations. cuDNN accelerates attention and matrix operations.|CUDA 12.4 · NCCL 2.21 · cuDNN 9.2 · Triton',
+  '6-7':'H100 or B200 GPU chips execute billions of matrix multiplications per second. NVLink connects GPUs within a server (900 GB/s). InfiniBand 400G connects servers within a cluster.|NVIDIA H100 SXM5 · AMD MI300X · CoreWeave · Lambda Labs · Equinix',
+};
+
+// Journey paths: array of [stageIndex, layerIndex] waypoints
+const PATHS = {
+  '4a': { label:'4A · Pre-Built API / WaaS',      color:'#5A7FC0',
+    desc:'The simplest path. Provider manages everything below L6.',
+    depth:'L7 → L4 (provider-managed to L1)', payment:'Per token (input + output)',
+    providers:['Anthropic API','OpenAI API','Amazon Bedrock','Azure OpenAI'],
+    waypoints:[[0,0],[1,2],[2,1],[3,3],[7,6],[7,3],[8,1],[9,0]] },
+  '4b': { label:'4B · Managed Endpoint / MLaaS',  color:'#0891B2',
+    desc:'Bring your own model weights; provider manages serving infra.',
+    depth:'L7 → L3 (provider-managed to L1)', payment:'Per endpoint-hour',
+    providers:['AWS SageMaker','Azure ML','Vertex AI Endpoints','Nebius'],
+    waypoints:[[0,0],[1,2],[2,1],[4,3],[4,4],[7,6],[7,3],[8,1],[9,0]] },
+  '4c': { label:'4C · Self-Hosted IaaS / GPUaaS', color:'#D97706',
+    desc:'Full stack ownership from inference engine to GPU driver.',
+    depth:'L7 → L2 (customer manages to L2)', payment:'Per GPU-hour',
+    providers:['CoreWeave','Lambda Labs','AWS EC2 p5','Nebius'],
+    waypoints:[[0,0],[1,2],[2,1],[5,2],[5,3],[5,4],[5,5],[7,6],[7,5],[7,3],[8,1],[9,0]] },
+  '4d': { label:'4D · Batch Workload / Offline',   color:'#5AB86A',
+    desc:'Offline bulk processing on spot compute. Results to storage.',
+    depth:'L7 → L3, results → storage (not streamed)', payment:'Per token (batch ~50–80% cheaper)',
+    providers:['Anthropic Batch API','SageMaker Batch','Vertex AI Batch'],
+    waypoints:[[0,0],[1,2],[2,1],[6,3],[6,4],[7,6],[8,1]] },
+};
+
+// Responsibility data: 7 rows (L7→L1), 4 cols (4A/4B/4C/4D)
+// 0=provider, 1=customer, 2=shared
+const RESP = {
+  models:['4A · Pre-Built API / WaaS','4B · Managed Endpoint / MLaaS','4C · Self-Hosted IaaS / GPUaaS','4D · Batch Workload / Offline'],
+  colors:['#E8EEF8','#E0F7FA','#FFF3E0','#E5F5E7'],
+  borders:['#5A7FC0','#0891B2','#D97706','#5AB86A'],
+  // Categorised vendor rows per model column
+  vendors:[
+    { // 4A
+      'Hyperscalers':['Amazon Bedrock','Azure OpenAI Service','Google Vertex AI Model Garden'],
+      'AI Labs':['Anthropic API','OpenAI API','Mistral API','Cohere API'],
+      'Platforms':['OpenRouter','Together AI','Fireworks AI'],
+    },
+    { // 4B
+      'Hyperscalers':['AWS SageMaker Endpoints','Azure ML Online Endpoints','Google Vertex AI Endpoints'],
+      'Neoclouds':['Nebius','Nscale','FluidStack','CoreWeave (managed)'],
+      'Platforms':['Modal','Lightning AI','Paperspace (DigitalOcean)','Hugging Face Endpoints'],
+    },
+    { // 4C
+      'Hyperscalers':['AWS EC2 p5 (H100)','Azure ND H100 v5','Google A3 Mega (H100)'],
+      'Neoclouds':['CoreWeave','Lambda Labs','Nebius','Voltage Park','Crusoe','Ori Industries'],
+      'Platforms':['Vast.ai','RunPod','TensorDock','Jarvis Labs'],
+    },
+    { // 4D
+      'Hyperscalers':['SageMaker Batch Transform','Vertex AI Batch Prediction','Azure ML Batch Endpoints'],
+      'AI Labs':['Anthropic Batch API','OpenAI Batch API'],
+      'Spot compute':['AWS Spot Instances','GCP Preemptible VMs','Azure Spot VMs','CoreWeave Spot'],
+    },
+  ],
+  data:[
+    [1,1,1,1],  // L7
+    [1,1,1,1],  // L6
+    [2,2,1,1],  // L5
+    [0,2,1,1],  // L4
+    [0,0,1,2],  // L3
+    [0,0,2,0],  // L2
+    [0,0,0,0],  // L1
+  ]
+};
+
+// Guide steps
+const GUIDE_STEPS = [
+  { targetId:'cellGrid',
+    title:'The Stack × Journey Matrix',
+    body:'Each <strong>row</strong> is a layer of the GPU compute stack — from L7 (the application your users see) down to L1 (the physical hardware). Each <strong>column</strong> is a stage of the inference journey. Coloured cells show where that layer is actively involved at that stage.' },
+  { targetId:'pathBtns',
+    title:'Select an Inference Path',
+    body:'A prompt can take four different routes through the stack. Select <strong>4A–4D</strong> to trace the data flow for each deployment model. The diagram redraws to show exactly which layers are touched — and how deep the path goes into the stack.' },
+  { targetId:'layerLabels',
+    title:'Click Any Row or Column',
+    body:'Click a <strong>layer label</strong> on the left for a deep-dive on that stack layer — what it does, what breaks without it, and which vendors operate here. Click a <strong>column header</strong> for the same detail on each journey stage.' },
+  { targetId:'resp-section' in document ? 'respGridCol' : 'legend',
+    title:'Responsibility & Vendors',
+    body:'The <strong>Responsibility Strip</strong> below the matrix shows exactly who manages each stack layer for each deployment model — customer, provider, or shared. Vendor examples are listed per column so you can match the diagram directly to real products.' },
+];
+
+// ════════════════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════════════════
+let activePath = '4a';
+let panelOpen = false;
+let guideActive = false;
+
+// ════════════════════════════════════════════════════════════════
+// RENDER — PATH BUTTONS
+// ════════════════════════════════════════════════════════════════
+function renderPathButtons() {
+  const el = document.getElementById('pathBtns');
+  Object.entries(PATHS).forEach(([key, p]) => {
+    const btn = document.createElement('button');
+    btn.className = 'path-btn' + (key === activePath ? ' active' : '');
+    btn.dataset.path = key;
+    if (key === activePath) btn.style.background = p.color;
+    btn.innerHTML = `
+      <span class="pb-code">${p.label.split('·')[0].trim()}</span>${p.label.split('·').slice(1).join('·').trim()}
+      <div class="pb-preview">
+        <div class="pb-title">${p.label}</div>
+        <p style="font-size:11px;opacity:.85;margin-bottom:6px;">${p.desc}</p>
+        <hr class="pb-divider">
+        <div class="pb-row"><span class="pb-key">Stack depth</span><span class="pb-val">${p.depth}</span></div>
+        <div class="pb-row"><span class="pb-key">Payment</span><span class="pb-val">${p.payment}</span></div>
+        <hr class="pb-divider">
+        <div class="pb-providers">${p.providers.map(v=>`<span class="pb-chip">${v}</span>`).join('')}</div>
+      </div>
+    `;
+    btn.addEventListener('click', () => selectPath(key));
+    el.appendChild(btn);
+  });
+}
+
+function selectPath(key) {
+  activePath = key;
+  document.querySelectorAll('.path-btn').forEach(b => {
+    const k = b.dataset.path;
+    b.classList.toggle('active', k === key);
+    b.style.background = k === key ? PATHS[k].color : '';
+  });
+  updateCellDimming();
+  drawPath();
+  document.getElementById('storageMarker').classList.toggle('visible', key === '4d');
+}
+
+// ════════════════════════════════════════════════════════════════
+// RENDER — STAGE GROUPS
+// ════════════════════════════════════════════════════════════════
+function renderStageGroups() {
+  const el = document.getElementById('stageGroups');
+  const groups = [
+    { label:'① Request composition', cls:'sg-request' },
+    { label:'② Inference path — one route is taken per request', cls:'sg-inf' },
+    { label:'③ GPU Compute', cls:'sg-compute' },
+    { label:'④ Return', cls:'sg-return' },
+  ];
+  groups.forEach(g => {
+    const d = document.createElement('div');
+    d.className = `sg ${g.cls}`;
+    d.textContent = g.label;
+    el.appendChild(d);
+  });
+}
+
+// ════════════════════════════════════════════════════════════════
+// RENDER — STAGE HEADERS
+// ════════════════════════════════════════════════════════════════
+function renderStageHeaders() {
+  const el = document.getElementById('stageHeaders');
+  STAGES.forEach((s, si) => {
+    const d = document.createElement('div');
+    d.className = 'sh';
+    d.dataset.stage = si;
+    const lines = s.label.split('\n');
+    d.innerHTML = `
+      <div class="sh-num">${s.num}</div>
+      <div class="sh-label">${lines.join('<br>')}</div>
+      ${s.sub ? `<div class="sh-sub">${s.sub}</div>` : ''}
+      <div class="sh-hint">click for detail</div>
+    `;
+    d.addEventListener('click', () => openStagePanel(si));
+    el.appendChild(d);
+  });
+}
+
+// ════════════════════════════════════════════════════════════════
+// RENDER — LAYER LABELS
+// ════════════════════════════════════════════════════════════════
+function renderLayerLabels() {
+  const el = document.getElementById('layerLabels');
+  LAYERS.forEach((l, li) => {
+    const d = document.createElement('div');
+    d.className = 'layer-label';
+    d.style.borderRightColor = l.border;
+    d.dataset.layer = li;
+    d.innerHTML = `
+      <div class="ll-id" style="color:${l.text}">${l.id}</div>
+      <div class="ll-name">${l.name}</div>
+      <div class="ll-desc">${l.desc}</div>
+      <div class="ll-click-hint">click for detail</div>
+    `;
+    d.addEventListener('click', () => openLayerPanel(li));
+    el.appendChild(d);
+  });
+}
+
+// ════════════════════════════════════════════════════════════════
+// RENDER — CELL GRID
+// ════════════════════════════════════════════════════════════════
+function renderCells() {
+  const cg = document.getElementById('cellGrid');
+  const svg = document.getElementById('journey-svg');
+  LAYERS.forEach((layer, li) => {
+    STAGES.forEach((stage, si) => {
+      const cell = document.createElement('div');
+      const act = ACTIVITY[li][si];
+      const isInf = si >= 3 && si <= 6;
+      cell.className = 'cell' + (isInf && si < 6 ? ' inf-col' : '') + (isInf && si === 6 ? ' inf-col-last' : '');
+      cell.dataset.li = li;
+      cell.dataset.si = si;
+
+      if (act === 2) {
+        cell.style.background = layer.bg;
+        cell.style.boxShadow = `inset 0 0 0 2px ${layer.border}`;
+        const dot = document.createElement('div');
+        dot.className = 'cell-dot';
+        dot.style.background = layer.border;
+        cell.appendChild(dot);
+      } else if (act === 1) {
+        cell.style.background = layer.bg;
+        cell.style.opacity = '0.45';
+        const dot = document.createElement('div');
+        dot.className = 'cell-dot secondary';
+        dot.style.background = layer.border;
+        cell.appendChild(dot);
+      } else {
+        cell.classList.add('inactive');
+      }
+
+      // Tooltip
+      const ttKey = `${li}-${si}`;
+      if (CELL_TT[ttKey]) {
+        cell.addEventListener('mouseenter', e => showCellTooltip(e, li, si));
+        cell.addEventListener('mousemove', e => moveCellTooltip(e));
+        cell.addEventListener('mouseleave', hideCellTooltip);
+        cell.style.cursor = 'default';
+      }
+
+      cg.insertBefore(cell, svg);
+    });
+  });
+}
+
+// ════════════════════════════════════════════════════════════════
+// CELL DIMMING FOR PATH SELECTION
+// ════════════════════════════════════════════════════════════════
+function updateCellDimming() {
+  const infCols = [3,4,5,6]; // inference path columns
+  const pathColMap = { '4a':3, '4b':4, '4c':5, '4d':6 };
+  const activeCol = pathColMap[activePath];
+  document.querySelectorAll('.cell').forEach(cell => {
+    const si = parseInt(cell.dataset.si);
+    if (infCols.includes(si)) {
+      cell.classList.toggle('dimmed', si !== activeCol);
+    } else {
+      cell.classList.remove('dimmed');
+    }
+  });
+}
+
+// ════════════════════════════════════════════════════════════════
+// SVG PATH DRAWING
+// ════════════════════════════════════════════════════════════════
+function drawPath() {
+  const cg = document.getElementById('cellGrid');
+  const rect = cg.getBoundingClientRect();
+  const W = rect.width;
+  const rowH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--row-h'));
+  const H = rowH * 7;
+  const colW = W / 10;
+  const svg = document.getElementById('journey-svg');
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+
+  // Remove old path elements (keep nothing, rebuild)
+  while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+  const p = PATHS[activePath];
+  const pts = p.waypoints.map(([si,li]) => ({
+    x: si * colW + colW / 2,
+    y: li * rowH + rowH / 2,
+  }));
+
+  // Smooth cubic bezier
+  function buildD(points) {
+    if (!points.length) return '';
+    let d = `M ${points[0].x.toFixed(1)},${points[0].y.toFixed(1)}`;
+    for (let i = 1; i < points.length; i++) {
+      const prev = points[i-1], curr = points[i];
+      const cpx = (prev.x + curr.x) / 2;
+      d += ` C ${cpx.toFixed(1)},${prev.y.toFixed(1)} ${cpx.toFixed(1)},${curr.y.toFixed(1)} ${curr.x.toFixed(1)},${curr.y.toFixed(1)}`;
+    }
+    return d;
+  }
+
+  const defs = document.createElementNS('http://www.w3.org/2000/svg','defs');
+  defs.innerHTML = `
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <polygon points="0 0,8 4,0 8" fill="${p.color}" opacity=".9"/>
+    </marker>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  `;
+  svg.appendChild(defs);
+
+  const pathD = buildD(pts);
+
+  // White halo
+  const halo = document.createElementNS('http://www.w3.org/2000/svg','path');
+  halo.setAttribute('d', pathD);
+  halo.setAttribute('fill','none');
+  halo.setAttribute('stroke','white');
+  halo.setAttribute('stroke-width','7');
+  halo.setAttribute('stroke-linecap','round');
+  halo.setAttribute('opacity','0.75');
+  svg.appendChild(halo);
+
+  // Main path
+  const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+  path.setAttribute('d', pathD);
+  path.setAttribute('fill','none');
+  path.setAttribute('stroke', p.color);
+  path.setAttribute('stroke-width','3');
+  path.setAttribute('stroke-linecap','round');
+  path.setAttribute('opacity','0.9');
+  path.setAttribute('marker-end','url(#arr)');
+  path.setAttribute('filter','url(#glow)');
+  svg.appendChild(path);
+
+  // Waypoint circles
+  pts.forEach((pt, i) => {
+    const isEnd = i === 0 || i === pts.length - 1;
+    const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('cx', pt.x.toFixed(1));
+    c.setAttribute('cy', pt.y.toFixed(1));
+    c.setAttribute('r', isEnd ? 7 : 4.5);
+    c.setAttribute('fill', p.color);
+    c.setAttribute('stroke','white');
+    c.setAttribute('stroke-width','2');
+    c.setAttribute('opacity','0.95');
+    svg.appendChild(c);
+  });
+}
+
+// ════════════════════════════════════════════════════════════════
+// Y-AXIS ALIGNMENT
+// ════════════════════════════════════════════════════════════════
+function alignYAxis() {
+  const hdrH = document.getElementById('gridHeaders').offsetHeight +
+               document.getElementById('stageGroups').offsetHeight + 4;
+  document.getElementById('llSpacer').style.height = hdrH + 'px';
+}
+
+// ════════════════════════════════════════════════════════════════
+// DETAIL PANEL
+// ════════════════════════════════════════════════════════════════
+function openPanel(html) {
+  const panel = document.getElementById('detailPanel');
+  const inner = document.getElementById('panelInner');
+  inner.innerHTML = html;
+  panel.classList.add('open');
+  panelOpen = true;
+  // Redraw path after panel transition
+  setTimeout(drawPath, 320);
+}
+
+function closePanel() {
+  document.getElementById('detailPanel').classList.remove('open');
+  panelOpen = false;
+  setTimeout(drawPath, 320);
+}
+
+function panelClose() {
+  return `<button class="panel-close" onclick="closePanel()">✕ Close</button>`;
+}
+
+function vendorGroupsHTML(vendors) {
+  return `<div class="vendor-groups">${
+    Object.entries(vendors).map(([cat, items]) => `
+      <div>
+        <div class="vg-label">${cat}</div>
+        <div class="vendor-chips">${items.map(v => `<span class="vchip vchip-oss">${v}</span>`).join('')}</div>
+      </div>
+    `).join('')
+  }</div>`;
+}
+
+function openLayerPanel(li) {
+  const l = LAYERS[li];
+  const activeStageNums = STAGES.map((s,si) => ACTIVITY[li][si] > 0 ? s.num : null).filter(Boolean);
+  const html = `
+    ${panelClose()}
+    <div class="panel-type">Stack Layer</div>
+    <div class="panel-id" style="color:${l.text}">${l.id}</div>
+    <div class="panel-name">${l.name}</div>
+    <div class="panel-accent-bar" style="background:${l.border}"></div>
+
+    <div class="panel-section">
+      <div class="ps-title">What this layer does</div>
+      <div class="ps-body">${l.plain}</div>
+    </div>
+
+    <div class="panel-section">
+      <div class="ps-title">Technical detail</div>
+      <div class="ps-tech">${l.technical}</div>
+    </div>
+
+    <div class="panel-section">
+      <div class="ps-title">Active at stages</div>
+      <div class="stage-badges">
+        ${activeStageNums.map(n => `<span class="stage-badge active-badge" style="background:${l.border}">${n}</span>`).join('')}
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <div class="ps-title">If this layer is poorly configured</div>
+      <div class="ps-warn"><div class="ps-warn-title">⚠ Risk</div>${l.breaks}</div>
+    </div>
+
+    <div class="panel-section">
+      <div class="ps-title">Vendors & tools</div>
+      ${vendorGroupsHTML(l.vendors)}
+    </div>
+  `;
+  openPanel(html);
+}
+
+function openStagePanel(si) {
+  const s = STAGES[si];
+  const activeLayers = LAYERS.map((l,li) => ACTIVITY[li][si] > 0 ? l : null).filter(Boolean);
+  const html = `
+    ${panelClose()}
+    <div class="panel-type">Journey Stage</div>
+    <div class="panel-id">${s.num} ${s.sub ? `<span style="font-size:13px;font-weight:400;color:var(--muted)">· ${s.sub}</span>` : ''}</div>
+    <div class="panel-name">${s.label.replace('\n',' ')}</div>
+    <div class="panel-accent-bar" style="background:var(--ink)"></div>
+
+    <div class="panel-section">
+      <div class="ps-title">What happens here</div>
+      <div class="ps-body">${s.plain}</div>
+    </div>
+
+    <div class="panel-section">
+      <div class="ps-title">Technical detail</div>
+      <div class="ps-tech">${s.technical}</div>
+    </div>
+
+    <div class="panel-section">
+      <div class="ps-title">Stack layers involved</div>
+      <div class="stage-badges">
+        ${activeLayers.map(l => `<span class="stage-badge active-badge" style="background:${l.border}">${l.id}</span>`).join('')}
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <div class="ps-title">Connects from / to</div>
+      <div class="ps-body" style="font-size:12px;color:var(--muted)">${s.connects}</div>
+    </div>
+
+    <div class="panel-section">
+      <div class="ps-title">Vendors & tools</div>
+      ${vendorGroupsHTML(s.vendors)}
+    </div>
+  `;
+  openPanel(html);
+}
+
+// ════════════════════════════════════════════════════════════════
+// CELL TOOLTIP
+// ════════════════════════════════════════════════════════════════
+function showCellTooltip(e, li, si) {
+  const key = `${li}-${si}`;
+  const tt = CELL_TT[key];
+  if (!tt) return;
+  const [body, vendors] = tt.split('|');
+  const l = LAYERS[li];
+  document.getElementById('ct-layer').textContent = `${l.id} × ${STAGES[si].label.replace('\n',' ')}`;
+  document.getElementById('ct-body').textContent = body;
+  const vc = document.getElementById('ct-vendors');
+  vc.innerHTML = vendors ? vendors.split('·').map(v=>`<span class="ct-chip">${v.trim()}</span>`).join('') : '';
+  moveCellTooltip(e);
+  document.getElementById('cell-tooltip').classList.add('visible');
+}
+function moveCellTooltip(e) {
+  const tt = document.getElementById('cell-tooltip');
+  const x = Math.min(e.clientX + 14, window.innerWidth - 280);
+  const y = Math.min(e.clientY + 14, window.innerHeight - 160);
+  tt.style.left = x + 'px';
+  tt.style.top = y + 'px';
+}
+function hideCellTooltip() {
+  document.getElementById('cell-tooltip').classList.remove('visible');
+}
+
+// ════════════════════════════════════════════════════════════════
+// LEGEND
+// ════════════════════════════════════════════════════════════════
+function renderLegend() {
+  document.getElementById('legend').innerHTML = `
+    <div class="legend-group">
+      <span class="lg-label">Cell shading</span>
+      <div class="li"><div class="li-dot" style="background:#9333EA"></div>Primary — layer is active at this stage</div>
+      <div class="li"><div class="li-dot-faint" style="background:#9333EA"></div>Secondary — layer present, not primary</div>
+      <div class="li"><div class="li-empty"></div>Not active at this stage</div>
+    </div>
+    <div class="lg-sep"></div>
+    <div class="legend-group">
+      <span class="lg-label">Path line</span>
+      <div class="li"><div class="li-line" style="background:#5A7FC0"></div>Selected inference path data flow</div>
+    </div>
+    <div class="lg-sep"></div>
+    <div class="legend-group">
+      <span class="lg-label">Interaction</span>
+      <div class="li">↖ Click any layer label or column header for detailed breakdown</div>
+      <div class="li">◎ Hover active cells for intersection-level detail</div>
+    </div>
+    <div class="legend-note">
+      Inference path columns 4A–4D are parallel alternatives — a single request uses exactly one path.
+      Layer colours match the GPU Value Chain reference document.
+    </div>
+  `;
+}
+
+// ════════════════════════════════════════════════════════════════
+// RESPONSIBILITY STRIP
+// ════════════════════════════════════════════════════════════════
+function renderRespStrip() {
+  const gc = document.getElementById('respGridCol');
+
+  // Model headers
+  const mh = document.createElement('div');
+  mh.className = 'resp-model-headers';
+  RESP.models.forEach((m,mi) => {
+    const d = document.createElement('div');
+    d.className = 'rmh';
+    d.style.cssText = `background:${RESP.colors[mi]};border:1.5px solid ${RESP.borders[mi]};`;
+    d.textContent = m;
+    mh.appendChild(d);
+  });
+  gc.appendChild(mh);
+
+  // Categorised vendor rows
+  const vr = document.createElement('div');
+  vr.className = 'resp-vendor-row';
+  vr.id = 'respVendorRow';
+
+  // Chip class mapping
+  const catClass = {
+    'Hyperscalers':'rvr-chip-hs',
+    'Neoclouds':'rvr-chip-nc',
+    'AI Labs':'rvr-chip-lab',
+    'Spot compute':'rvr-chip-other',
+    'Platforms':'rvr-chip-other',
+  };
+
+  RESP.vendors.forEach((catMap, mi) => {
+    const cell = document.createElement('div');
+    cell.className = 'rvr-cell';
+    cell.style.borderColor = RESP.borders[mi];
+    Object.entries(catMap).forEach(([cat, items]) => {
+      const grp = document.createElement('div');
+      grp.innerHTML = `
+        <div class="rvr-cat-label">${cat}</div>
+        <div class="rvr-chips">${items.map(v =>
+          `<span class="rvr-chip ${catClass[cat]||'rvr-chip-other'}">${v}</span>`
+        ).join('')}</div>
+      `;
+      cell.appendChild(grp);
+    });
+    vr.appendChild(cell);
+  });
+  gc.appendChild(vr);
+
+  // Responsibility rows
+  const rows = document.createElement('div');
+  rows.className = 'resp-rows';
+  rows.id = 'respRows';
+  LAYERS.forEach((layer, li) => {
+    const row = document.createElement('div');
+    row.className = 'resp-row';
+    RESP.data[li].forEach((val, mi) => {
+      const d = document.createElement('div');
+      d.className = 'rc';
+      if (val === 1) {
+        d.classList.add('rc-cust');
+        d.style.cssText = `background:${RESP.colors[mi]};border:1px solid ${RESP.borders[mi]};`;
+        d.textContent = 'Customer';
+      } else if (val === 2) {
+        d.classList.add('rc-shared');
+        d.style.cssText = `border:1px solid ${RESP.borders[mi]};`;
+        d.textContent = 'Shared';
+      } else {
+        d.classList.add('rc-prov');
+        d.textContent = 'Provider';
+      }
+      row.appendChild(d);
+    });
+    rows.appendChild(row);
+  });
+  gc.appendChild(rows);
+
+  // Layer labels — aligned dynamically after render
+  const rl = document.getElementById('respLabels');
+  LAYERS.forEach(l => {
+    const d = document.createElement('div');
+    d.className = 'resp-layer-row';
+    d.innerHTML = `<div class="rl-dot" style="background:${l.border}"></div>${l.id} · ${l.name.split('·')[0].trim()}`;
+    rl.appendChild(d);
+  });
+
+  // Dynamic padding: match legend + model headers + vendor row height
+  requestAnimationFrame(() => {
+    const legendH = document.querySelector('.resp-legend').offsetHeight + 4;
+    const mhH = mh.offsetHeight + 4;
+    const vrH = vr.offsetHeight + 6;
+    rl.style.paddingTop = (legendH + mhH + vrH) + 'px';
+  });
+}
+
+// ════════════════════════════════════════════════════════════════
+// INTRO GUIDE
+// ════════════════════════════════════════════════════════════════
+let currentGuideStep = 0;
+
+function initGuide() {
+  guideActive = true;
+  document.getElementById('guide').classList.add('active');
+  renderGuideStep(0);
+}
+
+function renderGuideStep(step) {
+  currentGuideStep = step;
+  const s = GUIDE_STEPS[step];
+  document.querySelector('.gc-step').textContent = `Step ${step+1} of ${GUIDE_STEPS.length}`;
+  document.querySelector('.gc-title').textContent = s.title;
+  document.querySelector('.gc-body').innerHTML = s.body;
+
+  // Dots
+  const dots = document.querySelector('.gc-dots');
+  dots.innerHTML = GUIDE_STEPS.map((_,i) =>
+    `<div class="gc-dot${i===step?' active':''}"></div>`
+  ).join('');
+
+  // Nav buttons
+  document.getElementById('gc-prev').style.opacity = step === 0 ? '0.3' : '1';
+  document.getElementById('gc-prev').disabled = step === 0;
+  const nextBtn = document.getElementById('gc-next');
+  nextBtn.textContent = step === GUIDE_STEPS.length - 1 ? 'Done ✓' : 'Next →';
+
+  // Highlight target
+  const targetEl = document.getElementById(s.targetId) ||
+                   document.querySelector('.' + s.targetId);
+  if (targetEl) {
+    const r = targetEl.getBoundingClientRect();
+    const pad = 8;
+    const hl = document.getElementById('guide-highlight');
+    hl.style.cssText = `
+      left:${r.left - pad + window.scrollX}px;
+      top:${r.top - pad + window.scrollY}px;
+      width:${r.width + pad*2}px;
+      height:${r.height + pad*2}px;
+    `;
+
+    // Position card
+    const card = document.getElementById('guide-card');
+    const cardW = 320, cardH = 200;
+    let cx = r.left + r.width/2 - cardW/2;
+    let cy = r.bottom + pad + 16;
+    if (cy + cardH > window.innerHeight) cy = r.top - cardH - 16;
+    cx = Math.max(16, Math.min(cx, window.innerWidth - cardW - 16));
+    card.style.left = cx + 'px';
+    card.style.top = (cy + window.scrollY) + 'px';
+  }
+}
+
+function advanceGuide(dir) {
+  const next = currentGuideStep + dir;
+  if (next >= GUIDE_STEPS.length) { closeGuide(); return; }
+  if (next < 0) return;
+  renderGuideStep(next);
+}
+
+function closeGuide() {
+  const guide = document.getElementById('guide');
+  guide.classList.remove('active');
+  guide.style.display = 'none';
+  guideActive = false;
+}
+
+// Keyboard
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    if (guideActive) closeGuide();
+    else if (panelOpen) closePanel();
+  }
+});
+
+// ════════════════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════════════════
+function init() {
+  renderStageGroups();
+  renderStageHeaders();
+  renderLayerLabels();
+  renderCells();
+  renderPathButtons();
+  renderLegend();
+  renderRespStrip();
+
+  requestAnimationFrame(() => {
+    alignYAxis();
+    updateCellDimming();
+    drawPath();
+    // Show guide after brief delay
+    setTimeout(initGuide, 600);
+  });
+
+  window.addEventListener('resize', () => {
+    alignYAxis();
+    drawPath();
+  });
+
+  new ResizeObserver(() => {
+    alignYAxis();
+    drawPath();
+  }).observe(document.getElementById('cellGrid'));
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

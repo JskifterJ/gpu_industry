@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Inference Works on a GPU Cluster</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080C14;
+  --surface: #0E1420;
+  --surface2: #141C2C;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.12);
+  --ink: #E8E4DC;
+  --muted: #6B7590;
+  --amber: #F5A623;
+  --amber-dim: rgba(245,166,35,0.15);
+  --cyan: #00C4CC;
+  --cyan-dim: rgba(0,196,204,0.12);
+  --purple: #9B72F5;
+  --purple-dim: rgba(155,114,245,0.12);
+  --green: #3DD68C;
+  --green-dim: rgba(61,214,140,0.12);
+  --red: #F56B6B;
+  --red-dim: rgba(245,107,107,0.12);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Grid background */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 48px 32px 120px; }
+
+/* ── HEADER ── */
+.eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 12px;
+}
+h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(28px, 4vw, 52px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, #E8E4DC 0%, #8A90A8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.header-sub {
+  font-size: 15px;
+  color: var(--muted);
+  line-height: 1.65;
+  max-width: 600px;
+  margin-bottom: 48px;
+}
+.header-sub strong { color: var(--ink); font-weight: 500; }
+
+/* ── NAV DOTS ── */
+.step-nav {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 36px;
+  flex-wrap: wrap;
+}
+.step-dot {
+  width: 28px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border2);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+.step-dot::after {
+  content: attr(data-label);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--surface2);
+  color: var(--ink);
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  padding: 3px 7px;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+  border: 1px solid var(--border2);
+}
+.step-dot:hover::after { opacity: 1; }
+.step-dot.active { width: 40px; }
+
+/* ── MAIN LAYOUT ── */
+.main-layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 24px;
+  align-items: start;
+}
+
+/* ── PIPELINE VISUAL ── */
+.pipeline {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px;
+  position: relative;
+  overflow: hidden;
+  min-height: 520px;
+}
+
+.pipeline::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(245,166,35,0.04) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.pipeline-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--muted);
+  margin-bottom: 24px;
+}
+
+/* Step visual containers */
+.step-visual { display: none; }
+.step-visual.active { display: block; animation: fadeIn 0.4s ease; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── VISUAL: TOKENS ── */
+.token-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0;
+}
+.token {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  color: var(--amber);
+  position: relative;
+}
+.token-id {
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 9px;
+  color: var(--muted);
+  font-family: 'DM Mono', monospace;
+  white-space: nowrap;
+}
+.token-arrow {
+  display: flex;
+  align-items: center;
+  color: var(--muted);
+  font-size: 20px;
+  margin: 20px 0;
+}
+.token-nums {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0;
+}
+.token-num {
+  background: var(--amber-dim);
+  border: 1px solid rgba(245,166,35,0.3);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  color: var(--amber);
+}
+
+/* ── VISUAL: MEMORY MAP ── */
+.memory-map {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 8px 0;
+}
+.memory-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.mem-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  width: 80px;
+  flex-shrink: 0;
+  text-align: right;
+}
+.mem-bar-wrap {
+  flex: 1;
+  background: var(--surface2);
+  border-radius: 4px;
+  height: 28px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid var(--border);
+}
+.mem-bar {
+  height: 100%;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: width 1s cubic-bezier(0.4,0,0.2,1);
+}
+.mem-pct {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  width: 36px;
+  text-align: right;
+  flex-shrink: 0;
+}
+.mem-note {
+  font-size: 10px;
+  color: var(--muted);
+  font-style: italic;
+  margin-left: 92px;
+  margin-top: -4px;
+}
+
+/* ── VISUAL: ATTENTION GRID ── */
+.attention-wrap {
+  overflow-x: auto;
+  margin: 8px 0;
+}
+.attention-grid {
+  display: inline-grid;
+  gap: 3px;
+}
+.att-cell {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 8.5px;
+  transition: all 0.3s;
+  cursor: default;
+}
+.att-header {
+  background: transparent !important;
+  color: var(--muted);
+  font-size: 9px;
+}
+.att-label {
+  color: var(--muted);
+  font-size: 9px;
+  text-align: right;
+  padding-right: 4px;
+}
+
+/* ── VISUAL: GPU CLUSTER ── */
+.cluster-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 8px 0;
+}
+.cluster-node {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.cluster-node-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.gpu-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.gpu-chip {
+  background: var(--purple-dim);
+  border: 1px solid var(--purple);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--purple);
+  text-align: center;
+  min-width: 52px;
+}
+.gpu-chip.active {
+  background: var(--purple);
+  color: white;
+  box-shadow: 0 0 12px rgba(155,114,245,0.4);
+}
+.link-bar {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: 'DM Mono', monospace;
+  font-size: 10.5px;
+}
+.link-speed { color: var(--cyan); font-weight: 500; }
+
+/* ── VISUAL: SAMPLING ── */
+.vocab-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 8px 0;
+}
+.vocab-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.vocab-word {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--ink);
+  width: 90px;
+  text-align: right;
+  flex-shrink: 0;
+}
+.vocab-bar-wrap {
+  flex: 1;
+  background: var(--surface2);
+  border-radius: 3px;
+  height: 20px;
+  overflow: hidden;
+}
+.vocab-bar {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 1s ease;
+  display: flex;
+  align-items: center;
+  padding-left: 8px;
+}
+.vocab-pct {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  width: 38px;
+  text-align: right;
+}
+.selected-word {
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: var(--green-dim);
+  border: 1px solid var(--green);
+  border-radius: 8px;
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  color: var(--green);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ── VISUAL: STREAMING ── */
+.stream-output {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 18px;
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  color: var(--ink);
+  line-height: 1.8;
+  min-height: 80px;
+  margin: 8px 0;
+}
+.stream-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 14px;
+  background: var(--amber);
+  margin-left: 2px;
+  animation: blink 1s step-end infinite;
+  vertical-align: middle;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+/* ── VISUAL: LOOP ── */
+.loop-diagram {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin: 16px 0;
+  flex-wrap: wrap;
+}
+.loop-step {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--ink);
+  text-align: center;
+  min-width: 80px;
+}
+.loop-arrow {
+  color: var(--amber);
+  font-size: 16px;
+  padding: 0 4px;
+}
+.loop-counter {
+  margin-top: 16px;
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.loop-token {
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
+  background: var(--amber-dim);
+  border: 1px solid rgba(245,166,35,0.3);
+  transition: all 0.3s;
+}
+.loop-token.done {
+  background: var(--amber);
+  border-color: var(--amber);
+}
+
+/* ── VISUAL: CONSTRAINT ── */
+.constraint-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 8px 0;
+}
+.constraint-item {
+  display: flex;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  align-items: flex-start;
+}
+.constraint-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.constraint-body {}
+.constraint-name {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  margin-bottom: 3px;
+}
+.constraint-desc {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ── SIDE PANEL ── */
+.side-panel {
+  position: sticky;
+  top: 24px;
+}
+
+.step-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px 26px;
+  margin-bottom: 16px;
+}
+
+.step-number {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.step-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+.step-accent {
+  height: 2px;
+  border-radius: 1px;
+  margin: 14px 0;
+}
+.step-body {
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: #B8B4AC;
+}
+.step-body p + p { margin-top: 10px; }
+.step-body strong { color: var(--ink); font-weight: 500; }
+
+/* Constraint pill */
+.constraint-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  margin-top: 14px;
+}
+
+/* ── NAVIGATION ── */
+.nav-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+}
+.nav-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 9px 18px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--ink);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.nav-btn:hover { background: var(--border2); }
+.nav-btn:disabled { opacity: 0.3; cursor: default; }
+.nav-btn.primary {
+  background: var(--amber);
+  border-color: var(--amber);
+  color: #000;
+  font-weight: 500;
+}
+.nav-btn.primary:hover { background: #F0A010; }
+.step-progress {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* ── SMALL DIAGRAM LABELS ── */
+.diag-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 10px;
+}
+.diag-note {
+  font-size: 11.5px;
+  color: var(--muted);
+  font-style: italic;
+  margin-top: 12px;
+  line-height: 1.5;
+  padding: 10px 12px;
+  background: var(--surface2);
+  border-radius: 6px;
+  border-left: 2px solid var(--border2);
+}
+
+/* ── GLOSSARY ── */
+.glossary {
+  margin-top: 48px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+}
+.glossary-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 20px;
+}
+.glossary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+.glossary-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.glossary-term {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--amber);
+  margin-bottom: 5px;
+}
+.glossary-def {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+@media (max-width: 900px) {
+  .main-layout { grid-template-columns: 1fr; }
+  .side-panel { position: static; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="eyebrow">GPU Cluster · Inference Walkthrough</div>
+  <h1>How a Prompt Becomes<br>an Answer</h1>
+  <p class="header-sub">
+    A step-by-step illustration of what happens <strong>inside a GPU cluster</strong> from the moment you press send to the moment words appear on screen. Every stage, every constraint, in plain English.
+  </p>
+
+  <!-- Step nav -->
+  <div class="step-nav" id="stepNav"></div>
+
+  <div class="main-layout">
+
+    <!-- Left: visual -->
+    <div class="pipeline">
+      <div class="pipeline-title" id="pipelineTitle"></div>
+      <div id="visuals"></div>
+    </div>
+
+    <!-- Right: explanation -->
+    <div class="side-panel">
+      <div class="step-card">
+        <div class="step-number" id="stepNumber"></div>
+        <div class="step-title" id="stepTitle"></div>
+        <div class="step-accent" id="stepAccent"></div>
+        <div class="step-body" id="stepBody"></div>
+        <div id="constraintPill"></div>
+      </div>
+      <div class="nav-row">
+        <button class="nav-btn" id="prevBtn" onclick="navigate(-1)">← Back</button>
+        <span class="step-progress" id="stepProgress"></span>
+        <button class="nav-btn primary" id="nextBtn" onclick="navigate(1)">Next →</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Glossary -->
+  <div class="glossary">
+    <div class="glossary-title">Key Terms</div>
+    <div class="glossary-grid" id="glossaryGrid"></div>
+  </div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════════
+
+const STEPS = [
+  {
+    id: 'input',
+    label: 'User Input',
+    color: '#3DD68C',
+    title: 'You send a message',
+    pipelineTitle: 'Stage 1 — User Input → Serving Layer',
+    body: `<p>You type a question and press send. The application — whether it's a chat UI, an enterprise copilot, or an API call — packages your message along with a hidden <strong>system prompt</strong> that defines the AI's role and rules.</p>
+    <p>This combined package is sent over the internet to the <strong>inference server</strong> — a computer specifically designated to run AI models. It arrives at the serving software (vLLM, TGI or TensorRT-LLM) which manages the queue of incoming requests.</p>
+    <p>At this point you are just a text string in a queue. Nothing involving the GPU has happened yet.</p>`,
+    constraint: null,
+    visual: 'input',
+  },
+  {
+    id: 'tokenize',
+    label: 'Tokenization',
+    color: '#F5A623',
+    title: 'The CPU converts your words into numbers',
+    pipelineTitle: 'Stage 2 — CPU Tokenization',
+    body: `<p>GPUs cannot read text. Before anything reaches the GPU, the <strong>CPU</strong> runs a tokenizer — a lookup table that converts every word (or word fragment) into a number called a <strong>token ID</strong>.</p>
+    <p>The word "hamburger" might become three tokens: <em>ham</em> · <em>bur</em> · <em>ger</em>. Common short words like "the" are a single token. This is why AI models measure cost in tokens, not words — a word can be 1 to 4 tokens.</p>
+    <p>The result is a list of integers — your message, now in the only language the GPU understands. This list also includes tokens from the system prompt and any retrieved documents added during the RAG stage.</p>`,
+    constraint: { icon: '📋', color: '#F5A623', label: 'CPU only — takes microseconds, not a bottleneck' },
+    visual: 'tokenize',
+  },
+  {
+    id: 'load',
+    label: 'Memory Loading',
+    color: '#00C4CC',
+    title: 'Everything is loaded into GPU memory',
+    pipelineTitle: 'Stage 3 — Weights + Context loaded into GPU HBM',
+    body: `<p>The GPU has its own ultra-fast memory called <strong>HBM (High Bandwidth Memory)</strong> — built directly onto the chip. Think of it as the GPU's workbench. Before any computation can start, two things must be loaded onto this workbench:</p>
+    <p><strong>1. Model weights</strong> — the billions of parameters the model learned during training. A 70B parameter model in standard precision takes ~140 GB. This is usually pre-loaded and stays resident in HBM across all requests.</p>
+    <p><strong>2. Your tokens</strong> — the list of token IDs generated in the previous step, transferred from CPU RAM into GPU HBM via the PCIe bus.</p>
+    <p>The <strong>PCIe transfer</strong> (CPU → GPU) is often the first real bottleneck for large contexts. Once everything is on the workbench, computation can begin.</p>`,
+    constraint: { icon: '⚠️', color: '#00C4CC', label: 'Bottleneck: PCIe bandwidth limits how fast context loads. Bottleneck: HBM size limits max model + batch size.' },
+    visual: 'load',
+  },
+  {
+    id: 'attention',
+    label: 'Attention',
+    color: '#9B72F5',
+    title: 'Every word looks at every other word',
+    pipelineTitle: 'Stage 4 — Self-Attention: understanding context',
+    body: `<p>The first major computation is called <strong>attention</strong>. The model compares every token in your prompt to every other token to understand relationships — which words matter most for understanding each other.</p>
+    <p>If you ask <em>"What did the CEO say about the Q3 results?"</em>, the attention mechanism connects "CEO", "say", "Q3" and "results" as highly related, while "did" and "the" get lower weight.</p>
+    <p>The critical constraint: this comparison is <strong>quadratic</strong>. Doubling the number of tokens quadruples the work. A 1,000-token prompt needs 1 million comparisons. A 4,000-token prompt needs 16 million. This is why long prompts are slower and more expensive.</p>
+    <p>The results of this step — called <strong>Keys and Values</strong> — are cached so they don't need to be recomputed as new tokens are generated.</p>`,
+    constraint: { icon: '⚠️', color: '#9B72F5', label: 'Critical bottleneck: O(n²) complexity. Long contexts slow everything quadratically.' },
+    visual: 'attention',
+  },
+  {
+    id: 'ffn',
+    label: 'Pattern Matching',
+    color: '#9B72F5',
+    title: 'The model applies what it learned',
+    pipelineTitle: 'Stage 5 — Feed-Forward Layers: pattern matching',
+    body: `<p>After attention tells the model what's relevant, the next step applies everything it learned during training. Each transformer layer has a <strong>feed-forward network</strong> — essentially two enormous multiplication tables that match the current context against billions of patterns learned from training data.</p>
+    <p>Think of it as passing your question through dozens of expert filters in sequence. Each layer refines the understanding slightly — early layers might recognise syntax, later layers recognise concepts and intent.</p>
+    <p>These multiplications — called <strong>matrix operations (GEMM)</strong> — are exactly what GPUs are designed for. Thousands of GPU cores do these simultaneously in parallel, which is why a GPU is 100× faster than a CPU for this task.</p>
+    <p>This is where most of the GPU's compute time is spent. The model weights being accessed here constitute the majority of that 140 GB loaded into HBM.</p>`,
+    constraint: { icon: '💡', color: '#9B72F5', label: 'GPU strength: thousands of cores compute in parallel. HBM bandwidth is the key constraint here.' },
+    visual: 'ffn',
+  },
+  {
+    id: 'multigpu',
+    label: 'Multi-GPU Sync',
+    color: '#F5A623',
+    title: 'Multiple GPUs compare notes',
+    pipelineTitle: 'Stage 6 — Tensor Parallelism: GPU coordination',
+    body: `<p>Models like Claude or GPT-4 are too large to fit on a single GPU chip. Instead they are <strong>split across multiple GPUs</strong> — each GPU holds a portion of the model's layers. This is called tensor parallelism.</p>
+    <p>After each layer completes its computation, all the GPUs must <strong>share their partial results</strong> and combine them before proceeding to the next layer. This synchronisation step — called <strong>AllReduce</strong> — happens dozens or hundreds of times per word generated.</p>
+    <p>Within a single server: GPUs are connected by <strong>NVLink</strong> — a proprietary NVIDIA cable running at 900 GB/s. This is fast enough that the sync adds very little delay.</p>
+    <p>Across multiple servers: synchronisation happens over <strong>InfiniBand</strong> at 400 Gb/s. For very large models spanning many servers, this inter-server communication can become the main speed constraint.</p>`,
+    constraint: { icon: '⚠️', color: '#F5A623', label: 'Bottleneck: inter-server InfiniBand latency compounds with model depth. Every layer needs a sync round-trip.' },
+    visual: 'multigpu',
+  },
+  {
+    id: 'kvcache',
+    label: 'KV Cache',
+    color: '#00C4CC',
+    title: 'The model remembers what it already computed',
+    pipelineTitle: 'Stage 7 — KV Cache: avoiding redundant computation',
+    body: `<p>Generating a response means producing tokens <em>one at a time</em> — each word requires a full forward pass. Without optimisation, every forward pass would recompute the attention for every token in the context from scratch.</p>
+    <p>The <strong>KV Cache</strong> solves this. After the first forward pass, the attention keys and values for every input token are stored in HBM. On subsequent passes, only the newest token needs to be computed — everything else is read from the cache.</p>
+    <p>This turns what would be an exponentially growing problem into a linear one. Generating word 200 is not significantly slower than generating word 2.</p>
+    <p>The constraint: the KV cache takes up HBM space. A long conversation with a large model can fill the cache and leave no room for processing new requests. <strong>PagedAttention</strong> (used by vLLM) manages the cache like computer virtual memory — in pages — dramatically improving HBM utilisation.</p>`,
+    constraint: { icon: '⚠️', color: '#00C4CC', label: 'Bottleneck: KV cache fills HBM. Longer conversations leave less room for parallel batching of other users\' requests.' },
+    visual: 'kvcache',
+  },
+  {
+    id: 'sampling',
+    label: 'Word Selection',
+    color: '#3DD68C',
+    title: 'The model picks the next word',
+    pipelineTitle: 'Stage 8 — Logit Sampling: selecting the next token',
+    body: `<p>After all the attention and pattern matching, the model produces a <strong>probability score for every word in its vocabulary</strong> — typically 32,000 to 128,000 possible words. The highest-scoring word is the one most likely to come next given your question.</p>
+    <p>But the model doesn't always pick the top word. A <strong>temperature</strong> setting controls randomness. Low temperature (closer to 0) always picks the most likely word — very predictable. Higher temperature introduces variety — useful for creative tasks but can produce unexpected results.</p>
+    <p><strong>Only one token is selected per forward pass.</strong> The entire process from Stage 4 to Stage 8 then repeats — with the new token appended to the context — to generate the next word. And again. And again.</p>
+    <p>A 200-word response requires approximately 270 complete passes through the model.</p>`,
+    constraint: { icon: '🔁', color: '#3DD68C', label: 'Key insight: one full forward pass per word. Total response time = time per pass × number of words.' },
+    visual: 'sampling',
+  },
+  {
+    id: 'streaming',
+    label: 'Streaming',
+    color: '#3DD68C',
+    title: 'Words are sent to you as they are generated',
+    pipelineTitle: 'Stage 9 — Response Streaming: words sent in real time',
+    body: `<p>Each word doesn't wait for the full response to finish. The moment a token is sampled, it travels back from the GPU to the CPU, then out through the inference server, across the internet, and into your browser — all within milliseconds.</p>
+    <p>This is delivered using <strong>Server-Sent Events (SSE)</strong> — a simple streaming protocol where the server pushes tiny chunks of text as they become available. Your browser renders each chunk immediately.</p>
+    <p>This is why AI responses appear word by word — it isn't a design choice or a performance trick. Each word genuinely arrives one at a time from the hardware level upward.</p>
+    <p>Before the words reach you they pass through a <strong>safety filter</strong> — checking for policy violations or sensitive content — and may also trigger <strong>agentic tool calls</strong> if the model decided an action (like searching a database or updating a record) should be taken.</p>`,
+    constraint: { icon: '✅', color: '#3DD68C', label: 'No bottleneck here — streaming is lightweight. The GPU is already working on the next token while this one travels to you.' },
+    visual: 'streaming',
+  },
+  {
+    id: 'constraints',
+    label: 'Constraints',
+    color: '#F56B6B',
+    title: 'The real-world limits of this system',
+    pipelineTitle: 'Summary — Where the constraints actually are',
+    body: `<p>Understanding the constraints helps explain why AI systems behave the way they do — why long prompts cost more, why larger models need more servers, and why some responses are faster than others.</p>
+    <p>The diagram on the left shows every meaningful constraint in the pipeline. These are the physical and architectural limits that no amount of software optimisation can fully overcome — only better hardware or smarter architectural choices (like the KV cache) can move them.</p>`,
+    constraint: null,
+    visual: 'constraints',
+  },
+];
+
+const GLOSSARY = [
+  { term: 'Token', def: 'The basic unit of text the model works with. One word is typically 1–3 tokens. Models price by tokens because that\'s what the hardware processes.' },
+  { term: 'HBM (High Bandwidth Memory)', def: 'Ultra-fast memory built directly onto the GPU chip. Much faster than regular RAM but limited in size. The size of HBM limits how large a model can fit on a single GPU.' },
+  { term: 'PCIe', def: 'The cable connecting the CPU to the GPU inside a server. Transfers data at up to 128 GB/s — fast, but still a bottleneck when loading large contexts.' },
+  { term: 'NVLink', def: 'NVIDIA\'s proprietary connection between GPUs within the same server. Runs at 900 GB/s — 7× faster than PCIe. Essential for splitting large models across multiple chips.' },
+  { term: 'InfiniBand', def: 'The high-speed network connecting different GPU servers in a cluster. Runs at 400 Gb/s. Slower than NVLink — becomes a bottleneck for very large multi-server models.' },
+  { term: 'Attention', def: 'The process of comparing every token to every other token to understand context and relationships. Cost grows quadratically with context length.' },
+  { term: 'KV Cache', def: 'A memory store that saves the results of attention computations so they don\'t need repeating. Enables efficient generation of long responses.' },
+  { term: 'Tensor Parallelism', def: 'Splitting a model across multiple GPU chips so that models too large for one chip can still run. Requires synchronisation between chips after every layer.' },
+  { term: 'PagedAttention', def: 'A technique (used in vLLM) that manages KV cache memory in small pages rather than large fixed blocks — dramatically reducing waste and allowing more parallel requests.' },
+  { term: 'Logits', def: 'The raw probability scores assigned to every possible next token before the final word is selected. Converted to a probability distribution and then sampled.' },
+  { term: 'Temperature', def: 'A parameter controlling how random the word selection is. Low = predictable, picks most likely word. High = more creative, sometimes unpredictable.' },
+  { term: 'GEMM', def: 'General Matrix Multiply — the core mathematical operation inside every transformer layer. GPUs are optimised to run GEMM operations thousands of times in parallel.' },
+];
+
+// ═══════════════════════════════════════════════════════════
+// VISUALS
+// ═══════════════════════════════════════════════════════════
+
+function buildVisualInput() {
+  return `
+    <div class="diag-label">Your message → inference server queue</div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin:8px 0;">
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px 18px;">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:8px;">USER MESSAGE</div>
+        <div style="font-size:14px;color:var(--ink);">"What were our top-selling products in Q3 and what drove the growth?"</div>
+      </div>
+      <div style="text-align:center;color:var(--muted);font-size:20px;">↓ packed with system prompt + RAG context</div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px 18px;">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:8px;">FULL CONTEXT WINDOW ASSEMBLED</div>
+        <div style="font-size:12.5px;color:var(--muted);line-height:1.7;">[System prompt: You are a business analyst assistant...] [Retrieved doc: Q3 Sales Report...] [User: What were our top-selling products...]</div>
+      </div>
+      <div style="text-align:center;color:var(--muted);font-size:20px;">↓ sent to inference server</div>
+      <div style="background:var(--green-dim);border:1px solid var(--green);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:10px;">
+        <span style="font-size:18px;">🖥️</span>
+        <div>
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--green);margin-bottom:2px;">INFERENCE SERVER — REQUEST QUEUE</div>
+          <div style="font-size:12px;color:var(--muted);">Request joins queue. Serving software (vLLM / TGI) assigns it to available GPU capacity.</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function buildVisualTokenize() {
+  const words = ['What', 'were', 'our', 'top', '-', 'sell', 'ing', 'products', 'in', 'Q', '3'];
+  const ids =   [2061,    892,   674,  983,  12,  3426,   278,    2165,   275,  660, 18];
+  return `
+    <div class="diag-label">Text → Token IDs (CPU operation)</div>
+    <div style="margin-bottom:18px;">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:10px;">INPUT TEXT</div>
+      <div class="token-row">
+        ${words.map((w,i) => `<div class="token">${w}</div>`).join('')}
+        <div style="color:var(--muted);padding:6px 4px;font-size:12px;">...</div>
+      </div>
+    </div>
+    <div class="token-arrow">↓ tokenizer lookup table (runs on CPU in microseconds)</div>
+    <div>
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin:8px 0 10px;">TOKEN IDs (integers)</div>
+      <div class="token-nums">
+        ${ids.map(id => `<div class="token-num">${id}</div>`).join('')}
+        <div style="color:var(--muted);padding:6px 4px;font-size:12px;">...</div>
+      </div>
+    </div>
+    <div class="diag-note">A typical request might be 500–4,000 tokens. Each token is a small integer — the GPU will look up an embedding vector for each one.</div>
+  `;
+}
+
+function buildVisualLoad() {
+  return `
+    <div class="diag-label">What is loaded into GPU HBM memory</div>
+    <div class="memory-map">
+      <div class="memory-row">
+        <div class="mem-label">Weights</div>
+        <div class="mem-bar-wrap">
+          <div class="mem-bar" style="width:72%;background:linear-gradient(90deg,#9B72F5,#7B52D5);color:white;">
+            Model weights — 140 GB (70B model, FP16)
+          </div>
+        </div>
+        <div class="mem-pct">72%</div>
+      </div>
+      <div class="mem-note">Pre-loaded and stays resident — shared across all requests</div>
+      <div class="memory-row">
+        <div class="mem-label">KV Cache</div>
+        <div class="mem-bar-wrap">
+          <div class="mem-bar" style="width:18%;background:linear-gradient(90deg,#00C4CC,#0094AA);color:white;">
+            KV cache — 36 GB
+          </div>
+        </div>
+        <div class="mem-pct">18%</div>
+      </div>
+      <div class="mem-note">Grows with context length and number of parallel requests</div>
+      <div class="memory-row">
+        <div class="mem-label">Activations</div>
+        <div class="mem-bar-wrap">
+          <div class="mem-bar" style="width:6%;background:linear-gradient(90deg,#F5A623,#D58603);color:white;">
+            ~12 GB
+          </div>
+        </div>
+        <div class="mem-pct">6%</div>
+      </div>
+      <div class="mem-note">Temporary working memory during the forward pass</div>
+      <div class="memory-row">
+        <div class="mem-label">Free</div>
+        <div class="mem-bar-wrap">
+          <div class="mem-bar" style="width:4%;background:var(--border2);color:var(--muted);">
+            ~8 GB
+          </div>
+        </div>
+        <div class="mem-pct">4%</div>
+      </div>
+    </div>
+    <div style="margin-top:16px;padding:12px 14px;background:var(--red-dim);border:1px solid var(--red);border-radius:8px;">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--red);margin-bottom:4px;">⚠ HBM CAPACITY CONSTRAINT</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.5;">When HBM is full, the server cannot accept more parallel requests until space is freed. This is the primary reason you cannot run an arbitrarily large model or serve unlimited concurrent users on a single GPU.</div>
+    </div>
+    <div style="margin-top:10px;padding:12px 14px;background:var(--amber-dim);border:1px solid rgba(245,166,35,0.3);border-radius:8px;">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--amber);margin-bottom:4px;">⚠ PCIe TRANSFER BOTTLENECK</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.5;">Your tokens travel from CPU RAM → GPU HBM over PCIe at 128 GB/s. For very long contexts (10K+ tokens), this transfer adds measurable latency before computation even begins.</div>
+    </div>
+  `;
+}
+
+function buildVisualAttention() {
+  const tokens = ['What', 'products', 'Q3', 'growth', '?'];
+  const scores = [
+    [0.9, 0.7, 0.5, 0.4, 0.2],
+    [0.7, 0.95, 0.8, 0.6, 0.3],
+    [0.5, 0.8, 0.9, 0.7, 0.2],
+    [0.4, 0.6, 0.7, 0.95, 0.4],
+    [0.2, 0.3, 0.2, 0.4, 0.9],
+  ];
+  function scoreColor(v) {
+    const r = Math.round(155 * v);
+    const g = Math.round(114 * v);
+    const b = Math.round(245 * v);
+    return `rgba(${r+40},${g+20},${245},${v * 0.85 + 0.05})`;
+  }
+  const cols = tokens.length + 1;
+  return `
+    <div class="diag-label">Attention scores — which tokens relate to which</div>
+    <div class="attention-wrap">
+      <div class="attention-grid" style="grid-template-columns: 56px ${tokens.map(()=>'36px').join(' ')}">
+        <div class="att-cell att-header"></div>
+        ${tokens.map(t => `<div class="att-cell att-header" style="font-size:8px;color:var(--muted);">${t}</div>`).join('')}
+        ${tokens.map((row,ri) => `
+          <div class="att-cell att-label">${row}</div>
+          ${scores[ri].map((v,ci) => `
+            <div class="att-cell" style="background:${scoreColor(v)};font-size:8.5px;color:rgba(255,255,255,${v > 0.5 ? 0.9 : 0.5});">${(v*100).toFixed(0)}%</div>
+          `).join('')}
+        `).join('')}
+      </div>
+    </div>
+    <div class="diag-note">
+      Bright cells = high attention score — these tokens pay close attention to each other. "Q3" and "products" score highly together. "?" scores mainly against itself.<br><br>
+      <strong>The quadratic problem:</strong> 5 tokens = 25 comparisons. 500 tokens = 250,000 comparisons. 4,000 tokens = 16 million comparisons. This is why long prompts are slower and cost more.
+    </div>
+  `;
+}
+
+function buildVisualFFN() {
+  const layers = [
+    { label: 'Layer 1', desc: 'Basic syntax and structure', width: '15%' },
+    { label: 'Layer 8', desc: 'Word relationships and entities', width: '40%' },
+    { label: 'Layer 20', desc: 'Concepts and intent', width: '70%' },
+    { label: 'Layer 32', desc: 'High-level reasoning and planning', width: '92%' },
+    { label: 'Layer 80', desc: 'Final refined representation', width: '98%' },
+  ];
+  return `
+    <div class="diag-label">How understanding builds through transformer layers</div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
+      ${layers.map(l => `
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="font-family:'DM Mono',monospace;font-size:9.5px;color:var(--muted);width:52px;flex-shrink:0;">${l.label}</div>
+          <div style="flex:1;background:var(--surface2);border-radius:4px;height:24px;overflow:hidden;">
+            <div style="width:${l.width};height:100%;background:linear-gradient(90deg,#9B72F5,#7B52D5);border-radius:3px;transition:width 1s ease;display:flex;align-items:center;padding-left:8px;">
+              <span style="font-size:10px;color:rgba(255,255,255,0.8);white-space:nowrap;">${l.desc}</span>
+            </div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    <div style="padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:6px;">WHAT'S ACTUALLY HAPPENING MATHEMATICALLY</div>
+      <div style="font-size:12.5px;color:var(--muted);line-height:1.6;">Each layer applies two enormous multiplication tables to the current representation. The GPU performs these as <span style="color:var(--amber);">matrix multiplications (GEMM)</span> across thousands of cores simultaneously — this is what GPUs are optimised for. A single forward pass through all layers takes ~20–50 ms on modern hardware.</div>
+    </div>
+  `;
+}
+
+function buildVisualMultiGPU() {
+  return `
+    <div class="diag-label">Model split across GPU chips — with synchronisation</div>
+    <div class="cluster-wrap">
+      <div class="cluster-node">
+        <div class="cluster-node-title">Server 1 — GPU Node (8× H100)</div>
+        <div class="gpu-chips">
+          ${['GPU 0<br>Layers 1–20', 'GPU 1<br>Layers 1–20', 'GPU 2<br>Layers 1–20', 'GPU 3<br>Layers 1–20'].map((g,i) =>
+            `<div class="gpu-chip active" style="font-size:9px;">${g}</div>`).join('')}
+          ${['GPU 4<br>Layers 21–40', 'GPU 5<br>Layers 21–40', 'GPU 6<br>Layers 21–40', 'GPU 7<br>Layers 21–40'].map((g) =>
+            `<div class="gpu-chip" style="font-size:9px;">${g}</div>`).join('')}
+        </div>
+      </div>
+      <div class="link-bar">
+        <span style="color:var(--muted);font-size:10px;">NVLink (intra-server)</span>
+        <span class="link-speed">900 GB/s · fast enough to be non-bottleneck</span>
+      </div>
+      <div class="cluster-node">
+        <div class="cluster-node-title">Server 2 — GPU Node (8× H100)</div>
+        <div class="gpu-chips">
+          ${['GPU 0<br>Layers 41–60', 'GPU 1<br>Layers 41–60', 'GPU 2<br>Layers 41–60', 'GPU 3<br>Layers 41–60'].map((g) =>
+            `<div class="gpu-chip" style="font-size:9px;">${g}</div>`).join('')}
+          ${['GPU 4<br>Layers 61–80', 'GPU 5<br>Layers 61–80', 'GPU 6<br>Layers 61–80', 'GPU 7<br>Layers 61–80'].map((g) =>
+            `<div class="gpu-chip" style="font-size:9px;">${g}</div>`).join('')}
+        </div>
+      </div>
+      <div class="link-bar">
+        <span style="color:var(--muted);font-size:10px;">InfiniBand (inter-server)</span>
+        <span style="color:var(--red);font-family:'DM Mono',monospace;font-size:10.5px;font-weight:500;">400 Gb/s · ⚠ key bottleneck for large models</span>
+      </div>
+    </div>
+    <div class="diag-note">After every layer, all GPUs must share partial results and combine them before proceeding. This AllReduce sync happens ~80 times per token for a large model. InfiniBand speed directly caps the maximum tokens-per-second the cluster can generate.</div>
+  `;
+}
+
+function buildVisualKVCache() {
+  return `
+    <div class="diag-label">KV Cache — avoiding redundant computation</div>
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px;">
+      <div style="padding:14px 16px;background:var(--surface2);border:1px solid var(--red);border-radius:8px;">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--red);margin-bottom:6px;">WITHOUT KV CACHE (naive approach)</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6;">To generate word 100, the model re-reads and re-processes all 100 previous words from scratch. To generate word 200, it re-reads 200 words. Response time grows quadratically. Completely impractical.</div>
+      </div>
+      <div style="padding:14px 16px;background:var(--green-dim);border:1px solid var(--green);border-radius:8px;">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--green);margin-bottom:6px;">WITH KV CACHE (modern approach)</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6;">After processing the input tokens once, the attention results (Keys and Values) for every input token are stored in HBM. Each new token only needs to compute attention against the cache — not re-process everything. Generation stays fast regardless of response length.</div>
+      </div>
+    </div>
+    <div style="padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:8px;">KV CACHE SIZE GROWS WITH CONTEXT</div>
+      <div style="display:flex;flex-direction:column;gap:5px;">
+        ${[
+          {label:'1K token context', pct:'8%', color:'#3DD68C'},
+          {label:'4K token context', pct:'28%', color:'#F5A623'},
+          {label:'16K token context', pct:'65%', color:'#F56B6B'},
+          {label:'32K token context', pct:'92%', color:'#F56B6B'},
+        ].map(r => `
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="font-family:'DM Mono',monospace;font-size:9.5px;color:var(--muted);width:120px;flex-shrink:0;">${r.label}</div>
+            <div style="flex:1;background:var(--bg);border-radius:3px;height:18px;overflow:hidden;">
+              <div style="width:${r.pct};height:100%;background:${r.color};border-radius:2px;opacity:0.7;"></div>
+            </div>
+            <div style="font-family:'DM Mono',monospace;font-size:9.5px;color:var(--muted);width:28px;">${r.pct}</div>
+          </div>
+        `).join('')}
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:8px;font-style:italic;">Share of one H100's 80 GB HBM used by KV cache alone (70B model)</div>
+    </div>
+  `;
+}
+
+function buildVisualSampling() {
+  const words = [
+    { word: 'increased', pct: 38, color: '#3DD68C', selected: true },
+    { word: 'grew', pct: 24, color: '#3DD68C' },
+    { word: 'was', pct: 18, color: '#00C4CC' },
+    { word: 'driven', pct: 11, color: '#F5A623' },
+    { word: 'rose', pct: 6, color: '#9B72F5' },
+    { word: 'other…', pct: 3, color: '#6B7590' },
+  ];
+  return `
+    <div class="diag-label">Probability scores over vocabulary — next token selection</div>
+    <div class="vocab-bars">
+      ${words.map(w => `
+        <div class="vocab-row">
+          <div class="vocab-word" style="${w.selected ? 'color:var(--green);font-weight:500;' : ''}">${w.word}${w.selected ? ' ✓' : ''}</div>
+          <div class="vocab-bar-wrap">
+            <div class="vocab-bar" style="width:${w.pct*2.2}%;background:${w.color};opacity:${w.selected ? 1 : 0.5};"></div>
+          </div>
+          <div class="vocab-pct">${w.pct}%</div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="selected-word">
+      <span style="font-size:20px;">✓</span>
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;opacity:0.7;margin-bottom:2px;">SELECTED TOKEN</div>
+        <div style="font-size:14px;font-weight:500;">"increased"</div>
+      </div>
+    </div>
+    <div class="diag-note">This selection happens in microseconds. The entire pipeline from Stage 4 to here now repeats — "increased" is appended to the context and the model generates the next word. For a 200-word response, this loop runs ~270 times.</div>
+  `;
+}
+
+function buildVisualStreaming() {
+  return `
+    <div class="diag-label">Tokens streamed to user as generated</div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
+      ${[
+        {step:'GPU → CPU', desc:'Token ID travels over PCIe from GPU HBM to CPU RAM', color:'#9B72F5', time:'<1ms'},
+        {step:'CPU → Server', desc:'Inference engine decodes token ID back to text character', color:'#F5A623', time:'<1ms'},
+        {step:'Server → Internet', desc:'SSE (Server-Sent Events) sends text chunk via HTTP', color:'#00C4CC', time:'1–30ms'},
+        {step:'Internet → Browser', desc:'Browser receives chunk and renders word immediately', color:'#3DD68C', time:'varies'},
+      ].map(s => `
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;">
+          <div style="width:8px;height:8px;border-radius:50%;background:${s.color};flex-shrink:0;"></div>
+          <div style="flex:1;">
+            <div style="font-family:'DM Mono',monospace;font-size:10.5px;color:${s.color};margin-bottom:2px;">${s.step}</div>
+            <div style="font-size:12px;color:var(--muted);">${s.desc}</div>
+          </div>
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">${s.time}</div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="stream-output" id="streamOut">Revenue <span class="stream-cursor"></span></div>
+    <div class="diag-note">While this token travels to you, the GPU has already started computing the next one. The network round-trip and the GPU computation overlap — which is why fast GPU clusters still feel slow if the network between the data center and the user is congested.</div>
+  `;
+}
+
+function buildVisualConstraints() {
+  return `
+    <div class="diag-label">Every meaningful constraint in the pipeline</div>
+    <div class="constraint-list">
+      ${[
+        {icon:'🔴', name:'HBM Capacity (GPU Memory)', color:' #F56B6B', desc:'The size of GPU memory limits the maximum model size and how many users can be served in parallel. A full H100 (80 GB) can barely fit a 70B parameter model, leaving limited room for concurrent requests. Solved by: larger GPUs (H200: 141 GB, B200: 192 GB), model quantisation (shrinking weight precision), or spreading the model across more GPUs.'},
+        {icon:'🔴', name:'PCIe Bandwidth (CPU → GPU)', color:'#F56B6B', desc:'When a new request arrives, the tokens must travel from CPU RAM to GPU HBM via PCIe at 128 GB/s. For very long contexts (50K+ tokens) this transfer time is measurable and adds to time-to-first-token latency. Solved by: faster PCIe generations, pre-loading likely contexts, direct GPU-to-GPU networking (NVLink-C2C).'},
+        {icon:'🟡', name:'Attention Quadratic Cost', color:'#F5A623', desc:'Attention computation grows as the square of context length. A 4,000-token prompt is 16× more expensive than a 1,000-token prompt. This is why long prompts are slower to process. Solved by: Flash Attention (memory efficiency), sliding window attention (only attend to nearby tokens), sparse attention patterns. Not fully solved — it is fundamental to the architecture.'},
+        {icon:'🟡', name:'InfiniBand Latency (Server → Server)', color:'#F5A623', desc:'When a model spans multiple servers, every transformer layer requires a synchronisation round-trip over InfiniBand (400 Gb/s). For an 80-layer model this is 80 sync operations per token. Solved by: faster interconnects (800G InfiniBand NDR), keeping models on fewer servers, pipeline parallelism (staggering work).'},
+        {icon:'🟢', name:'KV Cache Memory', color:'#3DD68C', desc:'Long conversations fill the KV cache which consumes HBM space that could serve other users. Solved by: PagedAttention (vLLM), KV cache quantisation, prefix caching (reusing cache entries for shared system prompts across users). Mostly solved by modern serving software.'},
+        {icon:'🟢', name:'Token Generation Speed (Autoregressive)', color:'#3DD68C', desc:'Generating tokens one at a time is inherently sequential — you cannot generate word 5 before word 4 is done. This sets a hard floor on response latency. Partially solved by: speculative decoding (a small model guesses several tokens ahead, the large model verifies in parallel — significant speedup for predictable text).'},
+      ].map(c => `
+        <div class="constraint-item">
+          <div class="constraint-icon">${c.icon}</div>
+          <div class="constraint-body">
+            <div class="constraint-name" style="color:${c.color};">${c.name}</div>
+            <div class="constraint-desc">${c.desc}</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+const VISUAL_BUILDERS = {
+  input: buildVisualInput,
+  tokenize: buildVisualTokenize,
+  load: buildVisualLoad,
+  attention: buildVisualAttention,
+  ffn: buildVisualFFN,
+  multigpu: buildVisualMultiGPU,
+  kvcache: buildVisualKVCache,
+  sampling: buildVisualSampling,
+  streaming: buildVisualStreaming,
+  constraints: buildVisualConstraints,
+};
+
+// ═══════════════════════════════════════════════════════════
+// STATE & RENDER
+// ═══════════════════════════════════════════════════════════
+let currentStep = 0;
+
+function render() {
+  const step = STEPS[currentStep];
+
+  // Nav dots
+  const nav = document.getElementById('stepNav');
+  nav.innerHTML = STEPS.map((s, i) => `
+    <div class="step-dot ${i === currentStep ? 'active' : ''}"
+         data-label="${s.label}"
+         style="${i === currentStep ? `background:${s.color}` : ''}"
+         onclick="goTo(${i})"></div>
+  `).join('');
+
+  // Pipeline visual
+  document.getElementById('pipelineTitle').textContent = step.pipelineTitle;
+  document.getElementById('visuals').innerHTML = VISUAL_BUILDERS[step.visual]?.() || '';
+
+  // Side panel
+  document.getElementById('stepNumber').textContent = `Step ${currentStep + 1} of ${STEPS.length}`;
+  document.getElementById('stepTitle').textContent = step.title;
+  document.getElementById('stepAccent').style.background = step.color;
+  document.getElementById('stepBody').innerHTML = step.body;
+
+  // Constraint pill
+  const cp = document.getElementById('constraintPill');
+  if (step.constraint) {
+    cp.innerHTML = `
+      <div class="constraint-pill" style="background:rgba(${hexToRgb(step.constraint.color)},0.12);border:1px solid rgba(${hexToRgb(step.constraint.color)},0.35);color:${step.constraint.color};">
+        <span>${step.constraint.icon}</span>
+        <span>${step.constraint.label}</span>
+      </div>
+    `;
+  } else {
+    cp.innerHTML = '';
+  }
+
+  // Navigation
+  document.getElementById('stepProgress').textContent = `${currentStep + 1} / ${STEPS.length}`;
+  document.getElementById('prevBtn').disabled = currentStep === 0;
+  document.getElementById('nextBtn').textContent = currentStep === STEPS.length - 1 ? 'Start over' : 'Next →';
+
+  // Animate streaming output
+  if (step.id === 'streaming') {
+    animateStream();
+  }
+}
+
+function animateStream() {
+  const words = ['Revenue', 'from', 'top-selling', 'products', 'increased', 'by', '23%', 'in', 'Q3,', 'driven', 'primarily', 'by...'];
+  const el = document.getElementById('streamOut');
+  if (!el) return;
+  let i = 1;
+  const iv = setInterval(() => {
+    if (!document.getElementById('streamOut') || i >= words.length) { clearInterval(iv); return; }
+    document.getElementById('streamOut').innerHTML = words.slice(0, i+1).join(' ') + ' <span class="stream-cursor"></span>';
+    i++;
+  }, 380);
+}
+
+function hexToRgb(hex) {
+  if (!hex.startsWith('#')) return '255,255,255';
+  const r = parseInt(hex.slice(1,3),16);
+  const g = parseInt(hex.slice(3,5),16);
+  const b = parseInt(hex.slice(5,7),16);
+  return `${r},${g},${b}`;
+}
+
+function navigate(dir) {
+  if (currentStep + dir < 0) return;
+  if (currentStep + dir >= STEPS.length) { currentStep = 0; }
+  else { currentStep += dir; }
+  render();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goTo(i) {
+  currentStep = i;
+  render();
+}
+
+// Glossary
+function renderGlossary() {
+  document.getElementById('glossaryGrid').innerHTML = GLOSSARY.map(g => `
+    <div class="glossary-item">
+      <div class="glossary-term">${g.term}</div>
+      <div class="glossary-def">${g.def}</div>
+    </div>
+  `).join('');
+}
+
+// Init
+render();
+renderGlossary();
+</script>
+</body>
+</html>

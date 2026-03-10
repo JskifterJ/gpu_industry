@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GPU Inference — End-to-End Architecture</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;1,300&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#060A10; --panel:#0B1018; --panel2:#111820; --panel3:#161E2A;
+  --border:rgba(255,255,255,0.06); --border2:rgba(255,255,255,0.12);
+  --ink:#D4D0C8; --muted:#556070; --dim:#2E3848;
+  --amber:#E8A020; --amber-d:rgba(232,160,32,0.12);
+  --cyan:#1ABFD0; --cyan-d:rgba(26,191,208,0.12);
+  --purple:#8A6EE8; --purple-d:rgba(138,110,232,0.12);
+  --green:#30C870; --green-d:rgba(48,200,112,0.12);
+  --red:#E04848; --red-d:rgba(224,72,72,0.12);
+  --blue:#4A90E8; --blue-d:rgba(74,144,232,0.12);
+  --orange:#D07030;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:radial-gradient(rgba(255,255,255,0.025) 1px,transparent 1px);
+  background-size:32px 32px;}
+.page{position:relative;z-index:1;max-width:1380px;margin:0 auto;padding:0 28px 100px;}
+
+/* HEADER */
+.hdr{padding:40px 0 28px;border-bottom:1px solid var(--border);margin-bottom:28px;
+  display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+.eyebrow{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--amber);margin-bottom:10px;}
+h1{font-family:'IBM Plex Mono',monospace;font-size:clamp(20px,2.8vw,34px);
+  font-weight:600;letter-spacing:-.02em;line-height:1.1;}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;}
+.leg{display:flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--muted);}
+.leg-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0;}
+.leg-dash{width:22px;height:2px;flex-shrink:0;border-radius:1px;}
+
+/* TWO-COLUMN LAYOUT */
+.layout{display:grid;grid-template-columns:1fr 320px;gap:28px;align-items:start;}
+@media(max-width:960px){.layout{grid-template-columns:1fr;}}
+
+/* FLOW */
+.flow{display:flex;flex-direction:column;gap:0;}
+
+/* SECTION */
+.sec{position:relative;}
+
+/* BOX */
+.box{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:18px 20px;}
+.box-hl{border-color:var(--border2);}
+.box-title{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;
+  letter-spacing:.15em;color:var(--muted);margin-bottom:10px;}
+.box-name{font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:600;
+  letter-spacing:-.01em;margin-bottom:4px;}
+.box-desc{font-size:12px;color:var(--muted);line-height:1.55;}
+
+/* VERTICAL CONNECTORS */
+.conn{display:flex;flex-direction:column;align-items:center;
+  height:48px;position:relative;margin:0 auto;width:100%;}
+.conn-line{width:2px;flex:1;background:linear-gradient(to bottom,var(--border2),var(--border));}
+.conn-label{position:absolute;top:50%;transform:translateY(-50%);
+  left:calc(50% + 10px);background:var(--panel2);border:1px solid var(--border2);
+  border-radius:4px;padding:3px 9px;font-family:'IBM Plex Mono',monospace;
+  font-size:9.5px;color:var(--muted);white-space:nowrap;}
+.pulse-wrap{position:absolute;top:0;left:calc(50% - 1px);width:2px;height:100%;overflow:visible;pointer-events:none;}
+.pulse{position:absolute;width:6px;height:6px;border-radius:50%;left:-2px;animation:pflow 2s linear infinite;}
+@keyframes pflow{0%{top:0%;opacity:0;}10%{opacity:1;}90%{opacity:1;}100%{top:100%;opacity:0;}}
+
+/* BOTTLENECK CONNECTORS */
+.bn-conn{display:flex;align-items:center;gap:10px;padding:10px 0;}
+.bn-line{flex:1;height:3px;border-radius:2px;}
+.bn-line-red{background:repeating-linear-gradient(90deg,var(--red) 0,var(--red) 8px,transparent 8px,transparent 14px);}
+.bn-line-amber{background:repeating-linear-gradient(90deg,var(--amber) 0,var(--amber) 8px,transparent 8px,transparent 14px);}
+.bn-tag{border-radius:6px;padding:5px 13px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;
+  font-weight:600;white-space:nowrap;display:flex;align-items:center;gap:6px;border:1.5px solid currentColor;}
+.bn-red{color:var(--red);background:var(--red-d);}
+.bn-amber{color:var(--amber);background:var(--amber-d);}
+.bn-green{color:var(--green);background:var(--green-d);}
+.bn-note{text-align:center;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);
+  margin:-4px 0 6px;padding:0 8px;line-height:1.5;}
+
+/* INLINE TAGS */
+.tag{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:3px;
+  font-family:'IBM Plex Mono',monospace;font-size:8.5px;font-weight:600;border:1px solid currentColor;
+  vertical-align:middle;margin-left:6px;}
+
+/* CONTEXT ROW */
+.ctx-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:10px;}
+.ctx-box{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:11px 13px;}
+.ctx-title{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;
+  letter-spacing:.12em;margin-bottom:6px;}
+.ctx-chip{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:9px;
+  padding:2px 6px;border-radius:3px;margin:2px 2px 2px 0;border:1px solid currentColor;}
+
+/* CONTEXT WINDOW BAR */
+.cw-bar{display:flex;height:22px;border-radius:4px;overflow:hidden;gap:1px;}
+.cw-seg{display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;
+  font-size:8px;font-weight:500;white-space:nowrap;padding:0 5px;}
+
+/* STORAGE SECTION */
+.storage-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.store-box{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;}
+.store-title{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;
+  letter-spacing:.12em;margin-bottom:8px;}
+.store-row{display:flex;gap:8px;align-items:flex-start;padding:5px 0;border-bottom:1px solid var(--border);}
+.store-row:last-child{border-bottom:none;}
+.store-icon{font-size:12px;flex-shrink:0;margin-top:1px;}
+.store-label{font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--ink);margin-bottom:1px;}
+.store-desc{font-size:10.5px;color:var(--muted);line-height:1.4;}
+.store-owner{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:1px 5px;border-radius:3px;margin-top:3px;display:inline-block;}
+
+/* NETWORK GAP WARNING */
+.net-gap{background:var(--amber-d);border:1px solid var(--amber);border-radius:8px;
+  padding:12px 15px;margin-top:10px;display:flex;gap:10px;align-items:flex-start;}
+
+/* CPU BOX */
+.cpu-inner{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
+.cpu-comp{background:var(--panel2);border:1px solid var(--border);border-radius:7px;padding:10px 12px;}
+.cc-title{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:5px;}
+.cc-val{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;margin-bottom:2px;}
+.cc-note{font-size:11px;color:var(--muted);line-height:1.45;}
+
+/* GPU CHASSIS */
+.chassis{background:var(--panel);border:1.5px solid var(--border2);border-radius:12px;padding:18px 20px;}
+.chassis-title{font-family:'IBM Plex Mono',monospace;font-size:9.5px;text-transform:uppercase;
+  letter-spacing:.13em;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.chassis-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* GPU CHIP GRID */
+.gpu-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:10px;}
+.gpu-chip{background:var(--panel2);border:1px solid var(--purple);border-radius:7px;padding:9px 8px;position:relative;overflow:hidden;}
+.gpu-chip::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--purple);}
+.gc-label{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;color:var(--purple);margin-bottom:5px;text-transform:uppercase;}
+.hbm-mini{background:var(--bg);border-radius:2px;height:7px;overflow:hidden;display:flex;gap:1px;margin-bottom:2px;}
+.hbm-seg{height:100%;border-radius:1px;}
+.gc-stat{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);}
+
+/* HBM LEGEND ROW */
+.hbm-leg{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:10px;}
+.hl-item{display:flex;align-items:center;gap:5px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--muted);}
+.hl-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0;}
+
+/* NVLINK BAR */
+.nvlink-bar{background:var(--green-d);border:1px solid var(--green);border-radius:6px;
+  padding:8px 14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:6px;}
+.nvlink-label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--green);font-weight:600;}
+.nvlink-desc{font-size:11px;color:var(--muted);}
+
+/* GPU DETAIL */
+.gpu-detail{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);}
+.gdb{background:var(--panel2);border:1px solid var(--border);border-radius:7px;padding:11px 12px;}
+.gdb-title{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:7px;}
+.gdb-val{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;margin-bottom:3px;}
+.gdb-note{font-size:11px;color:var(--muted);line-height:1.4;}
+
+/* HBM STACKED BAR */
+.hbm-stack{display:flex;height:20px;border-radius:3px;overflow:hidden;gap:1px;margin-bottom:7px;}
+.hbm-s{display:flex;align-items:center;padding:0 5px;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:500;white-space:nowrap;}
+
+/* SM GRID */
+.sm-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:2px;}
+.sm-cell{height:10px;border-radius:1px;background:var(--purple);opacity:.4;animation:sm-pulse 2s ease-in-out infinite;}
+@keyframes sm-pulse{0%,100%{opacity:.2;}50%{opacity:.85;}}
+
+/* FORWARD PASS */
+.fwd-steps{display:flex;flex-direction:column;gap:4px;margin-top:10px;}
+.fwd-step{display:flex;gap:0;align-items:stretch;}
+.fwd-num{width:26px;flex-shrink:0;display:flex;align-items:flex-start;padding-top:10px;
+  justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);}
+.fwd-body{flex:1;background:var(--panel2);border:1px solid var(--border);border-radius:7px;padding:10px 13px;}
+.fwd-name{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;margin-bottom:3px;}
+.fwd-desc{font-size:11.5px;color:var(--muted);line-height:1.5;}
+
+/* RETURN PATH */
+.ret-row{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;
+  background:var(--panel2);border:1px solid var(--border);border-radius:7px;margin-bottom:5px;}
+.ret-icon{font-size:14px;flex-shrink:0;margin-top:1px;}
+.ret-label{font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--muted);margin-bottom:1px;}
+.ret-val{font-size:12px;color:var(--ink);}
+
+/* STORAGE ANNOTATION (branch off main flow) */
+.storage-branch{display:flex;gap:12px;align-items:stretch;margin:8px 0;}
+.branch-line{width:2px;background:var(--cyan);border-radius:1px;flex-shrink:0;margin-left:12px;}
+.branch-content{flex:1;}
+
+/* SIDEBAR */
+.sidebar{position:sticky;top:24px;display:flex;flex-direction:column;gap:18px;}
+.sb-panel{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px 16px 18px;}
+.sb-title{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;
+  letter-spacing:.15em;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:7px;}
+.sb-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.sb-body{font-size:12px;color:var(--muted);line-height:1.6;}
+.sb-body strong{color:var(--ink);font-weight:500;}
+.sb-body p+p{margin-top:8px;}
+
+/* LARGE CONTEXT TABLE */
+.ctx-table{width:100%;border-collapse:collapse;margin:8px 0;}
+.ctx-table th{font-family:'IBM Plex Mono',monospace;font-size:8.5px;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--muted);padding:5px 6px;border-bottom:1px solid var(--border2);text-align:left;}
+.ctx-table td{font-family:'IBM Plex Mono',monospace;font-size:9.5px;padding:5px 6px;
+  border-bottom:1px solid var(--border);color:var(--ink);}
+.ctx-table tr:last-child td{border-bottom:none;font-weight:600;}
+
+/* CHIP COMPARE */
+.chip-card{background:var(--panel2);border:1px solid var(--border);border-radius:7px;padding:9px 11px;margin-bottom:6px;}
+.chip-name{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;margin-bottom:5px;}
+.chip-stat{display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--muted);margin-bottom:2px;}
+.chip-stat-val{color:var(--ink);font-weight:500;}
+
+/* BOTTLENECK LIST */
+.bn-list{display:flex;flex-direction:column;gap:0;}
+.bn-item{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--border);}
+.bn-item:last-child{border-bottom:none;}
+.bn-ico{font-size:14px;flex-shrink:0;margin-top:1px;}
+.bn-name{font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;margin-bottom:2px;}
+.bn-desc{font-size:11px;color:var(--muted);line-height:1.45;}
+.bn-fix{font-family:'IBM Plex Mono',monospace;font-size:9px;margin-top:4px;
+  padding:3px 7px;border-radius:3px;border:1px solid currentColor;display:inline-flex;align-items:center;gap:4px;}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- HEADER -->
+<header class="hdr">
+  <div>
+    <div class="eyebrow">GPU Compute · Infrastructure Reference</div>
+    <h1>Inference on a GPU Cluster<br>End-to-End Architecture + Storage</h1>
+  </div>
+  <div class="legend">
+    <div class="leg"><div class="leg-dash" style="background:var(--red);opacity:.8;border-bottom:2px dashed var(--red);"></div>Critical bottleneck</div>
+    <div class="leg"><div class="leg-dash" style="background:var(--amber);opacity:.8;border-bottom:2px dashed var(--amber);"></div>Moderate constraint</div>
+    <div class="leg"><div class="leg-dash" style="background:var(--green);"></div>Non-bottleneck</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--purple);"></div>GPU components</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--cyan);"></div>Storage / data</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--green);"></div>Context inputs (RAG, MCP)</div>
+  </div>
+</header>
+
+<div class="layout">
+<!-- ════════════════════════════════════
+     LEFT — MAIN FLOW
+════════════════════════════════════ -->
+<div class="flow">
+
+<!-- ① CONTEXT ASSEMBLY -->
+<div class="sec">
+<div class="box box-hl" style="border-color:rgba(48,200,112,0.25);">
+  <div class="box-title">① Context Assembly — L7 Application + L5 RAG / MCP</div>
+  <div class="ctx-row">
+
+    <div class="ctx-box" style="border-color:rgba(48,200,112,0.2);">
+      <div class="ctx-title" style="color:var(--green);">User Prompt</div>
+      <div style="font-size:11.5px;color:var(--muted);margin-bottom:6px;line-height:1.45;">Your typed message + hidden system prompt added by the application. This is the "base" of every request.</div>
+      <span class="ctx-chip" style="color:var(--green);border-color:rgba(48,200,112,0.4);">~500 tokens</span>
+    </div>
+
+    <div class="ctx-box" style="border-color:rgba(48,200,112,0.2);">
+      <div class="ctx-title" style="color:var(--green);">Uploaded Docs / Files</div>
+      <div style="font-size:11.5px;color:var(--muted);margin-bottom:6px;line-height:1.45;">Attached PDFs, code, spreadsheets. Sent directly to Anthropic's servers, held in memory for the session.</div>
+      <span class="ctx-chip" style="color:var(--green);border-color:rgba(48,200,112,0.4);">1K–50K tokens</span>
+    </div>
+
+    <div class="ctx-box" style="border-color:rgba(26,191,208,0.2);">
+      <div class="ctx-title" style="color:var(--cyan);">RAG Retrieval</div>
+      <div style="font-size:11.5px;color:var(--muted);margin-bottom:6px;line-height:1.45;">Query → embedding → vector DB search → top-k chunks returned. DB lives on customer infra.</div>
+      <span class="ctx-chip" style="color:var(--cyan);border-color:rgba(26,191,208,0.4);">Pinecone</span>
+      <span class="ctx-chip" style="color:var(--cyan);border-color:rgba(26,191,208,0.4);">pgvector</span>
+    </div>
+
+    <div class="ctx-box" style="border-color:rgba(26,191,208,0.2);">
+      <div class="ctx-title" style="color:var(--cyan);">MCP Live Data</div>
+      <div style="font-size:11.5px;color:var(--muted);margin-bottom:6px;line-height:1.45;">Fetched on demand from source systems. Original not copied — only the response text enters the context.</div>
+      <span class="ctx-chip" style="color:var(--cyan);border-color:rgba(26,191,208,0.4);">Slack</span>
+      <span class="ctx-chip" style="color:var(--cyan);border-color:rgba(26,191,208,0.4);">Drive</span>
+      <span class="ctx-chip" style="color:var(--cyan);border-color:rgba(26,191,208,0.4);">CRM</span>
+    </div>
+  </div>
+
+  <!-- Context window bar -->
+  <div style="display:flex;align-items:center;gap:10px;margin-top:4px;">
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--muted);white-space:nowrap;">Context window →</span>
+    <div class="cw-bar" style="flex:1;">
+      <div class="cw-seg" style="background:rgba(48,200,112,0.3);color:var(--green);flex:0.5;">Sys</div>
+      <div class="cw-seg" style="background:rgba(48,200,112,0.45);color:#fff;flex:0.4;">User</div>
+      <div class="cw-seg" style="background:rgba(48,200,112,0.25);color:var(--green);flex:1.2;">Uploaded doc</div>
+      <div class="cw-seg" style="background:rgba(26,191,208,0.4);color:#fff;flex:1.4;">RAG chunks</div>
+      <div class="cw-seg" style="background:rgba(26,191,208,0.25);color:var(--cyan);flex:0.5;">MCP</div>
+    </div>
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--amber);white-space:nowrap;">≈ 14,000 tokens</span>
+  </div>
+</div>
+</div>
+
+<!-- STORAGE BRANCH -->
+<div class="storage-branch" style="margin:12px 0;">
+  <div class="branch-line"></div>
+  <div class="branch-content">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:var(--cyan);margin-bottom:8px;">↳ Storage: where this data lives</div>
+    <div class="storage-grid">
+
+      <div class="store-box" style="border-color:rgba(74,144,232,0.25);">
+        <div class="store-title" style="color:var(--blue);">☁ Anthropic Servers (Provider)</div>
+        <div class="store-row">
+          <div class="store-icon">💬</div>
+          <div>
+            <div class="store-label">claude.ai conversation</div>
+            <div class="store-desc">HOT: Anthropic database (Postgres / Aurora) — active session, full history. COLD: Anthropic object storage (S3/GCS) — archived. You can delete but Anthropic retains per policy while active.</div>
+            <span class="store-owner" style="background:var(--blue-d);color:var(--blue);border:1px solid rgba(74,144,232,0.3);">Owned by Anthropic</span>
+          </div>
+        </div>
+        <div class="store-row">
+          <div class="store-icon">📎</div>
+          <div>
+            <div class="store-label">Uploaded files (this session)</div>
+            <div class="store-desc">Sent to and processed on Anthropic's servers. Held for session duration. Retention per Anthropic policy — not on your device.</div>
+            <span class="store-owner" style="background:var(--blue-d);color:var(--blue);border:1px solid rgba(74,144,232,0.3);">Processed by Anthropic</span>
+          </div>
+        </div>
+        <div class="store-row">
+          <div class="store-icon">🧠</div>
+          <div>
+            <div class="store-label">Model weights (70B numbers)</div>
+            <div class="store-desc">Always resident in GPU HBM during serving. Backed up to provider object storage (S3/GCS). Never leaves provider infrastructure.</div>
+            <span class="store-owner" style="background:var(--blue-d);color:var(--blue);border:1px solid rgba(74,144,232,0.3);">Owned by Anthropic / Provider</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="store-box" style="border-color:rgba(26,191,208,0.25);">
+        <div class="store-title" style="color:var(--cyan);">🏢 Customer / Enterprise Infra</div>
+        <div class="store-row">
+          <div class="store-icon">📦</div>
+          <div>
+            <div class="store-label">RAG vector index</div>
+            <div class="store-desc">HOT: Vector DB (Pinecone, pgvector) — queried per request. Can be cloud-hosted or on-premises. COLD: Source documents in S3, SharePoint, local storage.</div>
+            <span class="store-owner" style="background:var(--cyan-d);color:var(--cyan);border:1px solid rgba(26,191,208,0.3);">Owned by Customer</span>
+          </div>
+        </div>
+        <div class="store-row">
+          <div class="store-icon">🔗</div>
+          <div>
+            <div class="store-label">MCP source systems</div>
+            <div class="store-desc">Source systems (Slack, Drive, CRM) unchanged — MCP fetches on demand and returns text. Nothing copied to provider. Original data stays in customer's systems.</div>
+            <span class="store-owner" style="background:var(--cyan-d);color:var(--cyan);border:1px solid rgba(26,191,208,0.3);">Owned by Customer</span>
+          </div>
+        </div>
+        <div class="store-row">
+          <div class="store-icon">🔌</div>
+          <div>
+            <div class="store-label">API conversation history</div>
+            <div class="store-desc">Anthropic does NOT persist API conversations. Developer must re-send full history with every request. Storage is the developer's responsibility.</div>
+            <span class="store-owner" style="background:var(--cyan-d);color:var(--cyan);border:1px solid rgba(26,191,208,0.3);">Developer's responsibility</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Network gap warning -->
+    <div class="net-gap">
+      <div style="font-size:18px;flex-shrink:0;">⚠</div>
+      <div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:var(--amber);margin-bottom:4px;">NETWORK GAP: Customer RAG ↔ Provider GPU</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.55;">For enterprise deployments, the RAG vector DB often lives on customer infrastructure while GPU inference runs on the provider's cloud. Every request requires a network round-trip to retrieve RAG chunks — typically 20–200 ms — which commonly <strong style="color:var(--ink);">exceeds the GPU computation time itself</strong>. Co-locating the vector DB with the GPU cluster is the primary fix.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONNECTOR -->
+<div class="conn">
+  <div class="conn-line"></div>
+  <div class="conn-label">HTTPS request → Anthropic inference server</div>
+  <div class="pulse-wrap"><div class="pulse" style="background:var(--green);"></div></div>
+</div>
+
+<!-- ② CPU -->
+<div class="sec">
+<div class="box" style="border-color:rgba(74,144,232,0.25);">
+  <div class="box-title">② CPU — Host Processor (Intel Xeon / AMD EPYC)</div>
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+    <div class="box-name" style="color:var(--blue);">Server CPU</div>
+    <span class="tag" style="color:var(--green);background:var(--green-d);border-color:var(--green);">✓ Non-bottleneck</span>
+  </div>
+  <div class="cpu-inner">
+    <div class="cpu-comp">
+      <div class="cc-title">Tokenizer</div>
+      <div class="cc-val" style="color:var(--amber);">Text → integers</div>
+      <div class="cc-note">Lookup table converts text to token IDs in microseconds. "quarterly" → [22882, 7817]. Runs entirely on CPU — done before GPU is involved.</div>
+    </div>
+    <div class="cpu-comp">
+      <div class="cc-title">CPU DRAM</div>
+      <div class="cc-val" style="color:var(--blue);">512 GB – 2 TB</div>
+      <div class="cc-note">Holds OS, vLLM serving software, request queue, token buffers. Does <em>not</em> hold model weights — those live in GPU HBM.</div>
+    </div>
+    <div class="cpu-comp" style="grid-column:1/-1;">
+      <div class="cc-title">Serving Software — vLLM / TGI / TensorRT-LLM</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.5;">Manages incoming queue, batches multiple users' requests together, schedules GPU work, allocates KV cache space (PagedAttention), streams tokens back to clients as they arrive.</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- PCIe BOTTLENECK -->
+<div class="bn-conn">
+  <div class="bn-line bn-line-red"></div>
+  <div class="bn-tag bn-red">⚠ PCIe Gen5 — 128 GB/s — BOTTLENECK #1</div>
+  <div class="bn-line bn-line-red"></div>
+</div>
+<div class="bn-note">Tokens + KV cache transfers CPU RAM → GPU HBM. At 14,000 tokens this transfer is measurable before any GPU work begins.</div>
+
+<!-- ③ GPU CHASSIS -->
+<div class="sec">
+<div class="chassis">
+  <div class="chassis-title">③ GPU Server Node — e.g. NVIDIA DGX H100 SXM (8× GPU)</div>
+
+  <!-- 8 GPU chips (4 active for 70B, 4 lighter) -->
+  <div class="gpu-grid">
+    <div class="gpu-chip">
+      <div class="gc-label">GPU 0</div>
+      <div class="hbm-mini">
+        <div class="hbm-seg" style="width:44%;background:var(--purple);"></div>
+        <div class="hbm-seg" style="width:25%;background:var(--cyan);"></div>
+        <div class="hbm-seg" style="width:8%;background:var(--amber);"></div>
+      </div>
+      <div class="gc-stat">17.5+20+3 GB</div>
+    </div>
+    <div class="gpu-chip">
+      <div class="gc-label">GPU 1</div>
+      <div class="hbm-mini">
+        <div class="hbm-seg" style="width:44%;background:var(--purple);"></div>
+        <div class="hbm-seg" style="width:25%;background:var(--cyan);"></div>
+        <div class="hbm-seg" style="width:8%;background:var(--amber);"></div>
+      </div>
+      <div class="gc-stat">17.5+20+3 GB</div>
+    </div>
+    <div class="gpu-chip">
+      <div class="gc-label">GPU 2</div>
+      <div class="hbm-mini">
+        <div class="hbm-seg" style="width:44%;background:var(--purple);"></div>
+        <div class="hbm-seg" style="width:25%;background:var(--cyan);"></div>
+        <div class="hbm-seg" style="width:8%;background:var(--amber);"></div>
+      </div>
+      <div class="gc-stat">17.5+20+3 GB</div>
+    </div>
+    <div class="gpu-chip">
+      <div class="gc-label">GPU 3</div>
+      <div class="hbm-mini">
+        <div class="hbm-seg" style="width:44%;background:var(--purple);"></div>
+        <div class="hbm-seg" style="width:25%;background:var(--cyan);"></div>
+        <div class="hbm-seg" style="width:8%;background:var(--amber);"></div>
+      </div>
+      <div class="gc-stat">17.5+20+3 GB</div>
+    </div>
+    <div class="gpu-chip" style="opacity:0.55;">
+      <div class="gc-label">GPU 4</div>
+      <div class="hbm-mini"><div class="hbm-seg" style="width:44%;background:var(--purple);"></div></div>
+      <div class="gc-stat">17.5 GB weights</div>
+    </div>
+    <div class="gpu-chip" style="opacity:0.55;">
+      <div class="gc-label">GPU 5</div>
+      <div class="hbm-mini"><div class="hbm-seg" style="width:44%;background:var(--purple);"></div></div>
+      <div class="gc-stat">17.5 GB weights</div>
+    </div>
+    <div class="gpu-chip" style="opacity:0.55;">
+      <div class="gc-label">GPU 6</div>
+      <div class="hbm-mini"><div class="hbm-seg" style="width:44%;background:var(--purple);"></div></div>
+      <div class="gc-stat">17.5 GB weights</div>
+    </div>
+    <div class="gpu-chip" style="opacity:0.55;">
+      <div class="gc-label">GPU 7</div>
+      <div class="hbm-mini"><div class="hbm-seg" style="width:44%;background:var(--purple);"></div></div>
+      <div class="gc-stat">17.5 GB weights</div>
+    </div>
+  </div>
+
+  <div class="hbm-leg">
+    <div class="hl-item"><div class="hl-dot" style="background:var(--purple);"></div>Weights (17.5 GB/GPU)</div>
+    <div class="hl-item"><div class="hl-dot" style="background:var(--cyan);"></div>KV Cache (~20 GB active for 14K context)</div>
+    <div class="hl-item"><div class="hl-dot" style="background:var(--amber);"></div>Activations (~3 GB)</div>
+    <div class="hl-item"><div class="hl-dot" style="background:var(--panel);border:1px solid var(--border);"></div>Free (~39 GB)</div>
+  </div>
+
+  <!-- HBM pressure warning -->
+  <div style="background:var(--red-d);border:1px solid var(--red);border-radius:7px;padding:11px 14px;margin-bottom:12px;">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--red);margin-bottom:5px;">⚠ HBM PRESSURE — 70B FP16 + 14K CONTEXT</div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px;">
+      <div style="flex:1;background:var(--bg);border-radius:3px;height:18px;overflow:hidden;display:flex;gap:1px;">
+        <div style="width:43%;background:var(--purple);display:flex;align-items:center;padding-left:5px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:rgba(255,255,255,.9);">Weights 140GB</div>
+        <div style="width:27%;background:var(--cyan);display:flex;align-items:center;padding-left:4px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:rgba(255,255,255,.9);">KV Cache 56GB</div>
+        <div style="width:9%;background:var(--amber);"></div>
+        <div style="flex:1;background:var(--dim);display:flex;align-items:center;padding-left:4px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);">Need 196 GB total</div>
+      </div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--red);white-space:nowrap;font-weight:600;">196 GB needed</div>
+    </div>
+    <div style="font-size:11.5px;color:var(--muted);line-height:1.55;">One DGX H100 = 640 GB total (8 × 80 GB). 196 GB means <strong style="color:var(--ink);">3 GPUs consumed just for one user's request</strong>. Only 5 GPUs remain for other concurrent users. On A100s (same 80 GB but 2× slower bandwidth): same 3-chip requirement, but each forward pass takes longer, cutting tokens/second roughly in half.</div>
+  </div>
+
+  <!-- NVLink -->
+  <div class="nvlink-bar">
+    <div>
+      <div class="nvlink-label">⟷ NVLink 4.0 — all-to-all intra-server interconnect</div>
+      <div class="nvlink-desc">900 GB/s bidirectional · GPUs share partial results after every transformer layer via AllReduce · fast enough to add &lt;5% overhead within one server</div>
+    </div>
+    <span class="tag" style="color:var(--green);background:var(--green-d);border-color:var(--green);font-size:9.5px;">✓ Fast</span>
+  </div>
+
+  <!-- Single GPU detail -->
+  <div class="chassis-title" style="margin-top:6px;">Inside one GPU — NVIDIA H100 SXM5</div>
+  <div class="gpu-detail">
+    <div class="gdb">
+      <div class="gdb-title">HBM3e — 80 GB per chip</div>
+      <div class="hbm-stack">
+        <div class="hbm-s" style="width:22%;background:var(--purple);color:rgba(255,255,255,.85);">Weights</div>
+        <div class="hbm-s" style="width:25%;background:var(--cyan);color:rgba(255,255,255,.85);">KV Cache</div>
+        <div class="hbm-s" style="width:4%;background:var(--amber);"></div>
+        <div class="hbm-s" style="flex:1;background:var(--panel);border:1px solid var(--border);color:var(--muted);font-size:8px;">Free ~33GB</div>
+      </div>
+      <div class="gdb-note"><strong style="color:var(--ink);">3.35 TB/s bandwidth.</strong> Data moves from HBM to the compute units at enormous speed. This bandwidth — not raw processing power — is the primary limit during inference. Upgrading to H200 (4.8 TB/s) is the single highest-ROI hardware move for inference speed.</div>
+    </div>
+    <div class="gdb">
+      <div class="gdb-title">132 Streaming Multiprocessors</div>
+      <div class="sm-grid" style="margin-bottom:7px;"><div class="sm-cell" style="animation-delay:0s;"></div><div class="sm-cell" style="animation-delay:0.2s;"></div><div class="sm-cell" style="animation-delay:0.5s;"></div><div class="sm-cell" style="animation-delay:0.8s;"></div><div class="sm-cell" style="animation-delay:1.1s;"></div><div class="sm-cell" style="animation-delay:1.4s;"></div><div class="sm-cell" style="animation-delay:0.3s;"></div><div class="sm-cell" style="animation-delay:0.7s;"></div><div class="sm-cell" style="animation-delay:1.0s;"></div><div class="sm-cell" style="animation-delay:0.1s;"></div><div class="sm-cell" style="animation-delay:0.6s;"></div><div class="sm-cell" style="animation-delay:0.9s;"></div><div class="sm-cell" style="animation-delay:0s;"></div><div class="sm-cell" style="animation-delay:0.2s;"></div><div class="sm-cell" style="animation-delay:0.5s;"></div><div class="sm-cell" style="animation-delay:0.8s;"></div><div class="sm-cell" style="animation-delay:1.1s;"></div><div class="sm-cell" style="animation-delay:1.4s;"></div><div class="sm-cell" style="animation-delay:0.3s;"></div><div class="sm-cell" style="animation-delay:0.7s;"></div><div class="sm-cell" style="animation-delay:1.0s;"></div><div class="sm-cell" style="animation-delay:0.1s;"></div><div class="sm-cell" style="animation-delay:0.6s;"></div><div class="sm-cell" style="animation-delay:0.9s;"></div><div class="sm-cell" style="animation-delay:0s;"></div><div class="sm-cell" style="animation-delay:0.2s;"></div><div class="sm-cell" style="animation-delay:0.5s;"></div><div class="sm-cell" style="animation-delay:0.8s;"></div><div class="sm-cell" style="animation-delay:1.1s;"></div><div class="sm-cell" style="animation-delay:1.4s;"></div><div class="sm-cell" style="animation-delay:0.3s;"></div><div class="sm-cell" style="animation-delay:0.7s;"></div><div class="sm-cell" style="animation-delay:1.0s;"></div><div class="sm-cell" style="animation-delay:0.1s;"></div><div class="sm-cell" style="animation-delay:0.6s;"></div><div class="sm-cell" style="animation-delay:0.9s;"></div><div class="sm-cell" style="animation-delay:0s;"></div><div class="sm-cell" style="animation-delay:0.2s;"></div><div class="sm-cell" style="animation-delay:0.5s;"></div><div class="sm-cell" style="animation-delay:0.8s;"></div><div class="sm-cell" style="animation-delay:1.1s;"></div><div class="sm-cell" style="animation-delay:1.4s;"></div><div class="sm-cell" style="animation-delay:0.3s;"></div><div class="sm-cell" style="animation-delay:0.7s;"></div><div class="sm-cell" style="animation-delay:1.0s;"></div><div class="sm-cell" style="animation-delay:0.1s;"></div><div class="sm-cell" style="animation-delay:0.6s;"></div><div class="sm-cell" style="animation-delay:0.9s;"></div><div class="sm-cell" style="animation-delay:0s;"></div><div class="sm-cell" style="animation-delay:0.2s;"></div><div class="sm-cell" style="animation-delay:0.5s;"></div><div class="sm-cell" style="animation-delay:0.8s;"></div><div class="sm-cell" style="animation-delay:1.1s;"></div><div class="sm-cell" style="animation-delay:1.4s;"></div><div class="sm-cell" style="animation-delay:0.3s;"></div><div class="sm-cell" style="animation-delay:0.7s;"></div><div class="sm-cell" style="animation-delay:1.0s;"></div><div class="sm-cell" style="animation-delay:0.1s;"></div><div class="sm-cell" style="animation-delay:0.6s;"></div><div class="sm-cell" style="animation-delay:0.9s;"></div><div class="sm-cell" style="animation-delay:0s;"></div><div class="sm-cell" style="animation-delay:0.2s;"></div><div class="sm-cell" style="animation-delay:0.5s;"></div><div class="sm-cell" style="animation-delay:0.8s;"></div><div class="sm-cell" style="animation-delay:1.1s;"></div><div class="sm-cell" style="animation-delay:1.4s;"></div><div class="sm-cell" style="animation-delay:0.3s;"></div><div class="sm-cell" style="animation-delay:0.7s;"></div><div class="sm-cell" style="animation-delay:1.0s;"></div><div class="sm-cell" style="animation-delay:0.1s;"></div><div class="sm-cell" style="animation-delay:0.6s;"></div><div class="sm-cell" style="animation-delay:0.9s;"></div><div class="sm-cell" style="animation-delay:0s;"></div><div class="sm-cell" style="animation-delay:0.2s;"></div><div class="sm-cell" style="animation-delay:0.5s;"></div><div class="sm-cell" style="animation-delay:0.8s;"></div><div class="sm-cell" style="animation-delay:1.1s;"></div><div class="sm-cell" style="animation-delay:1.4s;"></div><div class="sm-cell" style="animation-delay:0.3s;"></div><div class="sm-cell" style="animation-delay:0.7s;"></div><div class="sm-cell" style="animation-delay:1.0s;"></div><div class="sm-cell" style="animation-delay:0.1s;"></div><div class="sm-cell" style="animation-delay:0.6s;"></div><div class="sm-cell" style="animation-delay:0.9s;"></div><div class="sm-cell" style="animation-delay:0s;"></div><div class="sm-cell" style="animation-delay:0.2s;"></div><div class="sm-cell" style="animation-delay:0.5s;"></div><div class="sm-cell" style="animation-delay:0.8s;"></div><div class="sm-cell" style="animation-delay:1.1s;"></div><div class="sm-cell" style="animation-delay:1.4s;"></div><div class="sm-cell" style="animation-delay:0.3s;"></div><div class="sm-cell" style="animation-delay:0.7s;"></div><div class="sm-cell" style="animation-delay:1.0s;"></div><div class="sm-cell" style="animation-delay:0.1s;"></div><div class="sm-cell" style="animation-delay:0.6s;"></div><div class="sm-cell" style="animation-delay:0.9s;"></div><div class="sm-cell" style="animation-delay:0s;"></div><div class="sm-cell" style="animation-delay:0.2s;"></div><div class="sm-cell" style="animation-delay:0.5s;"></div><div class="sm-cell" style="animation-delay:0.8s;"></div><div class="sm-cell" style="animation-delay:1.1s;"></div><div class="sm-cell" style="animation-delay:1.4s;"></div><div class="sm-cell" style="animation-delay:0.3s;"></div><div class="sm-cell" style="animation-delay:0.7s;"></div><div class="sm-cell" style="animation-delay:1.0s;"></div><div class="sm-cell" style="animation-delay:0.1s;"></div><div class="sm-cell" style="animation-delay:0.6s;"></div><div class="sm-cell" style="animation-delay:0.9s;"></div><div class="sm-cell" style="animation-delay:0s;"></div><div class="sm-cell" style="animation-delay:0.2s;"></div><div class="sm-cell" style="animation-delay:0.5s;"></div><div class="sm-cell" style="animation-delay:0.8s;"></div><div class="sm-cell" style="animation-delay:1.1s;"></div><div class="sm-cell" style="animation-delay:1.4s;"></div><div class="sm-cell" style="animation-delay:0.3s;"></div><div class="sm-cell" style="animation-delay:0.7s;"></div><div class="sm-cell" style="animation-delay:1.0s;"></div><div class="sm-cell" style="animation-delay:0.1s;"></div><div class="sm-cell" style="animation-delay:0.6s;"></div><div class="sm-cell" style="animation-delay:0.9s;"></div><div class="sm-cell" style="animation-delay:0s;"></div><div class="sm-cell" style="animation-delay:0.2s;"></div><div class="sm-cell" style="animation-delay:0.5s;"></div><div class="sm-cell" style="animation-delay:0.8s;"></div><div class="sm-cell" style="animation-delay:1.1s;"></div><div class="sm-cell" style="animation-delay:1.4s;"></div><div class="sm-cell" style="animation-delay:0.3s;"></div><div class="sm-cell" style="animation-delay:0.7s;"></div><div class="sm-cell" style="animation-delay:1.0s;"></div><div class="sm-cell" style="animation-delay:0.1s;"></div><div class="sm-cell" style="animation-delay:0.6s;"></div><div class="sm-cell" style="animation-delay:0.9s;"></div></div>
+      <div class="gdb-note">Each SM contains <strong style="color:var(--ink);">Tensor Cores</strong> — specialised matrix multiply units. All 132 SMs fire simultaneously on different parts of the same operation. This is why GPUs are ~100× faster than CPUs for AI. During inference they are often idle waiting for HBM data to arrive — the GPU is <em>memory-bound</em>, not compute-bound.</div>
+    </div>
+    <div class="gdb">
+      <div class="gdb-title">KV Cache (inside HBM)</div>
+      <div class="gdb-val" style="color:var(--cyan);">Grows with context + users</div>
+      <div class="gdb-note">Stores attention Keys + Values for every processed token so they need not be recomputed on the next forward pass. PagedAttention (vLLM) manages it in memory pages. When full, no new requests can start — this is the primary cause of inference server "queue full" errors.</div>
+    </div>
+    <div class="gdb">
+      <div class="gdb-title">Model Weights (inside HBM)</div>
+      <div class="gdb-val" style="color:var(--purple);">Resident across all requests</div>
+      <div class="gdb-note">Pre-loaded once at server start. All user requests share the same weights — nobody gets their own copy. For 70B FP16: 140 GB total spread across 8 GPUs (17.5 GB each). Weights themselves never change during inference.</div>
+    </div>
+  </div>
+
+  <!-- FORWARD PASS -->
+  <div class="chassis-title" style="margin-top:14px;">④ Forward Pass — repeated once per output token</div>
+  <div class="fwd-steps">
+    <div class="fwd-step">
+      <div class="fwd-num">1</div>
+      <div class="fwd-body">
+        <div class="fwd-name" style="color:var(--amber);">Token Embedding Lookup</div>
+        <div class="fwd-desc">Each input token ID maps to an 8,192-dimensional vector (70B model). These embedding vectors are loaded from a lookup table in HBM into the SM registers — the raw numerical starting point before any transformer computation begins.</div>
+      </div>
+    </div>
+    <div class="fwd-step">
+      <div class="fwd-num">2</div>
+      <div class="fwd-body" style="border-color:rgba(138,110,232,0.35);">
+        <div class="fwd-name" style="color:var(--purple);">Multi-Head Self-Attention <span class="tag" style="color:var(--amber);background:var(--amber-d);border-color:var(--amber);">⚠ O(n²)</span></div>
+        <div class="fwd-desc">Every token is compared to every other token in the context. For 14,000 tokens: 196 million pairwise comparisons per attention head, across 64 heads. Each comparison uses Q, K, V weight matrices (8,192 × 8,192 = 67M params each). The attention results (Keys and Values) are written to the <strong style="color:var(--cyan);">KV Cache</strong> so they are not recomputed for the next token. This is the most memory-intensive step. Flash Attention 2 reduces peak HBM usage via tiled computation.</div>
+      </div>
+    </div>
+    <div class="fwd-step">
+      <div class="fwd-num">3</div>
+      <div class="fwd-body">
+        <div class="fwd-name" style="color:var(--purple);">Feed-Forward Network (FFN)</div>
+        <div class="fwd-desc">Two enormous matrix multiplications per transformer layer: expand (8,192 → 28,672) then contract (28,672 → 8,192). These weight matrices hold the bulk of what the model "knows" from training. Executed as cuBLAS GEMM operations across all 132 SMs simultaneously. Most of the 140 GB of weights consumed here. HBM bandwidth is the bottleneck.</div>
+      </div>
+    </div>
+    <div class="fwd-step">
+      <div class="fwd-num">4</div>
+      <div class="fwd-body" style="border-color:rgba(48,200,112,0.3);">
+        <div class="fwd-name" style="color:var(--green);">NCCL AllReduce — GPU sync via NVLink <span class="tag" style="color:var(--green);background:var(--green-d);border-color:var(--green);">✓ Fast intra-server</span></div>
+        <div class="fwd-desc">Each GPU computed its shard of the layer output. AllReduce sums all 8 shards so every GPU has the complete result before the next layer. Happens after every one of the 80 transformer layers — that is 80 AllReduce operations per single token generated. NVLink at 900 GB/s makes this fast within one server (&lt;5% overhead). Across servers via InfiniBand it becomes a significant bottleneck.</div>
+      </div>
+    </div>
+    <div class="fwd-step">
+      <div class="fwd-num">5</div>
+      <div class="fwd-body">
+        <div class="fwd-name" style="color:var(--green);">Logit Sampling → next token selected</div>
+        <div class="fwd-desc">Final layer output (8,192-dim vector) × vocabulary matrix (8,192 × 128,256 tokens) produces a score for every possible next word. Softmax converts to probabilities. Temperature and top-p sampling selects one token. <strong style="color:var(--ink);">One token = one complete forward pass. A 200-word response ≈ 270 passes.</strong></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- INFINIBAND BOTTLENECK -->
+<div class="bn-conn">
+  <div class="bn-line bn-line-amber"></div>
+  <div class="bn-tag bn-amber">⚠ InfiniBand 400G NDR — BOTTLENECK #2 — multi-server only</div>
+  <div class="bn-line bn-line-amber"></div>
+</div>
+<div class="bn-note">Required when model exceeds one server's HBM (e.g. Llama 405B needs 7+ servers). 50 GB/s effective throughput. 80 AllReduce round-trips per output token compounds this latency.</div>
+
+<!-- ⑤ SECOND SERVER -->
+<div class="sec">
+<div class="chassis" style="opacity:0.65;border-color:rgba(232,160,32,0.3);">
+  <div class="chassis-title" style="color:var(--amber);">⑤ GPU Server Node 2 — required for models &gt; one server's HBM</div>
+  <div class="gpu-grid">
+    <div class="gpu-chip" style="border-color:var(--amber);"><div class="gc-label" style="color:var(--amber);">GPU 8</div><div class="hbm-mini"><div class="hbm-seg" style="width:44%;background:var(--amber);"></div></div><div class="gc-stat">Layers 81–160</div></div>
+    <div class="gpu-chip" style="border-color:var(--amber);"><div class="gc-label" style="color:var(--amber);">GPU 9</div><div class="hbm-mini"><div class="hbm-seg" style="width:44%;background:var(--amber);"></div></div><div class="gc-stat">Layers 81–160</div></div>
+    <div class="gpu-chip" style="border-color:var(--amber);"><div class="gc-label" style="color:var(--amber);">GPU 10</div><div class="hbm-mini"><div class="hbm-seg" style="width:44%;background:var(--amber);"></div></div><div class="gc-stat">Layers 81–160</div></div>
+    <div class="gpu-chip" style="border-color:var(--amber);"><div class="gc-label" style="color:var(--amber);">GPU 11</div><div class="hbm-mini"><div class="hbm-seg" style="width:44%;background:var(--amber);"></div></div><div class="gc-stat">Layers 81–160</div></div>
+    <div class="gpu-chip" style="border-color:var(--amber);opacity:0.5;"><div class="gc-label" style="color:var(--amber);">GPU 12</div><div class="hbm-mini"><div class="hbm-seg" style="width:44%;background:var(--amber);"></div></div></div>
+    <div class="gpu-chip" style="border-color:var(--amber);opacity:0.5;"><div class="gc-label" style="color:var(--amber);">GPU 13</div><div class="hbm-mini"><div class="hbm-seg" style="width:44%;background:var(--amber);"></div></div></div>
+    <div class="gpu-chip" style="border-color:var(--amber);opacity:0.5;"><div class="gc-label" style="color:var(--amber);">GPU 14</div><div class="hbm-mini"><div class="hbm-seg" style="width:44%;background:var(--amber);"></div></div></div>
+    <div class="gpu-chip" style="border-color:var(--amber);opacity:0.5;"><div class="gc-label" style="color:var(--amber);">GPU 15</div><div class="hbm-mini"><div class="hbm-seg" style="width:44%;background:var(--amber);"></div></div></div>
+  </div>
+  <div style="font-size:11.5px;color:var(--muted);padding:4px;line-height:1.5;">Each InfiniBand AllReduce round-trip across servers: ~5–15 µs latency × 80 layers × 270 tokens per response = compound delay. Llama 405B across 7 nodes means 56-GPU AllReduce — InfiniBand becomes the dominant latency source.</div>
+</div>
+</div>
+
+<!-- RETURN -->
+<div class="conn" style="height:40px;">
+  <div class="conn-line"></div>
+  <div class="conn-label">Token → PCIe → CPU → SSE stream</div>
+  <div class="pulse-wrap"><div class="pulse" style="background:var(--amber);animation-delay:.5s;"></div></div>
+</div>
+
+<div class="sec">
+<div class="box" style="border-color:rgba(232,160,32,0.25);">
+  <div class="box-title">⑥ Return Path + Session Storage</div>
+  <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px;">
+    <div class="ret-row">
+      <div class="ret-icon">🔢</div>
+      <div><div class="ret-label">GPU HBM → CPU RAM (PCIe)</div><div class="ret-val">Token ID integer returns to CPU. vLLM decodes to text. Forward pass loop restarts for next token immediately.</div></div>
+    </div>
+    <div style="text-align:center;color:var(--muted);font-size:14px;">↓</div>
+    <div class="ret-row">
+      <div class="ret-icon">📡</div>
+      <div><div class="ret-label">Inference server → User (SSE)</div><div class="ret-val">Server-Sent Events push token chunk as HTTP data event. Browser renders word immediately. This is why answers stream word by word.</div></div>
+    </div>
+    <div style="text-align:center;color:var(--muted);font-size:14px;">↓</div>
+    <div class="ret-row" style="border-color:rgba(26,191,208,0.3);">
+      <div class="ret-icon">💾</div>
+      <div><div class="ret-label" style="color:var(--cyan);">Conversation written to Anthropic DB</div><div class="ret-val">Your full exchange is persisted to Anthropic's database (HOT) and eventually archived to object storage (COLD). The KV cache is released from GPU HBM — it was ephemeral. The GPU is now free for the next user.</div></div>
+    </div>
+  </div>
+</div>
+</div>
+
+</div><!-- /flow -->
+
+
+<!-- ════════════════════════════════════
+     RIGHT — SIDEBAR
+════════════════════════════════════ -->
+<div class="sidebar">
+
+<!-- WHAT 70B MEANS -->
+<div class="sb-panel">
+  <div class="sb-title"><div class="sb-dot" style="background:var(--purple);"></div>What "70B Parameters" Actually Means</div>
+  <div class="sb-body">
+    <p><strong>70 billion decimal numbers</strong> — each a small value like <code style="font-family:'IBM Plex Mono',monospace;color:var(--amber);">0.00432</code> — stored in matrices. Not sentences, not facts. Statistical patterns encoded as numbers.</p>
+  </div>
+
+  <!-- Matrix visual — pre-computed -->
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin:10px 0 5px;">ONE Q WEIGHT MATRIX — 8192 × 8192 = 67M values</div>
+  <div style="display:grid;grid-template-columns:repeat(32,1fr);gap:1.5px;width:100%;margin-bottom:4px;">
+    <div style="height:5px;border-radius:1px;background:rgb(120,80,222);opacity:0.68;"></div><div style="height:5px;border-radius:1px;background:rgb(134,90,230);opacity:0.79;"></div><div style="height:5px;border-radius:1px;background:rgb(146,100,237);opacity:0.89;"></div><div style="height:5px;border-radius:1px;background:rgb(155,106,242);opacity:0.97;"></div><div style="height:5px;border-radius:1px;background:rgb(159,109,244);opacity:1.00;"></div><div style="height:5px;border-radius:1px;background:rgb(158,108,244);opacity:0.99;"></div><div style="height:5px;border-radius:1px;background:rgb(151,103,240);opacity:0.93;"></div><div style="height:5px;border-radius:1px;background:rgb(140,95,234);opacity:0.85;"></div><div style="height:5px;border-radius:1px;background:rgb(127,85,226);opacity:0.73;"></div><div style="height:5px;border-radius:1px;background:rgb(112,74,218);opacity:0.61;"></div><div style="height:5px;border-radius:1px;background:rgb(98,64,210);opacity:0.50;"></div><div style="height:5px;border-radius:1px;background:rgb(87,55,204);opacity:0.41;"></div><div style="height:5px;border-radius:1px;background:rgb(81,51,200);opacity:0.36;"></div><div style="height:5px;border-radius:1px;background:rgb(80,50,200);opacity:0.35;"></div><div style="height:5px;border-radius:1px;background:rgb(84,53,202);opacity:0.38;"></div><div style="height:5px;border-radius:1px;background:rgb(93,59,207);opacity:0.46;"></div><div style="height:5px;border-radius:1px;background:rgb(105,69,214);opacity:0.56;"></div><div style="height:5px;border-radius:1px;background:rgb(120,80,222);opacity:0.68;"></div><div style="height:5px;border-radius:1px;background:rgb(134,91,230);opacity:0.79;"></div><div style="height:5px;border-radius:1px;background:rgb(147,100,237);opacity:0.90;"></div><div style="height:5px;border-radius:1px;background:rgb(155,106,242);opacity:0.97;"></div><div style="height:5px;border-radius:1px;background:rgb(159,109,244);opacity:1.00;"></div><div style="height:5px;border-radius:1px;background:rgb(158,108,244);opacity:0.99;"></div><div style="height:5px;border-radius:1px;background:rgb(151,103,240);opacity:0.93;"></div><div style="height:5px;border-radius:1px;background:rgb(140,95,234);opacity:0.84;"></div><div style="height:5px;border-radius:1px;background:rgb(126,85,226);opacity:0.73;"></div><div style="height:5px;border-radius:1px;background:rgb(112,74,218);opacity:0.61;"></div><div style="height:5px;border-radius:1px;background:rgb(98,63,210);opacity:0.50;"></div><div style="height:5px;border-radius:1px;background:rgb(87,55,204);opacity:0.41;"></div><div style="height:5px;border-radius:1px;background:rgb(81,51,200);opacity:0.36;"></div><div style="height:5px;border-radius:1px;background:rgb(80,50,200);opacity:0.35;"></div><div style="height:5px;border-radius:1px;background:rgb(84,53,202);opacity:0.39;"></div><div style="height:5px;border-radius:1px;background:rgb(93,60,207);opacity:0.46;"></div><div style="height:5px;border-radius:1px;background:rgb(106,69,214);opacity:0.56;"></div><div style="height:5px;border-radius:1px;background:rgb(120,80,222);opacity:0.68;"></div><div style="height:5px;border-radius:1px;background:rgb(134,91,230);opacity:0.80;"></div><div style="height:5px;border-radius:1px;background:rgb(147,100,237);opacity:0.90;"></div><div style="height:5px;border-radius:1px;background:rgb(156,107,242);opacity:0.97;"></div><div style="height:5px;border-radius:1px;background:rgb(159,109,244);opacity:1.00;"></div><div style="height:5px;border-radius:1px;background:rgb(158,108,244);opacity:0.99;"></div><div style="height:5px;border-radius:1px;background:rgb(151,103,240);opacity:0.93;"></div><div style="height:5px;border-radius:1px;background:rgb(140,95,234);opacity:0.84;"></div><div style="height:5px;border-radius:1px;background:rgb(126,85,226);opacity:0.73;"></div><div style="height:5px;border-radius:1px;background:rgb(111,73,217);opacity:0.61;"></div><div style="height:5px;border-radius:1px;background:rgb(98,63,210);opacity:0.50;"></div><div style="height:5px;border-radius:1px;background:rgb(87,55,204);opacity:0.41;"></div><div style="height:5px;border-radius:1px;background:rgb(81,50,200);opacity:0.36;"></div><div style="height:5px;border-radius:1px;background:rgb(80,50,200);opacity:0.35;"></div><div style="height:5px;border-radius:1px;background:rgb(84,53,202);opacity:0.39;"></div><div style="height:5px;border-radius:1px;background:rgb(93,60,207);opacity:0.46;"></div><div style="height:5px;border-radius:1px;background:rgb(106,69,214);opacity:0.56;"></div><div style="height:5px;border-radius:1px;background:rgb(120,80,222);opacity:0.68;"></div><div style="height:5px;border-radius:1px;background:rgb(135,91,231);opacity:0.80;"></div><div style="height:5px;border-radius:1px;background:rgb(147,100,238);opacity:0.90;"></div><div style="height:5px;border-radius:1px;background:rgb(156,107,242);opacity:0.97;"></div><div style="height:5px;border-radius:1px;background:rgb(159,109,244);opacity:1.00;"></div><div style="height:5px;border-radius:1px;background:rgb(158,108,243);opacity:0.99;"></div><div style="height:5px;border-radius:1px;background:rgb(151,103,240);opacity:0.93;"></div><div style="height:5px;border-radius:1px;background:rgb(140,95,233);opacity:0.84;"></div><div style="height:5px;border-radius:1px;background:rgb(126,84,226);opacity:0.73;"></div><div style="height:5px;border-radius:1px;background:rgb(111,73,217);opacity:0.61;"></div><div style="height:5px;border-radius:1px;background:rgb(98,63,210);opacity:0.50;"></div><div style="height:5px;border-radius:1px;background:rgb(87,55,204);opacity:0.41;"></div><div style="height:5px;border-radius:1px;background:rgb(81,50,200);opacity:0.36;"></div><div style="height:5px;border-radius:1px;background:rgb(80,50,200);opacity:0.35;"></div><div style="height:5px;border-radius:1px;background:rgb(84,53,202);opacity:0.39;"></div><div style="height:5px;border-radius:1px;background:rgb(93,60,207);opacity:0.46;"></div><div style="height:5px;border-radius:1px;background:rgb(106,69,214);opacity:0.57;"></div><div style="height:5px;border-radius:1px;background:rgb(121,80,223);opacity:0.68;"></div><div style="height:5px;border-radius:1px;background:rgb(135,91,231);opacity:0.80;"></div><div style="height:5px;border-radius:1px;background:rgb(147,100,238);opacity:0.90;"></div><div style="height:5px;border-radius:1px;background:rgb(156,107,242);opacity:0.97;"></div><div style="height:5px;border-radius:1px;background:rgb(159,109,244);opacity:1.00;"></div><div style="height:5px;border-radius:1px;background:rgb(158,108,243);opacity:0.98;"></div><div style="height:5px;border-radius:1px;background:rgb(151,103,240);opacity:0.93;"></div><div style="height:5px;border-radius:1px;background:rgb(140,95,233);opacity:0.84;"></div><div style="height:5px;border-radius:1px;background:rgb(126,84,225);opacity:0.72;"></div><div style="height:5px;border-radius:1px;background:rgb(111,73,217);opacity:0.61;"></div><div style="height:5px;border-radius:1px;background:rgb(97,63,210);opacity:0.50;"></div><div style="height:5px;border-radius:1px;background:rgb(87,55,204);opacity:0.41;"></div><div style="height:5px;border-radius:1px;background:rgb(81,50,200);opacity:0.36;"></div><div style="height:5px;border-radius:1px;background:rgb(80,50,200);opacity:0.35;"></div><div style="height:5px;border-radius:1px;background:rgb(84,53,202);opacity:0.39;"></div><div style="height:5px;border-radius:1px;background:rgb(94,60,207);opacity:0.46;"></div><div style="height:5px;border-radius:1px;background:rgb(106,70,215);opacity:0.57;"></div><div style="height:5px;border-radius:1px;background:rgb(121,81,223);opacity:0.69;"></div><div style="height:5px;border-radius:1px;background:rgb(135,91,231);opacity:0.80;"></div><div style="height:5px;border-radius:1px;background:rgb(147,100,238);opacity:0.90;"></div><div style="height:5px;border-radius:1px;background:rgb(156,107,242);opacity:0.97;"></div><div style="height:5px;border-radius:1px;background:rgb(159,109,244);opacity:1.00;"></div><div style="height:5px;border-radius:1px;background:rgb(158,108,243);opacity:0.98;"></div><div style="height:5px;border-radius:1px;background:rgb(151,103,239);opacity:0.93;"></div><div style="height:5px;border-radius:1px;background:rgb(139,94,233);opacity:0.84;"></div><div style="height:5px;border-radius:1px;background:rgb(125,84,225);opacity:0.72;"></div><div style="height:5px;border-radius:1px;background:rgb(111,73,217);opacity:0.60;"></div><div style="height:5px;border-radius:1px;background:rgb(97,63,209);opacity:0.49;"></div><div style="height:5px;border-radius:1px;background:rgb(87,55,204);opacity:0.41;"></div><div style="height:5px;border-radius:1px;background:rgb(81,50,200);opacity:0.36;"></div><div style="height:5px;border-radius:1px;background:rgb(80,50,200);opacity:0.35;"></div><div style="height:5px;border-radius:1px;background:rgb(84,53,202);opacity:0.39;"></div><div style="height:5px;border-radius:1px;background:rgb(94,60,208);opacity:0.47;"></div><div style="height:5px;border-radius:1px;background:rgb(107,70,215);opacity:0.57;"></div><div style="height:5px;border-radius:1px;background:rgb(121,81,223);opacity:0.69;"></div><div style="height:5px;border-radius:1px;background:rgb(135,91,231);opacity:0.80;"></div><div style="height:5px;border-radius:1px;background:rgb(148,101,238);opacity:0.90;"></div><div style="height:5px;border-radius:1px;background:rgb(156,107,243);opacity:0.97;"></div><div style="height:5px;border-radius:1px;background:rgb(159,109,244);opacity:1.00;"></div><div style="height:5px;border-radius:1px;background:rgb(157,108,243);opacity:0.98;"></div><div style="height:5px;border-radius:1px;background:rgb(150,103,239);opacity:0.93;"></div><div style="height:5px;border-radius:1px;background:rgb(139,94,233);opacity:0.83;"></div><div style="height:5px;border-radius:1px;background:rgb(125,84,225);opacity:0.72;"></div><div style="height:5px;border-radius:1px;background:rgb(110,73,217);opacity:0.60;"></div><div style="height:5px;border-radius:1px;background:rgb(97,63,209);opacity:0.49;"></div><div style="height:5px;border-radius:1px;background:rgb(87,55,203);opacity:0.41;"></div><div style="height:5px;border-radius:1px;background:rgb(81,50,200);opacity:0.36;"></div><div style="height:5px;border-radius:1px;background:rgb(80,50,200);opacity:0.35;"></div><div style="height:5px;border-radius:1px;background:rgb(85,53,202);opacity:0.39;"></div><div style="height:5px;border-radius:1px;background:rgb(94,60,208);opacity:0.47;"></div><div style="height:5px;border-radius:1px;background:rgb(107,70,215);opacity:0.57;"></div><div style="height:5px;border-radius:1px;background:rgb(121,81,223);opacity:0.69;"></div><div style="height:5px;border-radius:1px;background:rgb(136,92,231);opacity:0.81;"></div><div style="height:5px;border-radius:1px;background:rgb(148,101,238);opacity:0.91;"></div><div style="height:5px;border-radius:1px;background:rgb(156,107,243);opacity:0.97;"></div><div style="height:5px;border-radius:1px;background:rgb(159,109,244);opacity:1.00;"></div><div style="height:5px;border-radius:1px;background:rgb(157,108,243);opacity:0.98;"></div><div style="height:5px;border-radius:1px;background:rgb(150,103,239);opacity:0.92;"></div><div style="height:5px;border-radius:1px;background:rgb(139,94,233);opacity:0.83;"></div><div style="height:5px;border-radius:1px;background:rgb(125,84,225);opacity:0.72;"></div><div style="height:5px;border-radius:1px;background:rgb(110,72,217);opacity:0.60;"></div><div style="height:5px;border-radius:1px;background:rgb(97,62,209);opacity:0.49;"></div><div style="height:5px;border-radius:1px;background:rgb(86,55,203);opacity:0.41;"></div><div style="height:5px;border-radius:1px;background:rgb(81,50,200);opacity:0.36;"></div><div style="height:5px;border-radius:1px;background:rgb(80,50,200);opacity:0.35;"></div><div style="height:5px;border-radius:1px;background:rgb(85,53,202);opacity:0.39;"></div><div style="height:5px;border-radius:1px;background:rgb(94,61,208);opacity:0.47;"></div><div style="height:5px;border-radius:1px;background:rgb(107,70,215);opacity:0.57;"></div><div style="height:5px;border-radius:1px;background:rgb(122,81,223);opacity:0.69;"></div><div style="height:5px;border-radius:1px;background:rgb(136,92,231);opacity:0.81;"></div><div style="height:5px;border-radius:1px;background:rgb(148,101,238);opacity:0.91;"></div><div style="height:5px;border-radius:1px;background:rgb(156,107,243);opacity:0.97;"></div><div style="height:5px;border-radius:1px;background:rgb(159,109,244);opacity:1.00;"></div><div style="height:5px;border-radius:1px;background:rgb(157,108,243);opacity:0.98;"></div><div style="height:5px;border-radius:1px;background:rgb(150,102,239);opacity:0.92;"></div><div style="height:5px;border-radius:1px;background:rgb(139,94,233);opacity:0.83;"></div><div style="height:5px;border-radius:1px;background:rgb(125,83,225);opacity:0.72;"></div><div style="height:5px;border-radius:1px;background:rgb(110,72,217);opacity:0.60;"></div><div style="height:5px;border-radius:1px;background:rgb(96,62,209);opacity:0.49;"></div><div style="height:5px;border-radius:1px;background:rgb(86,55,203);opacity:0.40;"></div><div style="height:5px;border-radius:1px;background:rgb(80,50,200);opacity:0.36;"></div><div style="height:5px;border-radius:1px;background:rgb(80,50,200);opacity:0.35;"></div><div style="height:5px;border-radius:1px;background:rgb(85,53,202);opacity:0.39;"></div><div style="height:5px;border-radius:1px;background:rgb(94,61,208);opacity:0.47;"></div><div style="height:5px;border-radius:1px;background:rgb(107,70,215);opacity:0.58;"></div><div style="height:5px;border-radius:1px;background:rgb(122,81,223);opacity:0.69;"></div><div style="height:5px;border-radius:1px;background:rgb(136,92,231);opacity:0.81;"></div><div style="height:5px;border-radius:1px;background:rgb(148,101,238);opacity:0.91;"></div><div style="height:5px;border-radius:1px;background:rgb(156,107,243);opacity:0.97;"></div><div style="height:5px;border-radius:1px;background:rgb(159,109,244);opacity:1.00;"></div><div style="height:5px;border-radius:1px;background:rgb(157,108,243);opacity:0.98;"></div><div style="height:5px;border-radius:1px;background:rgb(150,102,239);opacity:0.92;"></div><div style="height:5px;border-radius:1px;background:rgb(138,94,233);opacity:0.83;"></div><div style="height:5px;border-radius:1px;background:rgb(124,83,225);opacity:0.71;"></div><div style="height:5px;border-radius:1px;background:rgb(110,72,216);opacity:0.59;"></div><div style="height:5px;border-radius:1px;background:rgb(96,62,209);opacity:0.49;"></div><div style="height:5px;border-radius:1px;background:rgb(86,54,203);opacity:0.40;"></div><div style="height:5px;border-radius:1px;background:rgb(80,50,200);opacity:0.36;"></div><div style="height:5px;border-radius:1px;background:rgb(80,50,200);opacity:0.35;"></div><div style="height:5px;border-radius:1px;background:rgb(85,54,203);opacity:0.39;"></div><div style="height:5px;border-radius:1px;background:rgb(95,61,208);opacity:0.47;"></div><div style="height:5px;border-radius:1px;background:rgb(108,71,215);opacity:0.58;"></div><div style="height:5px;border-radius:1px;background:rgb(122,82,224);opacity:0.70;"></div><div style="height:5px;border-radius:1px;background:rgb(136,92,232);opacity:0.81;"></div><div style="height:5px;border-radius:1px;background:rgb(148,101,238);opacity:0.91;"></div><div style="height:5px;border-radius:1px;background:rgb(156,107,243);opacity:0.98;"></div><div style="height:5px;border-radius:1px;background:rgb(159,109,244);opacity:1.00;"></div><div style="height:5px;border-radius:1px;background:rgb(157,108,243);opacity:0.98;"></div><div style="height:5px;border-radius:1px;background:rgb(150,102,239);opacity:0.92;"></div><div style="height:5px;border-radius:1px;background:rgb(138,93,232);opacity:0.83;"></div><div style="height:5px;border-radius:1px;background:rgb(124,83,225);opacity:0.71;"></div><div style="height:5px;border-radius:1px;background:rgb(109,72,216);opacity:0.59;"></div><div style="height:5px;border-radius:1px;background:rgb(96,62,209);opacity:0.48;"></div><div style="height:5px;border-radius:1px;background:rgb(86,54,203);opacity:0.40;"></div><div style="height:5px;border-radius:1px;background:rgb(80,50,200);opacity:0.36;"></div><div style="height:5px;border-radius:1px;background:rgb(80,50,200);opacity:0.35;"></div><div style="height:5px;border-radius:1px;background:rgb(85,54,203);opacity:0.40;"></div><div style="height:5px;border-radius:1px;background:rgb(95,61,208);opacity:0.47;"></div><div style="height:5px;border-radius:1px;background:rgb(108,71,215);opacity:0.58;"></div><div style="height:5px;border-radius:1px;background:rgb(122,82,224);opacity:0.70;"></div><div style="height:5px;border-radius:1px;background:rgb(137,92,232);opacity:0.81;"></div><div style="height:5px;border-radius:1px;background:rgb(149,101,238);opacity:0.91;"></div><div style="height:5px;border-radius:1px;background:rgb(157,107,243);opacity:0.98;"></div><div style="height:5px;border-radius:1px;background:rgb(159,109,244);opacity:1.00;"></div><div style="height:5px;border-radius:1px;background:rgb(157,108,243);opacity:0.98;"></div><div style="height:5px;border-radius:1px;background:rgb(149,102,239);opacity:0.92;"></div><div style="height:5px;border-radius:1px;background:rgb(138,93,232);opacity:0.82;"></div><div style="height:5px;border-radius:1px;background:rgb(124,83,224);opacity:0.71;"></div><div style="height:5px;border-radius:1px;background:rgb(109,72,216);opacity:0.59;"></div><div style="height:5px;border-radius:1px;background:rgb(96,62,209);opacity:0.48;"></div><div style="height:5px;border-radius:1px;background:rgb(86,54,203);opacity:0.40;"></div><div style="height:5px;border-radius:1px;background:rgb(80,50,200);opacity:0.36;"></div><div style="height:5px;border-radius:1px;background:rgb(80,50,200);opacity:0.35;"></div><div style="height:5px;border-radius:1px;background:rgb(85,54,203);opacity:0.40;"></div><div style="height:5px;border-radius:1px;background:rgb(95,61,208);opacity:0.48;"></div><div style="height:5px;border-radius:1px;background:rgb(108,71,216);opacity:0.58;"></div><div style="height:5px;border-radius:1px;background:rgb(123,82,224);opacity:0.70;"></div><div style="height:5px;border-radius:1px;background:rgb(137,93,232);opacity:0.82;"></div><div style="height:5px;border-radius:1px;background:rgb(149,101,238);opacity:0.91;"></div><div style="height:5px;border-radius:1px;background:rgb(157,107,243);opacity:0.98;"></div><div style="height:5px;border-radius:1px;background:rgb(159,109,244);opacity:1.00;"></div><div style="height:5px;border-radius:1px;background:rgb(157,108,243);opacity:0.98;"></div><div style="height:5px;border-radius:1px;background:rgb(149,102,239);opacity:0.92;"></div><div style="height:5px;border-radius:1px;background:rgb(138,93,232);opacity:0.82;"></div><div style="height:5px;border-radius:1px;background:rgb(123,82,224);opacity:0.71;"></div><div style="height:5px;border-radius:1px;background:rgb(109,71,216);opacity:0.59;"></div><div style="height:5px;border-radius:1px;background:rgb(96,62,209);opacity:0.48;"></div><div style="height:5px;border-radius:1px;background:rgb(86,54,203);opacity:0.40;"></div><div style="height:5px;border-radius:1px;background:rgb(80,50,200);opacity:0.36;"></div><div style="height:5px;border-radius:1px;background:rgb(80,50,200);opacity:0.36;"></div><div style="height:5px;border-radius:1px;background:rgb(85,54,203);opacity:0.40;"></div><div style="height:5px;border-radius:1px;background:rgb(95,61,208);opacity:0.48;"></div><div style="height:5px;border-radius:1px;background:rgb(108,71,216);opacity:0.58;"></div><div style="height:5px;border-radius:1px;background:rgb(123,82,224);opacity:0.70;"></div><div style="height:5px;border-radius:1px;background:rgb(137,93,232);opacity:0.82;"></div><div style="height:5px;border-radius:1px;background:rgb(149,102,239);opacity:0.91;"></div><div style="height:5px;border-radius:1px;background:rgb(157,107,243);opacity:0.98;"></div><div style="height:5px;border-radius:1px;background:rgb(159,109,244);opacity:1.00;"></div><div style="height:5px;border-radius:1px;background:rgb(157,107,243);opacity:0.98;"></div><div style="height:5px;border-radius:1px;background:rgb(149,102,239);opacity:0.92;"></div><div style="height:5px;border-radius:1px;background:rgb(137,93,232);opacity:0.82;"></div><div style="height:5px;border-radius:1px;background:rgb(123,82,224);opacity:0.71;"></div><div style="height:5px;border-radius:1px;background:rgb(109,71,216);opacity:0.59;"></div><div style="height:5px;border-radius:1px;background:rgb(95,61,208);opacity:0.48;"></div><div style="height:5px;border-radius:1px;background:rgb(85,54,203);opacity:0.40;"></div><div style="height:5px;border-radius:1px;background:rgb(80,50,200);opacity:0.36;"></div><div style="height:5px;border-radius:1px;background:rgb(80,50,200);opacity:0.36;"></div><div style="height:5px;border-radius:1px;background:rgb(86,54,203);opacity:0.40;"></div><div style="height:5px;border-radius:1px;background:rgb(95,61,208);opacity:0.48;"></div><div style="height:5px;border-radius:1px;background:rgb(109,71,216);opacity:0.59;"></div><div style="height:5px;border-radius:1px;background:rgb(123,82,224);opacity:0.71;"></div><div style="height:5px;border-radius:1px;background:rgb(137,93,232);opacity:0.82;"></div><div style="height:5px;border-radius:1px;background:rgb(149,102,239);opacity:0.92;"></div><div style="height:5px;border-radius:1px;background:rgb(157,108,243);opacity:0.98;"></div><div style="height:5px;border-radius:1px;background:rgb(159,109,244);opacity:1.00;"></div><div style="height:5px;border-radius:1px;background:rgb(157,107,243);opacity:0.98;"></div><div style="height:5px;border-radius:1px;background:rgb(149,102,239);opacity:0.91;"></div><div style="height:5px;border-radius:1px;background:rgb(137,93,232);opacity:0.82;"></div><div style="height:5px;border-radius:1px;background:rgb(123,82,224);opacity:0.70;"></div><div style="height:5px;border-radius:1px;background:rgb(108,71,216);opacity:0.58;"></div><div style="height:5px;border-radius:1px;background:rgb(95,61,208);opacity:0.48;"></div><div style="height:5px;border-radius:1px;background:rgb(85,54,203);opacity:0.40;"></div><div style="height:5px;border-radius:1px;background:rgb(80,50,200);opacity:0.36;"></div><div style="height:5px;border-radius:1px;background:rgb(80,50,200);opacity:0.36;"></div><div style="height:5px;border-radius:1px;background:rgb(86,54,203);opacity:0.40;"></div><div style="height:5px;border-radius:1px;background:rgb(96,62,209);opacity:0.48;"></div><div style="height:5px;border-radius:1px;background:rgb(109,72,216);opacity:0.59;"></div><div style="height:5px;border-radius:1px;background:rgb(124,83,224);opacity:0.71;"></div><div style="height:5px;border-radius:1px;background:rgb(138,93,232);opacity:0.82;"></div><div style="height:5px;border-radius:1px;background:rgb(149,102,239);opacity:0.92;"></div><div style="height:5px;border-radius:1px;background:rgb(157,108,243);opacity:0.98;"></div><div style="height:5px;border-radius:1px;background:rgb(159,109,244);opacity:1.00;"></div><div style="height:5px;border-radius:1px;background:rgb(157,107,243);opacity:0.98;"></div><div style="height:5px;border-radius:1px;background:rgb(149,101,238);opacity:0.91;"></div><div style="height:5px;border-radius:1px;background:rgb(137,93,232);opacity:0.82;"></div><div style="height:5px;border-radius:1px;background:rgb(123,82,224);opacity:0.70;"></div><div style="height:5px;border-radius:1px;background:rgb(108,71,216);opacity:0.58;"></div><div style="height:5px;border-radius:1px;background:rgb(95,61,208);opacity:0.48;"></div><div style="height:5px;border-radius:1px;background:rgb(85,54,203);opacity:0.40;"></div><div style="height:5px;border-radius:1px;background:rgb(80,50,200);opacity:0.35;"></div><div style="height:5px;border-radius:1px;background:rgb(80,50,200);opacity:0.36;"></div><div style="height:5px;border-radius:1px;background:rgb(86,54,203);opacity:0.40;"></div><div style="height:5px;border-radius:1px;background:rgb(96,62,209);opacity:0.48;"></div><div style="height:5px;border-radius:1px;background:rgb(109,72,216);opacity:0.59;"></div><div style="height:5px;border-radius:1px;background:rgb(124,83,224);opacity:0.71;"></div><div style="height:5px;border-radius:1px;background:rgb(138,93,232);opacity:0.82;"></div><div style="height:5px;border-radius:1px;background:rgb(150,102,239);opacity:0.92;"></div><div style="height:5px;border-radius:1px;background:rgb(157,108,243);opacity:0.98;"></div><div style="height:5px;border-radius:1px;background:rgb(159,109,244);opacity:1.00;"></div><div style="height:5px;border-radius:1px;background:rgb(157,107,243);opacity:0.98;"></div><div style="height:5px;border-radius:1px;background:rgb(149,101,238);opacity:0.91;"></div><div style="height:5px;border-radius:1px;background:rgb(137,92,232);opacity:0.81;"></div><div style="height:5px;border-radius:1px;background:rgb(122,82,224);opacity:0.70;"></div><div style="height:5px;border-radius:1px;background:rgb(108,71,215);opacity:0.58;"></div><div style="height:5px;border-radius:1px;background:rgb(95,61,208);opacity:0.47;"></div><div style="height:5px;border-radius:1px;background:rgb(85,54,203);opacity:0.40;"></div><div style="height:5px;border-radius:1px;background:rgb(80,50,200);opacity:0.35;"></div><div style="height:5px;border-radius:1px;background:rgb(80,50,200);opacity:0.36;"></div><div style="height:5px;border-radius:1px;background:rgb(86,54,203);opacity:0.40;"></div><div style="height:5px;border-radius:1px;background:rgb(96,62,209);opacity:0.49;"></div><div style="height:5px;border-radius:1px;background:rgb(109,72,216);opacity:0.59;"></div><div style="height:5px;border-radius:1px;background:rgb(124,83,225);opacity:0.71;"></div><div style="height:5px;border-radius:1px;background:rgb(138,94,233);opacity:0.83;"></div><div style="height:5px;border-radius:1px;background:rgb(150,102,239);opacity:0.92;"></div><div style="height:5px;border-radius:1px;background:rgb(157,108,243);opacity:0.98;"></div><div style="height:5px;border-radius:1px;background:rgb(159,109,244);opacity:1.00;"></div><div style="height:5px;border-radius:1px;background:rgb(156,107,243);opacity:0.97;"></div><div style="height:5px;border-radius:1px;background:rgb(148,101,238);opacity:0.91;"></div><div style="height:5px;border-radius:1px;background:rgb(136,92,231);opacity:0.81;"></div><div style="height:5px;border-radius:1px;background:rgb(122,81,223);opacity:0.70;"></div><div style="height:5px;border-radius:1px;background:rgb(108,71,215);opacity:0.58;"></div><div style="height:5px;border-radius:1px;background:rgb(95,61,208);opacity:0.47;"></div><div style="height:5px;border-radius:1px;background:rgb(85,54,203);opacity:0.39;"></div><div style="height:5px;border-radius:1px;background:rgb(80,50,200);opacity:0.35;"></div><div style="height:5px;border-radius:1px;background:rgb(80,50,200);opacity:0.36;"></div><div style="height:5px;border-radius:1px;background:rgb(86,54,203);opacity:0.40;"></div><div style="height:5px;border-radius:1px;background:rgb(96,62,209);opacity:0.49;"></div><div style="height:5px;border-radius:1px;background:rgb(110,72,216);opacity:0.60;"></div><div style="height:5px;border-radius:1px;background:rgb(124,83,225);opacity:0.71;"></div><div style="height:5px;border-radius:1px;background:rgb(138,94,233);opacity:0.83;"></div><div style="height:5px;border-radius:1px;background:rgb(150,102,239);opacity:0.92;"></div><div style="height:5px;border-radius:1px;background:rgb(157,108,243);opacity:0.98;"></div><div style="height:5px;border-radius:1px;background:rgb(159,109,244);opacity:1.00;"></div><div style="height:5px;border-radius:1px;background:rgb(156,107,243);opacity:0.97;"></div><div style="height:5px;border-radius:1px;background:rgb(148,101,238);opacity:0.91;"></div><div style="height:5px;border-radius:1px;background:rgb(136,92,231);opacity:0.81;"></div><div style="height:5px;border-radius:1px;background:rgb(122,81,223);opacity:0.69;"></div><div style="height:5px;border-radius:1px;background:rgb(107,70,215);opacity:0.58;"></div><div style="height:5px;border-radius:1px;background:rgb(94,61,208);opacity:0.47;"></div><div style="height:5px;border-radius:1px;background:rgb(85,53,202);opacity:0.39;"></div><div style="height:5px;border-radius:1px;background:rgb(80,50,200);opacity:0.35;"></div><div style="height:5px;border-radius:1px;background:rgb(80,50,200);opacity:0.36;"></div>
+  </div>
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:12px;">Each tiny cell = one weight value. A 70B model has ~1,000 matrices this size.</div>
+
+  <!-- Training loop — pre-computed -->
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:8px;">How weights are created — training loop</div>
+  
+        <div style="background:var(--panel2);border:1px solid var(--border);border-radius:7px;padding:9px 11px;">
+          <div style="font-size:13px;margin-bottom:3px;">📄 <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;color:var(--ink);">Training Data</span></div>
+          <div style="font-size:11px;color:var(--muted);line-height:1.45;">15 trillion tokens of text — books, code, web, papers</div>
+        </div><div style="text-align:center;color:var(--muted);font-size:12px;line-height:1;">↓</div>
+        <div style="background:var(--panel2);border:1px solid var(--border);border-radius:7px;padding:9px 11px;">
+          <div style="font-size:13px;margin-bottom:3px;">🎯 <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;color:var(--ink);">Prediction</span></div>
+          <div style="font-size:11px;color:var(--muted);line-height:1.45;">Model guesses: "What word comes next?"</div>
+        </div><div style="text-align:center;color:var(--muted);font-size:12px;line-height:1;">↓</div>
+        <div style="background:var(--panel2);border:1px solid var(--border);border-radius:7px;padding:9px 11px;">
+          <div style="font-size:13px;margin-bottom:3px;">❌ <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;color:var(--ink);">Measure Error</span></div>
+          <div style="font-size:11px;color:var(--muted);line-height:1.45;">Compare guess to actual next word. Calculate how wrong.</div>
+        </div><div style="text-align:center;color:var(--muted);font-size:12px;line-height:1;">↓</div>
+        <div style="background:var(--panel2);border:1px solid var(--border);border-radius:7px;padding:9px 11px;">
+          <div style="font-size:13px;margin-bottom:3px;">🔧 <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;color:var(--ink);">Nudge 70B weights</span></div>
+          <div style="font-size:11px;color:var(--muted);line-height:1.45;">Backpropagation shifts all 70B numbers slightly toward being less wrong</div>
+        </div><div style="text-align:center;color:var(--muted);font-size:12px;line-height:1;">↓</div>
+        <div style="background:var(--panel2);border:1px solid var(--border);border-radius:7px;padding:9px 11px;">
+          <div style="font-size:13px;margin-bottom:3px;">🔁 <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;color:var(--ink);">Repeat billions of times</span></div>
+          <div style="font-size:11px;color:var(--muted);line-height:1.45;">After enough iterations, patterns are encoded in the weights</div>
+        </div>
+
+  <div style="margin-top:12px;padding:10px 11px;background:var(--purple-d);border:1px solid rgba(138,110,232,0.3);border-radius:7px;font-size:11.5px;color:var(--muted);line-height:1.55;">
+    <strong style="color:var(--ink);">What weights encode:</strong> Not facts — statistical correlations. Weight #3,847,291 might nudge the output toward numbers when the context contains financial questions. No single weight maps to a concept. Removing weights doesn't remove facts — it reduces the model's ability to hold nuance at the edges.
+  </div>
+
+  <!-- Memory requirement -->
+  <div style="margin-top:10px;padding:10px 11px;background:var(--red-d);border:1px solid var(--red);border-radius:7px;">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--red);margin-bottom:5px;">⚠ MEMORY: 70B × 2 bytes (FP16) = 140 GB</div>
+    <div style="font-size:11.5px;color:var(--muted);line-height:1.5;">H100 = 80 GB HBM. Model does not fit on one chip. Minimum 2 GPUs for weights alone. With 14K context KV cache: 3–4 GPUs for one user's request.</div>
+  </div>
+</div>
+
+<!-- QUANTIZATION -->
+<div class="sb-panel">
+  <div class="sb-title"><div class="sb-dot" style="background:var(--cyan);"></div>Quantization — Precision vs Size</div>
+  <div class="sb-body">
+    <p><strong>Quantization reduces the decimal precision of every weight</strong> to shrink total model size. Analogy: the difference between writing "3.14159265" vs "3.14" vs "3" — same number, different precision.</p>
+    <p>It does <strong>not</strong> remove learned patterns or "delete sentences." It rounds every one of the 70 billion dials to a coarser resolution. Fine distinctions and edge-case reasoning degrade first. Core knowledge is largely preserved at INT8.</p>
+  </div>
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin:10px 0 6px;">ONE WEIGHT AT DIFFERENT PRECISIONS</div>
+  <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:12px;">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--muted);width:48px;">FP32</span>
+      <code style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink);">0.00431752</code>
+      <span style="font-size:10px;color:var(--muted);">32 bits = 4 bytes</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--muted);width:48px;">FP16</span>
+      <code style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink);">0.00432</code>
+      <span style="font-size:10px;color:var(--muted);">16 bits = 2 bytes</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--caution);width:48px;">INT8</span>
+      <code style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink);">0.004</code>
+      <span style="font-size:10px;color:var(--muted);">8 bits = 1 byte</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--green);width:48px;">INT4</span>
+      <code style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink);">0.00</code>
+      <span style="font-size:10px;color:var(--muted);">4 bits = 0.5 bytes</span>
+    </div>
+  </div>
+
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:6px;">70B MODEL SIZE vs H100 80 GB HBM</div>
+  
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:#E05050;">FP32</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);">280 GB — 4 GPUs min</span>
+          </div>
+          <div style="background:var(--panel2);border-radius:3px;height:16px;overflow:hidden;position:relative;">
+            <div style="width:100.0%;height:100%;background:#E05050;opacity:0.75;border-radius:2px;"></div>
+            <div style="position:absolute;left:28.6%;top:0;width:1.5px;height:100%;background:rgba(255,255,255,0.3);"></div>
+          </div>
+          <div style="font-size:10px;color:var(--muted);margin-top:2px;font-style:italic;">2 bytes → 4 bytes / param</div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:#E05050;">FP16</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);">140 GB — 2 GPUs min</span>
+          </div>
+          <div style="background:var(--panel2);border-radius:3px;height:16px;overflow:hidden;position:relative;">
+            <div style="width:50.0%;height:100%;background:#E05050;opacity:0.75;border-radius:2px;"></div>
+            <div style="position:absolute;left:28.6%;top:0;width:1.5px;height:100%;background:rgba(255,255,255,0.3);"></div>
+          </div>
+          <div style="font-size:10px;color:var(--muted);margin-top:2px;font-style:italic;">Standard training precision</div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:#E8A020;">INT8</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);">70 GB — 1 GPU (tight)</span>
+          </div>
+          <div style="background:var(--panel2);border-radius:3px;height:16px;overflow:hidden;position:relative;">
+            <div style="width:25.0%;height:100%;background:#E8A020;opacity:0.75;border-radius:2px;"></div>
+            <div style="position:absolute;left:28.6%;top:0;width:1.5px;height:100%;background:rgba(255,255,255,0.3);"></div>
+          </div>
+          <div style="font-size:10px;color:var(--muted);margin-top:2px;font-style:italic;">Good quality, 2× smaller</div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:#36C878;">INT4</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);">35 GB — 1 GPU easily</span>
+          </div>
+          <div style="background:var(--panel2);border-radius:3px;height:16px;overflow:hidden;position:relative;">
+            <div style="width:12.5%;height:100%;background:#36C878;opacity:0.75;border-radius:2px;"></div>
+            <div style="position:absolute;left:28.6%;top:0;width:1.5px;height:100%;background:rgba(255,255,255,0.3);"></div>
+          </div>
+          <div style="font-size:10px;color:var(--muted);margin-top:2px;font-style:italic;">Minor quality loss, 4× smaller</div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:#36C878;">INT2</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);">18 GB — Fits, quality↓</span>
+          </div>
+          <div style="background:var(--panel2);border-radius:3px;height:16px;overflow:hidden;position:relative;">
+            <div style="width:6.4%;height:100%;background:#36C878;opacity:0.75;border-radius:2px;"></div>
+            <div style="position:absolute;left:28.6%;top:0;width:1.5px;height:100%;background:rgba(255,255,255,0.3);"></div>
+          </div>
+          <div style="font-size:10px;color:var(--muted);margin-top:2px;font-style:italic;">Aggressive, noticeable loss</div>
+        </div>
+  <div style="font-size:10.5px;color:var(--muted);font-style:italic;margin-top:4px;">Dashed line = H100 80 GB limit. Bars past it require multiple GPUs.</div>
+</div>
+
+<!-- LARGE CONTEXT PROBLEM -->
+<div class="sb-panel">
+  <div class="sb-title"><div class="sb-dot" style="background:var(--red);"></div>The Large Context Problem</div>
+  <div style="font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:10px;">Modern enterprise use — RAG + uploaded docs + MCP — routinely produces 10K–50K token contexts. This compounds the HBM pressure beyond just model weights.</div>
+  <table class="ctx-table">
+    <thead><tr><th>Component</th><th>Tokens</th><th>HBM (70B)</th></tr></thead>
+    <tbody>
+      <tr><td>Model weights (FP16)</td><td>—</td><td style="color:var(--purple);">140 GB</td></tr>
+      <tr><td>System prompt</td><td>500</td><td style="color:var(--cyan);">1.6 GB</td></tr>
+      <tr><td>Uploaded document</td><td>8,000</td><td style="color:var(--cyan);">25 GB</td></tr>
+      <tr><td>RAG chunks</td><td>3,000</td><td style="color:var(--cyan);">9.5 GB</td></tr>
+      <tr><td>Conversation history</td><td>2,000</td><td style="color:var(--cyan);">6.3 GB</td></tr>
+      <tr><td>MCP + misc</td><td>500</td><td style="color:var(--cyan);">1.6 GB</td></tr>
+      <tr><td style="color:var(--red);font-weight:600;">TOTAL</td><td style="color:var(--amber);">14,000 tokens</td><td style="color:var(--red);">184 GB</td></tr>
+    </tbody>
+  </table>
+  <div style="margin-top:10px;padding:10px 11px;background:var(--red-d);border:1px solid var(--red);border-radius:7px;font-size:11.5px;color:var(--muted);line-height:1.5;">
+    <strong style="color:var(--red);">On A100:</strong> Same 3-chip minimum for memory, but only 2.0 TB/s HBM bandwidth vs H100's 3.35 TB/s. Each weight load takes 67% longer. Tokens/second roughly halved vs H100 for the same model and context size.
+  </div>
+</div>
+
+<!-- CHIP COMPARISON -->
+<div class="sb-panel">
+  <div class="sb-title"><div class="sb-dot" style="background:var(--amber);"></div>Chip Comparison</div>
+  <div style="font-size:11.5px;color:var(--muted);margin-bottom:10px;line-height:1.55;"><strong style="color:var(--ink);">Memory bandwidth — not TFLOPS — is the inference bottleneck.</strong> The GPU is almost always waiting for weights to load from HBM, not waiting to compute them.</div>
+  <div class="chip-card" style="border-color:rgba(48,200,112,0.3);">
+    <div class="chip-name" style="color:var(--green);">NVIDIA B200 — current flagship</div>
+    <div class="chip-stat"><span>HBM capacity</span><span class="chip-stat-val">192 GB HBM3e</span></div>
+    <div class="chip-stat"><span>Memory bandwidth</span><span class="chip-stat-val" style="color:var(--green);">8.0 TB/s</span></div>
+    <div class="chip-stat"><span>GPU interconnect</span><span class="chip-stat-val">NVLink 5.0 · 1.8 TB/s</span></div>
+    <div class="chip-stat"><span>70B FP16 fits?</span><span class="chip-stat-val" style="color:var(--green);">Yes — on 1 chip</span></div>
+  </div>
+  <div class="chip-card" style="border-color:rgba(48,200,112,0.3);">
+    <div class="chip-name" style="color:var(--green);">NVIDIA H200</div>
+    <div class="chip-stat"><span>HBM capacity</span><span class="chip-stat-val">141 GB HBM3e</span></div>
+    <div class="chip-stat"><span>Memory bandwidth</span><span class="chip-stat-val" style="color:var(--green);">4.8 TB/s</span></div>
+    <div class="chip-stat"><span>GPU interconnect</span><span class="chip-stat-val">NVLink 4.0 · 900 GB/s</span></div>
+    <div class="chip-stat"><span>70B FP16 fits?</span><span class="chip-stat-val" style="color:var(--green);">Yes — 1 chip (tight)</span></div>
+  </div>
+  <div class="chip-card" style="border-color:rgba(232,160,32,0.3);">
+    <div class="chip-name" style="color:var(--amber);">NVIDIA H100 SXM5</div>
+    <div class="chip-stat"><span>HBM capacity</span><span class="chip-stat-val">80 GB HBM3e</span></div>
+    <div class="chip-stat"><span>Memory bandwidth</span><span class="chip-stat-val" style="color:var(--amber);">3.35 TB/s</span></div>
+    <div class="chip-stat"><span>GPU interconnect</span><span class="chip-stat-val">NVLink 4.0 · 900 GB/s</span></div>
+    <div class="chip-stat"><span>70B FP16 fits?</span><span class="chip-stat-val" style="color:var(--amber);">No — needs 2 chips</span></div>
+  </div>
+  <div class="chip-card" style="border-color:rgba(224,72,72,0.3);">
+    <div class="chip-name" style="color:var(--red);">NVIDIA A100 (prev gen)</div>
+    <div class="chip-stat"><span>HBM capacity</span><span class="chip-stat-val">80 GB HBM2e</span></div>
+    <div class="chip-stat"><span>Memory bandwidth</span><span class="chip-stat-val" style="color:var(--red);">2.0 TB/s ← 40% slower</span></div>
+    <div class="chip-stat"><span>GPU interconnect</span><span class="chip-stat-val">NVLink 3.0 · 600 GB/s</span></div>
+    <div class="chip-stat"><span>70B FP16 fits?</span><span class="chip-stat-val" style="color:var(--red);">No — 2 chips, 2× slower</span></div>
+  </div>
+  <div class="chip-card" style="border-color:rgba(48,200,112,0.3);">
+    <div class="chip-name" style="color:var(--green);">AMD MI300X — inference competitor</div>
+    <div class="chip-stat"><span>HBM capacity</span><span class="chip-stat-val">192 GB HBM3</span></div>
+    <div class="chip-stat"><span>Memory bandwidth</span><span class="chip-stat-val" style="color:var(--green);">5.3 TB/s</span></div>
+    <div class="chip-stat"><span>GPU interconnect</span><span class="chip-stat-val">Infinity Fabric</span></div>
+    <div class="chip-stat"><span>70B FP16 fits?</span><span class="chip-stat-val" style="color:var(--green);">Yes — comfortably</span></div>
+  </div>
+</div>
+
+<!-- BOTTLENECK + WHERE TO SPEND -->
+<div class="sb-panel">
+  <div class="sb-title"><div class="sb-dot" style="background:var(--red);"></div>Bottlenecks + Where to Spend Money</div>
+  <div class="bn-list">
+    <div class="bn-item">
+      <div class="bn-ico">🔴</div>
+      <div class="bn-body">
+        <div class="bn-name" style="color:var(--red);">HBM Bandwidth (within chip)</div>
+        <div class="bn-desc">Dominant bottleneck during inference. GPU waits for weights to load from HBM between every computation. H100 (3.35 TB/s) → H200 (4.8 TB/s) = ~40% more tokens/second for the same model, same configuration.</div>
+        <span class="bn-fix" style="color:var(--green);background:var(--green-d);border-color:var(--green);">💰 Upgrade to H200 or MI300X</span>
+      </div>
+    </div>
+    <div class="bn-item">
+      <div class="bn-ico">🔴</div>
+      <div class="bn-body">
+        <div class="bn-name" style="color:var(--red);">HBM Capacity (model + KV cache)</div>
+        <div class="bn-desc">Hard ceiling on model size and concurrent users. 70B FP16 + 14K context = 184 GB = 3 H100s per user. Directly limits how many users you can serve simultaneously per server.</div>
+        <span class="bn-fix" style="color:var(--green);background:var(--green-d);border-color:var(--green);">💰 B200/MI300X (192GB) or INT4 quantization</span>
+      </div>
+    </div>
+    <div class="bn-item">
+      <div class="bn-ico">🟡</div>
+      <div class="bn-body">
+        <div class="bn-name" style="color:var(--amber);">RAG Network Latency</div>
+        <div class="bn-desc">If vector DB is on customer infra and GPU is at provider, each RAG retrieval adds 20–200ms — often more than the GPU compute itself. This is the most overlooked bottleneck in enterprise deployments.</div>
+        <span class="bn-fix" style="color:var(--amber);background:var(--amber-d);border-color:var(--amber);">💰 Co-locate vector DB with GPU cluster</span>
+      </div>
+    </div>
+    <div class="bn-item">
+      <div class="bn-ico">🟡</div>
+      <div class="bn-body">
+        <div class="bn-name" style="color:var(--amber);">InfiniBand (inter-server AllReduce)</div>
+        <div class="bn-desc">50 GB/s effective vs NVLink 900 GB/s. Compounds across 80 layers × 270 tokens per response. Keeping models on as few servers as possible (larger GPUs) reduces IB usage.</div>
+        <span class="bn-fix" style="color:var(--amber);background:var(--amber-d);border-color:var(--amber);">💰 Fewer servers = less IB dependency</span>
+      </div>
+    </div>
+    <div class="bn-item">
+      <div class="bn-ico">🟡</div>
+      <div class="bn-body">
+        <div class="bn-name" style="color:var(--amber);">Context Length (attention O(n²))</div>
+        <div class="bn-desc">Doubling context from 7K to 14K tokens quadruples attention compute and KV cache memory. Long RAG pipelines and document uploads directly degrade throughput.</div>
+        <span class="bn-fix" style="color:var(--amber);background:var(--amber-d);border-color:var(--amber);">💰 Chunk documents smaller, use Flash Attention</span>
+      </div>
+    </div>
+    <div class="bn-item">
+      <div class="bn-ico">🟢</div>
+      <div class="bn-body">
+        <div class="bn-name" style="color:var(--green);">Raw TFLOPS (compute power)</div>
+        <div class="bn-desc">Counter-intuitively not the bottleneck for inference. GPU compute units are usually idle waiting for HBM. Buying more TFLOPS without more HBM bandwidth does very little.</div>
+        <span class="bn-fix" style="color:var(--muted);border-color:var(--muted);background:transparent;">🚫 Not worth spending on alone</span>
+      </div>
+    </div>
+    <div class="bn-item">
+      <div class="bn-ico">🟢</div>
+      <div class="bn-body">
+        <div class="bn-name" style="color:var(--green);">NVLink (intra-server)</div>
+        <div class="bn-desc">900 GB/s — AllReduce within a single DGX adds &lt;5% overhead. Not a bottleneck in practice. Upgrading NVLink alone provides minimal benefit.</div>
+        <span class="bn-fix" style="color:var(--muted);border-color:var(--muted);background:transparent;">🚫 Not a priority</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /sidebar -->
+</div><!-- /layout -->
+</div><!-- /page -->
+</body>
+</html>

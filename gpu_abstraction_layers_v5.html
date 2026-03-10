@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GPU Compute — Abstraction Layer Market Map</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #F5F3EE;
+    --surface:  #FFFFFF;
+    --ink:      #1A1714;
+    --muted:    #7A7570;
+    --rule:     #E2DED8;
+
+    --waas:     #1D3461;
+    --waas-lt:  #EBF0F8;
+    --mlaas:    #2D6A4F;
+    --mlaas-lt: #EAF4EF;
+    --gpuaas:   #9B4F1A;
+    --gpuaas-lt:#FBF0E8;
+    --bmaas:    #4A1942;
+    --bmaas-lt: #F5EDF4;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 48px 40px 80px;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    margin-bottom: 28px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 20px;
+  }
+
+  .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(22px, 3vw, 36px);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  .header-note {
+    font-size: 12px;
+    color: var(--muted);
+    max-width: 360px;
+    line-height: 1.6;
+    text-align: right;
+  }
+
+  /* ── TAXONOMY EXPLAINER ── */
+  .taxonomy {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    padding: 14px 18px;
+    background: var(--surface);
+    border-radius: 10px;
+    border: 1px solid var(--rule);
+  }
+
+  .tax-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .tax-swatch {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .tax-text {
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: var(--ink);
+  }
+
+  .tax-text strong {
+    display: block;
+    font-weight: 500;
+    font-family: 'DM Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.04em;
+    margin-bottom: 1px;
+  }
+
+  .tax-text span {
+    color: var(--muted);
+    font-size: 11px;
+  }
+
+  /* ── ABSTRACTION ARROW ── */
+  .abstraction-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .abs-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .abs-arrow {
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(to right, var(--bmaas), var(--gpuaas), var(--mlaas), var(--waas));
+    border-radius: 1px;
+    position: relative;
+  }
+
+  .abs-arrow::after {
+    content: '';
+    position: absolute;
+    right: -1px;
+    top: -4px;
+    border-left: 8px solid var(--waas);
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+  }
+
+  /* ── TABLE ── */
+  .table-scroll {
+    overflow-x: auto;
+    border-radius: 12px;
+    box-shadow: 0 2px 24px rgba(0,0,0,0.07);
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 1200px;
+    background: var(--surface);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  thead tr th {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 12px 16px;
+    text-align: left;
+    background: var(--surface);
+    border-bottom: 1px solid var(--rule);
+    white-space: nowrap;
+    vertical-align: bottom;
+  }
+
+  .th-owns {
+    font-size: 9px;
+    display: block;
+    margin-top: 3px;
+    opacity: 0.7;
+    font-style: italic;
+    letter-spacing: 0.06em;
+    text-transform: none;
+  }
+
+  thead tr th:first-child {
+    width: 110px;
+    border-right: 2px solid var(--rule);
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--rule);
+  }
+
+  tbody tr:last-child { border-bottom: none; }
+
+  td {
+    padding: 18px 16px;
+    vertical-align: top;
+    font-size: 12.5px;
+    line-height: 1.5;
+  }
+
+  /* ── LAYER CELL ── */
+  .layer-cell {
+    border-right: 2px solid var(--rule);
+    width: 110px;
+  }
+
+  .layer-acronym {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    display: block;
+    margin-bottom: 3px;
+  }
+
+  .layer-name {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+
+  .layer-ref {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    color: var(--muted);
+    background: rgba(0,0,0,0.05);
+    border-radius: 4px;
+    padding: 3px 6px;
+    display: block;
+    line-height: 1.4;
+  }
+
+  /* ── DESCRIPTION ── */
+  .desc-main {
+    font-weight: 500;
+    margin-bottom: 4px;
+    font-size: 13px;
+  }
+
+  .desc-sub {
+    font-size: 11.5px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* ── MANAGES ── */
+  .manages { display: flex; flex-direction: column; gap: 4px; }
+
+  .manages-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+  }
+
+  .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .dot-yes     { background: #C8E6C9; border: 1.5px solid #4CAF50; }
+  .dot-no      { background: #FFCDD2; border: 1.5px solid #EF5350; }
+  .dot-partial { background: #FFF9C4; border: 1.5px solid #F9A825; }
+
+  /* ── CHIPS ── */
+  .chips { display: flex; flex-wrap: wrap; gap: 5px; }
+
+  .chip {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    border: 1px solid currentColor;
+    white-space: nowrap;
+  }
+
+  .chip-hs    { background: #EBF3FF; color: #1A4B8C; border-color: #C2D8F5; }
+  .chip-nc    { background: #FFF3E8; color: #7A2E08; border-color: #F5CEAA; }
+  .chip-lab   { background: #FEF3F2; color: #7A1A1A; border-color: #FCCACA; }
+  .chip-plat  { background: #F0F0F0; color: #3A3A3A; border-color: #D0D0D0; }
+
+  .chip-note {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-style: italic;
+    color: var(--muted);
+    padding: 3px 0;
+    display: block;
+    width: 100%;
+  }
+
+  /* ── VALUE PROP ── */
+  .vprop {
+    font-size: 12px;
+    font-style: italic;
+    color: var(--muted);
+    border-left: 2px solid var(--rule);
+    padding-left: 10px;
+    line-height: 1.6;
+  }
+
+  /* ── PAYMENT MECHANISM ── */
+  .payment {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .pay-primary {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--ink);
+    background: rgba(0,0,0,0.05);
+    border-radius: 6px;
+    padding: 4px 8px;
+    line-height: 1.5;
+    display: block;
+  }
+
+  .pay-secondary {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.5;
+    display: block;
+  }
+
+  .pay-note {
+    font-size: 10.5px;
+    font-style: italic;
+    color: var(--muted);
+    line-height: 1.4;
+    display: block;
+  }
+
+  /* ── ALSO KNOWN AS ── */
+  .aka-cell {
+    width: 260px;
+    min-width: 220px;
+  }
+
+  .aka {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-content: flex-start;
+  }
+
+  .aka-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10.5px;
+    color: var(--ink);
+    background: rgba(0,0,0,0.04);
+    border-radius: 4px;
+    padding: 3px 7px;
+    display: inline-block;
+    width: fit-content;
+    line-height: 1.5;
+    border: 1px solid var(--rule);
+  }
+
+  .aka-note {
+    font-size: 10.5px;
+    color: var(--muted);
+    font-style: italic;
+    margin-top: 4px;
+    line-height: 1.4;
+    width: 100%;
+  }
+
+  /* ── BUYER ── */
+  .buyer strong {
+    display: block;
+    font-weight: 500;
+    font-size: 12.5px;
+    margin-bottom: 3px;
+  }
+
+  .buyer span {
+    font-size: 11.5px;
+    color: var(--muted);
+  }
+
+  /* ── N/A CELL ── */
+  .na {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--rule);
+    letter-spacing: 0.1em;
+  }
+
+  /* ── ROW ACCENTS ── */
+  tr.row-waas   td.layer-cell { border-left: 4px solid var(--waas);   }
+  tr.row-mlaas  td.layer-cell { border-left: 4px solid var(--mlaas);  }
+  tr.row-gpuaas td.layer-cell { border-left: 4px solid var(--gpuaas); }
+  tr.row-bmaas  td.layer-cell { border-left: 4px solid var(--bmaas);  }
+
+  tr.row-waas   { background: var(--waas-lt);   }
+  tr.row-mlaas  { background: var(--mlaas-lt);  }
+  tr.row-gpuaas { background: var(--gpuaas-lt); }
+  tr.row-bmaas  { background: var(--bmaas-lt);  }
+
+  tr.row-waas   .layer-acronym { color: var(--waas);   }
+  tr.row-mlaas  .layer-acronym { color: var(--mlaas);  }
+  tr.row-gpuaas .layer-acronym { color: var(--gpuaas); }
+  tr.row-bmaas  .layer-acronym { color: var(--bmaas);  }
+
+  /* ── PRE-TABLE META (legends above table) ── */
+  .pre-table-meta {
+    margin-bottom: 12px;
+  }
+
+  .legend-row {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+    padding: 14px 18px;
+    background: var(--surface);
+    border-radius: 10px;
+    border: 1px solid var(--rule);
+    margin-bottom: 10px;
+    align-items: flex-start;
+  }
+
+  .legend-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 16px;
+  }
+
+  .legend-group-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--muted);
+    width: 100%;
+    margin-bottom: 2px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--ink);
+  }
+
+  .legend-swatch {
+    width: 20px;
+    height: 8px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 20px;
+    align-items: center;
+  }
+
+  .footnote {
+    width: 100%;
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 8px;
+    line-height: 1.6;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .legend-swatch {
+    width: 20px;
+    height: 8px;
+    border-radius: 2px;
+  }
+
+  .manages-legend {
+    margin-left: auto;
+    display: flex;
+    gap: 14px;
+  }
+
+  @media (max-width: 900px) {
+    body { padding: 24px 16px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="eyebrow">GPU Compute · Market Structure</div>
+    <h1>Abstraction Layers in GPU Infrastructure</h1>
+  </div>
+  <div class="header-note">
+    Four distinct buying and operating models — each representing a different
+    tradeoff between control, complexity, and cost. Rows ordered from least to most abstracted.
+  </div>
+</div>
+
+<!-- TAXONOMY EXPLAINER -->
+<div class="taxonomy">
+  <div class="tax-item">
+    <div class="tax-swatch" style="background:#C2D8F5;border:1px solid #1A4B8C"></div>
+    <div class="tax-text">
+      <strong>Hyperscaler</strong>
+      <span>Owns data centers and GPU infrastructure at massive scale. Sells compute as a managed cloud service. AWS, Google, Microsoft.</span>
+    </div>
+  </div>
+  <div class="tax-item">
+    <div class="tax-swatch" style="background:#F5CEAA;border:1px solid #7A2E08"></div>
+    <div class="tax-text">
+      <strong>Neocloud</strong>
+      <span>Owns and operates GPU-specialised data centers. Purpose-built for AI workloads. Does not offer the breadth of a hyperscaler.</span>
+    </div>
+  </div>
+  <div class="tax-item">
+    <div class="tax-swatch" style="background:#FCCACA;border:1px solid #7A1A1A"></div>
+    <div class="tax-text">
+      <strong>AI Lab / Model Provider</strong>
+      <span>Trains and serves foundation models. Does <em>not</em> own GPU infrastructure — leases compute from hyperscalers and neoclouds. Sells model output via API.</span>
+    </div>
+  </div>
+  <div class="tax-item">
+    <div class="tax-swatch" style="background:#D0D0D0;border:1px solid #3A3A3A"></div>
+    <div class="tax-text">
+      <strong>Platform / Aggregator</strong>
+      <span>Software layer that routes to, or abstracts over, underlying compute. Does not own infrastructure. Competes on developer experience and tooling.</span>
+    </div>
+  </div>
+</div>
+
+<div class="pre-table-meta">
+  <div class="legend-row">
+    <div class="legend-group">
+      <span class="legend-group-label">Provider type</span>
+      <div class="legend-item"><div class="legend-swatch" style="background:#C2D8F5;border:1px solid #1A4B8C"></div>Hyperscaler</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#F5CEAA;border:1px solid #7A2E08"></div>Neocloud (owns infra)</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#FCCACA;border:1px solid #7A1A1A"></div>AI Lab (leases compute)</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#D0D0D0;border:1px solid #3A3A3A"></div>Platform or Aggregator (no owned infra)</div>
+    </div>
+    <div class="legend-group">
+      <span class="legend-group-label">Responsibilities</span>
+      <div class="legend-item"><span class="dot dot-yes"></span>Customer responsibility</div>
+      <div class="legend-item"><span class="dot dot-no"></span>Provider responsibility</div>
+      <div class="legend-item"><span class="dot dot-partial"></span>Shared responsibility</div>
+    </div>
+  </div>
+</div>
+
+<div class="abstraction-bar">
+  <span class="abs-label">← More control · more complexity</span>
+  <div class="abs-arrow"></div>
+  <span class="abs-label">Less control · less complexity →</span>
+</div>
+
+<div class="table-scroll">
+<table>
+  <thead>
+    <tr>
+      <th>Layer</th>
+      <th>Also known as</th>
+      <th>What the customer gets</th>
+      <th>Responsibilities</th>
+      <th>Typical buyer</th>
+      <th>Value proposition</th>
+      <th>Payment mechanism</th>
+      <th>Hyperscalers<span class="th-owns">Own infrastructure</span></th>
+      <th>Neoclouds<span class="th-owns">Own infrastructure</span></th>
+      <th>AI Labs<span class="th-owns">Lease compute — WaaS only</span></th>
+      <th>Platforms and Aggregators<span class="th-owns">Do not own infrastructure</span></th>
+    </tr>
+  </thead>
+  <tbody>
+
+    <!-- WaaS -->
+    <tr class="row-waas">
+      <td class="layer-cell">
+        <span class="layer-acronym">WaaS</span>
+        <span class="layer-name">Workload as a Service</span>
+        <span class="layer-ref">↔ Serverless Model API</span>
+      </td>
+      <td class="aka-cell">
+        <div class="aka">
+          <span class="aka-tag">Inference as a Service ⚠</span>
+          <span class="aka-tag">Serverless AI</span>
+          <span class="aka-tag">Model API</span>
+          <span class="aka-tag">Inference API</span>
+          <span class="aka-tag">Foundation Model API</span>
+          <span class="aka-tag">AI API</span>
+          <span class="aka-tag">AIaaS</span>
+          <span class="aka-tag">Serverless Inference</span>
+          <span class="aka-note">⚠ "Inference as a Service" is ambiguous — at this tier it means serverless, token-billed API access with no model hosting responsibility. The same term is also used at the MLaaS tier to mean a managed endpoint serving customer-owned weights. Always verify which meaning is intended.</span>
+        </div>
+      </td>
+      <td>
+        <div class="desc-main">Fully abstracted AI output</div>
+        <div class="desc-sub">Call an API, receive a response. No visibility into hardware, hosting, or scaling. Pay per token consumed.</div>
+      </td>
+      <td>
+        <div class="manages">
+          <div class="manages-item"><span class="dot dot-yes"></span>Prompt and system instructions</div>
+          <div class="manages-item"><span class="dot dot-yes"></span>Application logic</div>
+          <div class="manages-item"><span class="dot dot-yes"></span>Model selection from catalog</div>
+          <div class="manages-item"><span class="dot dot-no"></span>Infrastructure or scaling</div>
+          <div class="manages-item"><span class="dot dot-no"></span>Model weights or hosting</div>
+        </div>
+      </td>
+      <td>
+        <div class="buyer">
+          <strong>Developers and product teams</strong>
+          <span>Fastest path to working AI features. No infrastructure expertise required.</span>
+        </div>
+      </td>
+      <td><div class="vprop">Zero infrastructure. Pay only for output consumed.</div></td>
+      <td>
+        <div class="payment">
+          <span class="pay-primary">Per token (input + output)</span>
+          <span class="pay-secondary">Billed per 1,000 or 1,000,000 tokens. Input and output priced separately — output typically costs more.</span>
+          <span class="pay-note">Alt: Provisioned throughput — reserve a fixed token-per-minute rate at a discounted flat fee. Suited to predictable, high-volume workloads.</span>
+        </div>
+      </td>
+      <td>
+        <div class="chips">
+          <span class="chip chip-hs">Amazon Bedrock</span>
+          <span class="chip chip-hs">Azure OpenAI Service</span>
+          <span class="chip chip-hs">Google Vertex AI Model Garden</span>
+          <span class="chip-note">Wrap AI Lab APIs and add cloud billing, IAM, and compliance tooling</span>
+        </div>
+      </td>
+      <td><span class="na">—</span></td>
+      <td>
+        <div class="chips">
+          <span class="chip chip-lab">Anthropic</span>
+          <span class="chip chip-lab">OpenAI</span>
+          <span class="chip chip-lab">Mistral</span>
+          <span class="chip chip-lab">Cohere</span>
+          <span class="chip-note">Anthropic runs on AWS and GCP. OpenAI runs on Azure and Oracle. None own GPU infrastructure.</span>
+        </div>
+      </td>
+      <td>
+        <div class="chips">
+          <span class="chip chip-plat">OpenRouter</span>
+          <span class="chip chip-plat">Together AI</span>
+          <span class="chip chip-plat">Fireworks AI</span>
+          <span class="chip-note">Route requests across model providers. Compete on latency and price.</span>
+        </div>
+      </td>
+    </tr>
+
+    <!-- MLaaS -->
+    <tr class="row-mlaas">
+      <td class="layer-cell">
+        <span class="layer-acronym">MLaaS</span>
+        <span class="layer-name">Managed GPU and ML as a Service</span>
+        <span class="layer-ref">↔ Managed Inference Endpoint</span>
+      </td>
+      <td class="aka-cell">
+        <div class="aka">
+          <span class="aka-tag">Inference as a Service ⚠</span>
+          <span class="aka-tag">Managed Inference</span>
+          <span class="aka-tag">AI Platform</span>
+          <span class="aka-tag">ML Platform</span>
+          <span class="aka-tag">MLOps Platform</span>
+          <span class="aka-tag">Managed ML</span>
+          <span class="aka-tag">Model Serving</span>
+          <span class="aka-tag">Dedicated Inference Endpoint</span>
+          <span class="aka-note">⚠ "Inference as a Service" at this tier means a managed endpoint serving customer-supplied model weights — distinct from the token-billed WaaS usage. "MLaaS" is the analyst term; vendors say "AI Platform" or "Managed Endpoint."</span>
+        </div>
+      </td>
+      <td>
+        <div class="desc-main">GPU compute bundled with ML tooling</div>
+        <div class="desc-sub">Customer brings model weights. Provider manages orchestration, auto-scaling, storage, networking, and experiment tracking around them.</div>
+      </td>
+      <td>
+        <div class="manages">
+          <div class="manages-item"><span class="dot dot-yes"></span>Model weights and fine-tuning</div>
+          <div class="manages-item"><span class="dot dot-yes"></span>Training pipelines and data</div>
+          <div class="manages-item"><span class="dot dot-partial"></span>Endpoint config and scaling policy</div>
+          <div class="manages-item"><span class="dot dot-no"></span>Hardware provisioning</div>
+          <div class="manages-item"><span class="dot dot-no"></span>Kubernetes and orchestration layer</div>
+        </div>
+      </td>
+      <td>
+        <div class="buyer">
+          <strong>ML practitioners and data scientists</strong>
+          <span>Focus on model quality — not infrastructure management.</span>
+        </div>
+      </td>
+      <td><div class="vprop">Developer experience and speed to deployment. Infrastructure abstracted away.</div></td>
+      <td>
+        <div class="payment">
+          <span class="pay-primary">Per endpoint-hour (dedicated)</span>
+          <span class="pay-secondary">Fixed hourly rate for a running endpoint regardless of traffic volume. Dedicated capacity reserved for you.</span>
+          <span class="pay-note">Alt: Per token (serverless endpoint) — some managed endpoints offer token billing for low or variable traffic. Storage and data transfer billed separately.</span>
+        </div>
+      </td>
+      <td>
+        <div class="chips">
+          <span class="chip chip-hs">AWS SageMaker</span>
+          <span class="chip chip-hs">Google Vertex AI</span>
+          <span class="chip chip-hs">Azure ML</span>
+        </div>
+      </td>
+      <td>
+        <div class="chips">
+          <span class="chip chip-nc">Nebius</span>
+          <span class="chip chip-nc">Nscale</span>
+          <span class="chip chip-nc">FluidStack</span>
+          <span class="chip-note">GPU-specialised clouds adding managed ML tooling on top of owned infrastructure</span>
+        </div>
+      </td>
+      <td><span class="na">—</span></td>
+      <td>
+        <div class="chips">
+          <span class="chip chip-plat">Modal</span>
+          <span class="chip chip-plat">Lightning AI</span>
+          <span class="chip chip-plat">Paperspace (DigitalOcean)</span>
+          <span class="chip-note">Software platforms. Do not own GPU hardware.</span>
+        </div>
+      </td>
+    </tr>
+
+    <!-- GPUaaS -->
+    <tr class="row-gpuaas">
+      <td class="layer-cell">
+        <span class="layer-acronym">GPUaaS</span>
+        <span class="layer-name">GPU as a Service</span>
+        <span class="layer-ref">↔ Self-Hosted on IaaS and Batch</span>
+      </td>
+      <td class="aka-cell">
+        <div class="aka">
+          <span class="aka-tag">GPU Cloud</span>
+          <span class="aka-tag">GPU IaaS</span>
+          <span class="aka-tag">Cloud GPU</span>
+          <span class="aka-tag">GPU Instances</span>
+          <span class="aka-tag">AI Compute</span>
+          <span class="aka-tag">Compute as a Service</span>
+          <span class="aka-tag">CaaS</span>
+          <span class="aka-tag">Accelerated Computing</span>
+          <span class="aka-note">IaaS (Infrastructure as a Service) is the broader cloud category. "GPU Cloud" is the most common vendor marketing term. "Accelerated Computing" is NVIDIA's preferred framing for GPU-based IaaS.</span>
+        </div>
+      </td>
+      <td>
+        <div class="desc-main">Virtualised or containerised GPU instances</div>
+        <div class="desc-sub">Customer rents GPU compute by the hour. Receives a VM, container, or instance and installs their own software stack on top.</div>
+      </td>
+      <td>
+        <div class="manages">
+          <div class="manages-item"><span class="dot dot-yes"></span>OS, drivers, and software stack</div>
+          <div class="manages-item"><span class="dot dot-yes"></span>Inference engine (vLLM, TGI)</div>
+          <div class="manages-item"><span class="dot dot-yes"></span>Kubernetes and orchestration</div>
+          <div class="manages-item"><span class="dot dot-yes"></span>Monitoring, scaling, and security</div>
+          <div class="manages-item"><span class="dot dot-no"></span>Physical hardware</div>
+        </div>
+      </td>
+      <td>
+        <div class="buyer">
+          <strong>Data science teams and ML engineers</strong>
+          <span>Need elasticity and software control without owning hardware.</span>
+        </div>
+      </td>
+      <td><div class="vprop">Flexibility and pay-as-you-go. Full software control without capital outlay.</div></td>
+      <td>
+        <div class="payment">
+          <span class="pay-primary">Per GPU-hour (on-demand)</span>
+          <span class="pay-secondary">Billed by the hour per GPU. H100 on-demand typically $2–$5/hr depending on provider.</span>
+          <span class="pay-note">Discounts available via: Spot or preemptible instances (60–80% off, interruptible), reserved instances (1–3 yr commitment, 30–50% off). Egress and storage billed separately.</span>
+        </div>
+      </td>
+      <td>
+        <div class="chips">
+          <span class="chip chip-hs">AWS EC2 P and G instances</span>
+          <span class="chip chip-hs">Google Compute Engine A3</span>
+          <span class="chip chip-hs">Azure ND H100 v5</span>
+        </div>
+      </td>
+      <td>
+        <div class="chips">
+          <span class="chip chip-nc">CoreWeave</span>
+          <span class="chip chip-nc">Lambda Labs</span>
+          <span class="chip chip-nc">Nebius</span>
+          <span class="chip chip-nc">Voltage Park</span>
+          <span class="chip chip-nc">Crusoe</span>
+          <span class="chip-note">Own and operate GPU data centers</span>
+        </div>
+      </td>
+      <td><span class="na">—</span></td>
+      <td>
+        <div class="chips">
+          <span class="chip chip-plat">Vast.ai</span>
+          <span class="chip chip-plat">RunPod</span>
+          <span class="chip chip-plat">TensorDock</span>
+          <span class="chip-note">Marketplaces that aggregate spare GPU capacity. Do not own infrastructure.</span>
+        </div>
+      </td>
+    </tr>
+
+    <!-- BMaaS -->
+    <tr class="row-bmaas">
+      <td class="layer-cell">
+        <span class="layer-acronym">BMaaS</span>
+        <span class="layer-name">Bare Metal as a Service</span>
+        <span class="layer-ref">↔ Physical Infrastructure</span>
+      </td>
+      <td class="aka-cell">
+        <div class="aka">
+          <span class="aka-tag">Bare Metal GPU</span>
+          <span class="aka-tag">Dedicated GPU Servers</span>
+          <span class="aka-tag">HPC Cloud</span>
+          <span class="aka-tag">GPU Colocation</span>
+          <span class="aka-tag">Reserved GPU Cluster</span>
+          <span class="aka-tag">GPU Hosting</span>
+          <span class="aka-tag">Dedicated AI Infrastructure</span>
+          <span class="aka-note">HPC (high-performance computing) is the older equivalent term from scientific and research computing. "GPU Colocation" is used when the customer owns the hardware and leases rack space and power — distinct from BMaaS where the provider owns the hardware.</span>
+        </div>
+      </td>
+      <td>
+        <div class="desc-main">Raw GPU hardware — no virtualisation</div>
+        <div class="desc-sub">Dedicated physical servers with direct hardware access. No hypervisor overhead. Customer manages the entire software stack from the OS upward.</div>
+      </td>
+      <td>
+        <div class="manages">
+          <div class="manages-item"><span class="dot dot-yes"></span>Firmware, drivers, and OS</div>
+          <div class="manages-item"><span class="dot dot-yes"></span>Networking and fabric config</div>
+          <div class="manages-item"><span class="dot dot-yes"></span>Entire software stack</div>
+          <div class="manages-item"><span class="dot dot-yes"></span>Security and access control</div>
+          <div class="manages-item"><span class="dot dot-partial"></span>Hardware replacement (provider SLA)</div>
+        </div>
+      </td>
+      <td>
+        <div class="buyer">
+          <strong>ML infrastructure teams and HPC</strong>
+          <span>Training at scale where GPU utilisation (MFU) and performance are critical.</span>
+        </div>
+      </td>
+      <td><div class="vprop">Maximum performance. No virtualisation overhead. Cost-efficient for sustained large-scale training.</div></td>
+      <td>
+        <div class="payment">
+          <span class="pay-primary">Per server-month (reservation)</span>
+          <span class="pay-secondary">Typically sold on 1–3 year contracts for committed clusters. Monthly billing against a fixed server reservation.</span>
+          <span class="pay-note">Short-term or hourly bare metal available from some neoclouds at a premium. No spot market equivalent — hardware is dedicated and not pooled.</span>
+        </div>
+      </td>
+      <td>
+        <div class="chips">
+          <span class="chip chip-hs">AWS Outposts</span>
+          <span class="chip chip-hs">Google Distributed Cloud</span>
+          <span class="chip chip-hs">Azure Stack Hub</span>
+          <span class="chip-note">On-premises hybrid cloud only — not cloud-based GPU BMaaS. Hyperscalers do not offer traditional BMaaS in the cloud.</span>
+        </div>
+      </td>
+      <td>
+        <div class="chips">
+          <span class="chip chip-nc">CoreWeave</span>
+          <span class="chip chip-nc">Crusoe</span>
+          <span class="chip chip-nc">Latitude.sh</span>
+          <span class="chip chip-nc">Hetzner</span>
+          <span class="chip chip-nc">Ori Industries</span>
+          <span class="chip-note">Primary providers of cloud GPU BMaaS. Own and operate the hardware.</span>
+        </div>
+      </td>
+      <td><span class="na">—</span></td>
+      <td>
+        <div class="chips">
+          <span class="chip chip-plat">Equinix Metal</span>
+          <span class="chip-note">Bare metal cloud provider. Does not specialise in GPU.</span>
+        </div>
+      </td>
+    </tr>
+
+  </tbody>
+</table>
+</div>
+
+<div class="footer">
+  <div class="footnote">
+    † AI Labs (Anthropic, OpenAI, Mistral, Cohere) are buyers of GPU compute — not infrastructure operators. They lease capacity from hyperscalers and neoclouds and resell model output via API. They appear only at the WaaS layer because they do not offer raw compute access.
+    &nbsp;&nbsp;·&nbsp;&nbsp;
+    "Inference as a Service" is used inconsistently across the industry: at WaaS tier it refers to serverless token-billed API access; at MLaaS tier it refers to a managed endpoint serving customer-owned model weights. Context determines meaning.
+    &nbsp;&nbsp;·&nbsp;&nbsp;
+    Paperspace was acquired by DigitalOcean in 2023.
+    &nbsp;&nbsp;·&nbsp;&nbsp;
+    CoreWeave appears at both GPUaaS and BMaaS tiers as they offer both virtualised instances and bare metal depending on the contract.
+  </div>
+</div>
+
+</body>
+</html>
