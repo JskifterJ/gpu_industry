@@ -1064,7 +1064,7 @@ body.theme-light .mkt-filters,body.theme-light .db-filters{background:#fff;}
 #page-compare .cmp-tldr-tension{background:rgba(59,130,246,.06)!important;border-color:rgba(59,130,246,.2)!important;}
 #page-compare .cmp-tldr-tension-h{color:#1D4ED8!important;}
 #page-compare .cmp-tldr-tension-body{color:#374151!important;}
-#page-compare .cmp-layer-title{color:#111827!important;background:#fff!important;border-color:#E5E7EB!important;}
+#page-compare .cmp-layer-title{color:#111827!important;border-color:#E5E7EB!important;}
 #page-compare .cmp-layer-title span{color:#9CA3AF!important;}
 #page-compare .cmp-layer-grid{border-color:#E5E7EB!important;}
 #page-compare .cmp-col{border-right-color:#E5E7EB!important;}
@@ -1213,6 +1213,65 @@ body.theme-light .btn.nav-active{
   font-size:10px;font-weight:700;
   cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.02em;transition:all .15s;}
 .tour-trigger:hover{background:rgba(99,102,241,.55);color:#fff;border-color:rgba(165,180,252,.8);}
+
+/* Readability overrides for compare mode and right detail sidebar */
+.cmp-overlay{background:rgba(230,235,244,.78);backdrop-filter:blur(3px);}
+.cmp-panel{background:#F4F6FA;color:#0F172A;}
+.cmp-header{background:#FFFFFF;border-bottom:1px solid #D6DEEA;}
+.cmp-title{color:#111827;}
+.cmp-close{background:#E6EBF3;color:#1F2937;border:1px solid #CBD5E1;}
+.cmp-close:hover{background:#D9E1EE;color:#0F172A;}
+.cmp-selectors{background:#EEF2F8;border-bottom-color:#D6DEEA;}
+.cmp-sel-half.sel-a-side{background:#EAF1FE;border-right-color:#D6DEEA;}
+.cmp-sel-half.sel-b-side{background:#F2ECFE;}
+.cmp-sel-label{color:#4B5563;}
+.cmp-sel-btn{background:rgba(15,23,42,.06);color:#374151;border-color:rgba(148,163,184,.35);}
+.cmp-sel-btn:hover{background:rgba(15,23,42,.12);color:#111827;}
+.cmp-guide{background:#FFFFFF;color:#334155;border:1px solid #D6DEEA;}
+.cmp-guide-title{color:#475569;}
+.cmp-tldr{background:#EEF4FF;border-left-color:#3B82F6;color:#1F2937;}
+.cmp-tldr-header{color:#475569;}
+.cmp-tldr-col-h{color:#111827;}
+.cmp-tldr-text{color:#334155;}
+.cmp-tldr-tension{background:rgba(59,130,246,.09);border-color:rgba(59,130,246,.28);}
+.cmp-tldr-tension-body{color:#1F2937;}
+.cmp-layer-title{color:#FFFFFF;border-color:#D6DEEA;}
+.cmp-layer-title span{color:#64748B;}
+.cmp-layer-grid{border-color:#D6DEEA;}
+.cmp-col:first-child{border-right-color:#D6DEEA;}
+.cmp-col-header{color:#1F2937;border-bottom-color:#D6DEEA;}
+.cmp-node-row:hover{background:rgba(15,23,42,.08)!important;border-color:rgba(100,116,139,.35);}
+.cmp-node-row.owns{background:#F1F5F9;border-color:#D4DEE9;}
+.cmp-node-row.facilitates{background:#F1F5F9;border-color:#D4DEE9;}
+.cmp-node-row.uses{opacity:.82;}
+.cmp-node-row.na{opacity:.52;}
+.cmp-node-name{color:#111827;}
+.cmp-node-role{color:#334155;}
+.cmp-badge.owns{background:#E2E8F0;color:#334155;}
+.cmp-badge.facilitates{background:#E2E8F0;color:#334155;}
+.cmp-badge.uses{background:#E2E8F0;color:#334155;}
+.cmp-badge.na{background:#E5E7EB;color:#6B7280;}
+
+.cmp-detail-panel{background:#F8FAFC;border-left:1px solid #D6DEEA;}
+.cmp-detail-close{color:#475569;}
+.cmp-detail-close:hover{color:#111827;}
+.cmp-detail-title{color:#0F172A;}
+.cmp-detail-layer{color:#64748B;}
+.cmp-detail-section h4{color:#475569;}
+.cmp-detail-text{color:#1F2937;}
+.cmp-bm-detail-row.owns{background:#EEF2F7;border-color:#CAD5E4;}
+.cmp-bm-detail-row.facilitates{background:#EEF2F7;border-color:#CAD5E4;}
+.cmp-bm-detail-row.uses{background:#EEF2F7;opacity:1;border-color:#CAD5E4;}
+.cmp-bm-detail-row.na{opacity:.66;}
+.cmp-bm-label2{color:#111827;}
+.cmp-bm-role2{color:#334155;}
+
+/* Keep contrast high on dedicated compare page too. */
+#page-compare .cmp-detail-title{color:#0F172A!important;}
+#page-compare .cmp-detail-layer{color:#64748B!important;}
+#page-compare .cmp-detail-section h4{color:#475569!important;}
+#page-compare .cmp-detail-text{color:#1F2937!important;}
+#page-compare .cmp-bm-role2{color:#334155!important;}
 
 </style>
 </head>
@@ -3358,7 +3417,7 @@ function renderCompare() {
 
     const grid = document.createElement('div');
     grid.className = 'cmp-layer-grid';
-    grid.style.background = layer.color + 'CC';
+    grid.style.background = '#F8FAFC';
 
     [cmpA, cmpB].forEach((code, idx) => {
       const bm = BM[code];
@@ -3380,7 +3439,7 @@ function renderCompare() {
 
         const row = document.createElement('div');
         row.className = 'cmp-node-row ' + rel;
-        if (selectedCmpNode === nodeId) row.style.background = 'rgba(255,255,255,.12)';
+        if (selectedCmpNode === nodeId) row.style.background = '#E8EEF5';
 
         const badgeMap = {
           owns:'<span class="cmp-badge owns">▲ owns</span>',
@@ -3449,7 +3508,7 @@ function showCmpDetail(nodeId) {
   document.querySelectorAll('.cmp-node-row').forEach(r => r.style.background = '');
   document.querySelectorAll('.cmp-node-row').forEach(r => {
     if (r.querySelector('.cmp-node-name') && r.querySelector('.cmp-node-name').textContent.startsWith(data.title.slice(0,20))) {
-      r.style.background = 'rgba(255,255,255,.1)';
+      r.style.background = '#E8EEF5';
     }
   });
 }
