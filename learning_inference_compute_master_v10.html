@@ -835,7 +835,11 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
         Params &nbsp;&asymp;&nbsp;
         <span style="color:var(--blue);">L</span>
         &nbsp;&times;&nbsp;
-        <span style="color:var(--amber);">12</span>
+        <span style="color:var(--muted);">(</span>
+        <span style="color:var(--purple);">4</span>
+        <span style="color:var(--muted);">+</span>
+        <span style="color:var(--amber);">8</span>
+        <span style="color:var(--muted);">)</span>
         &nbsp;&times;&nbsp;
         <span style="color:var(--purple);">d</span><sup style="font-size:11px;">2</sup>
         &nbsp;&nbsp;+&nbsp;&nbsp;
@@ -849,8 +853,8 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
           <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:var(--blue);margin-bottom:2px;">L = layers</div>
           <div style="font-size:11px;color:var(--muted);">Llama 70B: <strong style="color:var(--ink);">80</strong></div>
         </div>
-        <div style="background:rgba(232,160,32,.12);border:1px solid rgba(232,160,32,.35);border-radius:5px;padding:6px 10px;">
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:var(--amber);margin-bottom:2px;">12 = Attention (4) + FFN (~8)</div>
+        <div style="background:linear-gradient(90deg,rgba(138,110,232,.12),rgba(232,160,32,.12));border:1px solid rgba(232,160,32,.35);border-radius:5px;padding:6px 10px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;margin-bottom:2px;"><span style="color:var(--purple);">4</span> <span style="color:var(--muted);">attention</span> <span style="color:var(--muted);">+</span> <span style="color:var(--amber);">~8</span> <span style="color:var(--muted);">FFN</span></div>
           <div style="font-size:11px;color:var(--muted);">4d² per layer for connecting words + ~8d² per layer for fact lookup</div>
         </div>
         <div style="background:rgba(138,110,232,.12);border:1px solid rgba(138,110,232,.35);border-radius:5px;padding:6px 10px;">
@@ -866,7 +870,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
       <div style="background:rgba(255,255,255,.03);border-radius:6px;padding:10px 14px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;line-height:2.1;">
         <div style="display:grid;grid-template-columns:auto auto 1fr;gap:0 14px;align-items:baseline;">
           <span style="color:var(--muted);">Layer block:</span>
-          <span style="color:var(--muted);">4&times;8192² + 8&times;8192² = 12 &times; 67,108,864 =</span>
+          <span style="color:var(--muted);"><span style="color:var(--purple);">4</span>&times;8192² + <span style="color:var(--amber);">8</span>&times;8192² = 12 &times; 67,108,864 =</span>
           <span style="color:var(--amber); font-weight:600;">805M params/layer</span>
           <span style="color:var(--muted);">&times; 80 layers:</span>
           <span style="color:var(--muted);">805M &times; 80 =</span>
@@ -921,12 +925,30 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
         <div style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:10px;">
           Every weight <em>matrix</em> connects one d-dimensional vector to another &mdash; that's d rows × d columns = d² numbers. Double d, and each matrix has 4× the entries. This is why a 70B model isn't 10× bigger than a 7B model &mdash; it's only 2× wider (d: 4,096 → 8,192), but 4× more params per matrix × more layers ≈ 10× total.
         </div>
-        <!-- d² chart: bars showing relative matrix size -->
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);margin-bottom:6px;">Relative weight matrix size (d²) across model sizes:</div>
-        <div style="display:flex;flex-direction:column;gap:5px;" id="d2-chart">
-          <!-- filled by JS below -->
-        </div>
-        <canvas id="d2-canvas" width="340" height="110" style="display:block;width:100%;margin-top:10px;border-radius:5px;"></canvas>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);margin-bottom:8px;">Relative weight matrix size (d²) across model sizes:</div>
+        <svg viewBox="0 0 420 170" style="display:block;width:100%;height:auto;border-radius:6px;background:rgba(255,255,255,.03);overflow:visible;">
+          <line x1="118" y1="24" x2="118" y2="150" stroke="rgba(255,255,255,.08)" stroke-width="1" />
+          <line x1="118" y1="150" x2="394" y2="150" stroke="rgba(255,255,255,.08)" stroke-width="1" />
+
+          <text x="110" y="43" text-anchor="end" fill="rgba(200,200,200,.65)" font-family="IBM Plex Mono, monospace" font-size="12">GPT-2 (117M)</text>
+          <rect x="118" y="28" width="10" height="18" rx="3" fill="rgba(138,110,232,.55)" />
+          <text x="136" y="41" fill="rgba(138,110,232,.95)" font-family="IBM Plex Mono, monospace" font-size="12" font-weight="700">d² = 0.6M</text>
+
+          <text x="110" y="76" text-anchor="end" fill="rgba(200,200,200,.7)" font-family="IBM Plex Mono, monospace" font-size="12">Llama 7B</text>
+          <rect x="118" y="61" width="95" height="18" rx="3" fill="rgba(74,144,232,.8)" />
+          <text x="221" y="74" fill="rgba(74,144,232,.95)" font-family="IBM Plex Mono, monospace" font-size="12" font-weight="700">d² = 16.8M</text>
+
+          <text x="110" y="109" text-anchor="end" fill="rgba(255,255,255,.86)" font-family="IBM Plex Mono, monospace" font-size="12">Llama 70B</text>
+          <rect x="118" y="94" width="191" height="18" rx="3" fill="rgba(232,160,32,.92)" />
+          <text x="317" y="107" fill="rgba(232,160,32,1)" font-family="IBM Plex Mono, monospace" font-size="12" font-weight="700">d² = 67.1M</text>
+
+          <text x="110" y="142" text-anchor="end" fill="rgba(200,200,200,.72)" font-family="IBM Plex Mono, monospace" font-size="12">GPT-4 est.</text>
+          <rect x="118" y="127" width="276" height="18" rx="3" fill="rgba(48,200,112,.92)" />
+          <text x="402" y="140" text-anchor="end" fill="rgba(48,200,112,1)" font-family="IBM Plex Mono, monospace" font-size="12" font-weight="700">d² = 151.0M</text>
+
+          <text x="118" y="164" fill="rgba(200,200,200,.35)" font-family="IBM Plex Mono, monospace" font-size="11">matrix width increases linearly</text>
+          <text x="286" y="164" fill="rgba(232,160,32,.78)" font-family="IBM Plex Mono, monospace" font-size="11" font-weight="700">but area grows as d²</text>
+        </svg>
         <div style="font-size:10.5px;color:var(--muted);margin-top:7px;line-height:1.55;">
           The d² curve is what makes the difference between a 7B and 70B model so dramatic &mdash; not just 10× more neurons, but 10× more connections per layer because each matrix grows in two dimensions simultaneously.
         </div>
@@ -977,13 +999,93 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
       </div>
     </div>
 
-    <!-- ④ INTERACTIVE CALCULATOR -->
+    <!-- ④ SIZE INTUITION -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;">
+      <div style="background:rgba(74,144,232,.08);border:1px solid rgba(74,144,232,.25);border-radius:8px;padding:14px 16px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--blue);margin-bottom:8px;text-transform:uppercase;letter-spacing:.09em;">From parameter count to GPU memory</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.75;margin-bottom:10px;">One parameter = one decimal number. To store it you need memory. The format (precision) determines how many bytes each number takes:</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--ink);background:rgba(255,255,255,.04);border-radius:5px;padding:10px 12px;line-height:2.1;">
+          70,000,000,000 params<br>
+          &times; 2 bytes per param (BF16)<br>
+          &divide; 1,000,000,000<br>
+          <span style="border-top:1px solid var(--border);display:block;padding-top:5px;color:var(--green);">= <strong>~140 GB</strong> minimum VRAM</span>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.6;">For context: an RTX 4090 gaming GPU has 24 GB. You&rsquo;d need 6 of them just to load Llama 70B, before serving a single user.</div>
+      </div>
+
+      <div style="background:rgba(232,160,32,.06);border:1px solid rgba(232,160,32,.25);border-radius:8px;padding:14px 16px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--amber);margin-bottom:8px;text-transform:uppercase;letter-spacing:.09em;">Quantization &mdash; trading precision for size</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:10px;">Numbers can be stored at different precisions. <strong style="color:var(--ink);">FP</strong> = Floating Point (scientific notation, flexible range). <strong style="color:var(--ink);">BF</strong> = Brain Float (same range as FP32, fewer fraction digits). <strong style="color:var(--ink);">INT</strong> = Integer (no decimals, fixed range).</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:5px;padding:7px 9px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
+              <div>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink);font-weight:600;">FP32</span>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);margin-left:6px;">32-bit float &middot; 4 bytes/param</span>
+              </div>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);">280 GB</span>
+            </div>
+            <div style="background:#1a2030;border-radius:2px;height:8px;overflow:hidden;margin-bottom:3px;"><div style="width:100%;height:100%;background:rgba(74,144,232,.6);border-radius:2px;"></div></div>
+            <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);">
+              <span>1 sign + 8 exponent + 23 fraction bits</span>
+              <span style="color:var(--blue);">Baseline accuracy</span>
+            </div>
+          </div>
+          <div style="background:rgba(48,200,112,.06);border:1.5px solid rgba(48,200,112,.4);border-radius:5px;padding:7px 9px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
+              <div>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--green);font-weight:600;">BF16 &#10003;</span>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);margin-left:6px;">Brain float &middot; 2 bytes/param</span>
+              </div>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--green);">140 GB</span>
+            </div>
+            <div style="background:#1a2030;border-radius:2px;height:8px;overflow:hidden;margin-bottom:3px;"><div style="width:50%;height:100%;background:var(--green);border-radius:2px;"></div></div>
+            <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);">
+              <span>1 sign + 8 exponent + 7 fraction bits</span>
+              <span style="color:var(--green);">~99.9% of FP32 quality</span>
+            </div>
+            <div style="font-size:10px;color:var(--green);margin-top:3px;">Production standard &mdash; same numeric range as FP32, fewer decimals. Negligible quality loss.</div>
+          </div>
+          <div style="background:rgba(232,160,32,.07);border:1px solid rgba(232,160,32,.3);border-radius:5px;padding:7px 9px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
+              <div>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--amber);font-weight:600;">FP8 / INT8</span>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);margin-left:6px;">8-bit &middot; 1 byte/param</span>
+              </div>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--amber);">70 GB</span>
+            </div>
+            <div style="background:#1a2030;border-radius:2px;height:8px;overflow:hidden;margin-bottom:3px;"><div style="width:25%;height:100%;background:var(--amber);border-radius:2px;"></div></div>
+            <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);">
+              <span>256 possible values only (vs 4 billion in FP32)</span>
+              <span style="color:var(--amber);">~98&ndash;99% of FP32 quality</span>
+            </div>
+            <div style="font-size:10px;color:var(--muted);margin-top:3px;">Frontier labs use this in production. Fits a single 8-GPU node. Small logic/math degradation.</div>
+          </div>
+          <div style="background:rgba(224,72,72,.07);border:1px solid rgba(224,72,72,.3);border-radius:5px;padding:7px 9px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
+              <div>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--red);font-weight:600;">INT4</span>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);margin-left:6px;">4-bit integer &middot; 0.5 bytes/param</span>
+              </div>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--red);">35 GB</span>
+            </div>
+            <div style="background:#1a2030;border-radius:2px;height:8px;overflow:hidden;margin-bottom:3px;"><div style="width:12.5%;height:100%;background:var(--red);border-radius:2px;"></div></div>
+            <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);">
+              <span>Only 16 possible values (0&ndash;15)</span>
+              <span style="color:var(--red);">~92&ndash;95% of FP32 quality</span>
+            </div>
+            <div style="font-size:10px;color:var(--red);margin-top:3px;line-height:1.5;"><strong>Edge performance degrades first:</strong> complex reasoning, multi-step math, code generation. The last 5&ndash;8% of quality is what makes frontier models useful for hard tasks.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ⑤ INTERACTIVE CALCULATOR -->
     <div style="background:rgba(48,200,112,.05);border:1.5px solid rgba(48,200,112,.3);border-radius:9px;padding:16px 18px;">
       <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:.12em;margin-bottom:4px;">Interactive: Build Your Own Model</div>
       <div style="font-size:11.5px;color:var(--muted);margin-bottom:14px;">Adjust d, L, and quantization to see how parameter count and memory scale. Notice how d has the most dramatic effect.</div>
 
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:14px;">
-        <!-- d slider -->
         <div>
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
             <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--purple);">Hidden dimension (d)</span>
@@ -996,7 +1098,6 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
             <span style="text-align:right;">8,192<br><span style="color:var(--amber);">70B</span></span>
           </div>
         </div>
-        <!-- L slider -->
         <div>
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
             <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--blue);">Layers (L)</span>
@@ -1009,7 +1110,6 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
             <span style="text-align:right;">80<br><span style="color:var(--blue);">70B</span></span>
           </div>
         </div>
-        <!-- Quant selector -->
         <div>
           <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--amber);margin-bottom:7px;">Precision</div>
           <div style="display:flex;flex-direction:column;gap:4px;" id="ms-quant-btns">
@@ -1021,7 +1121,6 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
         </div>
       </div>
 
-      <!-- Live results -->
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;">
         <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:10px;text-align:center;">
           <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);margin-bottom:4px;">PARAMETERS</div>
@@ -1041,15 +1140,12 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
         </div>
       </div>
 
-      <!-- d vs params chart -->
       <canvas id="ms-chart" width="900" height="100" style="display:block;width:100%;border-radius:5px;margin-bottom:10px;"></canvas>
 
-      <!-- What determines optimal d/L note -->
       <div style="background:rgba(255,255,255,.03);border-left:3px solid var(--amber);border-radius:0 5px 5px 0;padding:9px 12px;font-size:11.5px;color:var(--muted);line-height:1.7;">
         <strong style="color:var(--ink);">What determines the optimal d and L?</strong> Scaling law research (Kaplan et al. 2020, Hoffmann et al. 2022 "Chinchilla") shows that for a given compute budget C, the optimal model has roughly d ∝ C<sup>⅓</sup> and L ∝ C<sup>⅓</sup>, meaning width and depth should scale together. Adding more layers with a fixed small d gives diminishing returns; similarly, a very wide but shallow model underperforms a balanced one. In practice, researchers also constrain d to powers of 64 or 128 for GPU tensor-core efficiency.
       </div>
     </div>
-  
 
   <script>
 var _msQuant = 2; // bytes per param
@@ -1178,138 +1274,10 @@ function drawMsChart(curD, curL, bytesPerParam){
 </script>
 
 <script>
-  (function(){
-    // d² static bar chart
-    var d2data = [
-      {model:'GPT-2 (117M)', d:768,  color:'rgba(138,110,232,.5)'},
-      {model:'Llama 7B',     d:4096, color:'rgba(74,144,232,.6)'},
-      {model:'Llama 70B',    d:8192, color:'rgba(232,160,32,.8)'},
-      {model:'GPT-4 est.',   d:12288,color:'rgba(48,200,112,.7)'},
-    ];
-    var c = document.getElementById('d2-canvas');
-    if(!c) return;
-    var dpr=window.devicePixelRatio||1;
-    c.width=Math.round(340*dpr); c.height=Math.round(110*dpr);
-    c.style.width='100%'; c.style.height='auto';
-    var ctx=c.getContext('2d'); ctx.scale(dpr,dpr);
-    var cw=340,ch=110;
-    ctx.fillStyle='rgba(255,255,255,.03)'; ctx.fillRect(0,0,cw,ch);
-    var maxD2 = 12288*12288;
-    var bh=(ch-24)/d2data.length;
-    d2data.forEach(function(row,i){
-      var d2=row.d*row.d;
-      var bw=Math.max(4,(d2/maxD2)*(cw-130));
-      var y=12+i*bh;
-      // bar
-      ctx.fillStyle=row.color;
-      ctx.fillRect(100,y,bw,bh-4);
-      // label left
-      ctx.fillStyle='rgba(200,200,200,.65)';
-      ctx.font='8.5px "IBM Plex Mono",monospace';
-      ctx.textAlign='right'; ctx.textBaseline='middle';
-      ctx.fillText(row.model, 96, y+bh/2-2);
-      // d² value right
-      ctx.fillStyle=row.color;
-      ctx.textAlign='left';
-      ctx.fillText('d²='+(d2/1e6).toFixed(1)+'M', 104+bw, y+bh/2-2);
-    });
-    // x axis label
-    ctx.fillStyle='rgba(200,200,200,.3)'; ctx.font='7.5px "IBM Plex Mono",monospace';
-    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
-    ctx.fillText('matrix size →  grows as d² (quadratic)', 100, ch-2);
-
-    // Init model size calc
-    calcModelSize();
-    drawMsChart(8192,80,2);
-  })();
+  calcModelSize();
+  drawMsChart(8192,80,2);
   </script>
 </div>
-
-  <!-- PART 5: SIZE INTUITION -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;">
-    <div style="background:rgba(74,144,232,.08);border:1px solid rgba(74,144,232,.25);border-radius:8px;padding:14px 16px;">
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--blue);margin-bottom:8px;text-transform:uppercase;letter-spacing:.09em;">From parameter count to GPU memory</div>
-      <div style="font-size:12px;color:var(--muted);line-height:1.75;margin-bottom:10px;">One parameter = one decimal number. To store it you need memory. The format (precision) determines how many bytes each number takes:</div>
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--ink);background:rgba(255,255,255,.04);border-radius:5px;padding:10px 12px;line-height:2.1;">
-        70,000,000,000 params<br>
-        &times; 2 bytes per param (BF16)<br>
-        &divide; 1,000,000,000<br>
-        <span style="border-top:1px solid var(--border);display:block;padding-top:5px;color:var(--green);">= <strong>~140 GB</strong> minimum VRAM</span>
-      </div>
-      <div style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.6;">For context: an RTX 4090 gaming GPU has 24 GB. You&rsquo;d need 6 of them just to load Llama 70B, before serving a single user.</div>
-    </div>
-
-    <!-- PART 6: QUANTIZATION -->
-    <div style="background:rgba(232,160,32,.06);border:1px solid rgba(232,160,32,.25);border-radius:8px;padding:14px 16px;">
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--amber);margin-bottom:8px;text-transform:uppercase;letter-spacing:.09em;">Quantization &mdash; trading precision for size</div>
-      <div style="font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:10px;">Numbers can be stored at different precisions. <strong style="color:var(--ink);">FP</strong> = Floating Point (scientific notation, flexible range). <strong style="color:var(--ink);">BF</strong> = Brain Float (same range as FP32, fewer fraction digits). <strong style="color:var(--ink);">INT</strong> = Integer (no decimals, fixed range).</div>
-      <div style="display:flex;flex-direction:column;gap:6px;">
-        <!-- FP32 -->
-        <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:5px;padding:7px 9px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
-            <div>
-              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink);font-weight:600;">FP32</span>
-              <span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);margin-left:6px;">32-bit float &middot; 4 bytes/param</span>
-            </div>
-            <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);">280 GB</span>
-          </div>
-          <div style="background:#1a2030;border-radius:2px;height:8px;overflow:hidden;margin-bottom:3px;"><div style="width:100%;height:100%;background:rgba(74,144,232,.6);border-radius:2px;"></div></div>
-          <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);">
-            <span>1 sign + 8 exponent + 23 fraction bits</span>
-            <span style="color:var(--blue);">Baseline accuracy</span>
-          </div>
-        </div>
-        <!-- BF16 -->
-        <div style="background:rgba(48,200,112,.06);border:1.5px solid rgba(48,200,112,.4);border-radius:5px;padding:7px 9px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
-            <div>
-              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--green);font-weight:600;">BF16 &#10003;</span>
-              <span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);margin-left:6px;">Brain float &middot; 2 bytes/param</span>
-            </div>
-            <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--green);">140 GB</span>
-          </div>
-          <div style="background:#1a2030;border-radius:2px;height:8px;overflow:hidden;margin-bottom:3px;"><div style="width:50%;height:100%;background:var(--green);border-radius:2px;"></div></div>
-          <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);">
-            <span>1 sign + 8 exponent + 7 fraction bits</span>
-            <span style="color:var(--green);">~99.9% of FP32 quality</span>
-          </div>
-          <div style="font-size:10px;color:var(--green);margin-top:3px;">Production standard &mdash; same numeric range as FP32, fewer decimals. Negligible quality loss.</div>
-        </div>
-        <!-- FP8 -->
-        <div style="background:rgba(232,160,32,.07);border:1px solid rgba(232,160,32,.3);border-radius:5px;padding:7px 9px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
-            <div>
-              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--amber);font-weight:600;">FP8 / INT8</span>
-              <span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);margin-left:6px;">8-bit &middot; 1 byte/param</span>
-            </div>
-            <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--amber);">70 GB</span>
-          </div>
-          <div style="background:#1a2030;border-radius:2px;height:8px;overflow:hidden;margin-bottom:3px;"><div style="width:25%;height:100%;background:var(--amber);border-radius:2px;"></div></div>
-          <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);">
-            <span>256 possible values only (vs 4 billion in FP32)</span>
-            <span style="color:var(--amber);">~98&ndash;99% of FP32 quality</span>
-          </div>
-          <div style="font-size:10px;color:var(--muted);margin-top:3px;">Frontier labs use this in production. Fits a single 8-GPU node. Small logic/math degradation.</div>
-        </div>
-        <!-- INT4 -->
-        <div style="background:rgba(224,72,72,.07);border:1px solid rgba(224,72,72,.3);border-radius:5px;padding:7px 9px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
-            <div>
-              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--red);font-weight:600;">INT4</span>
-              <span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);margin-left:6px;">4-bit integer &middot; 0.5 bytes/param</span>
-            </div>
-            <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--red);">35 GB</span>
-          </div>
-          <div style="background:#1a2030;border-radius:2px;height:8px;overflow:hidden;margin-bottom:3px;"><div style="width:12.5%;height:100%;background:var(--red);border-radius:2px;"></div></div>
-          <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);">
-            <span>Only 16 possible values (0&ndash;15)</span>
-            <span style="color:var(--red);">~92&ndash;95% of FP32 quality</span>
-          </div>
-          <div style="font-size:10px;color:var(--red);margin-top:3px;line-height:1.5;"><strong>Edge performance degrades first:</strong> complex reasoning, multi-step math, code generation. The last 5&ndash;8% of quality is what makes frontier models useful for hard tasks.</div>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- X12 DETAIL (collapsible) -->
   <details style="margin-top:0;">

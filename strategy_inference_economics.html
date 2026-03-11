@@ -1677,8 +1677,8 @@ footer {
 <footer>
   <div class="footer-note">
     <strong style="color:var(--text2)">Methodology & Data Sources</strong><br>
-    GPU specs sourced from NVIDIA product pages and third-party benchmarks. <span data-tip="spot_price" class="term">Spot prices</span> are representative estimates
-    from CoreWeave, Lambda Labs, and AWS (H100/A100, 2024–2025) and change frequently. Inference calculations use
+    GPU specs sourced from NVIDIA product pages and third-party benchmarks. <span data-tip="spot_price" class="term">Hourly prices</span> use
+    the average listed market price from computeprices.com for the matching GPU SKU. Inference calculations use
     the roofline model: decode is modeled as memory-bandwidth-bound (reading all weights per token);
     prefill is modeled as compute-bound. All-reduce latency uses ring-allreduce formulation.
     Actual performance varies with batch scheduling, <span data-tip="kv_cache" class="term">KV cache</span> management (vLLM PagedAttention, etc.),
@@ -1706,7 +1706,7 @@ const GPUS = {
   'V100 SXM2 32GB': {
     vram: 32, bandwidth: 900, tflops: 112, tdp: 300,
     interconnect: 'NVLink 2.0', ic_bw: 300, ic_lat: 2.5, ic_type: 'nvlink',
-    price_spot: 0.60, gen: 'Volta (2017)',
+    price_spot: 2.96, gen: 'Volta (2017)',
     chassis_u: 3, gpu_per_chassis: 8,      // DGX-1: 8× V100 in 3U
     ecc: true, datacenter: true, sustained_eff: 0.94,
     color: '#7c3aed',
@@ -1715,7 +1715,7 @@ const GPUS = {
   'A100 PCIe 40GB': {
     vram: 40, bandwidth: 1555, tflops: 312, tdp: 250,
     interconnect: 'PCIe 4.0', ic_bw: 32, ic_lat: 6, ic_type: 'pcie',
-    price_spot: 0.90, gen: 'Ampere (2020)',
+    price_spot: 2.65, gen: 'Ampere (2020)',
     chassis_u: 4, gpu_per_chassis: 4,
     ecc: true, datacenter: true, sustained_eff: 0.95,
     color: '#0284c7',
@@ -1724,7 +1724,7 @@ const GPUS = {
   'A100 SXM4 80GB': {
     vram: 80, bandwidth: 2000, tflops: 312, tdp: 400,
     interconnect: 'NVLink 3.0', ic_bw: 600, ic_lat: 1.2, ic_type: 'nvlink',
-    price_spot: 1.80, gen: 'Ampere (2020)',
+    price_spot: 1.87, gen: 'Ampere (2020)',
     chassis_u: 6, gpu_per_chassis: 8,      // DGX A100: 8× A100 in 6U
     ecc: true, datacenter: true, sustained_eff: 0.96,
     color: '#06b6d4',
@@ -1733,7 +1733,7 @@ const GPUS = {
   'A40': {
     vram: 48, bandwidth: 696, tflops: 149, tdp: 300,
     interconnect: 'PCIe 4.0', ic_bw: 32, ic_lat: 6, ic_type: 'pcie',
-    price_spot: 0.65, gen: 'Ampere (2021)',
+    price_spot: 1.32, gen: 'Ampere (2021)',
     chassis_u: 2, gpu_per_chassis: 4,
     ecc: true, datacenter: true, sustained_eff: 0.94,
     color: '#2dd4bf',
@@ -1742,7 +1742,7 @@ const GPUS = {
   'RTX 4090': {
     vram: 24, bandwidth: 1008, tflops: 165, tdp: 450,
     interconnect: 'PCIe 4.0', ic_bw: 32, ic_lat: 7, ic_type: 'pcie',
-    price_spot: 0.30, gen: 'Ada Lovelace (2022)',
+    price_spot: 0.29, gen: 'Ada Lovelace (2022)',
     chassis_u: 4, gpu_per_chassis: 4,      // 4× per 4U custom server (with spacing for cooling)
     ecc: false, datacenter: false, sustained_eff: 0.76,
     color: '#16a34a',
@@ -1751,7 +1751,7 @@ const GPUS = {
   'H100 PCIe': {
     vram: 80, bandwidth: 2000, tflops: 756, tdp: 350,
     interconnect: 'PCIe 5.0', ic_bw: 64, ic_lat: 5, ic_type: 'pcie',
-    price_spot: 2.00, gen: 'Hopper (2023)',
+    price_spot: 3.33, gen: 'Hopper (2023)',
     chassis_u: 4, gpu_per_chassis: 4,      // HGX: 4× H100 PCIe per 4U server
     ecc: true, datacenter: true, sustained_eff: 0.96,
     color: '#d97706',
@@ -1760,7 +1760,7 @@ const GPUS = {
   'H100 SXM5': {
     vram: 80, bandwidth: 3350, tflops: 989, tdp: 700,
     interconnect: 'NVLink 4.0', ic_bw: 900, ic_lat: 0.8, ic_type: 'nvlink',
-    price_spot: 2.50, gen: 'Hopper (2023)',
+    price_spot: 2.99, gen: 'Hopper (2023)',
     chassis_u: 10, gpu_per_chassis: 8,     // DGX H100: 8× H100 in 10U chassis
     ecc: true, datacenter: true, sustained_eff: 0.97,
     color: '#f59e0b',
@@ -1769,7 +1769,7 @@ const GPUS = {
   'H200 SXM5': {
     vram: 141, bandwidth: 4800, tflops: 1979, tdp: 700,
     interconnect: 'NVLink 4.0', ic_bw: 900, ic_lat: 0.8, ic_type: 'nvlink',
-    price_spot: 3.80, gen: 'Hopper H2 (2024)',
+    price_spot: 4.23, gen: 'Hopper H2 (2024)',
     chassis_u: 10, gpu_per_chassis: 8,
     ecc: true, datacenter: true, sustained_eff: 0.97,
     color: '#fb923c',
@@ -1778,7 +1778,7 @@ const GPUS = {
   'B200 SXM': {
     vram: 192, bandwidth: 8000, tflops: 4500, tdp: 1000,
     interconnect: 'NVLink 5.0', ic_bw: 1800, ic_lat: 0.5, ic_type: 'nvlink',
-    price_spot: 7.00, gen: 'Blackwell (2025)',
+    price_spot: 3.94, gen: 'Blackwell (2025)',
     chassis_u: 10, gpu_per_chassis: 8,
     ecc: true, datacenter: true, sustained_eff: 0.97,
     color: '#e879f9',
@@ -2075,11 +2075,11 @@ const GLOSSARY = {
       NCCL automatically selects the best communication topology based on the hardware — NVLink, InfiniBand, or PCIe. However, on PCIe-only systems (consumer GPUs), NCCL must route all communication through system memory and the CPU PCIe controller, resulting in significantly lower effective bandwidth than on NVLink-connected systems.`
   },
   spot_price: {
-    title: 'Spot vs. On-Demand vs. Reserved Pricing',
-    body: `<strong>Spot/preemptible:</strong> Cheapest (shown here). Can be interrupted when the cloud provider needs the capacity back. Up to 70% cheaper than on-demand. Best for batch jobs that can checkpoint and resume.<br><br>
-      <strong>On-demand:</strong> Pay-as-you-go with no commitment. ~2× spot price. Guaranteed availability while you're running.<br><br>
-      <strong>Reserved (1-year):</strong> Commit to paying for a full year. 30–50% discount vs on-demand. Best for consistent baseline production workloads.<br><br>
-      <strong>Important:</strong> The spot prices shown ($0.30/hr RTX 4090, $2.50/hr H100) are from DePIN networks (Vast.ai, RunPod) and major clouds respectively. RTX 4090s are NOT available on AWS/Azure/GCP — only from smaller providers with weaker SLAs.`
+    title: 'Average GPU Hourly Price',
+    body: `The hourly prices shown in this tool use the <strong>average listed market price</strong> for each GPU from computeprices.com.<br><br>
+      These are not guaranteed contract rates. Real quotes still vary by provider, region, uptime guarantees, minimum commitment, storage, networking, and whether the instance is interruptible.<br><br>
+      <strong>Examples used here:</strong> RTX 4090 = $0.29/hr, H100 = $2.99/hr, A100 SXM = $1.87/hr, V100 = $2.96/hr.<br><br>
+      <strong>Important:</strong> use these averages for strategic comparison, then validate with current provider quotes before making a deployment decision.`
   }
 };
 
