@@ -398,50 +398,37 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
     <!-- TOKEN VECTOR EVOLUTION -->
     <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:14px;">
       <!-- Vector at each stage — shown as mini bar charts -->
-      <div style="background:var(--bg);border:1px solid rgba(48,200,112,.25);border-radius:7px;padding:10px 12px;">
+      <div style="background:var(--bg);border:1px solid rgba(48,200,112,.25);border-radius:7px;padding:10px 12px;display:flex;flex-direction:column;justify-content:flex-start;align-items:flex-start;">
         <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--green);margin-bottom:6px;text-transform:uppercase;">Input &mdash; &ldquo;France&rdquo;</div>
         <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);margin-bottom:5px;">Raw embedding lookup</div>
         <div id="vec-in" style="display:flex;gap:1px;align-items:flex-end;height:36px;"></div>
         <div style="font-family:'IBM Plex Mono',monospace;font-size:7.5px;color:var(--muted);margin-top:5px;line-height:1.5;">8,192 numbers, each a coordinate in meaning-space. Nearby tokens like &ldquo;Germany&rdquo; have similar vectors.</div>
       </div>
-      <div style="background:var(--bg);border:1px solid rgba(138,110,232,.25);border-radius:7px;padding:10px 12px;">
+      <div style="background:var(--bg);border:1px solid rgba(138,110,232,.25);border-radius:7px;padding:10px 12px;display:flex;flex-direction:column;justify-content:flex-start;align-items:flex-start;">
         <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--purple);margin-bottom:6px;text-transform:uppercase;">After L1&ndash;L20</div>
         <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);margin-bottom:5px;">Grammar &amp; position absorbed</div>
         <div id="vec-l20" style="display:flex;gap:1px;align-items:flex-end;height:36px;"></div>
         <div style="font-family:'IBM Plex Mono',monospace;font-size:7.5px;color:var(--muted);margin-top:5px;line-height:1.5;">The vector has been adjusted to reflect where &ldquo;France&rdquo; sits in the sentence — subject, following &ldquo;of&rdquo;.</div>
       </div>
-      <div style="background:var(--bg);border:1px solid rgba(74,144,232,.25);border-radius:7px;padding:10px 12px;">
+      <div style="background:var(--bg);border:1px solid rgba(74,144,232,.25);border-radius:7px;padding:10px 12px;display:flex;flex-direction:column;justify-content:flex-start;align-items:flex-start;">
         <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--blue);margin-bottom:6px;text-transform:uppercase;">After L40&ndash;L60</div>
         <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);margin-bottom:5px;">World knowledge integrated</div>
         <div id="vec-l60" style="display:flex;gap:1px;align-items:flex-end;height:36px;"></div>
         <div style="font-family:'IBM Plex Mono',monospace;font-size:7.5px;color:var(--muted);margin-top:5px;line-height:1.5;">Neurons encoding &ldquo;European country,&rdquo; &ldquo;has a capital,&rdquo; &ldquo;capital = Paris&rdquo; fire strongly.</div>
       </div>
-      <div style="background:var(--bg);border:1px solid rgba(232,160,32,.25);border-radius:7px;padding:10px 12px;">
+      <div style="background:var(--bg);border:1px solid rgba(232,160,32,.25);border-radius:7px;padding:10px 12px;display:flex;flex-direction:column;justify-content:flex-start;align-items:flex-start;">
         <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--amber);margin-bottom:6px;text-transform:uppercase;">After L80</div>
         <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);margin-bottom:5px;">Final answer encoded</div>
         <div id="vec-l80" style="display:flex;gap:1px;align-items:flex-end;height:36px;"></div>
         <div style="font-family:'IBM Plex Mono',monospace;font-size:7.5px;color:var(--muted);margin-top:5px;line-height:1.5;">The vector now strongly points toward &ldquo;Paris&rdquo; in output space. One projection away from the answer.</div>
       </div>
       <!-- KV Cache -->
-      <div style="background:var(--bg);border:1.5px solid rgba(26,191,208,.4);border-radius:7px;padding:10px 12px;">
+      <div style="background:var(--bg);border:1.5px solid rgba(26,191,208,.4);border-radius:7px;padding:10px 12px;display:flex;flex-direction:column;justify-content:flex-start;align-items:flex-start;">
         <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--cyan);margin-bottom:6px;text-transform:uppercase;"><span class="tip" data-tip="KV Cache: the stored Key and Value vectors for prior tokens. They stay in GPU memory so each new token can look back without recomputing the whole history. It grows with conversation length and is a core memory constraint.">KV Cache</span> (GPU HBM)</div>
         <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);margin-bottom:6px;">Written per layer, per token</div>
         <!-- KV cache grid -->
         <div style="display:grid;grid-template-columns:repeat(8,1fr);gap:2px;margin-bottom:5px;" id="kv-grid"></div>
         <div style="font-family:'IBM Plex Mono',monospace;font-size:7.5px;color:var(--muted);line-height:1.5;">Each layer saves the K and V vectors for &ldquo;France&rdquo; so future tokens don&rsquo;t recompute from scratch. 80 layers &times; 2 (K+V) &times; 128 dims &times; 8 heads = 163,840 numbers saved <em>per token per layer</em>.</div>
-      </div>
-    </div>
-
-    <!-- OUTPUT PROBABILITIES -->
-    <div style="background:var(--bg);border:1px solid rgba(48,200,112,.2);border-radius:9px;padding:16px 18px;margin-bottom:14px;">
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;">Output &mdash; All 128,256 tokens scored. Top results for &ldquo;The capital of France is ___&rdquo;</div>
-      <div style="display:flex;flex-direction:column;gap:5px;" id="output-probs">
-        <!-- filled by JS -->
-      </div>
-      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
-        <div style="background:rgba(48,200,112,.1);border:1px solid rgba(48,200,112,.3);border-radius:5px;padding:6px 12px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--green);">&#10003; Token selected: &ldquo; Paris&rdquo;</div>
-        <div style="background:rgba(74,144,232,.08);border:1px solid rgba(74,144,232,.25);border-radius:5px;padding:6px 12px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--blue);">&darr; Token ID 3342 looked up in vocab table &rarr; string &ldquo; Paris&rdquo;</div>
-        <div style="background:rgba(138,110,232,.08);border:1px solid rgba(138,110,232,.25);border-radius:5px;padding:6px 12px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--purple);">&darr; Appended to context &rarr; repeat for next token</div>
       </div>
     </div>
 
@@ -854,7 +841,12 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
           <div style="font-size:11px;color:var(--muted);">Llama 70B: <strong style="color:var(--ink);">80</strong></div>
         </div>
         <div style="background:linear-gradient(90deg,rgba(138,110,232,.12),rgba(232,160,32,.12));border:1px solid rgba(232,160,32,.35);border-radius:5px;padding:6px 10px;">
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;margin-bottom:2px;"><span style="color:var(--purple);">4</span> <span style="color:var(--muted);">attention</span> <span style="color:var(--muted);">+</span> <span style="color:var(--amber);">~8</span> <span style="color:var(--muted);">FFN</span></div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;margin-bottom:2px;display:flex;align-items:center;gap:4px;flex-wrap:wrap;">
+            <span id="ms-attn-chip" style="color:var(--purple);cursor:pointer;border:1px solid rgba(138,110,232,.35);border-radius:3px;padding:1px 5px;background:rgba(138,110,232,.1);" onmouseenter="showFormulaBlock('attn')" onmouseleave="hideFormulaBlock()" onclick="pinFormulaBlock('attn')">4 attention</span>
+            <span style="color:var(--muted);">+</span>
+            <span id="ms-ffn-chip" style="color:var(--amber);cursor:pointer;border:1px solid rgba(232,160,32,.35);border-radius:3px;padding:1px 5px;background:rgba(232,160,32,.1);" onmouseenter="showFormulaBlock('ffn')" onmouseleave="hideFormulaBlock()" onclick="pinFormulaBlock('ffn')">~8 FFN</span>
+            <span style="font-size:8px;color:var(--muted);">(hover/click)</span>
+          </div>
           <div style="font-size:11px;color:var(--muted);">4d² per layer for connecting words + ~8d² per layer for fact lookup</div>
         </div>
         <div style="background:rgba(138,110,232,.12);border:1px solid rgba(138,110,232,.35);border-radius:5px;padding:6px 10px;">
@@ -883,9 +875,124 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
           <span style="color:var(--green); font-weight:700; font-size:13px;">~70B ✓</span>
         </div>
       </div>
+
+      <div style="margin-top:10px;background:rgba(74,144,232,.08);border:1px solid rgba(74,144,232,.25);border-radius:6px;padding:10px 12px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--blue);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em;">From parameter count to GPU memory</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.65;margin-bottom:7px;">One parameter is one number in memory. Precision decides bytes per parameter.</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--ink);background:rgba(255,255,255,.03);border-radius:5px;padding:7px 10px;line-height:1.9;">
+          70,000,000,000 params &times; 2 bytes (BF16) &divide; 1,000,000,000 = <strong style="color:var(--green);">~140 GB VRAM</strong>
+        </div>
+        <div style="font-size:10px;color:var(--muted);margin-top:6px;line-height:1.55;">A single RTX 4090 has 24 GB, so a 70B BF16 model needs multiple GPUs just to load weights.</div>
+      </div>
+
+      <div id="ms-formula-blocks" style="display:none;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
+        <div id="ms-formula-attn" style="display:none;background:rgba(138,110,232,.1);border:1px solid rgba(138,110,232,.3);border-radius:6px;padding:9px 10px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--purple);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em;">Attention block &mdash; 4 &times; d²</div>
+          <div style="display:flex;flex-direction:column;gap:2px;font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);line-height:1.6;">
+            <div style="display:flex;justify-content:space-between;"><span>Q matrix</span><span style="color:var(--purple);">d &times; d</span></div>
+            <div style="display:flex;justify-content:space-between;"><span>K matrix</span><span style="color:var(--purple);">d &times; d</span></div>
+            <div style="display:flex;justify-content:space-between;"><span>V matrix</span><span style="color:var(--purple);">d &times; d</span></div>
+            <div style="display:flex;justify-content:space-between;"><span>O matrix</span><span style="color:var(--purple);">d &times; d</span></div>
+          </div>
+          <div style="margin-top:6px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--purple);">Subtotal: <strong>4 &times; d²</strong> &nbsp;&mdash;&nbsp; d=8,192: <strong style="color:var(--ink);">268M</strong></div>
+        </div>
+        <div id="ms-formula-ffn" style="display:none;background:rgba(232,160,32,.1);border:1px solid rgba(232,160,32,.3);border-radius:6px;padding:9px 10px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--amber);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em;">FFN block &mdash; ~8 &times; d²</div>
+          <div style="display:flex;flex-direction:column;gap:2px;font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);line-height:1.6;">
+            <div style="display:flex;justify-content:space-between;"><span>Expand</span><span style="color:var(--amber);">d &times; 3.5d</span></div>
+            <div style="display:flex;justify-content:space-between;"><span>Gate</span><span style="color:var(--amber);">d &times; 3.5d</span></div>
+            <div style="display:flex;justify-content:space-between;"><span>Compress</span><span style="color:var(--amber);">3.5d &times; d</span></div>
+          </div>
+          <div style="margin-top:6px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--amber);">Subtotal: <strong>~8 &times; d²</strong> &nbsp;&mdash;&nbsp; d=8,192: <strong style="color:var(--ink);">537M</strong></div>
+        </div>
+      </div>
     </div>
 
-    <!-- ② WHAT DETERMINES d? -->
+    <!-- ② QUANTIZATION -->
+    <div style="background:rgba(232,160,32,.06);border:1px solid rgba(232,160,32,.25);border-radius:8px;padding:14px 16px;margin-bottom:18px;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--amber);margin-bottom:8px;text-transform:uppercase;letter-spacing:.09em;">Quantization &mdash; trading precision for size</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:10px;">Numbers can be stored at different precisions. <strong style="color:var(--ink);">FP</strong> = Floating Point (scientific notation, flexible range). <strong style="color:var(--ink);">BF</strong> = Brain Float (same range as FP32, fewer fraction digits). <strong style="color:var(--ink);">INT</strong> = Integer (no decimals, fixed range).</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);margin-bottom:8px;letter-spacing:.03em;">All memory and size examples below assume a <strong style="color:var(--ink);">70B parameter</strong> model.</div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:5px;padding:7px 9px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
+            <div>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink);font-weight:600;">FP32</span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);margin-left:6px;">32-bit float &middot; 4 bytes/param</span>
+            </div>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);">280 GB</span>
+          </div>
+          <div style="background:#1a2030;border-radius:2px;height:8px;overflow:hidden;margin-bottom:3px;"><div style="width:100%;height:100%;background:rgba(74,144,232,.6);border-radius:2px;"></div></div>
+          <div style="margin-bottom:4px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:5px 6px;display:flex;justify-content:space-between;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:7.5px;">
+            <span style="color:var(--red);">Sign<br><strong style="color:var(--ink);">+</strong></span>
+            <span style="color:var(--amber);">Exponent<br><strong style="color:var(--ink);">127</strong></span>
+            <span style="color:var(--blue);">Fraction<br><strong style="color:var(--ink);">0.625</strong></span>
+            <span style="color:var(--muted);">Example value<br><strong style="color:var(--ink);">+1.625</strong></span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);"><span>1 sign + 8 exponent + 23 fraction bits</span><span style="color:var(--blue);">Baseline accuracy</span></div>
+        </div>
+
+        <div style="background:rgba(48,200,112,.06);border:1.5px solid rgba(48,200,112,.4);border-radius:5px;padding:7px 9px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
+            <div>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--green);font-weight:600;">BF16 &#10003;</span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);margin-left:6px;">Brain float &middot; 2 bytes/param</span>
+            </div>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--green);">140 GB</span>
+          </div>
+          <div style="background:#1a2030;border-radius:2px;height:8px;overflow:hidden;margin-bottom:3px;"><div style="width:50%;height:100%;background:var(--green);border-radius:2px;"></div></div>
+          <div style="margin-bottom:4px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:5px 6px;display:flex;justify-content:space-between;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:7.5px;">
+            <span style="color:var(--red);">Sign<br><strong style="color:var(--ink);">+</strong></span>
+            <span style="color:var(--amber);">Exponent<br><strong style="color:var(--ink);">127</strong></span>
+            <span style="color:var(--green);">Fraction<br><strong style="color:var(--ink);">0.62</strong></span>
+            <span style="color:var(--muted);">Example value<br><strong style="color:var(--ink);">+1.62</strong></span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);"><span>1 sign + 8 exponent + 7 fraction bits</span><span style="color:var(--green);">~99.9% of FP32 quality</span></div>
+          <div style="font-size:10px;color:var(--green);margin-top:3px;">Production standard &mdash; same numeric range as FP32, fewer decimals. Negligible quality loss.</div>
+        </div>
+
+        <div style="background:rgba(232,160,32,.07);border:1px solid rgba(232,160,32,.3);border-radius:5px;padding:7px 9px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
+            <div>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--amber);font-weight:600;">FP8 / INT8</span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);margin-left:6px;">8-bit &middot; 1 byte/param</span>
+            </div>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--amber);">70 GB</span>
+          </div>
+          <div style="background:#1a2030;border-radius:2px;height:8px;overflow:hidden;margin-bottom:3px;"><div style="width:25%;height:100%;background:var(--amber);border-radius:2px;"></div></div>
+          <div style="margin-bottom:4px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:5px 6px;display:flex;justify-content:space-between;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:7.5px;">
+            <span style="color:var(--red);">Sign<br><strong style="color:var(--ink);">+</strong></span>
+            <span style="color:var(--amber);">Integer bucket<br><strong style="color:var(--ink);">104</strong></span>
+            <span style="color:var(--muted);">Scale factor<br><strong style="color:var(--ink);">x0.0156</strong></span>
+            <span style="color:var(--muted);">Example value<br><strong style="color:var(--ink);">+1.62</strong></span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);"><span>Integer storage: sign + value bits (no exponent field)</span><span style="color:var(--amber);">~98&ndash;99% of FP32 quality</span></div>
+          <div style="font-size:10px;color:var(--muted);margin-top:3px;">Frontier labs use this in production. Fits a single 8-GPU node. Small logic/math degradation.</div>
+        </div>
+
+        <div style="background:rgba(224,72,72,.07);border:1px solid rgba(224,72,72,.3);border-radius:5px;padding:7px 9px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
+            <div>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--red);font-weight:600;">INT4</span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);margin-left:6px;">4-bit integer &middot; 0.5 bytes/param</span>
+            </div>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--red);">35 GB</span>
+          </div>
+          <div style="background:#1a2030;border-radius:2px;height:8px;overflow:hidden;margin-bottom:3px;"><div style="width:12.5%;height:100%;background:var(--red);border-radius:2px;"></div></div>
+          <div style="margin-bottom:4px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:5px 6px;display:flex;justify-content:space-between;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:7.5px;">
+            <span style="color:var(--red);">Sign<br><strong style="color:var(--ink);">+</strong></span>
+            <span style="color:#d08686;">Integer bucket<br><strong style="color:var(--ink);">5</strong></span>
+            <span style="color:var(--muted);">Scale factor<br><strong style="color:var(--ink);">x0.32</strong></span>
+            <span style="color:var(--muted);">Example value<br><strong style="color:var(--ink);">+1.60</strong></span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);"><span>Integer storage: sign + value bits (no exponent field)</span><span style="color:var(--red);">~92&ndash;95% of FP32 quality</span></div>
+          <div style="font-size:10px;color:var(--red);margin-top:3px;line-height:1.5;"><strong>Edge performance degrades first:</strong> complex reasoning, multi-step math, code generation.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ③ WHAT DETERMINES d? -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;">
       <div style="background:rgba(138,110,232,.07);border:1px solid rgba(138,110,232,.25);border-radius:8px;padding:14px 16px;">
         <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--purple);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;">What determines d (hidden dimension)?</div>
@@ -955,177 +1062,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
       </div>
     </div>
 
-    <!-- ③ ATTENTION + FFN BREAKDOWN (existing) -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
-      <div style="background:rgba(138,110,232,.1);border:1px solid rgba(138,110,232,.3);border-radius:8px;padding:12px 14px;">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--purple);margin-bottom:7px;text-transform:uppercase;letter-spacing:.09em;">Attention block per layer &mdash; 4 &times; d²</div>
-        <div style="display:flex;flex-direction:column;gap:4px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;margin-bottom:8px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,.06);padding-bottom:3px;">
-            <span style="color:var(--muted);">Q matrix (what am I searching for?)</span>
-            <span style="color:var(--purple);">d &times; d</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,.06);padding-bottom:3px;">
-            <span style="color:var(--muted);">K matrix (what do I contain?)</span>
-            <span style="color:var(--purple);">d &times; d</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,.06);padding-bottom:3px;">
-            <span style="color:var(--muted);">V matrix (what meaning do I share?)</span>
-            <span style="color:var(--purple);">d &times; d</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;">
-            <span style="color:var(--muted);">O matrix (blend all heads together)</span>
-            <span style="color:var(--purple);">d &times; d</span>
-          </div>
-        </div>
-        <div style="background:rgba(138,110,232,.15);border-radius:4px;padding:5px 8px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--purple);">Subtotal: <strong>4 &times; d²</strong> &nbsp;&mdash;&nbsp; at d=8,192: <strong style="color:var(--ink);">268M params</strong></div>
-      </div>
-      <div style="background:rgba(232,160,32,.1);border:1px solid rgba(232,160,32,.3);border-radius:8px;padding:12px 14px;">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--amber);margin-bottom:7px;text-transform:uppercase;letter-spacing:.09em;">FFN (fact-recall) block per layer &mdash; ~8 &times; d²</div>
-        <div style="display:flex;flex-direction:column;gap:4px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;margin-bottom:8px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,.06);padding-bottom:3px;">
-            <span style="color:var(--muted);">Expand (d &rarr; 3.5d, spread concepts)</span>
-            <span style="color:var(--amber);">d &times; 3.5d</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,.06);padding-bottom:3px;">
-            <span style="color:var(--muted);">Gate (SwiGLU filter, silences noise)</span>
-            <span style="color:var(--amber);">d &times; 3.5d</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;">
-            <span style="color:var(--muted);">Compress (3.5d &rarr; d, back to stream)</span>
-            <span style="color:var(--amber);">3.5d &times; d</span>
-          </div>
-        </div>
-        <div style="background:rgba(232,160,32,.15);border-radius:4px;padding:5px 8px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--amber);">Subtotal: <strong>~8 &times; d²</strong> &nbsp;&mdash;&nbsp; at d=8,192: <strong style="color:var(--ink);">537M params</strong></div>
-      </div>
-    </div>
-
-    <!-- ④ SIZE INTUITION -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;">
-      <div style="background:rgba(74,144,232,.08);border:1px solid rgba(74,144,232,.25);border-radius:8px;padding:14px 16px;">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--blue);margin-bottom:8px;text-transform:uppercase;letter-spacing:.09em;">From parameter count to GPU memory</div>
-        <div style="font-size:12px;color:var(--muted);line-height:1.75;margin-bottom:10px;">One parameter = one decimal number. To store it you need memory. The format (precision) determines how many bytes each number takes:</div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--ink);background:rgba(255,255,255,.04);border-radius:5px;padding:10px 12px;line-height:2.1;">
-          70,000,000,000 params<br>
-          &times; 2 bytes per param (BF16)<br>
-          &divide; 1,000,000,000<br>
-          <span style="border-top:1px solid var(--border);display:block;padding-top:5px;color:var(--green);">= <strong>~140 GB</strong> minimum VRAM</span>
-        </div>
-        <div style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.6;">For context: an RTX 4090 gaming GPU has 24 GB. You&rsquo;d need 6 of them just to load Llama 70B, before serving a single user.</div>
-      </div>
-
-      <div style="background:rgba(232,160,32,.06);border:1px solid rgba(232,160,32,.25);border-radius:8px;padding:14px 16px;">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--amber);margin-bottom:8px;text-transform:uppercase;letter-spacing:.09em;">Quantization &mdash; trading precision for size</div>
-        <div style="font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:10px;">Numbers can be stored at different precisions. <strong style="color:var(--ink);">FP</strong> = Floating Point (scientific notation, flexible range). <strong style="color:var(--ink);">BF</strong> = Brain Float (same range as FP32, fewer fraction digits). <strong style="color:var(--ink);">INT</strong> = Integer (no decimals, fixed range).</div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);margin-bottom:8px;letter-spacing:.03em;">All memory and size examples below assume a <strong style="color:var(--ink);">70B parameter</strong> model.</div>
-        <div style="display:flex;flex-direction:column;gap:6px;">
-          <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:5px;padding:7px 9px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
-              <div>
-                <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink);font-weight:600;">FP32</span>
-                <span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);margin-left:6px;">32-bit float &middot; 4 bytes/param</span>
-              </div>
-              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);">280 GB</span>
-            </div>
-            <div style="background:#1a2030;border-radius:2px;height:8px;overflow:hidden;margin-bottom:3px;"><div style="width:100%;height:100%;background:rgba(74,144,232,.6);border-radius:2px;"></div></div>
-            <div style="margin-bottom:4px;">
-              <div style="display:flex;height:10px;border-radius:3px;overflow:hidden;border:1px solid rgba(255,255,255,.14);">
-                <div style="width:3.125%;background:rgba(224,72,72,.9);"></div>
-                <div style="width:25%;background:rgba(232,160,32,.9);"></div>
-                <div style="width:71.875%;background:rgba(74,144,232,.85);"></div>
-              </div>
-              <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--muted);margin-top:2px;">
-                <span style="color:var(--red);">S:1</span>
-                <span style="color:var(--amber);">E:8</span>
-                <span style="color:var(--blue);">F:23</span>
-              </div>
-            </div>
-            <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);">
-              <span>1 sign + 8 exponent + 23 fraction bits</span>
-              <span style="color:var(--blue);">Baseline accuracy</span>
-            </div>
-          </div>
-          <div style="background:rgba(48,200,112,.06);border:1.5px solid rgba(48,200,112,.4);border-radius:5px;padding:7px 9px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
-              <div>
-                <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--green);font-weight:600;">BF16 &#10003;</span>
-                <span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);margin-left:6px;">Brain float &middot; 2 bytes/param</span>
-              </div>
-              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--green);">140 GB</span>
-            </div>
-            <div style="background:#1a2030;border-radius:2px;height:8px;overflow:hidden;margin-bottom:3px;"><div style="width:50%;height:100%;background:var(--green);border-radius:2px;"></div></div>
-            <div style="margin-bottom:4px;">
-              <div style="display:flex;height:10px;border-radius:3px;overflow:hidden;border:1px solid rgba(255,255,255,.14);">
-                <div style="width:6.25%;background:rgba(224,72,72,.9);"></div>
-                <div style="width:50%;background:rgba(232,160,32,.9);"></div>
-                <div style="width:43.75%;background:rgba(48,200,112,.85);"></div>
-              </div>
-              <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--muted);margin-top:2px;">
-                <span style="color:var(--red);">S:1</span>
-                <span style="color:var(--amber);">E:8</span>
-                <span style="color:var(--green);">F:7</span>
-              </div>
-            </div>
-            <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);">
-              <span>1 sign + 8 exponent + 7 fraction bits</span>
-              <span style="color:var(--green);">~99.9% of FP32 quality</span>
-            </div>
-            <div style="font-size:10px;color:var(--green);margin-top:3px;">Production standard &mdash; same numeric range as FP32, fewer decimals. Negligible quality loss.</div>
-          </div>
-          <div style="background:rgba(232,160,32,.07);border:1px solid rgba(232,160,32,.3);border-radius:5px;padding:7px 9px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
-              <div>
-                <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--amber);font-weight:600;">FP8 / INT8</span>
-                <span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);margin-left:6px;">8-bit &middot; 1 byte/param</span>
-              </div>
-              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--amber);">70 GB</span>
-            </div>
-            <div style="background:#1a2030;border-radius:2px;height:8px;overflow:hidden;margin-bottom:3px;"><div style="width:25%;height:100%;background:var(--amber);border-radius:2px;"></div></div>
-            <div style="margin-bottom:4px;">
-              <div style="display:flex;height:10px;border-radius:3px;overflow:hidden;border:1px solid rgba(255,255,255,.14);">
-                <div style="width:12.5%;background:rgba(224,72,72,.9);"></div>
-                <div style="width:87.5%;background:rgba(232,160,32,.85);"></div>
-              </div>
-              <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--muted);margin-top:2px;">
-                <span style="color:var(--red);">S:1</span>
-                <span style="color:var(--amber);">Value bits:7</span>
-              </div>
-            </div>
-            <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);">
-              <span>Integer storage: sign + value bits (no exponent field)</span>
-              <span style="color:var(--amber);">~98&ndash;99% of FP32 quality</span>
-            </div>
-            <div style="font-size:10px;color:var(--muted);margin-top:3px;">Frontier labs use this in production. Fits a single 8-GPU node. Small logic/math degradation.</div>
-          </div>
-          <div style="background:rgba(224,72,72,.07);border:1px solid rgba(224,72,72,.3);border-radius:5px;padding:7px 9px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
-              <div>
-                <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--red);font-weight:600;">INT4</span>
-                <span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);margin-left:6px;">4-bit integer &middot; 0.5 bytes/param</span>
-              </div>
-              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--red);">35 GB</span>
-            </div>
-            <div style="background:#1a2030;border-radius:2px;height:8px;overflow:hidden;margin-bottom:3px;"><div style="width:12.5%;height:100%;background:var(--red);border-radius:2px;"></div></div>
-            <div style="margin-bottom:4px;">
-              <div style="display:flex;height:10px;border-radius:3px;overflow:hidden;border:1px solid rgba(255,255,255,.14);">
-                <div style="width:25%;background:rgba(224,72,72,.9);"></div>
-                <div style="width:75%;background:rgba(164,72,72,.85);"></div>
-              </div>
-              <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--muted);margin-top:2px;">
-                <span style="color:var(--red);">S:1</span>
-                <span style="color:#d08686;">Value bits:3</span>
-              </div>
-            </div>
-            <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);">
-              <span>Integer storage: sign + value bits (no exponent field)</span>
-              <span style="color:var(--red);">~92&ndash;95% of FP32 quality</span>
-            </div>
-            <div style="font-size:10px;color:var(--red);margin-top:3px;line-height:1.5;"><strong>Edge performance degrades first:</strong> complex reasoning, multi-step math, code generation. The last 5&ndash;8% of quality is what makes frontier models useful for hard tasks.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ⑤ INTERACTIVE CALCULATOR -->
+    <!-- ④ INTERACTIVE CALCULATOR -->
     <div style="background:rgba(48,200,112,.05);border:1.5px solid rgba(48,200,112,.3);border-radius:9px;padding:16px 18px;">
       <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:.12em;margin-bottom:4px;">Interactive: Build Your Own Model</div>
       <div style="font-size:11.5px;color:var(--muted);margin-bottom:14px;">Adjust d, L, and quantization to see how parameter count and memory scale. Notice how d has the most dramatic effect.</div>
@@ -1195,6 +1132,55 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
   <script>
 var _msQuant = 2; // bytes per param
 var _msQuantName = 'BF16';
+var _msPinnedFormulaBlock = '';
+
+function _setFormulaChipState(kind, active){
+  var chip = document.getElementById(kind==='attn' ? 'ms-attn-chip' : 'ms-ffn-chip');
+  if(!chip) return;
+  if(kind === 'attn'){
+    chip.style.background = active ? 'rgba(138,110,232,.26)' : 'rgba(138,110,232,.1)';
+    chip.style.borderColor = active ? 'rgba(138,110,232,.7)' : 'rgba(138,110,232,.35)';
+  } else {
+    chip.style.background = active ? 'rgba(232,160,32,.26)' : 'rgba(232,160,32,.1)';
+    chip.style.borderColor = active ? 'rgba(232,160,32,.7)' : 'rgba(232,160,32,.35)';
+  }
+}
+
+function _renderFormulaBlocks(kind){
+  var wrap = document.getElementById('ms-formula-blocks');
+  var attn = document.getElementById('ms-formula-attn');
+  var ffn  = document.getElementById('ms-formula-ffn');
+  if(!wrap || !attn || !ffn) return;
+  if(!kind){
+    wrap.style.display = 'none';
+    attn.style.display = 'none';
+    ffn.style.display = 'none';
+    _setFormulaChipState('attn', false);
+    _setFormulaChipState('ffn', false);
+    return;
+  }
+  wrap.style.display = 'grid';
+  attn.style.display = kind==='attn' ? 'block' : 'none';
+  ffn.style.display = kind==='ffn' ? 'block' : 'none';
+  _setFormulaChipState('attn', kind==='attn');
+  _setFormulaChipState('ffn', kind==='ffn');
+}
+
+function showFormulaBlock(kind){
+  if(_msPinnedFormulaBlock) return;
+  _renderFormulaBlocks(kind);
+}
+
+function hideFormulaBlock(){
+  if(_msPinnedFormulaBlock) return;
+  _renderFormulaBlocks('');
+}
+
+function pinFormulaBlock(kind){
+  _msPinnedFormulaBlock = (_msPinnedFormulaBlock === kind) ? '' : kind;
+  _renderFormulaBlocks(_msPinnedFormulaBlock || kind);
+  if(!_msPinnedFormulaBlock) _renderFormulaBlocks('');
+}
 
 function setQuant(bytes, name){
   _msQuant = bytes; _msQuantName = name;
@@ -2388,23 +2374,20 @@ function drawMsChart(curD, curL, bytesPerParam){
 </div>
 
 <!-- ⑤ FORWARD PASS -->
-<details style="margin:0 0 0 0;">
-  <summary style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px;padding:4px 0 10px;user-select:none;">
-    <span class="fp-fold-arr" style="width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--amber);border:1px solid rgba(232,160,32,.45);border-radius:4px;background:rgba(232,160,32,.12);">&gt;</span>
-    <div>
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:var(--amber);">Forward Pass &mdash; What the GPU Actually Does</div>
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);margin-top:2px;">Collapsed by default &middot; click to expand</div>
+<details class="box" style="border-color:rgba(232,160,32,.3);">
+  <summary style="cursor:pointer;list-style:none;user-select:none;padding:0 0 10px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+      <div class="step-badge" style="margin:0;">
+        <div class="step-num" style="color:var(--amber);border-color:var(--amber);background:var(--amber-d);">&#9316;</div>
+        <div>
+          <div class="step-label" style="color:var(--amber);">Forward Pass &mdash; What the GPU Actually Does</div>
+          <div class="step-sub">One complete pass per output token &middot; 80 layers &middot; ~140 GB streamed from memory every time</div>
+        </div>
+      </div>
+      <span class="fp-fold-arr" style="width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--amber);border:1px solid rgba(232,160,32,.45);border-radius:4px;background:rgba(232,160,32,.12);flex-shrink:0;">&gt;</span>
     </div>
   </summary>
   <style>details[open] > summary .fp-fold-arr{transform:rotate(90deg);}</style>
-<div class="box" style="border-color:rgba(232,160,32,.3);">
-  <div class="step-badge">
-    <div class="step-num" style="color:var(--amber);border-color:var(--amber);background:var(--amber-d);">&#9316;</div>
-    <div>
-      <div class="step-label" style="color:var(--amber);">Forward Pass &mdash; What the GPU Actually Does</div>
-      <div class="step-sub">One complete pass per output token &middot; 80 layers &middot; ~140 GB streamed from memory every time</div>
-    </div>
-  </div>
   <div style="font-size:12.5px;color:var(--muted);line-height:1.75;margin-bottom:12px;">
     Every word the model produces requires one full trip through all 80 layers. Think of it like running a very deep assembly line: each station processes your token and passes it on. The slowdown isn&rsquo;t the work itself &mdash; it&rsquo;s how fast each station can read its instructions from memory.
   </div>
@@ -2517,7 +2500,6 @@ function drawMsChart(curD, curL, bytesPerParam){
       <div style="font-size:12px;color:var(--muted);line-height:1.65;">During prefill (reading your prompt), step 2&rsquo;s &ldquo;connecting words&rdquo; work scales with N&sup2;: 10K tokens = 100M comparisons, 100K tokens = 10 billion comparisons. This is why a 100K-token document can take 5&ndash;20 seconds before the first word appears &mdash; and why there&rsquo;s a meaningful cost difference between long and short prompts.</div>
     </div>
   </div>
-</div>
 </details>
 
 <!-- CONNECTOR -->
@@ -2599,14 +2581,54 @@ function drawMsChart(curD, curL, bytesPerParam){
 <!-- CONNECTOR -->
 <div class="conn">
   <div class="conn-line"></div>
-  <div class="conn-label">response complete &rarr; persistence policy decisions</div>
+  <div class="conn-label">tokens stream to client</div>
   <div class="pulse-wrap"><div class="pulse" style="background:var(--cyan);animation-delay:.4s;"></div></div>
 </div>
 
-<!-- ⑦ STORAGE & RETENTION -->
+<!-- ⑦ OUTPUT LAYER -->
+<div class="box" style="border-color:rgba(26,191,208,0.25);">
+  <div class="step-badge">
+    <div class="step-num" style="color:var(--cyan);border-color:var(--cyan);background:var(--cyan-d);">&#9318;</div>
+    <div>
+      <div class="step-label" style="color:var(--cyan);">Output &amp; Streaming</div>
+      <div class="step-sub">Token IDs &rarr; text chunks &rarr; SSE stream &rarr; browser render</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+    <div>
+      <div style="font-size:12.5px;color:var(--muted);line-height:1.75;margin-bottom:12px;">Each generated token ID is decoded back to a text chunk and sent over a <span class="tip" data-tip="Server-Sent Events — a simple HTTP protocol where the server pushes data to the browser as it becomes available. Each token arrives as a small JSON chunk. The browser appends it to the conversation in real time.">Server-Sent Events (SSE)</span> connection. The browser renders each chunk as it arrives. Users see text appearing word-by-word rather than waiting for the full response.</div>
+      <div style="background:var(--bg);border:1px solid rgba(255,255,255,.08);border-radius:7px;padding:12px 14px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--muted);line-height:2;">
+        data: {"type":"content_block_delta","delta":{"text":" Paris"}}<br>
+        data: {"type":"content_block_delta","delta":{"text":"."}}<br>
+        data: {"type":"content_block_delta","delta":{"text":" It"}}<br>
+        <span style="color:var(--dim);">&hellip; one chunk per token &hellip;</span><br>
+        data: {"type":"message_stop"}
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:7px;">
+      <div style="background:var(--panel2);border:1px solid var(--border);border-radius:7px;padding:10px 12px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:4px;">TOKENS PER SECOND (output speed)</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6;">H100 node, 70B model, 32 concurrent users: ~420 tok/s total = ~13 tok/s per user. At 0.75 words/token, that&rsquo;s ~10 words/sec &mdash; faster than typical reading speed.</div>
+      </div>
+      <div style="background:var(--panel2);border:1px solid var(--border);border-radius:7px;padding:10px 12px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:4px;">STOP CONDITIONS</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6;">Generation stops when: (1) the model produces the end-of-sequence token, (2) max_tokens limit is reached, (3) a stop sequence is matched, or (4) the user cancels the request.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONNECTOR -->
+<div class="conn">
+  <div class="conn-line"></div>
+  <div class="conn-label">response complete &rarr; persistence policy decisions</div>
+  <div class="pulse-wrap"><div class="pulse" style="background:var(--cyan);animation-delay:.35s;"></div></div>
+</div>
+
+<!-- ⑧ STORAGE & RETENTION -->
 <div class="box" style="border-color:rgba(74,144,232,0.28);">
   <div class="step-badge">
-    <div class="step-num" style="color:var(--blue);border-color:var(--blue);background:var(--blue-d);">&#9318;</div>
+    <div class="step-num" style="color:var(--blue);border-color:var(--blue);background:var(--blue-d);">&#9319;</div>
     <div>
       <div class="step-label" style="color:var(--blue);">Storage &amp; Retention Pathways</div>
       <div class="step-sub">What is kept after inference &middot; where it lives &middot; typical retention windows</div>
@@ -2660,46 +2682,6 @@ function drawMsChart(curD, curL, bytesPerParam){
       <div style="background:rgba(224,72,72,.08);border:1px solid rgba(224,72,72,.25);border-radius:7px;padding:10px 12px;">
         <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--red);margin-bottom:4px;">Retention is contractual, not universal</div>
         <div style="font-size:12px;color:var(--muted);line-height:1.6;">Provider, SKU, and enterprise contract determine whether prompts/outputs are logged, how long they are retained, and whether they can be used for model improvement.</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- CONNECTOR -->
-<div class="conn">
-  <div class="conn-line"></div>
-  <div class="conn-label">stored transcript/logs &rarr; UX and analytics</div>
-  <div class="pulse-wrap"><div class="pulse" style="background:var(--cyan);animation-delay:.35s;"></div></div>
-</div>
-
-<!-- ⑧ OUTPUT LAYER -->
-<div class="box" style="border-color:rgba(26,191,208,0.25);">
-  <div class="step-badge">
-    <div class="step-num" style="color:var(--cyan);border-color:var(--cyan);background:var(--cyan-d);">&#9319;</div>
-    <div>
-      <div class="step-label" style="color:var(--cyan);">Output &amp; Streaming</div>
-      <div class="step-sub">Token IDs &rarr; text chunks &rarr; SSE stream &rarr; browser render</div>
-    </div>
-  </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
-    <div>
-      <div style="font-size:12.5px;color:var(--muted);line-height:1.75;margin-bottom:12px;">Each generated token ID is decoded back to a text chunk and sent over a <span class="tip" data-tip="Server-Sent Events — a simple HTTP protocol where the server pushes data to the browser as it becomes available. Each token arrives as a small JSON chunk. The browser appends it to the conversation in real time.">Server-Sent Events (SSE)</span> connection. The browser renders each chunk as it arrives. Users see text appearing word-by-word rather than waiting for the full response.</div>
-      <div style="background:var(--bg);border:1px solid rgba(255,255,255,.08);border-radius:7px;padding:12px 14px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--muted);line-height:2;">
-        data: {"type":"content_block_delta","delta":{"text":" Paris"}}<br>
-        data: {"type":"content_block_delta","delta":{"text":"."}}<br>
-        data: {"type":"content_block_delta","delta":{"text":" It"}}<br>
-        <span style="color:var(--dim);">&hellip; one chunk per token &hellip;</span><br>
-        data: {"type":"message_stop"}
-      </div>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:7px;">
-      <div style="background:var(--panel2);border:1px solid var(--border);border-radius:7px;padding:10px 12px;">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:4px;">TOKENS PER SECOND (output speed)</div>
-        <div style="font-size:12px;color:var(--muted);line-height:1.6;">H100 node, 70B model, 32 concurrent users: ~420 tok/s total = ~13 tok/s per user. At 0.75 words/token, that&rsquo;s ~10 words/sec &mdash; faster than typical reading speed.</div>
-      </div>
-      <div style="background:var(--panel2);border:1px solid var(--border);border-radius:7px;padding:10px 12px;">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:4px;">STOP CONDITIONS</div>
-        <div style="font-size:12px;color:var(--muted);line-height:1.6;">Generation stops when: (1) the model produces the end-of-sequence token, (2) max_tokens limit is reached, (3) a stop sequence is matched, or (4) the user cancels the request.</div>
       </div>
     </div>
   </div>
