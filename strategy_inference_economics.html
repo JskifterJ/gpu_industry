@@ -488,7 +488,17 @@ textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
   background: var(--surface2); border: 1px solid var(--border);
   border-radius: 6px; padding: 16px;
 }
-.compare-col-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+.compare-col-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(280px, 1fr));
+  gap: 16px;
+  overflow-x: auto;
+  align-items: start;
+  padding-bottom: 6px;
+}
+@media (max-width: 1320px) {
+  .compare-col-grid { grid-template-columns: repeat(3, minmax(260px, 1fr)); }
+}
 .compare-col {
   background: var(--surface); border: 1px solid var(--border);
   border-radius: 8px; overflow: hidden;
@@ -871,10 +881,9 @@ footer {
   <div class="nav-links">
     <a class="nav-link" href="#s1"><span class="nav-num">01</span> Tokens</a>
     <a class="nav-link" href="#s2"><span class="nav-num">02</span> Model Memory</a>
-    <a class="nav-link" href="#s3"><span class="nav-num">03</span> GPU Hardware</a>
-    <a class="nav-link" href="#s4"><span class="nav-num">04</span> Network Penalty</a>
-    <a class="nav-link" href="#s5"><span class="nav-num">05</span> Economics</a>
-    <a class="nav-link" href="#s6"><span class="nav-num">06</span> Use Case Map</a>
+    <a class="nav-link" href="#s4"><span class="nav-num">03</span> Network Penalty</a>
+    <a class="nav-link" href="#s5"><span class="nav-num">04</span> Economics</a>
+    <a class="nav-link" href="#s6"><span class="nav-num">05</span> Use Case Map</a>
   </div>
 </nav>
 
@@ -1261,187 +1270,46 @@ footer {
 </section>
 
 <!-- ══════════════════════════════════════════════ -->
-<!-- SECTION 3: GPU HARDWARE -->
-<!-- ══════════════════════════════════════════════ -->
-<section id="s3">
-  <div class="section-header">
-    <div class="section-num">03</div>
-    <div class="section-title-block">
-      <div class="section-eyebrow">Deployment Fit</div>
-      <h2 class="section-title">Practical Hardware Fit — Pick by Output Cost and Fit, Not Raw Specs</h2>
-      <p class="section-desc">
-        Instead of a long GPU database, this section focuses on decision-ready deployment guidance.
-        Use the economics dashboard for cost per output token and use this section for model-fit guardrails.
-      </p>
-    </div>
-  </div>
-
-  <div class="insight cyan">
-    <strong>Decision rule:</strong> first minimize GPU count (fit), then minimize networking penalty, then optimize cost per 1M output tokens.
-    This keeps the narrative aligned with the economics calculator and avoids misleading single-spec comparisons.
-  </div>
-
-  <div class="sub-heading" style="margin-top:24px">Practical Model Deployments — Batch=40, Context=8K</div>
-  <div class="grid-2" style="margin-top:16px">
-    <div class="card">
-      <div class="card-title">7B Model (e.g., Llama 3.1 8B)</div>
-      <div style="font-family:var(--mono);font-size:12px;line-height:1.8">
-        <div><strong>Model weights (BF16):</strong> 14 GB</div>
-        <div><strong>KV cache (batch=40, 8K ctx):</strong> ~1 GB</div>
-        <div><strong>Total:</strong> ~15 GB with margin</div>
-      </div>
-      <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:12px;color:var(--text2)">
-        <strong>Best fits:</strong> RTX 4090 (24GB) · A40 (48GB) · A100 PCIe (40GB) · A100 SXM4 (80GB+)<br>
-        <strong>Performance:</strong> 50–80 tok/s on RTX 4090 · 100+ tok/s on A100 SXM4+<br>
-        <strong>Use case:</strong> Real-time chat, sub-100ms latency requirements, massive batch throughput.
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">34B Model (e.g., CodeLlama 34B)</div>
-      <div style="font-family:var(--mono);font-size:12px;line-height:1.8">
-        <div><strong>Model weights (BF16):</strong> 68 GB</div>
-        <div><strong>KV cache (batch=40, 8K ctx):</strong> ~3 GB</div>
-        <div><strong>Total:</strong> ~71 GB with margin</div>
-      </div>
-      <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:12px;color:var(--text2)">
-        <strong>Best fits:</strong> 2× RTX 4090 + PCIe cluster (high latency penalty) · A100 SXM4 80GB · H100 PCIe · H100 SXM5<br>
-        <strong>Performance:</strong> 20–30 tok/s on dual RTX 4090 (PCIe overhead) · 40–60 tok/s on H100 PCIe · 70+ tok/s on H100 SXM5<br>
-        <strong>Use case:</strong> Code generation, moderately urgent workloads. Avoid large PCIe clusters for this size.
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">70B Model (e.g., Llama 3.1 70B)</div>
-      <div style="font-family:var(--mono);font-size:12px;line-height:1.8">
-        <div><strong>Model weights (BF16):</strong> 140 GB</div>
-        <div><strong>KV cache (batch=40, 8K ctx):</strong> ~6 GB</div>
-        <div><strong>Total:</strong> ~150 GB with margin</div>
-      </div>
-      <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:12px;color:var(--text2)">
-        <strong>Best fits:</strong> 2× A100 SXM4 80GB (NVLink) · 2× H100 PCIe (PCIe, higher latency) · 1× H200 SXM5 · 1× B200 SXM<br>
-        <strong>Performance:</strong> 25–35 tok/s on 2× A100 NVLink · 40–50 tok/s on 2× H100 PCIe · 100+ tok/s on H200/B200<br>
-        <strong>Use case:</strong> Production inference, long-running batches. NVLink (A100, H100 SXM5) far exceeds PCIe due to 160ms/token all-reduce tax.
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">405B Model (e.g., Llama 3.1 405B)</div>
-      <div style="font-family:var(--mono);font-size:12px;line-height:1.8">
-        <div><strong>Model weights (BF16):</strong> 810 GB</div>
-        <div><strong>KV cache (batch=40, 8K ctx):</strong> ~40 GB</div>
-        <div><strong>Total:</strong> ~850 GB with margin</div>
-      </div>
-      <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:12px;color:var(--text2)">
-        <strong>Best fits:</strong> 4× H200 SXM5 (NVLink) · 8+ H100 SXM5 cluster (NVLink) · Specialized multi-rack clusters<br>
-        <strong>Performance:</strong> 50–70 tok/s on 4× H200 NVLink · 20–30 tok/s on 8× H100 (scaling inefficiency) · Requires enterprise infrastructure<br>
-        <strong>Use case:</strong> Frontier research, massive batch processing. RTX 4090 clusters are not viable (32+ GPUs, PCIe all-reduce would be 5+ sec/token).
-      </div>
-    </div>
-  </div>
-
-  <div class="insight" style="margin-top:20px">
-    <strong>Key takeaway:</strong> use this section for feasibility and the dashboard in §05 for economics.
-    The best option is the one that fits your model and context with the fewest GPUs while minimizing
-    network synchronization overhead and total cost per output token.
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════════ -->
 <!-- SECTION 4: NETWORKING PENALTY -->
 <!-- ══════════════════════════════════════════════ -->
 <section id="s4">
   <div class="section-header">
-    <div class="section-num">04</div>
+    <div class="section-num">03</div>
     <div class="section-title-block">
       <div class="section-eyebrow">The Critical Constraint</div>
       <h2 class="section-title">The Networking Penalty — Multi-GPU Communication Overhead</h2>
       <p class="section-desc">
-        When a large model must span multiple GPUs, they need to constantly talk to each other.
-        The speed of that connection — NVLink vs PCIe — determines how much time GPUs spend
-        <em>waiting for data</em> instead of computing. Below, we make the math concrete.
+        The point is simple: when a model spills across GPUs, communication can erase the benefit of adding more cards.
+        NVLink keeps that tax small. PCIe can make a larger cluster slower, more expensive, or both.
       </p>
     </div>
   </div>
 
-  <!-- Step by step explanation -->
   <div class="card" style="margin-bottom:24px">
-    <div class="card-title">First: Why Does a 70B Model Need Multiple GPUs?</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+    <div class="card-title">The Point in One Minute</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px">
       <div>
-        <p style="color:var(--text2);font-size:13px;line-height:1.8;margin-bottom:16px">
-          A 70B model in BF16 precision weighs <strong style="color:var(--amber)">140 GB</strong>.
-          Most single GPUs have 24–80GB of VRAM — so the model must be split across multiple cards.
-          This split is called <strong>tensor parallelism</strong>.
+        <div class="tag tag-amber" style="margin-bottom:10px">1. Why clusters happen</div>
+        <p style="color:var(--text2);font-size:13px;line-height:1.8">
+          A 70B BF16 model is about <strong style="color:var(--amber)">140 GB</strong> before KV cache and runtime overhead.
+          Most GPUs cannot hold that alone, so the model is split across multiple GPUs.
         </p>
-        <div style="background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:16px;font-family:var(--mono);font-size:12px">
-          <div style="color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px">How the model is split across 4 GPUs:</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-            <div style="background:rgba(245,158,11,0.12);border:1px solid var(--amber);border-radius:4px;padding:8px;text-align:center">
-              <div style="color:var(--amber);font-size:10px">GPU 0</div>
-              <div style="color:var(--text);font-size:11px;margin-top:4px">Layers 1–20<br>35 GB</div>
-            </div>
-            <div style="background:rgba(34,211,238,0.08);border:1px solid var(--cyan);border-radius:4px;padding:8px;text-align:center">
-              <div style="color:var(--cyan);font-size:10px">GPU 1</div>
-              <div style="color:var(--text);font-size:11px;margin-top:4px">Layers 21–40<br>35 GB</div>
-            </div>
-            <div style="background:rgba(167,139,250,0.08);border:1px solid var(--purple);border-radius:4px;padding:8px;text-align:center">
-              <div style="color:var(--purple);font-size:10px">GPU 2</div>
-              <div style="color:var(--text);font-size:11px;margin-top:4px">Layers 41–60<br>35 GB</div>
-            </div>
-            <div style="background:rgba(74,222,128,0.08);border:1px solid var(--green);border-radius:4px;padding:8px;text-align:center">
-              <div style="color:var(--green);font-size:10px">GPU 3</div>
-              <div style="color:var(--text);font-size:11px;margin-top:4px">Layers 61–80<br>35 GB</div>
-            </div>
-          </div>
-          <div style="color:var(--text3);font-size:10px;margin-top:10px;text-align:center">
-            ↑ "80 layers" = 80 transformer blocks in Llama 70B. Each block is a self-contained computation unit.
-          </div>
-        </div>
       </div>
       <div>
-        <p style="color:var(--text2);font-size:13px;line-height:1.8;margin-bottom:12px">
-          After <em>every single layer</em> finishes computing, the GPUs must synchronize.
-          Each GPU computed a partial result; they need to combine them before the next layer can start.
-          This synchronization is called an <strong style="color:var(--red)">all-reduce</strong>.
+        <div class="tag tag-red" style="margin-bottom:10px">2. Where the penalty comes from</div>
+        <p style="color:var(--text2);font-size:13px;line-height:1.8">
+          After each layer, GPUs must synchronize partial results. That sync happens roughly
+          <strong style="color:var(--red)">160 times per token</strong> on a 70B-class model.
+          NVLink makes this cheap. PCIe makes it visible to the user as added latency.
         </p>
-        <div style="background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:14px;font-family:var(--mono);font-size:11px;line-height:2.2">
-          <div style="color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px">For every output token generated:</div>
-          <div><span style="color:var(--amber)">①</span> <span style="color:var(--text)">All 4 GPUs read their 35GB weight shard</span></div>
-          <div><span style="color:var(--text2)">②</span> <span style="color:var(--text)">Each computes partial attention output</span> <span style="color:var(--text3)">(fast, parallel)</span></div>
-          <div><span style="color:var(--red)">③ ALL-REDUCE</span> <span style="color:var(--text)">— GPUs exchange results over the cable</span> <span style="color:var(--red)">(bottleneck)</span></div>
-          <div><span style="color:var(--text2)">④</span> <span style="color:var(--text)">Repeat for the FFN sub-layer</span> <span style="color:var(--text3)">(2nd all-reduce per layer)</span></div>
-          <div style="border-top:1px solid var(--border2);margin-top:8px;padding-top:8px">
-            <span style="color:var(--text3)">2 all-reduces × 80 layers = </span><strong style="color:var(--red)">160 synchronizations per token</strong>
-          </div>
-        </div>
-        <div style="background:rgba(248,113,113,0.07);border:1px solid rgba(248,113,113,0.3);border-radius:6px;padding:10px 14px;margin-top:12px;font-size:13px;color:var(--text2)">
-          <strong style="color:var(--text)">The problem:</strong> Each all-reduce is a <em>hard stop</em> — all GPUs wait
-          for the slowest transfer. On NVLink, this is negligible (microseconds). On PCIe,
-          160 of these pauses add up to <strong style="color:var(--red)">1–3ms per token</strong>.
-        </div>
       </div>
-    </div>
-  </div>
-
-  <!-- Visual GPU utilization comparison -->
-  <div class="card" style="margin-bottom:24px">
-    <div class="card-title">Latency Composition: Compute Time vs Communication Wait</div>
-    <p style="color:var(--text2);font-size:13px;margin-bottom:18px">
-      This is the practical point of the chart: for each generated token, what share of time is useful work
-      versus waiting on synchronization. If the red segment grows, adding more PCIe GPUs is usually hurting latency.
-    </p>
-    <div id="utilizationViz" style="display:flex;flex-direction:column;gap:12px">
-      <!-- populated by JS -->
-    </div>
-    <div style="display:flex;gap:20px;margin-top:14px;font-family:var(--mono);font-size:11px">
-      <span style="display:flex;align-items:center;gap:6px"><span style="display:inline-block;width:14px;height:14px;border-radius:2px;background:var(--amber)"></span>Compute (VRAM read)</span>
-      <span style="display:flex;align-items:center;gap:6px"><span style="display:inline-block;width:14px;height:14px;border-radius:2px;background:var(--red)"></span>Comms wait (all-reduce)</span>
-      <span style="display:flex;align-items:center;gap:6px"><span style="display:inline-block;width:14px;height:14px;border-radius:2px;background:var(--border2)"></span>Idle</span>
-    </div>
-    <div class="anno" style="margin-top:10px">
-      <strong>Interpretation:</strong> prioritize configurations where compute dominates and communication wait stays low,
-      then validate the business impact in §05 via cost per 1M output tokens.
+      <div>
+        <div class="tag tag-green" style="margin-bottom:10px">3. Decision rule</div>
+        <p style="color:var(--text2);font-size:13px;line-height:1.8">
+          First fit the model on as few GPUs as possible. Then prefer the fastest interconnect.
+          Only after that should you compare cost per output token in the economics dashboard.
+        </p>
+      </div>
     </div>
   </div>
 
@@ -1612,7 +1480,7 @@ footer {
 <!-- ══════════════════════════════════════════════ -->
 <section id="s5">
   <div class="section-header">
-    <div class="section-num">05</div>
+    <div class="section-num">04</div>
     <div class="section-title-block">
       <div class="section-eyebrow">The Bottom Line</div>
       <h2 class="section-title">Full Economics Dashboard — True Cost Per Inference</h2>
@@ -1762,7 +1630,7 @@ footer {
 <!-- ══════════════════════════════════════════════ -->
 <section id="s6">
   <div class="section-header">
-    <div class="section-num">06</div>
+    <div class="section-num">05</div>
     <div class="section-title-block">
       <div class="section-eyebrow">The Strategy</div>
       <h2 class="section-title">Legacy GPU Use Case Map — What Old Hardware Is Actually Good For</h2>
@@ -2494,7 +2362,7 @@ function renderModelGpuConfigViz(totalMemGb) {
       return { name, g, usable, gpuCount, nodes, fillPct, hourly, fitClass, fitText };
     });
 
-  wrap.innerHTML = entries.map((e, idx) => {
+  wrap.innerHTML = entries.map((e) => {
     const nodeCards = [];
     let gpusLeft = e.gpuCount;
     for (let n = 1; n <= e.nodes; n += 1) {
@@ -2508,7 +2376,6 @@ function renderModelGpuConfigViz(totalMemGb) {
     return `
     <div class="cfg-gpu-item">
       <div>
-        <div class="cfg-rank">#${idx + 1} rank (performance -> release date -> VRAM)</div>
         <div class="cfg-gpu-item-top">
           <div class="cfg-gpu-name" style="color:${e.g.color}">${e.name}</div>
           <span class="cfg-fit-badge ${e.fitClass}">${e.fitText}</span>
@@ -2617,80 +2484,7 @@ function updateModelMemory() {
 document.getElementById('batchSize').addEventListener('input', updateModelMemory);
 
 // ══════════════════════════════════════════════════════════════════
-// SECTION 3 – GPU CARDS + TABLE
-// ══════════════════════════════════════════════════════════════════
-function buildGpuCards() {
-  const grid = document.getElementById('gpuCardGrid');
-  if (!grid) return;
-  const ordered = getOrderedGpuEntries({ exclude: ['A100 PCIe 40GB'] });
-  grid.innerHTML = ordered.map(({ name, g }) => {
-    const bpd = (g.bandwidth / g.price_spot).toFixed(0);
-    const vramClass = g.vram >= 80 ? 'good' : g.vram >= 40 ? 'warn' : 'bad';
-    return `<div class="gpu-card" style="--gpu-color:${g.color}" onclick="highlightGpu('${name}')">
-      <div class="gpu-name" style="color:${g.color}">${name}</div>
-      <div class="gpu-gen">${g.gen}</div>
-      <div class="gpu-stats">
-        <div class="gpu-stat-item">
-          <div class="gpu-stat-label">VRAM</div>
-          <div class="gpu-stat-value ${vramClass}">${g.vram} GB</div>
-        </div>
-        <div class="gpu-stat-item">
-          <div class="gpu-stat-label">Bandwidth</div>
-          <div class="gpu-stat-value">${g.bandwidth >= 2000 ? (g.bandwidth/1000).toFixed(2)+' TB/s' : g.bandwidth+' GB/s'}</div>
-        </div>
-        <div class="gpu-stat-item">
-          <div class="gpu-stat-label">Interconnect</div>
-          <div class="gpu-stat-value ${g.interconnect.startsWith('NVLink') ? 'good' : 'warn'}" style="font-size:11px">${g.interconnect}</div>
-        </div>
-        <div class="gpu-stat-item">
-          <div class="gpu-stat-label">Spot $/hr</div>
-          <div class="gpu-stat-value">$${g.price_spot.toFixed(2)}</div>
-        </div>
-      </div>
-      <div style="margin-top:10px;font-size:11px;color:var(--text3);line-height:1.4">${g.note}</div>
-      <div style="margin-top:8px">
-        <span class="tag tag-cyan">BW/$: ${bpd} GB/s per $</span>
-      </div>
-    </div>`;
-  }).join('');
-
-  // Spec table
-  const tbody = document.getElementById('gpuSpecBody');
-  if (!tbody) return;
-  const sorted = getOrderedGpuEntries({ exclude: ['A100 PCIe 40GB'] });
-  const model70MemGb = Calc.modelMemGB(MODELS['70B'].params, 'BF16');
-  const effectiveRows = sorted.map(({ name, g }) => {
-    const singleBpd = g.bandwidth / g.price_spot;
-    const usablePerGpu = g.vram * 0.92;
-    const fitGpus = Math.max(1, Math.ceil(model70MemGb / usablePerGpu));
-    const icEff = Calc.icEfficiency(g.ic_type, fitGpus);
-    const effectiveClusterBpd = (g.bandwidth * fitGpus * icEff) / (g.price_spot * fitGpus);
-    return { name, g, singleBpd, fitGpus, effectiveClusterBpd };
-  });
-  const maxEffBpd = Math.max(...effectiveRows.map(r => r.effectiveClusterBpd));
-  tbody.innerHTML = effectiveRows.map(({ name, g, singleBpd, fitGpus, effectiveClusterBpd }) => {
-    const isBest = effectiveClusterBpd > maxEffBpd * 0.9;
-    const interconnectTag = fitGpus > 1 ? ` <span style="color:var(--text3)">(${(Calc.icEfficiency(g.ic_type, fitGpus)*100).toFixed(0)}% eff)</span>` : '';
-    return `<tr>
-      <td><span style="color:${g.color};font-weight:600">${name}</span></td>
-      <td style="color:var(--text2)">${g.gen}</td>
-      <td style="font-family:var(--mono)">${g.vram} GB</td>
-      <td style="font-family:var(--mono);color:var(--amber)">${g.bandwidth >= 2000 ? (g.bandwidth/1000).toFixed(2)+' TB/s' : g.bandwidth+' GB/s'}</td>
-      <td style="font-family:var(--mono);color:${g.interconnect.startsWith('NVLink') ? 'var(--green)' : 'var(--amber)'}">${g.interconnect}</td>
-      <td style="font-family:var(--mono)">${g.ic_bw} GB/s</td>
-      <td style="font-family:var(--mono)">${g.tdp}W</td>
-      <td style="font-family:var(--mono)">$${g.price_spot.toFixed(2)}</td>
-      <td style="font-family:var(--mono)">${singleBpd.toFixed(0)}</td>
-      <td style="font-family:var(--mono)">${fitGpus}x</td>
-      <td class="${isBest ? 'winner' : ''}" style="font-family:var(--mono)">${effectiveClusterBpd.toFixed(0)}${interconnectTag}</td>
-    </tr>`;
-  }).join('');
-}
-
-function highlightGpu(name) {}
-
-// ══════════════════════════════════════════════════════════════════
-// SECTION 4 – GPU UTILIZATION VIZ + LATENCY COMPARE
+// SECTION 4 – LATENCY COMPARE
 // ══════════════════════════════════════════════════════════════════
 function buildCompareSelects() {
   const keys = getOrderedGpuEntries({ exclude: ['A100 PCIe 40GB'] }).map(e => e.name);
@@ -2699,56 +2493,6 @@ function buildCompareSelects() {
   const selB = document.getElementById('compareGpuB');
   if (selA) { selA.innerHTML = opts; selA.value = keys.includes('B200 SXM') ? 'B200 SXM' : keys[0]; }
   if (selB) { selB.innerHTML = opts; selB.value = 'RTX 4090'; }
-}
-
-function updateUtilizationViz() {
-  const el = document.getElementById('utilizationViz');
-  if (!el) return;
-  const modelKey = '70B';
-  const model = MODELS[modelKey];
-  const mm_gb = Calc.modelMemGB(model.params, 'BF16');
-
-  const configs = [
-    { label: '1× H100 SXM5', gpu_key: 'H100 SXM5', n: 1 },
-    { label: '2× H100 SXM5 (NVLink)', gpu_key: 'H100 SXM5', n: 2 },
-    { label: '2× A100 SXM4 (NVLink)', gpu_key: 'A100 SXM4 80GB', n: 2 },
-    { label: '4× RTX 4090 (PCIe)', gpu_key: 'RTX 4090', n: 4 },
-    { label: '8× RTX 4090 (PCIe)', gpu_key: 'RTX 4090', n: 8 },
-    { label: '1× B200', gpu_key: 'B200 SXM', n: 1 },
-  ];
-
-  el.innerHTML = configs.map(c => {
-    const g = GPUS[c.gpu_key];
-    if (!g) return '';
-    if (g.vram * c.n < mm_gb * 1.05) {
-      return `<div style="font-family:var(--mono);font-size:11px">
-        <span style="color:${g.color};min-width:240px;display:inline-block">${c.label}</span>
-        <span style="color:var(--red)">✗ Model doesn't fit (${g.vram * c.n}GB < ${mm_gb.toFixed(0)}GB needed)</span>
-      </div>`;
-    }
-    const d = Calc.decodeMetrics(mm_gb, model, c.n, g.bandwidth, g.ic_bw, g.ic_lat, g.ic_type, g.sustained_eff);
-    const computePct = Math.min(99, (d.read_ms / d.total_ms) * 100);
-    const commsPct = Math.min(99 - computePct, (d.comms_ms / d.total_ms) * 100);
-    const idlePct = Math.max(0, 100 - computePct - commsPct);
-    const utilColor = commsPct > 40 ? 'var(--red)' : commsPct > 15 ? 'var(--amber)' : 'var(--green)';
-
-    return `<div style="margin-bottom:4px">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">
-        <span style="font-family:var(--mono);font-size:11px;color:${g.color};min-width:220px">${c.label}</span>
-        <span style="font-family:var(--mono);font-size:10px;color:var(--text2)">${d.total_ms.toFixed(2)}ms/tok · ${d.tps.toFixed(1)} tok/s</span>
-        <span style="font-family:var(--mono);font-size:10px;color:${utilColor}">GPU useful: ${computePct.toFixed(0)}%</span>
-      </div>
-      <div style="display:flex;height:22px;border-radius:4px;overflow:hidden;border:1px solid var(--border2)">
-        <div style="width:${computePct.toFixed(1)}%;background:var(--amber);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;color:#000;font-weight:700;overflow:hidden">
-          ${computePct > 8 ? 'COMPUTE' : ''}
-        </div>
-        <div style="width:${commsPct.toFixed(1)}%;background:var(--red);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;color:#fff;font-weight:700;overflow:hidden">
-          ${commsPct > 8 ? 'COMMS WAIT' : commsPct > 3 ? '⋯' : ''}
-        </div>
-        <div style="flex:1;background:var(--border);opacity:0.4"></div>
-      </div>
-    </div>`;
-  }).join('');
 }
 
 function updateLatencyCompare() {
@@ -3453,14 +3197,12 @@ function toggleMath(id) {
 document.addEventListener('DOMContentLoaded', () => {
   populateGpuSelects();
   buildCompareSelects();
-  buildGpuCards();
   buildInterconnectBars();
   buildUseCaseMatrix();
   buildModelPresets();
   setModel('70B');
   setPrecision('BF16');
   updateTokens();
-  updateUtilizationViz();
   updateLatencyCompare();
   updatePenaltyChart();
 });
