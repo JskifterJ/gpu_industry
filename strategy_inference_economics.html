@@ -1583,10 +1583,11 @@ footer {
       </div>
 
       <div class="card" style="margin-top:16px">
-        <div class="card-title">Cost Per 1 Million Output Tokens — What That Buys in the Real World</div>
+        <div class="card-title">Cost Per 1 Million Output Tokens + Time To Produce Them</div>
         <div class="chart-container" style="height:220px">
           <canvas id="costChart"></canvas>
         </div>
+        <div id="costSpeedSummary" style="margin-top:12px"></div>
         <details class="example-dropdown" style="margin-top:16px">
           <summary>Task Type Examples</summary>
           <div class="example-body">
@@ -2784,6 +2785,12 @@ function updateEcon() {
     { key: 'ttft', label: '<span data-tip="ttft" class="term">TTFT</span> (prefill)', fmt: r => r ? r.ttft_ms.toFixed(0)+'ms' : '—', best: 'min' },
     { key: 'decode', label: 'Decode ms/tok', fmt: r => r ? r.decode.total_ms.toFixed(1)+'ms' : '—', best: 'min' },
     { key: 'tps', label: 'Tokens/sec', fmt: r => r ? r.tps_effective.toFixed(1) : '—', best: 'max' },
+    { key: 'time_1m', label: 'Time for 1M out tokens', fmt: r => {
+        if (!r || !isFinite(r.tps_effective) || r.tps_effective <= 0) return '—';
+        const secs = 1e6 / r.tps_effective;
+        if (secs < 3600) return (secs / 60).toFixed(1) + ' min';
+        return (secs / 3600).toFixed(2) + ' hr';
+      }, best: 'min' },
     { key: 'total_time', label: 'Total resp. time', fmt: r => r ? (r.total_ms < 1000 ? r.total_ms.toFixed(0)+'ms' : (r.total_ms/1000).toFixed(2)+'s') : '—', best: 'min' },
     { key: 'power_raw', label: '⚡ Power (GPU raw)', fmt: r => r ? r.raw_power_kw.toFixed(2)+' kW' : '—', best: 'min' },
     { key: 'power_pue', label: '⚡ Power (with <span data-tip="pue" class="term">PUE</span>)', fmt: r => r ? r.total_power_kw.toFixed(2)+' kW' : '—', best: 'min' },
@@ -2916,6 +2923,41 @@ function updateEcon() {
     }
   });
 
+  // Cost-speed summary for 1M output tokens
+  const css = document.getElementById('costSpeedSummary');
+  if (css) {
+    const rows = results.map(({key, gpu, result: r}) => {
+      if (!r || !isFinite(r.tps_effective) || r.tps_effective <= 0) {
+        return `<tr><td style="padding:6px 8px;color:var(--text2)">${key}</td><td style="padding:6px 8px;color:var(--text3)">—</td><td style="padding:6px 8px;color:var(--text3)">—</td><td style="padding:6px 8px;color:var(--text3)">N/A</td></tr>`;
+      }
+      const secs1m = 1e6 / r.tps_effective;
+      const timeFmt = secs1m < 3600 ? (secs1m/60).toFixed(1)+' min' : (secs1m/3600).toFixed(2)+' hr';
+      const tokPerDollar = r.cost_per_1m_out > 0 ? (1e6 / r.cost_per_1m_out).toFixed(0) : '—';
+      return `<tr>
+        <td style="padding:6px 8px;color:${gpu?.color || 'var(--text)'};font-family:var(--mono)">${key}</td>
+        <td style="padding:6px 8px;color:var(--text)">$${r.cost_per_1m_out.toFixed(0)}</td>
+        <td style="padding:6px 8px;color:var(--text)">${timeFmt}</td>
+        <td style="padding:6px 8px;color:var(--text2)">${tokPerDollar} tok/$</td>
+      </tr>`;
+    }).join('');
+
+    css.innerHTML = `
+      <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:6px;">Direct comparison at the same scale: how much you pay and how long you wait for 1M output tokens.</div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;min-width:520px;">
+          <thead>
+            <tr style="border-bottom:1px solid var(--border2);">
+              <th style="text-align:left;padding:6px 8px;color:var(--text3);font-family:var(--mono);font-size:10px;">Config</th>
+              <th style="text-align:left;padding:6px 8px;color:var(--text3);font-family:var(--mono);font-size:10px;">$ / 1M out tok</th>
+              <th style="text-align:left;padding:6px 8px;color:var(--text3);font-family:var(--mono);font-size:10px;">Time for 1M out tok</th>
+              <th style="text-align:left;padding:6px 8px;color:var(--text3);font-family:var(--mono);font-size:10px;">Output tokens per $1</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>`;
+  }
+
   // Math panel
   const mp = document.getElementById('mathS5');
   const ra = results[0];
@@ -2933,7 +2975,8 @@ function updateEcon() {
       <span class="math-eq"><span data-tip="rack_u" class="term">Rack</span> = ${r.rack_u_total}U × $${rack}/U/month ÷ 720 hrs/month = $${(r.rack_u_total*rack/720).toFixed(4)}/hr × ${(r.total_ms/3600000).toFixed(8)} hrs = $${r.rack_cost.toFixed(6)}</span>
       <span class="math-eq">Reliability mult = ${r.reliability_mult === 1.02 ? '1.02 (enterprise grade)' : '1.15 (consumer: no <span data-tip="ecc" class="term">ECC</span> + thermal throttle)'}</span>
       <span class="math-eq">Total = ($${r.compute_cost.toFixed(5)} + $${r.energy_cost.toFixed(5)} + $${r.rack_cost.toFixed(5)}) × ${r.reliability_mult} = $<span class="math-result">${r.total_cost.toFixed(6)}</span></span>
-      <span class="math-eq">$/1M output tokens = $<span class="math-result">${r.cost_per_1m_out.toFixed(0)}</span></span>`;
+      <span class="math-eq">$/1M output tokens = $<span class="math-result">${r.cost_per_1m_out.toFixed(0)}</span></span>
+      <span class="math-eq">Time for 1M output tokens = 1,000,000 / ${r.tps_effective.toFixed(1)} tok/s = ${((1e6 / r.tps_effective)/3600).toFixed(2)} hours</span>`;
   }
   // ── Real-world cost translation ──
   updateCostTranslation(results, outputTok);
