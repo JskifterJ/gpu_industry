@@ -613,6 +613,125 @@ textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
 }
 .hidden-cost-box strong { color:var(--red); }
 
+/* ── SECTION 2: MODEL CONFIG TO GPU FIT VISUAL ── */
+.cfg-gpu-card {
+  margin-top: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+}
+.cfg-gpu-headline {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.cfg-gpu-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--amber);
+}
+.cfg-gpu-sub {
+  font-size: 12px;
+  color: var(--text2);
+}
+.cfg-gpu-summary {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text3);
+}
+.cfg-gpu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 10px;
+}
+.cfg-gpu-item {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 7px;
+  padding: 10px;
+}
+.cfg-gpu-item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.cfg-gpu-name {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+}
+.cfg-fit-badge {
+  font-family: var(--mono);
+  font-size: 9px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid var(--border2);
+  color: var(--text2);
+  background: rgba(148, 163, 184, 0.12);
+}
+.cfg-fit-badge.good {
+  color: var(--green);
+  border-color: rgba(74,222,128,0.35);
+  background: rgba(74,222,128,0.12);
+}
+.cfg-fit-badge.warn {
+  color: var(--amber);
+  border-color: rgba(245,158,11,0.35);
+  background: rgba(245,158,11,0.12);
+}
+.cfg-fit-badge.bad {
+  color: var(--red);
+  border-color: rgba(248,113,113,0.35);
+  background: rgba(248,113,113,0.12);
+}
+.cfg-gpu-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 10px;
+  margin-bottom: 8px;
+}
+.cfg-gpu-k {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.cfg-gpu-v {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text);
+}
+.cfg-gpu-fill {
+  margin-top: 4px;
+}
+.cfg-gpu-fill-label {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text3);
+  margin-bottom: 4px;
+}
+.cfg-gpu-fill-track {
+  height: 8px;
+  background: var(--bg);
+  border: 1px solid var(--border2);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.cfg-gpu-fill-bar {
+  height: 100%;
+  background: linear-gradient(90deg, rgba(245,158,11,0.55), rgba(34,211,238,0.5));
+}
+
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--surface); }
 ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
@@ -1016,6 +1135,21 @@ footer {
           <div class="mem-bar-track" style="height:14px">
             <div class="mem-bar-fill" id="ovhdMemBar" style="width:0%;background:var(--purple)"></div>
           </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <div class="card-title">Workload Configuration → Required GPU Configuration</div>
+        <div class="cfg-gpu-card">
+          <div class="cfg-gpu-headline">
+            <div>
+              <div class="cfg-gpu-label">Live Configuration Fit</div>
+              <div class="cfg-gpu-sub">Changes in model size, precision, batch, and context immediately recalculate GPU topology.</div>
+            </div>
+            <div class="cfg-gpu-summary" id="cfgGpuSummary">70B · BF16 · batch 1 · context 1,024</div>
+          </div>
+          <div class="cfg-gpu-grid" id="modelGpuConfigViz"></div>
+          <div class="anno" style="margin-top:8px">Usable VRAM assumes ~8% runtime reserve for allocator, kernels, and fragmentation.</div>
         </div>
       </div>
 
@@ -2161,6 +2295,62 @@ function setPrecision(p) {
   updateModelMemory();
 }
 
+function renderModelGpuConfigViz(totalMemGb) {
+  const wrap = document.getElementById('modelGpuConfigViz');
+  if (!wrap) return;
+
+  const entries = Object.entries(GPUS)
+    .map(([name, g]) => {
+      const usable = g.vram * 0.92;
+      const gpuCount = Math.max(1, Math.ceil(totalMemGb / usable));
+      const nodes = Math.ceil(gpuCount / g.gpu_per_chassis);
+      const fillPct = Math.min(100, (totalMemGb / (gpuCount * usable)) * 100);
+      const hourly = gpuCount * g.price_spot;
+      const fitClass = gpuCount <= 1 ? 'good' : gpuCount <= 4 ? 'warn' : 'bad';
+      const fitText = gpuCount <= 1 ? 'single GPU' : gpuCount <= 4 ? 'small cluster' : 'large cluster';
+      return { name, g, usable, gpuCount, nodes, fillPct, hourly, fitClass, fitText };
+    })
+    .sort((a, b) => a.hourly - b.hourly);
+
+  wrap.innerHTML = entries.map(e => `
+    <div class="cfg-gpu-item">
+      <div class="cfg-gpu-item-top">
+        <div class="cfg-gpu-name" style="color:${e.g.color}">${e.name}</div>
+        <span class="cfg-fit-badge ${e.fitClass}">${e.fitText}</span>
+      </div>
+      <div class="cfg-gpu-metrics">
+        <div>
+          <div class="cfg-gpu-k">GPUs Needed</div>
+          <div class="cfg-gpu-v">${e.gpuCount}</div>
+        </div>
+        <div>
+          <div class="cfg-gpu-k">Nodes</div>
+          <div class="cfg-gpu-v">${e.nodes}</div>
+        </div>
+        <div>
+          <div class="cfg-gpu-k">Usable VRAM/GPU</div>
+          <div class="cfg-gpu-v">${e.usable.toFixed(1)} GB</div>
+        </div>
+        <div>
+          <div class="cfg-gpu-k">Infra $/h</div>
+          <div class="cfg-gpu-v">$${e.hourly.toFixed(2)}</div>
+        </div>
+      </div>
+      <div class="cfg-gpu-fill">
+        <div class="cfg-gpu-fill-label"><span>Memory fill across allocated GPUs</span><span>${Math.round(e.fillPct)}%</span></div>
+        <div class="cfg-gpu-fill-track"><div class="cfg-gpu-fill-bar" style="width:${e.fillPct}%;"></div></div>
+      </div>
+    </div>
+  `).join('');
+
+  const summary = document.getElementById('cfgGpuSummary');
+  if (summary) {
+    const batch = parseInt(document.getElementById('batchSize').value) || 1;
+    const seqLen = getEffectiveSeqLen();
+    summary.textContent = `${selectedModel} · ${selectedPrecision} · batch ${batch} · context ${seqLen.toLocaleString()}`;
+  }
+}
+
 function updateModelMemory() {
   const m = MODELS[selectedModel];
   const batch = parseInt(document.getElementById('batchSize').value);
@@ -2199,6 +2389,8 @@ function updateModelMemory() {
   document.getElementById('m2KvMem').textContent = kv.toFixed(2) + ' GB';
   document.getElementById('m2Overhead').textContent = overhead.toFixed(1) + ' GB';
   document.getElementById('m2Total').textContent = total.toFixed(1) + ' GB';
+
+  renderModelGpuConfigViz(total);
 
   // Precision table
   const tb = document.getElementById('precisionTable');
