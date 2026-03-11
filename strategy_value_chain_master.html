@@ -791,7 +791,7 @@ body.theme-light .cmp-tldr-text{color:#374151;}
 body.theme-light .cmp-tldr-tension{background:rgba(59,130,246,.07);border-color:rgba(59,130,246,.25);}
 body.theme-light .cmp-tldr-tension-h{color:#1D4ED8;}
 body.theme-light .cmp-tldr-tension-body{color:#374151;}
-body.theme-light .cmp-layer-title{color:#111827;border-color:#E5E7EB;background:#F3F4F6!important;}
+body.theme-light .cmp-layer-title{color:#111827;border-color:#E5E7EB;}
 body.theme-light .cmp-layer-title span{color:#9CA3AF;}
 body.theme-light .cmp-layer-grid{border-color:#E5E7EB;}
 body.theme-light .cmp-col{border-right-color:#E5E7EB;}
@@ -1247,8 +1247,8 @@ body.theme-light .btn.nav-active{
 .cmp-node-row.na{opacity:.52;}
 .cmp-node-name{color:#111827;}
 .cmp-node-role{color:#334155;}
-.cmp-badge.owns{background:#E2E8F0;color:#334155;}
-.cmp-badge.facilitates{background:#E2E8F0;color:#334155;}
+.cmp-badge.owns{background:#065F46;color:#86E6B2;}
+.cmp-badge.facilitates{background:#92400E;color:#FDE68A;}
 .cmp-badge.uses{background:#E2E8F0;color:#334155;}
 .cmp-badge.na{background:#E5E7EB;color:#6B7280;}
 
@@ -1259,8 +1259,8 @@ body.theme-light .btn.nav-active{
 .cmp-detail-layer{color:#64748B;}
 .cmp-detail-section h4{color:#475569;}
 .cmp-detail-text{color:#1F2937;}
-.cmp-bm-detail-row.owns{background:#EEF2F7;border-color:#CAD5E4;}
-.cmp-bm-detail-row.facilitates{background:#EEF2F7;border-color:#CAD5E4;}
+.cmp-bm-detail-row.owns{background:rgba(6,95,70,.14);border-color:rgba(6,95,70,.28);}
+.cmp-bm-detail-row.facilitates{background:rgba(146,64,14,.14);border-color:rgba(146,64,14,.28);}
 .cmp-bm-detail-row.uses{background:#EEF2F7;opacity:1;border-color:#CAD5E4;}
 .cmp-bm-detail-row.na{opacity:.66;}
 .cmp-bm-label2{color:#111827;}
@@ -3410,7 +3410,8 @@ function renderCompare() {
 
     const title = document.createElement('div');
     title.className = 'cmp-layer-title';
-    title.style.background = layer.color;
+    title.style.setProperty('background', layer.color, 'important');
+    title.style.setProperty('color', '#1F2937', 'important');
     title.innerHTML = `${layer.label}`;
     title.addEventListener('click',function(){block.classList.toggle('layer-collapsed');});
     block.appendChild(title);
