@@ -371,11 +371,6 @@ header{padding:10px 18px;background:#1A1A2E;color:#fff;display:flex;align-items:
 .cmp-bm-dot2{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:2px;}
 .cmp-bm-label2{font-family:'JetBrains Mono',monospace;font-size:8.5px;font-weight:700;margin-bottom:2px;}
 .cmp-bm-role2{font-size:8.5px;color:#9CA3AF;line-height:1.4;}
-rset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GPU Compute Value Chain v2</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
-<style>
 :root {
   --c-hyp: #2563EB; --c-neo: #059669; --c-agg: #D97706;
   --c-orc: #7C3AED; --c-dep: #DC2626; --c-hyb: #475569; --c-inf: #0891B2;
@@ -928,7 +923,7 @@ body.theme-light .layer-guide-item{border:1px solid #E5E7EB;}
 .mkt-th-tier{text-align:left;min-width:160px;background:#F4F5F7!important;}
 .mkt-th-meta{text-align:left;min-width:130px;}
 .mkt-th-hs{min-width:110px;text-align:left;}
-.mkt-th-co{min-width:220px;text-align:left;}
+.mkt-th-co{min-width:660px;text-align:left;}
 .mkt-tier-row td{border-bottom:1px solid #E5E7EB;vertical-align:top;padding:12px 10px;}
 .mkt-tier-cell{border-right:3px solid #E5E7EB;padding:14px 14px!important;}
 .mkt-tier-name{font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:#111827;margin-bottom:3px;}
@@ -945,7 +940,10 @@ body.theme-light .layer-guide-item{border:1px solid #E5E7EB;}
 .mkt-svc{font-size:8px;color:#374151;padding:2px 6px;background:#F3F4F6;border-radius:3px;margin:1px 0;display:block;line-height:1.4;}
 .mkt-svc:hover{background:#E5E7EB;}
 /* Company chips */
-.mkt-co-cell{padding:10px 10px!important;}
+.mkt-co-cell{padding:10px 10px!important;min-width:660px;}
+.mkt-region-groups{display:flex;flex-direction:column;gap:8px;}
+.mkt-region-group{padding:7px 8px;border:1px solid #E5E7EB;border-radius:8px;background:#FFFFFFAA;}
+.mkt-region-title{font-family:'JetBrains Mono',monospace;font-size:7.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#6B7280;margin-bottom:5px;}
 .mkt-chips{display:flex;flex-wrap:wrap;gap:5px;align-items:flex-start;}
 .mkt-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 7px;background:#fff;border:1px solid #E5E7EB;border-radius:6px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:8.5px;color:#111827;font-weight:600;transition:all .12s;position:relative;white-space:nowrap;}
 .mkt-chip:hover{border-color:#6B7280;box-shadow:0 2px 8px rgba(0,0,0,.1);}
@@ -4349,6 +4347,11 @@ function renderMarketMatrix(){
   var cmCol={platinum:'#818CF8',gold:'#F59E0B',silver:'#9CA3AF',bronze:'#D97706',unrated:'#9CA3AF'};
   var bmLabel={H:'Hyperscaler',N:'Neocloud',A:'Aggregator',O:'Orchestrator/Platform',D:'DePIN',I:'Inf. API/Model'};
   var HS_IDS=['aws','gcp','azure','oracle'];
+  var REGION_GROUPS=[
+    {id:'north_america',label:'North America'},
+    {id:'europe',label:'EU'},
+    {id:'asia_pacific',label:'APAC'}
+  ];
   
   var s='<table class="mkt-table"><thead><tr>'
     +'<th class="mkt-th-tier">Tier</th>'
@@ -4361,7 +4364,7 @@ function renderMarketMatrix(){
     +'<th class="mkt-th-hs">GCP</th>'
     +'<th class="mkt-th-hs">Azure</th>'
     +'<th class="mkt-th-hs">Oracle</th>'
-    +'<th class="mkt-th-co">Neoclouds &amp; Platforms</th>'
+    +'<th class="mkt-th-co" style="min-width:660px;">Neoclouds &amp; Platforms</th>'
     +'</tr></thead><tbody>';
   
   TIER_DATA.forEach(function(tier){
@@ -4402,24 +4405,37 @@ function renderMarketMatrix(){
       s+='</td>';
     });
     
-    // Neocloud chips
-    s+='<td class="mkt-co-cell"><div class="mkt-chips">';
-    COMPANY_DB.forEach(function(co){
-      if(HS_IDS.indexOf(co.id)>=0)return; // skip hyperscalers
-      if(co.tiers.indexOf(tier.id)<0)return;
-      var badges='';
-      if(co.cm!=='unrated')badges+='<span class="mbadge cm-'+co.cm+'">'+co.cm.charAt(0).toUpperCase()+'</span>';
-      if(co.s3)badges+='<span class="mbadge has-s3">S3</span>';
-      if(co.ib)badges+='<span class="mbadge has-ib">IB</span>';
-      if(co.eu)badges+='<span class="mbadge is-eu">EU</span>';
-      if(co.pub)badges+='<span class="mbadge is-pub">↗</span>';
-      s+='<div class="mkt-chip" data-co="'+co.id+'"'
-        +' onmouseenter="showCoTooltip(event,\''+co.id+'\')"'
-        +' onmouseleave="hideCoTooltip()">'
-        +'<span class="co-flag">'+co.hq.flag+'</span>'
-        +co.name
-        +(badges?'<span class="mkt-badges">'+badges+'</span>':'')
-        +'</div>';
+    // Neocloud chips grouped by region
+    s+='<td class="mkt-co-cell" style="min-width:660px;"><div class="mkt-region-groups">';
+    REGION_GROUPS.forEach(function(regionGroup){
+      var regionCompanies=COMPANY_DB.filter(function(co){
+        if(HS_IDS.indexOf(co.id)>=0)return false; // skip hyperscalers
+        if(co.tiers.indexOf(tier.id)<0)return false;
+        return co.hq && co.hq.region===regionGroup.id;
+      });
+      if(!regionCompanies.length)return;
+
+      s+='<div class="mkt-region-group">'
+        +'<div class="mkt-region-title">'+regionGroup.label+'</div>'
+        +'<div class="mkt-chips">';
+
+      regionCompanies.forEach(function(co){
+        var badges='';
+        if(co.cm!=='unrated')badges+='<span class="mbadge cm-'+co.cm+'">'+co.cm.charAt(0).toUpperCase()+'</span>';
+        if(co.s3)badges+='<span class="mbadge has-s3">S3</span>';
+        if(co.ib)badges+='<span class="mbadge has-ib">IB</span>';
+        if(co.eu)badges+='<span class="mbadge is-eu">EU</span>';
+        if(co.pub)badges+='<span class="mbadge is-pub">↗</span>';
+        s+='<div class="mkt-chip" data-co="'+co.id+'"'
+          +' onmouseenter="showCoTooltip(event,\''+co.id+'\')"'
+          +' onmouseleave="hideCoTooltip()">'
+          +'<span class="co-flag">'+co.hq.flag+'</span>'
+          +co.name
+          +(badges?'<span class="mkt-badges">'+badges+'</span>':'')
+          +'</div>';
+      });
+
+      s+='</div></div>';
     });
     s+='</div></td>';
     
