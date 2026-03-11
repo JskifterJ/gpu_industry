@@ -926,28 +926,28 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
           Every weight <em>matrix</em> connects one d-dimensional vector to another &mdash; that's d rows × d columns = d² numbers. Double d, and each matrix has 4× the entries. This is why a 70B model isn't 10× bigger than a 7B model &mdash; it's only 2× wider (d: 4,096 → 8,192), but 4× more params per matrix × more layers ≈ 10× total.
         </div>
         <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);margin-bottom:8px;">Relative weight matrix size (d²) across model sizes:</div>
-        <svg viewBox="0 0 420 170" style="display:block;width:100%;height:auto;border-radius:6px;background:rgba(255,255,255,.03);overflow:visible;">
-          <line x1="118" y1="24" x2="118" y2="150" stroke="rgba(255,255,255,.08)" stroke-width="1" />
-          <line x1="118" y1="150" x2="394" y2="150" stroke="rgba(255,255,255,.08)" stroke-width="1" />
+        <svg viewBox="0 0 420 136" style="display:block;width:100%;height:auto;border-radius:6px;background:rgba(255,255,255,.03);overflow:visible;">
+          <line x1="118" y1="18" x2="118" y2="116" stroke="rgba(255,255,255,.08)" stroke-width="1" />
+          <line x1="118" y1="116" x2="394" y2="116" stroke="rgba(255,255,255,.08)" stroke-width="1" />
 
-          <text x="110" y="43" text-anchor="end" fill="rgba(200,200,200,.65)" font-family="IBM Plex Mono, monospace" font-size="12">GPT-2 (117M)</text>
-          <rect x="118" y="28" width="10" height="18" rx="3" fill="rgba(138,110,232,.55)" />
-          <text x="136" y="41" fill="rgba(138,110,232,.95)" font-family="IBM Plex Mono, monospace" font-size="12" font-weight="700">d² = 0.6M</text>
+          <text x="110" y="31" text-anchor="end" fill="rgba(200,200,200,.65)" font-family="IBM Plex Mono, monospace" font-size="9">GPT-2 (117M)</text>
+          <rect x="118" y="22" width="8" height="10" rx="2" fill="rgba(138,110,232,.55)" />
+          <text x="133" y="30" fill="rgba(138,110,232,.95)" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="700">d² = 0.6M</text>
 
-          <text x="110" y="76" text-anchor="end" fill="rgba(200,200,200,.7)" font-family="IBM Plex Mono, monospace" font-size="12">Llama 7B</text>
-          <rect x="118" y="61" width="95" height="18" rx="3" fill="rgba(74,144,232,.8)" />
-          <text x="221" y="74" fill="rgba(74,144,232,.95)" font-family="IBM Plex Mono, monospace" font-size="12" font-weight="700">d² = 16.8M</text>
+          <text x="110" y="56" text-anchor="end" fill="rgba(200,200,200,.7)" font-family="IBM Plex Mono, monospace" font-size="9">Llama 7B</text>
+          <rect x="118" y="47" width="95" height="10" rx="2" fill="rgba(74,144,232,.8)" />
+          <text x="221" y="55" fill="rgba(74,144,232,.95)" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="700">d² = 16.8M</text>
 
-          <text x="110" y="109" text-anchor="end" fill="rgba(255,255,255,.86)" font-family="IBM Plex Mono, monospace" font-size="12">Llama 70B</text>
-          <rect x="118" y="94" width="191" height="18" rx="3" fill="rgba(232,160,32,.92)" />
-          <text x="317" y="107" fill="rgba(232,160,32,1)" font-family="IBM Plex Mono, monospace" font-size="12" font-weight="700">d² = 67.1M</text>
+          <text x="110" y="81" text-anchor="end" fill="rgba(255,255,255,.86)" font-family="IBM Plex Mono, monospace" font-size="9">Llama 70B</text>
+          <rect x="118" y="72" width="191" height="10" rx="2" fill="rgba(232,160,32,.92)" />
+          <text x="317" y="80" fill="rgba(232,160,32,1)" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="700">d² = 67.1M</text>
 
-          <text x="110" y="142" text-anchor="end" fill="rgba(200,200,200,.72)" font-family="IBM Plex Mono, monospace" font-size="12">GPT-4 est.</text>
-          <rect x="118" y="127" width="276" height="18" rx="3" fill="rgba(48,200,112,.92)" />
-          <text x="402" y="140" text-anchor="end" fill="rgba(48,200,112,1)" font-family="IBM Plex Mono, monospace" font-size="12" font-weight="700">d² = 151.0M</text>
+          <text x="110" y="106" text-anchor="end" fill="rgba(200,200,200,.72)" font-family="IBM Plex Mono, monospace" font-size="9">GPT-4 est.</text>
+          <rect x="118" y="97" width="276" height="10" rx="2" fill="rgba(48,200,112,.92)" />
+          <text x="402" y="105" text-anchor="end" fill="rgba(48,200,112,1)" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="700">d² = 151.0M</text>
 
-          <text x="118" y="164" fill="rgba(200,200,200,.35)" font-family="IBM Plex Mono, monospace" font-size="11">matrix width increases linearly</text>
-          <text x="286" y="164" fill="rgba(232,160,32,.78)" font-family="IBM Plex Mono, monospace" font-size="11" font-weight="700">but area grows as d²</text>
+          <text x="118" y="129" fill="rgba(200,200,200,.35)" font-family="IBM Plex Mono, monospace" font-size="8">matrix width increases linearly</text>
+          <text x="286" y="129" fill="rgba(232,160,32,.78)" font-family="IBM Plex Mono, monospace" font-size="8" font-weight="700">but area grows as d²</text>
         </svg>
         <div style="font-size:10.5px;color:var(--muted);margin-top:7px;line-height:1.55;">
           The d² curve is what makes the difference between a 7B and 70B model so dramatic &mdash; not just 10× more neurons, but 10× more connections per layer because each matrix grows in two dimensions simultaneously.
@@ -1016,6 +1016,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
       <div style="background:rgba(232,160,32,.06);border:1px solid rgba(232,160,32,.25);border-radius:8px;padding:14px 16px;">
         <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--amber);margin-bottom:8px;text-transform:uppercase;letter-spacing:.09em;">Quantization &mdash; trading precision for size</div>
         <div style="font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:10px;">Numbers can be stored at different precisions. <strong style="color:var(--ink);">FP</strong> = Floating Point (scientific notation, flexible range). <strong style="color:var(--ink);">BF</strong> = Brain Float (same range as FP32, fewer fraction digits). <strong style="color:var(--ink);">INT</strong> = Integer (no decimals, fixed range).</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);margin-bottom:8px;letter-spacing:.03em;">All memory and size examples below assume a <strong style="color:var(--ink);">70B parameter</strong> model.</div>
         <div style="display:flex;flex-direction:column;gap:6px;">
           <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:5px;padding:7px 9px;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
@@ -1026,6 +1027,18 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
               <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);">280 GB</span>
             </div>
             <div style="background:#1a2030;border-radius:2px;height:8px;overflow:hidden;margin-bottom:3px;"><div style="width:100%;height:100%;background:rgba(74,144,232,.6);border-radius:2px;"></div></div>
+            <div style="margin-bottom:4px;">
+              <div style="display:flex;height:10px;border-radius:3px;overflow:hidden;border:1px solid rgba(255,255,255,.14);">
+                <div style="width:3.125%;background:rgba(224,72,72,.9);"></div>
+                <div style="width:25%;background:rgba(232,160,32,.9);"></div>
+                <div style="width:71.875%;background:rgba(74,144,232,.85);"></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--muted);margin-top:2px;">
+                <span style="color:var(--red);">S:1</span>
+                <span style="color:var(--amber);">E:8</span>
+                <span style="color:var(--blue);">F:23</span>
+              </div>
+            </div>
             <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);">
               <span>1 sign + 8 exponent + 23 fraction bits</span>
               <span style="color:var(--blue);">Baseline accuracy</span>
@@ -1040,6 +1053,18 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
               <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--green);">140 GB</span>
             </div>
             <div style="background:#1a2030;border-radius:2px;height:8px;overflow:hidden;margin-bottom:3px;"><div style="width:50%;height:100%;background:var(--green);border-radius:2px;"></div></div>
+            <div style="margin-bottom:4px;">
+              <div style="display:flex;height:10px;border-radius:3px;overflow:hidden;border:1px solid rgba(255,255,255,.14);">
+                <div style="width:6.25%;background:rgba(224,72,72,.9);"></div>
+                <div style="width:50%;background:rgba(232,160,32,.9);"></div>
+                <div style="width:43.75%;background:rgba(48,200,112,.85);"></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--muted);margin-top:2px;">
+                <span style="color:var(--red);">S:1</span>
+                <span style="color:var(--amber);">E:8</span>
+                <span style="color:var(--green);">F:7</span>
+              </div>
+            </div>
             <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);">
               <span>1 sign + 8 exponent + 7 fraction bits</span>
               <span style="color:var(--green);">~99.9% of FP32 quality</span>
@@ -1055,8 +1080,18 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
               <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--amber);">70 GB</span>
             </div>
             <div style="background:#1a2030;border-radius:2px;height:8px;overflow:hidden;margin-bottom:3px;"><div style="width:25%;height:100%;background:var(--amber);border-radius:2px;"></div></div>
+            <div style="margin-bottom:4px;">
+              <div style="display:flex;height:10px;border-radius:3px;overflow:hidden;border:1px solid rgba(255,255,255,.14);">
+                <div style="width:12.5%;background:rgba(224,72,72,.9);"></div>
+                <div style="width:87.5%;background:rgba(232,160,32,.85);"></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--muted);margin-top:2px;">
+                <span style="color:var(--red);">S:1</span>
+                <span style="color:var(--amber);">Value bits:7</span>
+              </div>
+            </div>
             <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);">
-              <span>256 possible values only (vs 4 billion in FP32)</span>
+              <span>Integer storage: sign + value bits (no exponent field)</span>
               <span style="color:var(--amber);">~98&ndash;99% of FP32 quality</span>
             </div>
             <div style="font-size:10px;color:var(--muted);margin-top:3px;">Frontier labs use this in production. Fits a single 8-GPU node. Small logic/math degradation.</div>
@@ -1070,8 +1105,18 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
               <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--red);">35 GB</span>
             </div>
             <div style="background:#1a2030;border-radius:2px;height:8px;overflow:hidden;margin-bottom:3px;"><div style="width:12.5%;height:100%;background:var(--red);border-radius:2px;"></div></div>
+            <div style="margin-bottom:4px;">
+              <div style="display:flex;height:10px;border-radius:3px;overflow:hidden;border:1px solid rgba(255,255,255,.14);">
+                <div style="width:25%;background:rgba(224,72,72,.9);"></div>
+                <div style="width:75%;background:rgba(164,72,72,.85);"></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--muted);margin-top:2px;">
+                <span style="color:var(--red);">S:1</span>
+                <span style="color:#d08686;">Value bits:3</span>
+              </div>
+            </div>
             <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);">
-              <span>Only 16 possible values (0&ndash;15)</span>
+              <span>Integer storage: sign + value bits (no exponent field)</span>
               <span style="color:var(--red);">~92&ndash;95% of FP32 quality</span>
             </div>
             <div style="font-size:10px;color:var(--red);margin-top:3px;line-height:1.5;"><strong>Edge performance degrades first:</strong> complex reasoning, multi-step math, code generation. The last 5&ndash;8% of quality is what makes frontier models useful for hard tasks.</div>
@@ -1113,10 +1158,10 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
         <div>
           <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--amber);margin-bottom:7px;">Precision</div>
           <div style="display:flex;flex-direction:column;gap:4px;" id="ms-quant-btns">
-            <button onclick="setQuant(4,'FP32')"  class="ms-qbtn" style="font-family:'IBM Plex Mono',monospace;font-size:9px;padding:4px 8px;border-radius:4px;cursor:pointer;border:1px solid rgba(74,144,232,.4);background:rgba(74,144,232,.08);color:var(--blue);">FP32 — 4 bytes/param</button>
-            <button onclick="setQuant(2,'BF16')"  class="ms-qbtn active" style="font-family:'IBM Plex Mono',monospace;font-size:9px;padding:4px 8px;border-radius:4px;cursor:pointer;border:1.5px solid var(--green);background:rgba(48,200,112,.15);color:var(--green);">BF16 — 2 bytes/param ✓</button>
-            <button onclick="setQuant(1,'INT8')"  class="ms-qbtn" style="font-family:'IBM Plex Mono',monospace;font-size:9px;padding:4px 8px;border-radius:4px;cursor:pointer;border:1px solid rgba(232,160,32,.4);background:rgba(232,160,32,.08);color:var(--amber);">INT8 — 1 byte/param</button>
-            <button onclick="setQuant(0.5,'INT4')" class="ms-qbtn" style="font-family:'IBM Plex Mono',monospace;font-size:9px;padding:4px 8px;border-radius:4px;cursor:pointer;border:1px solid rgba(224,72,72,.4);background:rgba(224,72,72,.08);color:var(--red);">INT4 — 0.5 bytes/param</button>
+            <button onclick="setQuant(4,'FP32')" data-name="FP32" data-label="FP32 — 4 bytes/param" class="ms-qbtn" style="font-family:'IBM Plex Mono',monospace;font-size:9px;padding:4px 8px;border-radius:4px;cursor:pointer;border:1px solid rgba(74,144,232,.4);background:rgba(74,144,232,.08);color:var(--blue);">FP32 — 4 bytes/param</button>
+            <button onclick="setQuant(2,'BF16')" data-name="BF16" data-label="BF16 — 2 bytes/param" class="ms-qbtn active" style="font-family:'IBM Plex Mono',monospace;font-size:9px;padding:4px 8px;border-radius:4px;cursor:pointer;border:1.5px solid var(--green);background:rgba(48,200,112,.15);color:var(--green);">BF16 — 2 bytes/param</button>
+            <button onclick="setQuant(1,'INT8')" data-name="INT8" data-label="INT8 — 1 byte/param" class="ms-qbtn" style="font-family:'IBM Plex Mono',monospace;font-size:9px;padding:4px 8px;border-radius:4px;cursor:pointer;border:1px solid rgba(232,160,32,.4);background:rgba(232,160,32,.08);color:var(--amber);">INT8 — 1 byte/param</button>
+            <button onclick="setQuant(0.5,'INT4')" data-name="INT4" data-label="INT4 — 0.5 bytes/param" class="ms-qbtn" style="font-family:'IBM Plex Mono',monospace;font-size:9px;padding:4px 8px;border-radius:4px;cursor:pointer;border:1px solid rgba(224,72,72,.4);background:rgba(224,72,72,.08);color:var(--red);">INT4 — 0.5 bytes/param</button>
           </div>
         </div>
       </div>
@@ -1153,15 +1198,23 @@ var _msQuantName = 'BF16';
 
 function setQuant(bytes, name){
   _msQuant = bytes; _msQuantName = name;
+  var tones = {
+    FP32: { color:'var(--blue)',  border:'rgba(74,144,232,.4)', activeBorder:'var(--blue)',  bg:'rgba(74,144,232,.08)', activeBg:'rgba(74,144,232,.2)' },
+    BF16: { color:'var(--green)', border:'rgba(48,200,112,.42)', activeBorder:'var(--green)', bg:'rgba(48,200,112,.08)', activeBg:'rgba(48,200,112,.2)' },
+    INT8: { color:'var(--amber)', border:'rgba(232,160,32,.4)', activeBorder:'var(--amber)', bg:'rgba(232,160,32,.08)', activeBg:'rgba(232,160,32,.2)' },
+    INT4: { color:'var(--red)',   border:'rgba(224,72,72,.4)',  activeBorder:'var(--red)',   bg:'rgba(224,72,72,.08)', activeBg:'rgba(224,72,72,.2)' }
+  };
   var btns = document.querySelectorAll('.ms-qbtn');
   btns.forEach(function(b){
-    b.style.fontWeight = '400';
-    if(b.textContent.indexOf(name) >= 0){
-      b.style.fontWeight = '700';
-      b.style.borderWidth = '1.5px';
-    } else {
-      b.style.borderWidth = '1px';
-    }
+    var btnName = b.getAttribute('data-name') || '';
+    var label = b.getAttribute('data-label') || b.textContent.replace(' ✓','').trim();
+    var tone = tones[btnName] || tones.FP32;
+    var isActive = btnName === name;
+    b.style.color = tone.color;
+    b.style.background = isActive ? tone.activeBg : tone.bg;
+    b.style.border = (isActive ? '1.5px solid ' + tone.activeBorder : '1px solid ' + tone.border);
+    b.style.fontWeight = isActive ? '700' : '500';
+    b.textContent = label + (isActive ? ' ✓' : '');
   });
   calcModelSize();
 }
@@ -1274,8 +1327,7 @@ function drawMsChart(curD, curL, bytesPerParam){
 </script>
 
 <script>
-  calcModelSize();
-  drawMsChart(8192,80,2);
+  setQuant(2,'BF16');
   </script>
 </div>
 
@@ -2028,10 +2080,17 @@ function drawMsChart(curD, curL, bytesPerParam){
       </div>
 
       <!-- SECOND NODE & INTER-NODE BANDWIDTH -->
-      <div style="margin-top:16px;background:rgba(224,72,72,.06);border:1.5px solid rgba(224,72,72,.3);border-radius:9px;padding:14px 16px;">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;">When One Node Is Not Enough &mdash; The Inter-Node Bandwidth Wall</div>
-        <div style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:14px;">
-          If your model grows (e.g. a 405B parameter model needs ~810 GB), or you need more concurrent users than a single node can support, you add a second server. But now GPUs must synchronise across nodes after every layer &mdash; and the inter-node cable is <strong style="color:var(--red);">28&times; slower</strong> than NVLink inside the node.
+      <details style="margin-top:16px;background:rgba(224,72,72,.06);border:1.5px solid rgba(224,72,72,.3);border-radius:9px;padding:12px 14px;">
+        <summary style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px;user-select:none;">
+          <span class="inode-fold-arr" style="width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--red);border:1px solid rgba(224,72,72,.45);border-radius:4px;background:rgba(224,72,72,.12);">&gt;</span>
+          <div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:.1em;">When One Node Is Not Enough &mdash; The Inter-Node Bandwidth Wall</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);margin-top:3px;">Collapsed by default &middot; click to expand</div>
+          </div>
+        </summary>
+        <style>details[open] > summary .inode-fold-arr{transform:rotate(90deg);}</style>
+        <div style="font-size:12px;color:var(--muted);line-height:1.7;margin:12px 0 14px;">
+          If your model grows (e.g. a 405B parameter model needs ~810 GB), or you need more concurrent users than a single node can support, you add a second server. But now GPUs must synchronise across nodes after every layer &mdash; and the inter-node cable is often dramatically slower than NVLink inside the node.
         </div>
 
         <!-- Two-node diagram -->
@@ -2113,10 +2172,31 @@ function drawMsChart(curD, curL, bytesPerParam){
             <div style="font-size:10px;color:var(--red);margin-top:3px;">&#9888; bottleneck for 2-node models</div>
           </div>
         </div>
-        <div style="margin-top:10px;font-size:11.5px;color:var(--muted);line-height:1.7;">
-          For a model spread across 2 nodes (e.g. Llama 405B at ~810 GB), after every one of the 80 layers each node must send ~17 GB of partial results to the other over InfiniBand. At 400 GB/s that takes ~0.04s per layer &mdash; 80 layers &times; 0.04s = <strong style="color:var(--red);">~3.2s per token</strong> just in synchronisation overhead if not carefully overlapped. This is why large-scale inference prefers the biggest possible single-node GPUs, and why H100 SXM (with NVLink) commands such a premium over PCIe variants.
+        <div style="margin-top:10px;background:rgba(224,72,72,.08);border:1px solid rgba(224,72,72,.28);border-radius:7px;padding:10px 12px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--red);text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px;">Slower node-to-node links: same 17 GB/layer payload gets painful fast</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;">
+            <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:5px;padding:7px 8px;">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--ink);">InfiniBand NDR (~400 GB/s)</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);margin-top:2px;">17/400 = 0.043s/layer &rarr; 80 layers = <span style="color:var(--red);">3.4s/token</span></div>
+            </div>
+            <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:5px;padding:7px 8px;">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--ink);">200 GbE / IB HDR (~25 GB/s)</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);margin-top:2px;">17/25 = 0.68s/layer &rarr; 80 layers = <span style="color:var(--red);">54.4s/token</span></div>
+            </div>
+            <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:5px;padding:7px 8px;">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--ink);">100 GbE (~12.5 GB/s)</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);margin-top:2px;">17/12.5 = 1.36s/layer &rarr; 80 layers = <span style="color:var(--red);">108.8s/token</span></div>
+            </div>
+            <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:5px;padding:7px 8px;">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--ink);">25 GbE (~3.125 GB/s)</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);margin-top:2px;">17/3.125 = 5.44s/layer &rarr; 80 layers = <span style="color:var(--red);">435s/token</span></div>
+            </div>
+          </div>
         </div>
-      </div>
+        <div style="margin-top:10px;font-size:11.5px;color:var(--muted);line-height:1.7;">
+          For a model spread across 2 nodes (e.g. Llama 405B at ~810 GB), after every one of the 80 layers each node must send ~17 GB of partial results to the other. Even with top-tier fabrics this synchronisation dominates latency unless heavily overlapped. This is why large-scale inference prefers the biggest possible single-node GPUs, and why H100 SXM (with NVLink) commands such a premium over PCIe variants.
+        </div>
+      </details>
     </div>
   </div>
 
@@ -2308,6 +2388,15 @@ function drawMsChart(curD, curL, bytesPerParam){
 </div>
 
 <!-- ⑤ FORWARD PASS -->
+<details style="margin:0 0 0 0;">
+  <summary style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px;padding:4px 0 10px;user-select:none;">
+    <span class="fp-fold-arr" style="width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--amber);border:1px solid rgba(232,160,32,.45);border-radius:4px;background:rgba(232,160,32,.12);">&gt;</span>
+    <div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:var(--amber);">Forward Pass &mdash; What the GPU Actually Does</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);margin-top:2px;">Collapsed by default &middot; click to expand</div>
+    </div>
+  </summary>
+  <style>details[open] > summary .fp-fold-arr{transform:rotate(90deg);}</style>
 <div class="box" style="border-color:rgba(232,160,32,.3);">
   <div class="step-badge">
     <div class="step-num" style="color:var(--amber);border-color:var(--amber);background:var(--amber-d);">&#9316;</div>
@@ -2360,7 +2449,7 @@ function drawMsChart(curD, curL, bytesPerParam){
     <!-- Step 1 -->
     <div class="fwd-step">
       <div class="fwd-hd"><div class="fwd-num" style="color:var(--blue);">1.</div><div class="fwd-name">Your words arrive at the GPU and become numbers</div></div>
-<div style="display:flex;flex-wrap:wrap;gap:5px;margin:5px 0 8px 0;"><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--green);background:rgba(48,200,112,.1);border:1px solid rgba(48,200,112,.3);border-radius:4px;padding:2px 9px;white-space:nowrap;">1 user: <strong><1%</strong></span><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--green);background:rgba(48,200,112,.06);border:1px solid rgba(48,200,112,.2);border-radius:4px;padding:2px 9px;white-space:nowrap;opacity:.8;">20 users: <strong><1%</strong></span><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--green);background:rgba(48,200,112,.04);border:1px solid rgba(48,200,112,.14);border-radius:4px;padding:2px 9px;white-space:nowrap;opacity:.65;">50 users: <strong><1%</strong></span></div>
+<div style="display:flex;flex-wrap:wrap;gap:5px;margin:5px 0 8px 0;"><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);border-radius:4px;padding:2px 9px;white-space:nowrap;">1 user: <strong style="color:var(--ink);"><1%</strong></span><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);border-radius:4px;padding:2px 9px;white-space:nowrap;">20 users: <strong style="color:var(--ink);"><1%</strong></span><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);border-radius:4px;padding:2px 9px;white-space:nowrap;">50 users: <strong style="color:var(--ink);"><1%</strong></span></div>
       <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px;padding-left:0;">
         <span style="display:inline-flex;align-items:center;gap:4px;background:rgba(48,200,112,.1);border:1px solid rgba(48,200,112,.3);border-radius:3px;padding:2px 7px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--green);">&#9670; bottleneck: neither &mdash; PCIe is fine for tiny token IDs</span>
         <span style="display:inline-flex;align-items:center;gap:4px;background:rgba(48,200,112,.08);border:1px solid rgba(48,200,112,.2);border-radius:3px;padding:2px 7px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);">negligible across all batch sizes</span>
@@ -2371,7 +2460,7 @@ function drawMsChart(curD, curL, bytesPerParam){
     <!-- Step 2 -->
     <div class="fwd-step" style="border-color:rgba(138,110,232,.3);">
       <div class="fwd-hd"><div class="fwd-num" style="color:var(--purple);">2.</div><div class="fwd-name">80 rounds: connecting the words (Attention layers)</div></div>
-<div style="display:flex;flex-wrap:wrap;gap:5px;margin:5px 0 8px 0;"><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--purple);background:rgba(138,110,232,.1);border:1px solid rgba(138,110,232,.3);border-radius:4px;padding:2px 9px;white-space:nowrap;">1 user: <strong>~28%</strong></span><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--purple);background:rgba(138,110,232,.06);border:1px solid rgba(138,110,232,.2);border-radius:4px;padding:2px 9px;white-space:nowrap;opacity:.8;">20 users: <strong>~33%</strong></span><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--purple);background:rgba(138,110,232,.04);border:1px solid rgba(138,110,232,.14);border-radius:4px;padding:2px 9px;white-space:nowrap;opacity:.65;">50 users: <strong>~40%</strong></span></div>
+<div style="display:flex;flex-wrap:wrap;gap:5px;margin:5px 0 8px 0;"><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);border-radius:4px;padding:2px 9px;white-space:nowrap;">1 user: <strong style="color:var(--ink);">~28%</strong></span><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);border-radius:4px;padding:2px 9px;white-space:nowrap;">20 users: <strong style="color:var(--ink);">~33%</strong></span><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);border-radius:4px;padding:2px 9px;white-space:nowrap;">50 users: <strong style="color:var(--ink);">~40%</strong></span></div>
       <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px;padding-left:0;">
         <span style="display:inline-flex;align-items:center;gap:4px;background:rgba(74,144,232,.12);border:1px solid rgba(74,144,232,.3);border-radius:3px;padding:2px 7px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--blue);">&#9633; matrix multiply &mdash; 64 heads in parallel</span>
         <span style="display:inline-flex;align-items:center;gap:4px;background:rgba(232,160,32,.1);border:1px solid rgba(232,160,32,.3);border-radius:3px;padding:2px 7px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--amber);">&#9670; memory bandwidth (weights + KV reads grow with batch)</span>
@@ -2383,7 +2472,7 @@ function drawMsChart(curD, curL, bytesPerParam){
     <!-- Step 3 -->
     <div class="fwd-step" style="border-color:rgba(232,160,32,.3);">
       <div class="fwd-hd"><div class="fwd-num" style="color:var(--amber);">3.</div><div class="fwd-name">80 rounds: looking up facts (Fact-recall layers)</div></div>
-<div style="display:flex;flex-wrap:wrap;gap:5px;margin:5px 0 8px 0;"><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--amber);background:rgba(232,160,32,.1);border:1px solid rgba(232,160,32,.3);border-radius:4px;padding:2px 9px;white-space:nowrap;">1 user: <strong>~58%</strong></span><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--amber);background:rgba(232,160,32,.06);border:1px solid rgba(232,160,32,.2);border-radius:4px;padding:2px 9px;white-space:nowrap;opacity:.8;">20 users: <strong>~48%</strong></span><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--amber);background:rgba(232,160,32,.04);border:1px solid rgba(232,160,32,.14);border-radius:4px;padding:2px 9px;white-space:nowrap;opacity:.65;">50 users: <strong>~40%</strong></span></div>
+<div style="display:flex;flex-wrap:wrap;gap:5px;margin:5px 0 8px 0;"><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);border-radius:4px;padding:2px 9px;white-space:nowrap;">1 user: <strong style="color:var(--ink);">~58%</strong></span><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);border-radius:4px;padding:2px 9px;white-space:nowrap;">20 users: <strong style="color:var(--ink);">~48%</strong></span><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);border-radius:4px;padding:2px 9px;white-space:nowrap;">50 users: <strong style="color:var(--ink);">~40%</strong></span></div>
       <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px;padding-left:0;">
         <span style="display:inline-flex;align-items:center;gap:4px;background:rgba(74,144,232,.12);border:1px solid rgba(74,144,232,.3);border-radius:3px;padding:2px 7px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--blue);">&#9633; matrix multiply &mdash; expand then compress</span>
         <span style="display:inline-flex;align-items:center;gap:4px;background:rgba(232,160,32,.1);border:1px solid rgba(232,160,32,.3);border-radius:3px;padding:2px 7px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--amber);">&#9670; memory bandwidth &mdash; largest single cost at low batch</span>
@@ -2395,7 +2484,7 @@ function drawMsChart(curD, curL, bytesPerParam){
     <!-- Step 4 -->
     <div class="fwd-step" style="border-color:rgba(26,191,208,.3);">
       <div class="fwd-hd"><div class="fwd-num" style="color:var(--cyan);">4.</div><div class="fwd-name">GPUs compare notes over the high-speed cable</div></div>
-<div style="display:flex;flex-wrap:wrap;gap:5px;margin:5px 0 8px 0;"><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--cyan);background:rgba(26,191,208,.1);border:1px solid rgba(26,191,208,.3);border-radius:4px;padding:2px 9px;white-space:nowrap;">1 user: <strong>~10%</strong></span><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--cyan);background:rgba(26,191,208,.06);border:1px solid rgba(26,191,208,.2);border-radius:4px;padding:2px 9px;white-space:nowrap;opacity:.8;">20 users: <strong>~14%</strong></span><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--cyan);background:rgba(26,191,208,.04);border:1px solid rgba(26,191,208,.14);border-radius:4px;padding:2px 9px;white-space:nowrap;opacity:.65;">50 users: <strong>~16%</strong></span></div>
+<div style="display:flex;flex-wrap:wrap;gap:5px;margin:5px 0 8px 0;"><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);border-radius:4px;padding:2px 9px;white-space:nowrap;">1 user: <strong style="color:var(--ink);">~10%</strong></span><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);border-radius:4px;padding:2px 9px;white-space:nowrap;">20 users: <strong style="color:var(--ink);">~14%</strong></span><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);border-radius:4px;padding:2px 9px;white-space:nowrap;">50 users: <strong style="color:var(--ink);">~16%</strong></span></div>
       <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px;padding-left:0;">
         <span style="display:inline-flex;align-items:center;gap:4px;background:rgba(48,200,112,.1);border:1px solid rgba(48,200,112,.3);border-radius:3px;padding:2px 7px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--green);">&#9670; bottleneck: neither &mdash; NVLink 4.0 is very fast</span>
         <span style="display:inline-flex;align-items:center;gap:4px;background:rgba(26,191,208,.08);border:1px solid rgba(26,191,208,.2);border-radius:3px;padding:2px 7px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);">fraction rises slightly as FFN shrinks at higher batch</span>
@@ -2406,7 +2495,7 @@ function drawMsChart(curD, curL, bytesPerParam){
     <!-- Step 5 -->
     <div class="fwd-step" style="border-color:rgba(48,200,112,.3);">
       <div class="fwd-hd"><div class="fwd-num" style="color:var(--green);">5.</div><div class="fwd-name">Picking the next word and sending it to your screen</div></div>
-<div style="display:flex;flex-wrap:wrap;gap:5px;margin:5px 0 8px 0;"><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--green);background:rgba(48,200,112,.1);border:1px solid rgba(48,200,112,.3);border-radius:4px;padding:2px 9px;white-space:nowrap;">1 user: <strong>~4%</strong></span><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--green);background:rgba(48,200,112,.06);border:1px solid rgba(48,200,112,.2);border-radius:4px;padding:2px 9px;white-space:nowrap;opacity:.8;">20 users: <strong>~5%</strong></span><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--green);background:rgba(48,200,112,.04);border:1px solid rgba(48,200,112,.14);border-radius:4px;padding:2px 9px;white-space:nowrap;opacity:.65;">50 users: <strong>~4%</strong></span></div>
+<div style="display:flex;flex-wrap:wrap;gap:5px;margin:5px 0 8px 0;"><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);border-radius:4px;padding:2px 9px;white-space:nowrap;">1 user: <strong style="color:var(--ink);">~4%</strong></span><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);border-radius:4px;padding:2px 9px;white-space:nowrap;">20 users: <strong style="color:var(--ink);">~5%</strong></span><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);border-radius:4px;padding:2px 9px;white-space:nowrap;">50 users: <strong style="color:var(--ink);">~4%</strong></span></div>
       <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px;padding-left:0;">
         <span style="display:inline-flex;align-items:center;gap:4px;background:rgba(74,144,232,.12);border:1px solid rgba(74,144,232,.3);border-radius:3px;padding:2px 7px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--blue);">&#9633; matrix multiply &mdash; all 128K tokens scored simultaneously</span>
         <span style="display:inline-flex;align-items:center;gap:4px;background:rgba(232,160,32,.1);border:1px solid rgba(232,160,32,.3);border-radius:3px;padding:2px 7px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--amber);">&#9670; memory bandwidth (unembedding vocab table)</span>
@@ -2429,6 +2518,7 @@ function drawMsChart(curD, curL, bytesPerParam){
     </div>
   </div>
 </div>
+</details>
 
 <!-- CONNECTOR -->
 <div class="conn">
@@ -2509,14 +2599,83 @@ function drawMsChart(curD, curL, bytesPerParam){
 <!-- CONNECTOR -->
 <div class="conn">
   <div class="conn-line"></div>
-  <div class="conn-label">tokens stream to client</div>
+  <div class="conn-label">response complete &rarr; persistence policy decisions</div>
   <div class="pulse-wrap"><div class="pulse" style="background:var(--cyan);animation-delay:.4s;"></div></div>
 </div>
 
-<!-- ⑦ OUTPUT LAYER -->
+<!-- ⑦ STORAGE & RETENTION -->
+<div class="box" style="border-color:rgba(74,144,232,0.28);">
+  <div class="step-badge">
+    <div class="step-num" style="color:var(--blue);border-color:var(--blue);background:var(--blue-d);">&#9318;</div>
+    <div>
+      <div class="step-label" style="color:var(--blue);">Storage &amp; Retention Pathways</div>
+      <div class="step-sub">What is kept after inference &middot; where it lives &middot; typical retention windows</div>
+    </div>
+  </div>
+  <div style="font-size:12.5px;color:var(--muted);line-height:1.75;margin-bottom:14px;">
+    After a response is generated, not all data is treated the same way. <span class="tip" data-tip="KV Cache: the stored Key and Value vectors for prior tokens. They stay in GPU memory so each new token can look back without recomputing the whole history. It grows with conversation length and is a core memory constraint.">KV cache</span> is runtime memory and is typically discarded when the request/session ends, while chat history, outputs, and logs may be persisted based on product settings, enterprise policy, and legal/compliance requirements.
+  </div>
+
+  <div style="background:var(--bg);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:12px 14px;margin-bottom:12px;">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:9px;text-transform:uppercase;letter-spacing:.09em;">Alternative data pathways after an inference request</div>
+    <div style="display:grid;grid-template-columns:1fr 30px 1fr;gap:10px;align-items:stretch;">
+      <div style="background:rgba(26,191,208,.08);border:1px solid rgba(26,191,208,.28);border-radius:7px;padding:10px 12px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--cyan);margin-bottom:6px;">Path A &mdash; Provider-hosted (example: Anthropic API on AWS)</div>
+        <div style="display:flex;flex-direction:column;gap:5px;font-size:11px;color:var(--muted);line-height:1.5;">
+          <div><strong style="color:var(--ink);">Inference runtime:</strong> prompts, tokens, and <span class="tip" data-tip="KV Cache: the stored Key and Value vectors for prior tokens. They stay in GPU memory so each new token can look back without recomputing the whole history. It grows with conversation length and is a core memory constraint.">KV cache</span> in GPU HBM/RAM, then dropped after request/session timeout.</div>
+          <div><strong style="color:var(--ink);">Provider logs:</strong> request metadata, abuse/safety traces, and operational telemetry retained per provider policy and plan.</div>
+          <div><strong style="color:var(--ink);">Customer app storage:</strong> chat transcript/output usually persisted in the customer app DB (Postgres/object store/vector DB) if chat memory is enabled.</div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);">&harr;</div>
+
+      <div style="background:rgba(48,200,112,.08);border:1px solid rgba(48,200,112,.28);border-radius:7px;padding:10px 12px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--green);margin-bottom:6px;">Path B &mdash; Enterprise isolated (on-prem / private VPC)</div>
+        <div style="display:flex;flex-direction:column;gap:5px;font-size:11px;color:var(--muted);line-height:1.5;">
+          <div><strong style="color:var(--ink);">Inference runtime:</strong> stays inside customer-controlled cluster; <span class="tip" data-tip="KV Cache: the stored Key and Value vectors for prior tokens. They stay in GPU memory so each new token can look back without recomputing the whole history. It grows with conversation length and is a core memory constraint.">KV cache</span> remains local runtime memory and is not persisted by default.</div>
+          <div><strong style="color:var(--ink);">Logs and traces:</strong> sent to internal SIEM/data lake (Splunk/ELK/S3/Blob) under customer policy.</div>
+          <div><strong style="color:var(--ink);">Chat/project memory:</strong> stored in enterprise-managed databases with configurable encryption, residency, and retention.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1.15fr .85fr;gap:12px;">
+    <div style="background:var(--bg);border:1px solid rgba(255,255,255,.08);border-radius:7px;padding:10px 12px;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:7px;text-transform:uppercase;letter-spacing:.08em;">Data object &rarr; storage location &rarr; typical retention</div>
+      <div style="display:flex;flex-direction:column;gap:4px;font-family:'IBM Plex Mono',monospace;font-size:8.8px;">
+        <div style="display:grid;grid-template-columns:120px 1fr 105px;gap:8px;padding:4px 0;border-bottom:1px solid var(--border);"><span style="color:var(--cyan);">KV cache</span><span style="color:var(--muted);">GPU HBM / process memory only</span><span style="color:var(--ink);text-align:right;">seconds&ndash;minutes</span></div>
+        <div style="display:grid;grid-template-columns:120px 1fr 105px;gap:8px;padding:4px 0;border-bottom:1px solid var(--border);"><span style="color:var(--blue);">Generated output</span><span style="color:var(--muted);">App DB / chat store (if enabled)</span><span style="color:var(--ink);text-align:right;">days&ndash;years</span></div>
+        <div style="display:grid;grid-template-columns:120px 1fr 105px;gap:8px;padding:4px 0;border-bottom:1px solid var(--border);"><span style="color:var(--amber);">Conversation history</span><span style="color:var(--muted);">Session store + long-term memory DB</span><span style="color:var(--ink);text-align:right;">policy-driven</span></div>
+        <div style="display:grid;grid-template-columns:120px 1fr 105px;gap:8px;padding:4px 0;border-bottom:1px solid var(--border);"><span style="color:var(--purple);">Request/usage logs</span><span style="color:var(--muted);">Provider telemetry and/or enterprise observability</span><span style="color:var(--ink);text-align:right;">0&ndash;90 days typical</span></div>
+        <div style="display:grid;grid-template-columns:120px 1fr 105px;gap:8px;padding:4px 0;"><span style="color:var(--green);">Vector memory</span><span style="color:var(--muted);">Vector DB (Pinecone/pgvector/FAISS/etc.)</span><span style="color:var(--ink);text-align:right;">until deleted</span></div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:7px;">
+      <div style="background:rgba(232,160,32,.08);border:1px solid rgba(232,160,32,.25);border-radius:7px;padding:10px 12px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--amber);margin-bottom:4px;">Where does KV data go?</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6;">Normally nowhere persistent. It is transient runtime memory used for fast decoding, then evicted when generation ends, session expires, or memory pressure clears it.</div>
+      </div>
+      <div style="background:rgba(224,72,72,.08);border:1px solid rgba(224,72,72,.25);border-radius:7px;padding:10px 12px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--red);margin-bottom:4px;">Retention is contractual, not universal</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6;">Provider, SKU, and enterprise contract determine whether prompts/outputs are logged, how long they are retained, and whether they can be used for model improvement.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONNECTOR -->
+<div class="conn">
+  <div class="conn-line"></div>
+  <div class="conn-label">stored transcript/logs &rarr; UX and analytics</div>
+  <div class="pulse-wrap"><div class="pulse" style="background:var(--cyan);animation-delay:.35s;"></div></div>
+</div>
+
+<!-- ⑧ OUTPUT LAYER -->
 <div class="box" style="border-color:rgba(26,191,208,0.25);">
   <div class="step-badge">
-    <div class="step-num" style="color:var(--cyan);border-color:var(--cyan);background:var(--cyan-d);">&#9317;</div>
+    <div class="step-num" style="color:var(--cyan);border-color:var(--cyan);background:var(--cyan-d);">&#9319;</div>
     <div>
       <div class="step-label" style="color:var(--cyan);">Output &amp; Streaming</div>
       <div class="step-sub">Token IDs &rarr; text chunks &rarr; SSE stream &rarr; browser render</div>
