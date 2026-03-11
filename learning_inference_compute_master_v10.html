@@ -2061,6 +2061,18 @@ function initMsCalculator(){
       </div>
     </div>
 
+    <div style="background:rgba(138,110,232,.08);border:1.5px solid rgba(138,110,232,.28);border-radius:8px;padding:10px 12px;margin-bottom:12px;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--purple);margin-bottom:6px;text-transform:uppercase;letter-spacing:.09em;">Tensor parallelism (why it is smart when bandwidth is high)</div>
+      <div style="display:grid;grid-template-columns:1fr 22px 1fr 22px 1fr;gap:8px;align-items:center;margin-bottom:7px;">
+        <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:7px 8px;font-family:'IBM Plex Mono',monospace;font-size:8.3px;color:var(--muted);">Split each big matrix across 8 GPUs<br><strong style="color:var(--ink);">G0..G7 each store ~1/8</strong></div>
+        <div style="text-align:center;color:var(--muted);">&rarr;</div>
+        <div style="background:rgba(74,144,232,.08);border:1px solid rgba(74,144,232,.25);border-radius:6px;padding:7px 8px;font-family:'IBM Plex Mono',monospace;font-size:8.3px;color:var(--muted);">All GPUs multiply in parallel at the same time<br><strong style="color:var(--ink);">~8x memory + compute footprint</strong></div>
+        <div style="text-align:center;color:var(--muted);">&rarr;</div>
+        <div style="background:rgba(26,191,208,.08);border:1px solid rgba(26,191,208,.25);border-radius:6px;padding:7px 8px;font-family:'IBM Plex Mono',monospace;font-size:8.3px;color:var(--muted);">Run <span class="tip" data-tip="AllReduce: a collective synchronization step where GPUs exchange and combine partial results so every GPU has the same updated activations before the next layer starts. In tensor-parallel inference it happens after every layer.">AllReduce</span> so each GPU gets the full activation before next layer</div>
+      </div>
+      <div style="font-size:11px;color:var(--muted);line-height:1.55;">Why this is smart: you turn one huge model that does not fit on one GPU into 8 concurrent shards. If interconnect is fast (NVLink 900 GB/s), sync overhead stays small relative to the compute gained. If interconnect is slow (PCIe), synchronization can dominate and erase the benefit.</div>
+    </div>
+
     <div class="nvlink-bar">
       <div>
         <div class="nvl-label"><span class="tip" data-tip="NVIDIA's high-speed GPU-to-GPU interconnect inside the server chassis. H100 NVLink 4.0 runs at 900 GB/s — 28&times; faster than PCIe. Critical for tensor-parallel inference: each GPU holds 1/8 of the weight matrices and must sync results after every layer.">NVLink 4.0</span> &mdash; all-to-all GPU fabric</div>
