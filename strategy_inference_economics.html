@@ -1586,7 +1586,12 @@ footer {
         <div class="chart-container" style="height:220px">
           <canvas id="costChart"></canvas>
         </div>
-        <div id="costTranslation" style="margin-top:16px"><!-- populated by JS --></div>
+        <details class="example-dropdown" style="margin-top:16px">
+          <summary>Task Type Examples</summary>
+          <div class="example-body">
+            <div id="costTranslation"><!-- populated by JS --></div>
+          </div>
+        </details>
       </div>
 
       <div class="math-toggle" onclick="toggleMath('mathS5')">
@@ -1594,32 +1599,6 @@ footer {
       </div>
       <div class="math-panel" id="mathS5" id="econMathPanel">
         <!-- populated by JS -->
-      </div>
-
-      <div class="sub-heading" style="margin-top:24px">Head-to-Head: Same Workload, Different Hardware</div>
-      <div class="card" style="margin-top:12px">
-        <div class="card-title">70B BF16 Model — Full Comparison Across GPU Configurations</div>
-        <div class="compare-wrap">
-          <table class="compare-table" id="penaltyTable">
-            <thead>
-              <tr>
-                <th>Configuration</th>
-                <th>GPUs</th>
-                <th>VRAM</th>
-                <th>Interconnect</th>
-                <th><span data-tip="pcie_efficiency" class="term" style="color:var(--text3)">IC Eff.</span></th>
-                <th>Decode ms/tok</th>
-                <th>Tok/sec</th>
-                <th>Power (raw + PUE)</th>
-                <th>Rack U ($/hr)</th>
-                <th>$/hr breakdown</th>
-                <th>$/1M tokens (all-in)</th>
-                <th>Verdict</th>
-              </tr>
-            </thead>
-            <tbody id="penaltyTableBody"></tbody>
-          </table>
-        </div>
       </div>
     </div>
   </div>
@@ -2748,105 +2727,6 @@ function updatePenaltyChart() {
     }
   });
 
-  // Build comparison table
-  buildPenaltyTable();
-}
-
-function buildPenaltyTable() {
-  const configs = [
-    { name: '1× B200',             gpu_key: 'B200 SXM',         n: 1 },
-    { name: '2× H200 SXM5',        gpu_key: 'H200 SXM5',        n: 2 },
-    { name: '2× H100 SXM5',        gpu_key: 'H100 SXM5',        n: 2 },
-    { name: '2× A100 SXM4',        gpu_key: 'A100 SXM4 80GB',   n: 2 },
-    { name: '4× A100 PCIe 40GB',   gpu_key: 'A100 PCIe 40GB',   n: 4 },
-    { name: '4× A40',              gpu_key: 'A40',               n: 4 },
-    { name: '8× V100 SXM2 32GB',   gpu_key: 'V100 SXM2 32GB',   n: 8 },
-    { name: '8× RTX 4090',         gpu_key: 'RTX 4090',          n: 8 },
-  ];
-  const mm_gb = Calc.modelMemGB(MODELS['70B'].params, 'BF16'); // 140 GB
-  const model = MODELS['70B'];
-  // Use representative econ params for full cost
-  const elec_kwh = 0.10, rack_u_cost = 150, pue = 1.4;
-
-  const results = configs.map(c => {
-    const g = GPUS[c.gpu_key];
-    if (!g) return null;
-    const total_vram = g.vram * c.n;
-    if (total_vram < mm_gb * 1.08) return { ...c, fits: false, g };
-    const d = Calc.decodeMetrics(mm_gb, model, c.n, g.bandwidth, g.ic_bw, g.ic_lat, g.ic_type, g.sustained_eff);
-    const ic_eff = Calc.icEfficiency(g.ic_type, c.n);
-    // Full cost per 1M tokens
-    const compute_hr = g.price_spot * c.n;
-    const raw_power_kw = g.tdp * c.n / 1000;
-    const total_power_kw = raw_power_kw * pue;
-    const u_per_gpu = g.chassis_u / g.gpu_per_chassis;
-    const rack_u_total = u_per_gpu * c.n;
-    const rack_hr = rack_u_total * rack_u_cost / (30 * 24);
-    const elec_hr = total_power_kw * elec_kwh;
-    const total_hr = (compute_hr + elec_hr + rack_hr) * (g.datacenter ? 1.02 : 1.15);
-    // tokens per hour = tps * 3600
-    const tph = d.tps * 3600;
-    const cost_1m_full = total_hr / tph * 1e6;
-    const cost_1m_compute_only = (compute_hr / tph) * 1e6;
-    return { ...c, fits: true, total_vram, g, ic_eff, d,
-             compute_hr, elec_hr, rack_hr, total_hr,
-             cost_1m_full, cost_1m_compute_only,
-             rack_u_total, raw_power_kw, total_power_kw };
-  }).filter(Boolean);
-
-  const valid = results.filter(r=>r.fits);
-  const best_tps = Math.max(...valid.map(r=>r.d.tps));
-  const best_cost_full = Math.min(...valid.map(r=>r.cost_1m_full));
-
-  const tbody = document.getElementById('penaltyTableBody');
-  tbody.innerHTML = results.map(r => {
-    if (!r.fits) return `<tr>
-      <td style="color:var(--text2)">${r.name}</td>
-      <td>${r.n}</td>
-      <td class="loser">${(r.g.vram*r.n)} GB</td>
-      <td colspan="9" style="color:var(--red);font-family:var(--mono);font-size:12px">
-        ✗ MODEL DOES NOT FIT — needs ${mm_gb.toFixed(0)} GB, has ${r.g.vram*r.n} GB</td>
-    </tr>`;
-    const isBestTps  = Math.abs(r.d.tps - best_tps) < 0.5;
-    const isBestCost = Math.abs(r.cost_1m_full - best_cost_full) < 0.5;
-    const icEffPct = (r.ic_eff * 100).toFixed(0);
-    const icCol = r.ic_eff > 0.8 ? 'var(--green)' : r.ic_eff > 0.4 ? 'var(--amber)' : 'var(--red)';
-    const verdict = isBestTps && isBestCost ? '⭐ BEST ALL-IN'
-                  : isBestTps  ? 'Fastest decode'
-                  : isBestCost ? 'Cheapest (all-in)'
-                  : '—';
-    const vtag = isBestTps && isBestCost ? 'tag-green' : isBestTps || isBestCost ? 'tag-amber' : 'tag-red';
-    return `<tr>
-      <td><span style="color:${r.g.color};font-weight:600">${r.name}</span>
-          ${r.g.ecc ? '' : '<br><span class="tag tag-red" style="font-size:9px;margin-top:2px">No ECC</span>'}</td>
-      <td style="font-family:var(--mono)">${r.n}</td>
-      <td style="font-family:var(--mono)">${r.total_vram} GB</td>
-      <td style="font-family:var(--mono);font-size:11px;color:${r.g.interconnect.startsWith('NVLink')?'var(--green)':'var(--amber)'}">${r.g.interconnect}</td>
-      <td style="font-family:var(--mono);color:${icCol}">${icEffPct}%</td>
-      <td style="font-family:var(--mono)">${r.d.total_ms.toFixed(1)} ms</td>
-      <td class="${isBestTps?'winner':''}" style="font-family:var(--mono)">${r.d.tps.toFixed(1)}</td>
-      <td style="font-family:var(--mono)">${r.raw_power_kw.toFixed(1)} kW<br><span style="font-size:10px;color:var(--text3)">(+PUE: ${r.total_power_kw.toFixed(1)} kW)</span></td>
-      <td style="font-family:var(--mono)">${r.rack_u_total.toFixed(1)}U<br><span style="font-size:10px;color:var(--text3)">$${(r.rack_hr).toFixed(2)}/hr</span></td>
-      <td style="font-family:var(--mono);font-size:11px">
-        $${r.compute_hr.toFixed(2)}<span style="color:var(--text3)"> compute</span><br>
-        +$${r.elec_hr.toFixed(2)}<span style="color:var(--cyan)"> elec</span>
-        +$${r.rack_hr.toFixed(2)}<span style="color:var(--purple)"> rack</span>
-      </td>
-      <td class="${isBestCost?'winner':''}" style="font-family:var(--mono)">$${r.cost_1m_full.toFixed(0)}</td>
-      <td><span class="tag ${vtag}">${verdict}</span></td>
-    </tr>`;
-  }).join('');
-
-  // Add note below table
-  const existing = document.getElementById('penaltyTableNote');
-  if (!existing) {
-    const note = document.createElement('div');
-    note.id = 'penaltyTableNote';
-    note.className = 'anno';
-    note.style.marginTop = '10px';
-    note.innerHTML = `Full cost = compute + electricity (incl. PUE ${pue}×) + rack ($${rack_u_cost}/U/mo, fractional per GPU) + reliability factor. Electricity at $${elec_kwh}/kWh. These inputs are adjustable in §05 Economics.`;
-    document.getElementById('penaltyTable').parentElement.appendChild(note);
-  }
 }
 
 // ══════════════════════════════════════════════════════════════════
