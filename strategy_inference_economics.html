@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GPU Inference Economics Explorer</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Nunito+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
@@ -989,15 +990,15 @@ footer {
           <div class="def-box" id="defCtx">
             <strong>Context window</strong> is the maximum number of tokens (input + output combined) the model can "see" at once.
             Think of it as short-term memory. Beyond this limit, older content is forgotten.
-            Longer context windows require more VRAM (KV cache grows linearly) and slower attention computation (O(n²) complexity).
+            Longer context windows require more VRAM (<span data-tip="kv_cache" class="term">KV cache</span> grows linearly) and slower attention computation (O(n²) complexity).
             GPT-4o: 128K tokens · Claude Sonnet: 200K tokens · Llama 3.1: 128K tokens.
-            A 200K context window on a 70B model adds ~50GB of KV cache VRAM on top of the 140GB of model weights.
+            A 200K context window on a 70B model adds ~50GB of <span data-tip="kv_cache" class="term">KV cache</span> VRAM on top of the 140GB of model weights.
           </div>
           <div class="slider-row">
             <input type="range" id="contextLen" min="512" max="131072" step="512" value="1024" oninput="syncSliderNum('contextLen','contextLenNum'); updateTokens()">
             <input type="number" class="slider-num" id="contextLenNum" value="1024" min="512" max="131072" oninput="syncNumSlider('contextLenNum','contextLen'); updateTokens()">
           </div>
-          <div class="anno">Model architectural limit — independent of response length. Affects KV cache VRAM (see §2) and truncation risk. 1K ≈ short chat · 8K ≈ long doc · 32K ≈ book chapter · 128K ≈ novel · 200K = Claude max</div>
+          <div class="anno">Model architectural limit — independent of response length. Affects <span data-tip="kv_cache" class="term">KV cache</span> VRAM (see §2) and truncation risk. 1K ≈ short chat · 8K ≈ long doc · 32K ≈ book chapter · 128K ≈ novel · 200K = Claude max</div>
         </div>
       </div>
 
@@ -1121,7 +1122,7 @@ footer {
               <span class="tag tag-amber">FP32</span><span><strong>32-bit float</strong> — 4 bytes/param. Full precision. Used during training. Too slow and memory-hungry for inference.</span>
               <span class="tag tag-cyan">BF16</span><span><strong>16-bit brain float</strong> — 2 bytes/param. Half the memory of FP32 with near-identical quality. <em>Industry standard for inference.</em></span>
               <span class="tag tag-amber">INT8</span><span><strong>8-bit integer</strong> — 1 byte/param. Requires calibration (SmoothQuant / LLM.int8). Tiny quality loss, 2× memory saving. Safe for most tasks.</span>
-              <span class="tag tag-red">INT4</span><span><strong>4-bit integer</strong> — 0.5 bytes/param. Requires AWQ or GPTQ quantisation. ~1–3% benchmark drop. Can make a 70B model fit on 2 GPUs instead of 4.</span>
+              <span class="tag tag-red">INT4</span><span><strong>4-bit integer</strong> — 0.5 bytes/param. Requires <span data-tip="awq_gptq" class="term">AWQ or GPTQ</span> quantisation. ~1–3% benchmark drop. Can make a 70B model fit on 2 GPUs instead of 4.</span>
             </div><br>
             <strong>Analogy:</strong> Think of a painting. FP32 is the original 4K canvas. BF16 is a high-res JPEG — virtually indistinguishable.
             INT8 is a compressed JPEG. INT4 is a heavily compressed thumbnail — still recognisable, but artefacts appear.
@@ -1160,8 +1161,8 @@ footer {
             into the model's context window alongside your query — this is called RAG (Retrieval-Augmented Generation)
             or MCP (Model Context Protocol).<br><br>
             These documents consume tokens in the context window. Every token in context must be stored as a
-            <strong>key-value pair</strong> in the KV Cache — a large, fast-access memory buffer.
-            The more documents, the more VRAM needed for the KV cache.<br><br>
+            <strong>key-value pair</strong> in the <span data-tip="kv_cache" class="term">KV Cache</span> — a large, fast-access memory buffer.
+            The more documents, the more VRAM needed for the <span data-tip="kv_cache" class="term">KV cache</span>.<br><br>
             <strong>Real-world sizes:</strong><br>
             • 1 document ≈ 2,000–5,000 tokens (a 4-page report or 200-line code file)<br>
             • 1 presentation ≈ 1,500–3,000 tokens (20-slide deck with speaker notes)<br>
@@ -1192,7 +1193,7 @@ footer {
         <strong>Model weights memory:</strong>
         <span class="math-eq">model_mem = params × bytes_per_param</span>
         <span class="math-eq">= <span id="m2Params">70B</span> × <span id="m2Bpp">2</span> bytes = <span class="math-result" id="m2ModelMem">140 GB</span></span><br>
-        <strong>KV Cache memory (per request):</strong>
+        <strong><span data-tip="kv_cache" class="term">KV Cache</span> memory (per request):</strong>
         <span class="math-eq">kv_cache = 2 × layers × kv_heads × head_dim × seq_len × batch × 2 bytes</span>
         <span class="math-eq">= 2 × <span id="m2Layers">80</span> × <span id="m2KvHeads">8</span> × 128 × <span id="m2SeqLen">1024</span> × <span id="m2Batch">1</span> × 2 = <span class="math-result" id="m2KvMem">3.4 GB</span></span><br>
         <strong>Overhead (~10%):</strong>
@@ -1210,7 +1211,7 @@ footer {
             <div class="metric-value" id="modelMemVal">140<span class="metric-unit">GB</span></div>
           </div>
           <div class="metric cyan">
-            <div class="metric-label">KV Cache</div>
+            <div class="metric-label"><span data-tip="kv_cache" class="term">KV Cache</span></div>
             <div class="metric-value" id="kvCacheVal">3.4<span class="metric-unit">GB</span></div>
           </div>
           <div class="metric red">
@@ -1226,7 +1227,7 @@ footer {
           </div>
         </div>
         <div class="mem-bar-wrap">
-          <div class="mem-bar-label"><span>KV Cache</span><span id="kvMemPct">0%</span></div>
+          <div class="mem-bar-label"><span><span data-tip="kv_cache" class="term">KV Cache</span></span><span id="kvMemPct">0%</span></div>
           <div class="mem-bar-track" style="height:14px">
             <div class="mem-bar-fill" id="kvMemBar" style="width:0%;background:var(--cyan)"></div>
           </div>
@@ -1262,7 +1263,7 @@ footer {
         <div class="insight cyan" style="margin-top:14px">
           <strong>Quantization is a physics knob, not just a quality knob.</strong>
           INT4 reduces model memory 4× vs BF16 — potentially halving the number of GPUs needed.
-          AWQ/GPTQ quantization on well-calibrated models loses &lt;2% benchmark quality for INT4.
+          <span data-tip="awq_gptq" class="term">AWQ/GPTQ</span> quantization on well-calibrated models loses &lt;2% benchmark quality for INT4.
         </div>
       </div>
     </div>
@@ -1291,14 +1292,14 @@ footer {
       <div>
         <div class="tag tag-amber" style="margin-bottom:10px">1. Why clusters happen</div>
         <p style="color:var(--text2);font-size:13px;line-height:1.8">
-          A 70B BF16 model is about <strong style="color:var(--amber)">140 GB</strong> before KV cache and runtime overhead.
-          Most GPUs cannot hold that alone, so the model is split across multiple GPUs.
+          A 70B BF16 model is about <strong style="color:var(--amber)">140 GB</strong> before <span data-tip="kv_cache" class="term">KV cache</span> and runtime overhead.
+          Most GPUs cannot hold that alone, so the model is split across multiple GPUs using <span data-tip="tensor_parallel" class="term">tensor parallelism</span>.
         </p>
       </div>
       <div>
         <div class="tag tag-red" style="margin-bottom:10px">2. Where the penalty comes from</div>
         <p style="color:var(--text2);font-size:13px;line-height:1.8">
-          After each layer, GPUs must synchronize partial results. That sync happens roughly
+          After each layer, GPUs must perform an <span data-tip="all_reduce" class="term">all-reduce</span> to synchronize partial results. That sync happens roughly
           <strong style="color:var(--red)">160 times per token</strong> on a 70B-class model.
           NVLink makes this cheap. PCIe makes it visible to the user as added latency.
         </p>
@@ -1317,7 +1318,7 @@ footer {
   <div class="card" style="margin-bottom:24px">
     <div class="card-title">Interactive Latency Comparison — Pick Two Configurations</div>
     <div class="anno" style="margin-bottom:14px">
-      <strong>IC efficiency</strong> means effective interconnect throughput after real-world overhead.
+      <strong><span data-tip="ic_efficiency" class="term">IC efficiency</span></strong> means effective interconnect throughput after real-world overhead.
       100% means the interconnect behaves close to spec; low percentages indicate bus contention/latency penalties
       and directly increase time spent waiting per token.
     </div>
@@ -1384,7 +1385,7 @@ footer {
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;margin-top:20px;font-size:12px;font-family:var(--mono)">
         <div style="background:rgba(245,158,11,0.08);border:1px solid var(--amber);border-radius:8px;padding:16px">
           <div style="color:var(--amber);font-weight:700;margin-bottom:8px">2× RTX 4090 (PCIe)</div>
-          <div><strong>Per token:</strong> 100ms (decode) + <strong>3.2ms (all-reduce)</strong> = 103ms</div>
+          <div><strong>Per token:</strong> 100ms (decode) + <strong>3.2ms (<span data-tip="all_reduce" class="term">all-reduce</span>)</strong> = 103ms</div>
           <div style="margin-top:8px;color:var(--text3)"><strong>500 tokens:</strong> 51.5 seconds</div>
           <div style="margin-top:8px;color:var(--text3)"><strong>Cost per req:</strong> $0.0086</div>
           <div style="margin-top:8px;color:var(--text3)"><strong>Users/hr:</strong> 70 (at $0.60/hr)</div>
@@ -1392,7 +1393,7 @@ footer {
 
         <div style="background:rgba(6,182,212,0.08);border:1px solid var(--cyan);border-radius:8px;padding:16px">
           <div style="color:var(--cyan);font-weight:700;margin-bottom:8px">2× A100 SXM4 (NVLink)</div>
-          <div><strong>Per token:</strong> 90ms (decode) + <strong>0.1ms (all-reduce)</strong> = 90ms</div>
+          <div><strong>Per token:</strong> 90ms (decode) + <strong>0.1ms (<span data-tip="all_reduce" class="term">all-reduce</span>)</strong> = 90ms</div>
           <div style="margin-top:8px;color:var(--text3)"><strong>500 tokens:</strong> 45 seconds</div>
           <div style="margin-top:8px;color:var(--text3)"><strong>Cost per req:</strong> $0.0250</div>
           <div style="margin-top:8px;color:var(--text3)"><strong>Users/hr:</strong> 80 (at $3.60/hr)</div>
@@ -1408,7 +1409,7 @@ footer {
       </div>
 
       <div style="margin-top:16px;padding:12px;background:var(--surface);border-radius:6px;font-size:12px;color:var(--text2)">
-        <strong>What is all-reduce?</strong> After each layer, GPUs must synchronize partial results.
+        <strong>What is <span data-tip="all_reduce" class="term">all-reduce</span>?</strong> After each layer, GPUs must synchronize partial results.
         On PCIe, these pauses stack up across 160 sync points per token for 70B-class models.
       </div>
     </div>
@@ -1448,12 +1449,12 @@ footer {
     </div>
     <div class="anno" style="margin-top:8px">
       Dashed line = perfect linear scaling (zero communication). PCIe configs flatten quickly because
-      all-reduce overhead grows faster than the VRAM benefit of adding GPUs.
+      <span data-tip="all_reduce" class="term">all-reduce</span> overhead grows faster than the VRAM benefit of adding GPUs.
     </div>
   </div>
 
   <div class="math-toggle" onclick="toggleMath('mathS4')">
-    <span class="toggle-icon">▶</span> Show the all-reduce latency math
+    <span class="toggle-icon">▶</span> Show the <span data-tip="all_reduce" class="term">all-reduce</span> latency math
   </div>
   <div class="math-panel" id="mathS4">
     <strong>All-reduce data volume per token (decode phase, hidden_dim=8192, 80 layers):</strong>
@@ -1666,7 +1667,7 @@ footer {
         <li>🔴 Pre-training / full fine-tuning at scale</li>
         <li>🔴 Speculative decoding (needs fast interconnect)</li>
         <li>🔴 Multi-modal frontier models</li>
-        <li>🔴 Sub-100ms TTFT SLA requirements</li>
+        <li>🔴 Sub-100ms <span data-tip="ttft" class="term">TTFT</span> SLA requirements</li>
       </ul>
     </div>
   </div>
@@ -1676,12 +1677,12 @@ footer {
 <footer>
   <div class="footer-note">
     <strong style="color:var(--text2)">Methodology & Data Sources</strong><br>
-    GPU specs sourced from NVIDIA product pages and third-party benchmarks. Spot prices are representative estimates
+    GPU specs sourced from NVIDIA product pages and third-party benchmarks. <span data-tip="spot_price" class="term">Spot prices</span> are representative estimates
     from CoreWeave, Lambda Labs, and AWS (H100/A100, 2024–2025) and change frequently. Inference calculations use
     the roofline model: decode is modeled as memory-bandwidth-bound (reading all weights per token);
     prefill is modeled as compute-bound. All-reduce latency uses ring-allreduce formulation.
-    Actual performance varies with batch scheduling, KV cache management (vLLM PagedAttention, etc.),
-    quantization kernels (AWQ/GPTQ), and driver/firmware versions.<br><br>
+    Actual performance varies with batch scheduling, <span data-tip="kv_cache" class="term">KV cache</span> management (vLLM PagedAttention, etc.),
+    quantization kernels (<span data-tip="awq_gptq" class="term">AWQ/GPTQ</span>), and driver/firmware versions.<br><br>
     This tool is for strategic evaluation and education — not a substitute for empirical benchmarking.
     Run <code>vllm bench</code> or <code>llm-perf</code> against your specific workload.
   </div>
@@ -2009,6 +2010,13 @@ const GLOSSARY = {
       • <strong>IOMMU overhead</strong>: memory protection adds per-message latency<br>
       • <strong>NCCL (the communication library)</strong> achieves only 15–25% of theoretical at 8+ GPUs via PCIe<br><br>
       <strong>Result:</strong> 8× RTX 4090s on PCIe get ~6 GB/s effective all-reduce bandwidth per GPU — <em>150× worse than NVLink</em>. This adds 5–15ms per token generated in communication overhead alone.`
+  },
+  ic_efficiency: {
+    title: 'IC Efficiency — Interconnect Efficiency',
+    body: `IC efficiency is the share of the interconnect's theoretical bandwidth that is actually usable once protocol overhead, topology limits, PCIe switch contention, and synchronization latency are included.<br><br>
+      <strong>100%</strong> would mean the fabric behaves exactly like the spec sheet. In practice that almost never happens.<br><br>
+      <strong>Why it matters:</strong> if a 32 GB/s PCIe link only delivers 18% effective efficiency at 8 GPUs, your usable communication bandwidth is closer to 5.8 GB/s. That directly increases waiting time per token.<br><br>
+      <strong>Rule of thumb:</strong> low IC efficiency means adding more GPUs is helping memory fit, but hurting latency.`
   },
   pue: {
     title: 'PUE — Power Usage Effectiveness',
@@ -2534,7 +2542,7 @@ function updateLatencyCompare() {
           <div style="color:var(--text);font-size:14px;font-weight:700">${(responseMs/1000).toFixed(2)}s</div>
         </div>
         <div style="background:var(--surface2);border:1px solid var(--border2);border-radius:4px;padding:8px">
-          <div style="color:var(--text3);font-size:9px;text-transform:uppercase">IC efficiency</div>
+          <div style="color:var(--text3);font-size:9px;text-transform:uppercase"><span data-tip="ic_efficiency" class="term">IC efficiency</span></div>
           <div style="color:${Calc.icEfficiency(g.ic_type,n)>0.8?'var(--green)':'var(--red)'};font-size:14px;font-weight:700">${(Calc.icEfficiency(g.ic_type,n)*100).toFixed(0)}%</div>
         </div>
         <div style="background:var(--surface2);border:1px solid var(--border2);border-radius:4px;padding:8px">
@@ -2766,24 +2774,24 @@ function updateEcon() {
   });
 
   const metricsList = [
-    { label: 'GPUs needed', fmt: (r,g) => r ? r.n + '× ' + (g?.interconnect?.split(' ')[0]||'') : '—', best: 'none' },
-    { label: 'Rack U occupied', fmt: (r,g) => r ? r.rack_u_total + 'U' : '—', best: 'min' },
-    { label: 'IC efficiency (actual)', fmt: (r,g,gk) => {
+    { key: 'gpus', label: 'GPUs needed', fmt: (r,g) => r ? r.n + '× ' + (g?.interconnect?.split(' ')[0]||'') : '—', best: 'none' },
+    { key: 'rack_u', label: '<span data-tip="rack_u" class="term">Rack U</span> occupied', fmt: (r,g) => r ? r.rack_u_total + 'U' : '—', best: 'min' },
+    { key: 'ic_efficiency', label: '<span data-tip="ic_efficiency" class="term">IC efficiency</span> (actual)', fmt: (r,g,gk) => {
         if (!r || !g) return '—';
         const eff = Calc.icEfficiency(g.ic_type, r.n);
         return (eff*100).toFixed(0) + '% of spec';
       }, best: 'max' },
-    { label: 'TTFT (prefill)', fmt: r => r ? r.ttft_ms.toFixed(0)+'ms' : '—', best: 'min' },
-    { label: 'Decode ms/tok', fmt: r => r ? r.decode.total_ms.toFixed(1)+'ms' : '—', best: 'min' },
-    { label: 'Tokens/sec', fmt: r => r ? r.tps_effective.toFixed(1) : '—', best: 'max' },
-    { label: 'Total resp. time', fmt: r => r ? (r.total_ms < 1000 ? r.total_ms.toFixed(0)+'ms' : (r.total_ms/1000).toFixed(2)+'s') : '—', best: 'min' },
-    { label: '⚡ Power (GPU raw)', fmt: r => r ? r.raw_power_kw.toFixed(2)+' kW' : '—', best: 'min' },
-    { label: '⚡ Power (with PUE)', fmt: r => r ? r.total_power_kw.toFixed(2)+' kW' : '—', best: 'min' },
-    { label: 'ECC memory', fmt: (r,g) => g ? (g.ecc ? '✓ Yes' : '✗ No') : '—', best: 'none' },
-    { label: 'Reliability mult.', fmt: r => r ? (r.reliability_mult===1.02?'+2% (enterprise)':'+15% (consumer)') : '—', best: 'none' },
+    { key: 'ttft', label: '<span data-tip="ttft" class="term">TTFT</span> (prefill)', fmt: r => r ? r.ttft_ms.toFixed(0)+'ms' : '—', best: 'min' },
+    { key: 'decode', label: 'Decode ms/tok', fmt: r => r ? r.decode.total_ms.toFixed(1)+'ms' : '—', best: 'min' },
+    { key: 'tps', label: 'Tokens/sec', fmt: r => r ? r.tps_effective.toFixed(1) : '—', best: 'max' },
+    { key: 'total_time', label: 'Total resp. time', fmt: r => r ? (r.total_ms < 1000 ? r.total_ms.toFixed(0)+'ms' : (r.total_ms/1000).toFixed(2)+'s') : '—', best: 'min' },
+    { key: 'power_raw', label: '⚡ Power (GPU raw)', fmt: r => r ? r.raw_power_kw.toFixed(2)+' kW' : '—', best: 'min' },
+    { key: 'power_pue', label: '⚡ Power (with <span data-tip="pue" class="term">PUE</span>)', fmt: r => r ? r.total_power_kw.toFixed(2)+' kW' : '—', best: 'min' },
+    { key: 'ecc', label: '<span data-tip="ecc" class="term">ECC</span> memory', fmt: (r,g) => g ? (g.ecc ? '✓ Yes' : '✗ No') : '—', best: 'none' },
+    { key: 'reliability', label: 'Reliability mult.', fmt: r => r ? (r.reliability_mult===1.02?'+2% (enterprise)':'+15% (consumer)') : '—', best: 'none' },
     { label: '$ compute only', fmt: r => r ? '$'+r.compute_cost.toFixed(5) : '—', best: 'min' },
     { label: '$ electricity', fmt: r => r ? '$'+r.energy_cost.toFixed(5) : '—', best: 'min' },
-    { label: '$ rack space', fmt: r => r ? '$'+r.rack_cost.toFixed(5) : '—', best: 'min' },
+    { key: 'rack_cost', label: '$ <span data-tip="rack_u" class="term">rack space</span>', fmt: r => r ? '$'+r.rack_cost.toFixed(5) : '—', best: 'min' },
     { label: '$ TOTAL / inference', fmt: r => r ? '$'+r.total_cost.toFixed(5) : '—', best: 'min' },
     { label: '$/1M out tokens', fmt: r => r ? '$'+r.cost_per_1m_out.toFixed(0) : '—', best: 'min' },
   ];
@@ -2817,7 +2825,7 @@ function updateEcon() {
         }
       }
       // ECC / reliability special styling
-      if (m.label === 'ECC memory') {
+      if (m.key === 'ecc') {
         if (val === '✓ Yes') cls += ' best'; else if (val === '✗ No') cls += ' worst';
       }
       return `<div class="compare-row"><span class="compare-row-label" style="font-size:11px">${m.label}</span><span class="${cls}" style="font-size:11px">${val}</span></div>`;
@@ -2846,14 +2854,14 @@ function updateEcon() {
           <span class="cost-legend-item"><span class="cost-legend-dot" style="background:#f87171"></span>Reliability</span>
         </div>
         ${!gpu?.ecc ? `<div class="hidden-cost-box" style="font-size:11px;padding:8px 10px;margin-top:8px"><strong>⚠ Consumer GPU hidden costs:</strong><br>
-          No ECC memory → silent errors<br>Thermal throttle → ${Math.round((1-gpu?.sustained_eff)*100)}% throughput loss<br>Not available on AWS/Azure/GCP<br>No enterprise SLA or support</div>` : ''}
+          No <span data-tip="ecc" class="term">ECC</span> memory → silent errors<br>Thermal throttle → ${Math.round((1-gpu?.sustained_eff)*100)}% throughput loss<br>Not available on AWS/Azure/GCP<br>No enterprise SLA or support</div>` : ''}
       </div>`;
     }
 
     return `<div class="compare-col" style="border-color:${headerBorder}">
       <div class="compare-col-header" style="background:${headerBg};border-bottom-color:${headerBorder}">
         <div style="color:${gpu?.color || 'var(--text)'}">Config ${['A','B','C'][ci]}: ${key}</div>
-        ${fits ? `<div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:2px">${r.n}× GPU · $${((gpu?.price_spot||0)*r.n).toFixed(2)}/hr compute · ${r.rack_u_total}U rack</div>`
+        ${fits ? `<div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:2px">${r.n}× GPU · $${((gpu?.price_spot||0)*r.n).toFixed(2)}/hr compute · ${r.rack_u_total}U <span data-tip="rack_u" class="term">rack</span></div>`
                : `<div class="tag tag-red" style="margin-top:4px">Model doesn't fit</div>`}
       </div>
       <div class="compare-col-body">${costBar}${rows}</div>
@@ -2916,14 +2924,14 @@ function updateEcon() {
     mp.innerHTML = `<strong>For Config A (${ra.key}, ${r.n} GPUs):</strong><br>
       <span class="math-eq">Model memory = ${MODELS[modelKey].params}B × ${BPP[prec]} bytes = ${r.mm_gb.toFixed(1)} GB</span>
       <span class="math-eq">GPUs needed = ⌈${r.total_mem.toFixed(0)} GB / ${g?.vram} GB⌉ → rounded to ${r.n} (power of 2 for TP)</span>
-      <span class="math-eq">IC efficiency = ${(Calc.icEfficiency(g?.ic_type||'pcie', r.n)*100).toFixed(0)}% (${g?.ic_type === 'nvlink' ? 'NVLink' : 'PCIe, shared bus degrades at '+r.n+' GPUs'})</span>
-      <span class="math-eq">Decode time/token = ${r.decode.read_ms.toFixed(1)} ms (VRAM read) + ${r.decode.comms_ms.toFixed(2)} ms (all-reduce) = ${r.decode.total_ms.toFixed(2)} ms</span>
-      <span class="math-eq">TTFT (prefill ${inputTok} tokens) = ${r.ttft_ms.toFixed(0)} ms</span>
+      <span class="math-eq"><span data-tip="ic_efficiency" class="term">IC efficiency</span> = ${(Calc.icEfficiency(g?.ic_type||'pcie', r.n)*100).toFixed(0)}% (${g?.ic_type === 'nvlink' ? 'NVLink' : 'PCIe, shared bus degrades at '+r.n+' GPUs'})</span>
+      <span class="math-eq">Decode time/token = ${r.decode.read_ms.toFixed(1)} ms (VRAM read) + ${r.decode.comms_ms.toFixed(2)} ms (<span data-tip="all_reduce" class="term">all-reduce</span>) = ${r.decode.total_ms.toFixed(2)} ms</span>
+      <span class="math-eq"><span data-tip="ttft" class="term">TTFT</span> (prefill ${inputTok} tokens) = ${r.ttft_ms.toFixed(0)} ms</span>
       <span class="math-eq">Total time = ${r.ttft_ms.toFixed(0)} ms + ${outputTok} tok × ${r.decode.total_ms.toFixed(2)} ms / batch(${batch}) = ${r.total_ms.toFixed(0)} ms</span>
       <span class="math-eq">Compute cost = ${r.n} GPUs × $${g?.price_spot}/hr × ${(r.total_ms/3600000).toFixed(8)} hrs = $${r.compute_cost.toFixed(6)}</span>
-      <span class="math-eq">Electricity = ${r.raw_power_kw.toFixed(2)} kW × PUE ${pue} = ${r.total_power_kw.toFixed(2)} kW effective × $${elec}/kWh = $${r.energy_cost.toFixed(6)}</span>
-      <span class="math-eq">Rack = ${r.rack_u_total}U × $${rack}/U/month ÷ 720 hrs/month = $${(r.rack_u_total*rack/720).toFixed(4)}/hr × ${(r.total_ms/3600000).toFixed(8)} hrs = $${r.rack_cost.toFixed(6)}</span>
-      <span class="math-eq">Reliability mult = ${r.reliability_mult === 1.02 ? '1.02 (enterprise grade)' : '1.15 (consumer: no ECC + thermal throttle)'}</span>
+      <span class="math-eq">Electricity = ${r.raw_power_kw.toFixed(2)} kW × <span data-tip="pue" class="term">PUE</span> ${pue} = ${r.total_power_kw.toFixed(2)} kW effective × $${elec}/kWh = $${r.energy_cost.toFixed(6)}</span>
+      <span class="math-eq"><span data-tip="rack_u" class="term">Rack</span> = ${r.rack_u_total}U × $${rack}/U/month ÷ 720 hrs/month = $${(r.rack_u_total*rack/720).toFixed(4)}/hr × ${(r.total_ms/3600000).toFixed(8)} hrs = $${r.rack_cost.toFixed(6)}</span>
+      <span class="math-eq">Reliability mult = ${r.reliability_mult === 1.02 ? '1.02 (enterprise grade)' : '1.15 (consumer: no <span data-tip="ecc" class="term">ECC</span> + thermal throttle)'}</span>
       <span class="math-eq">Total = ($${r.compute_cost.toFixed(5)} + $${r.energy_cost.toFixed(5)} + $${r.rack_cost.toFixed(5)}) × ${r.reliability_mult} = $<span class="math-result">${r.total_cost.toFixed(6)}</span></span>
       <span class="math-eq">$/1M output tokens = $<span class="math-result">${r.cost_per_1m_out.toFixed(0)}</span></span>`;
   }

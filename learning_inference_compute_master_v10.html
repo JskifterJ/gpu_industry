@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>GPU Inference Pipeline v7</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -313,7 +314,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
     <div class="leg"><div class="leg-dot" style="background:var(--amber);"></div>Constraint</div>
     <div class="leg"><div class="leg-dot" style="background:var(--green);"></div>Non-bottleneck</div>
     <div class="leg"><div class="leg-dot" style="background:var(--purple);"></div>GPU memory</div>
-    <div class="leg"><div class="leg-dot" style="background:var(--cyan);"></div>KV cache</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--cyan);"></div><span class="tip" data-tip="KV Cache: the stored Key and Value vectors for prior tokens. They stay in GPU memory so each new token can look back without recomputing the whole history. It grows with conversation length and is a core memory constraint.">KV cache</span></div>
   </div>
 </header>
 <!-- INTRO SECTION -->
@@ -423,7 +424,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
       </div>
       <!-- KV Cache -->
       <div style="background:var(--bg);border:1.5px solid rgba(26,191,208,.4);border-radius:7px;padding:10px 12px;">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--cyan);margin-bottom:6px;text-transform:uppercase;">KV Cache (GPU HBM)</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--cyan);margin-bottom:6px;text-transform:uppercase;"><span class="tip" data-tip="KV Cache: the stored Key and Value vectors for prior tokens. They stay in GPU memory so each new token can look back without recomputing the whole history. It grows with conversation length and is a core memory constraint.">KV Cache</span> (GPU HBM)</div>
         <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);margin-bottom:6px;">Written per layer, per token</div>
         <!-- KV cache grid -->
         <div style="display:grid;grid-template-columns:repeat(8,1fr);gap:2px;margin-bottom:5px;" id="kv-grid"></div>
@@ -1663,9 +1664,9 @@ function drawMsChart(curD, curL, bytesPerParam){
     <div class="sp-demo">
       <div class="sp-demo-lbl">Building the response token by token:</div>
       <div style="display:flex;flex-direction:column;gap:3px;margin-top:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;">
-        <div style="display:flex;gap:8px;"><span style="color:var(--muted);width:56px;flex-shrink:0;">Pass 1</span><span style="color:var(--muted);">&ldquo;...France is&rdquo;</span><span style="color:var(--muted);">&rarr;</span><span style="color:var(--green);font-weight:600;"> Paris</span><span style="color:var(--muted);font-size:8.5px;margin-left:8px;">[KV cache +0.3 MB]</span></div>
-        <div style="display:flex;gap:8px;"><span style="color:var(--muted);width:56px;flex-shrink:0;">Pass 2</span><span style="color:var(--muted);">&ldquo;...is Paris&rdquo;</span><span style="color:var(--muted);">&rarr;</span><span style="color:var(--green);"> .</span><span style="color:var(--muted);font-size:8.5px;margin-left:8px;">[KV cache +0.6 MB]</span></div>
-        <div style="display:flex;gap:8px;"><span style="color:var(--muted);width:56px;flex-shrink:0;">Pass 3</span><span style="color:var(--muted);">&ldquo;...Paris.&rdquo;</span><span style="color:var(--muted);">&rarr;</span><span style="color:var(--green);"> It</span><span style="color:var(--muted);font-size:8.5px;margin-left:8px;">[KV cache +0.9 MB]</span></div>
+        <div style="display:flex;gap:8px;"><span style="color:var(--muted);width:56px;flex-shrink:0;">Pass 1</span><span style="color:var(--muted);">&ldquo;...France is&rdquo;</span><span style="color:var(--muted);">&rarr;</span><span style="color:var(--green);font-weight:600;"> Paris</span><span style="color:var(--muted);font-size:8.5px;margin-left:8px;">[<span class="tip" data-tip="KV Cache: the stored Key and Value vectors for prior tokens. They stay in GPU memory so each new token can look back without recomputing the whole history. It grows with conversation length and is a core memory constraint.">KV cache</span> +0.3 MB]</span></div>
+        <div style="display:flex;gap:8px;"><span style="color:var(--muted);width:56px;flex-shrink:0;">Pass 2</span><span style="color:var(--muted);">&ldquo;...is Paris&rdquo;</span><span style="color:var(--muted);">&rarr;</span><span style="color:var(--green);"> .</span><span style="color:var(--muted);font-size:8.5px;margin-left:8px;">[<span class="tip" data-tip="KV Cache: the stored Key and Value vectors for prior tokens. They stay in GPU memory so each new token can look back without recomputing the whole history. It grows with conversation length and is a core memory constraint.">KV cache</span> +0.6 MB]</span></div>
+        <div style="display:flex;gap:8px;"><span style="color:var(--muted);width:56px;flex-shrink:0;">Pass 3</span><span style="color:var(--muted);">&ldquo;...Paris.&rdquo;</span><span style="color:var(--muted);">&rarr;</span><span style="color:var(--green);"> It</span><span style="color:var(--muted);font-size:8.5px;margin-left:8px;">[<span class="tip" data-tip="KV Cache: the stored Key and Value vectors for prior tokens. They stay in GPU memory so each new token can look back without recomputing the whole history. It grows with conversation length and is a core memory constraint.">KV cache</span> +0.9 MB]</span></div>
         <div style="color:var(--muted);padding-left:64px;font-size:9px;">&hellip; repeat ~67&times; for a 50-word answer</div>
       </div>
     </div>
@@ -1678,7 +1679,7 @@ function drawMsChart(curD, curL, bytesPerParam){
   <div>
     <div class="sp-card">
       <div class="sp-card-title"><span class="tip" data-tip="Stores Key and Value vectors for all previous tokens. Each new token only needs to process itself — past results are looked up from cache. Grows by ~0.3 MB per token for Llama 70B with GQA.">KV Cache</span> &mdash; why it exists</div>
-      <div style="font-size:12px;color:var(--muted);line-height:1.65;">Without caching, pass 67 would need to recompute attention over all 66 prior tokens from scratch &mdash; taking 66&times; longer. The KV cache stores past results in GPU memory so each new token only looks them up. The trade-off: memory consumed is proportional to conversation length.</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.65;">Without caching, pass 67 would need to recompute attention over all 66 prior tokens from scratch &mdash; taking 66&times; longer. The <span class="tip" data-tip="KV Cache: the stored Key and Value vectors for prior tokens. They stay in GPU memory so each new token can look back without recomputing the whole history. It grows with conversation length and is a core memory constraint.">KV cache</span> stores past results in GPU memory so each new token only looks them up. The trade-off: memory consumed is proportional to conversation length.</div>
     </div>
     <div class="sp-card">
       <div class="sp-card-title">Batching &mdash; the efficiency fix</div>
@@ -1871,11 +1872,11 @@ function drawMsChart(curD, curL, bytesPerParam){
         </div>
         <div style="background:var(--panel2);border:1px solid var(--border);border-radius:7px;padding:10px 12px;">
           <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:4px;">Context window limit</div>
-          <div style="font-size:12px;color:var(--muted);line-height:1.6;">Claude supports up to 200K tokens. Longer contexts increase TTFT quadratically (attention is O(N&sup2;)) and consume more KV cache memory per user. The workload calculator below shows the memory impact.</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6;">Claude supports up to 200K tokens. Longer contexts increase <span class="tip" data-tip="Time To First Token — the delay between pressing Submit and seeing the first word appear. Determined by the prompt-reading prefill phase, so it gets worse as prompts get longer.">TTFT</span> quadratically (attention is O(N&sup2;)) and consume more <span class="tip" data-tip="KV Cache: the stored Key and Value vectors for prior tokens. They stay in GPU memory so each new token can look back without recomputing the whole history. It grows with conversation length and is a core memory constraint.">KV cache</span> memory per user. The workload calculator below shows the memory impact.</div>
         </div>
         <div style="background:var(--panel2);border:1px solid var(--border);border-radius:7px;padding:10px 12px;">
           <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--red);margin-bottom:4px;">Context is not free</div>
-          <div style="font-size:12px;color:var(--muted);line-height:1.6;">Every token in the context window must be read during prefill and kept in KV cache during decode. 10K extra tokens = ~3 MB extra KV memory per user = fewer concurrent users per node.</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6;">Every token in the context window must be read during prefill and kept in <span class="tip" data-tip="KV Cache: the stored Key and Value vectors for prior tokens. They stay in GPU memory so each new token can look back without recomputing the whole history. It grows with conversation length and is a core memory constraint.">KV cache</span> during decode. 10K extra tokens = ~3 MB extra <span class="tip" data-tip="KV Cache: the stored Key and Value vectors for prior tokens. They stay in GPU memory so each new token can look back without recomputing the whole history. It grows with conversation length and is a core memory constraint.">KV cache</span> memory per user = fewer concurrent users per node.</div>
         </div>
       </div>
     </div>
@@ -1908,7 +1909,7 @@ function drawMsChart(curD, curL, bytesPerParam){
         <div style="width:9px;height:9px;background:var(--purple);border-radius:2px;"></div>Model weights (22% of 80 GB each = 140 GB spread across all 8)
       </div>
       <div style="display:flex;align-items:center;gap:5px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);">
-        <div style="width:9px;height:9px;background:var(--cyan);border-radius:2px;"></div>KV cache (grows with each output token)
+        <div style="width:9px;height:9px;background:var(--cyan);border-radius:2px;"></div><span class="tip" data-tip="KV Cache: the stored Key and Value vectors for prior tokens. They stay in GPU memory so each new token can look back without recomputing the whole history. It grows with conversation length and is a core memory constraint.">KV cache</span> (grows with each output token)
       </div>
       <div style="display:flex;align-items:center;gap:5px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);">
         <div style="width:9px;height:9px;background:var(--dim);border-radius:2px;"></div>Free HBM (available for more users)
@@ -1932,7 +1933,7 @@ function drawMsChart(curD, curL, bytesPerParam){
       <div style="background:var(--panel2);border:1px solid var(--border);border-radius:7px;padding:11px 13px;">
         <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:4px;">70B MODEL FIT</div>
         <div style="font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:600;color:var(--green);">140 / 640 GB</div>
-        <div style="font-size:11px;color:var(--muted);margin-top:3px;">22% of node HBM used. 500 GB free for KV cache and multiple users.</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:3px;">22% of node HBM used. 500 GB free for <span class="tip" data-tip="KV Cache: the stored Key and Value vectors for prior tokens. They stay in GPU memory so each new token can look back without recomputing the whole history. It grows with conversation length and is a core memory constraint.">KV cache</span> and multiple users.</div>
       </div>
       <div style="background:var(--panel2);border:1px solid var(--border);border-radius:7px;padding:11px 13px;">
         <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:4px;"><span class="tip" data-tip="Streaming Multiprocessors — the physical compute units inside each GPU. H100 has 132 SMs, each containing Tensor Cores and fast SRAM. Data must be streamed from HBM into SM SRAM before computation can begin.">TENSOR CORES</span></div>
@@ -1988,11 +1989,11 @@ function drawMsChart(curD, curL, bytesPerParam){
           </div>
         </div>
         <div class="mem-box">
-          <div class="mem-line"><span>KV cache per token</span><span class="mem-v" id="m-pertok">0.31 MB</span></div>
+          <div class="mem-line"><span><span class="tip" data-tip="KV Cache: the stored Key and Value vectors for prior tokens. They stay in GPU memory so each new token can look back without recomputing the whole history. It grows with conversation length and is a core memory constraint.">KV cache</span> per token</span><span class="mem-v" id="m-pertok">0.31 MB</span></div>
           <div class="mem-line"><span>Total context tokens</span><span class="mem-v" id="m-ctxtok">11,700</span></div>
-          <div class="mem-line"><span>KV cache per user</span><span class="mem-v" id="m-peruser">3.6 GB</span></div>
+          <div class="mem-line"><span><span class="tip" data-tip="KV Cache: the stored Key and Value vectors for prior tokens. They stay in GPU memory so each new token can look back without recomputing the whole history. It grows with conversation length and is a core memory constraint.">KV cache</span> per user</span><span class="mem-v" id="m-peruser">3.6 GB</span></div>
           <div class="mem-line"><span>Model weights</span><span class="mem-v">140 GB</span></div>
-          <div class="mem-line"><span>KV cache (all users)</span><span class="mem-v" id="m-totalcache">28.8 GB</span></div>
+          <div class="mem-line"><span><span class="tip" data-tip="KV Cache: the stored Key and Value vectors for prior tokens. They stay in GPU memory so each new token can look back without recomputing the whole history. It grows with conversation length and is a core memory constraint.">KV cache</span> (all users)</span><span class="mem-v" id="m-totalcache">28.8 GB</span></div>
           <div class="mem-line" style="border-top:1px solid var(--border2);margin-top:4px;padding-top:8px;">
             <span style="color:var(--ink);font-weight:600;">Total HBM used</span>
             <span class="mem-v" id="m-total" style="color:var(--amber);">168.8 GB</span>
@@ -2029,7 +2030,7 @@ function drawMsChart(curD, curL, bytesPerParam){
         <div class="gpu-bars" id="gpu-bar-grid"></div>
         <div class="hbm-legend" style="margin-top:6px;">
           <div class="hbm-leg-item"><div class="hbm-leg-dot" style="background:var(--purple);"></div>Model weights (evenly sharded)</div>
-          <div class="hbm-leg-item"><div class="hbm-leg-dot" style="background:var(--cyan);opacity:.8;"></div>KV cache (current users)</div>
+          <div class="hbm-leg-item"><div class="hbm-leg-dot" style="background:var(--cyan);opacity:.8;"></div><span class="tip" data-tip="KV Cache: the stored Key and Value vectors for prior tokens. They stay in GPU memory so each new token can look back without recomputing the whole history. It grows with conversation length and is a core memory constraint.">KV cache</span> (current users)</div>
           <div class="hbm-leg-item"><div class="hbm-leg-dot" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.15);"></div>Free HBM</div>
         </div>
 
@@ -2041,7 +2042,7 @@ function drawMsChart(curD, curL, bytesPerParam){
             <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);">fixed &mdash; 21.9% of node</div>
           </div>
           <div style="flex:1;min-width:140px;background:rgba(26,191,208,.1);border:1px solid rgba(26,191,208,.3);border-radius:5px;padding:6px 10px;text-align:center;">
-            <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--cyan);margin-bottom:2px;">KV CACHE</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--cyan);margin-bottom:2px;"><span class="tip" data-tip="KV Cache: the stored Key and Value vectors for prior tokens. They stay in GPU memory so each new token can look back without recomputing the whole history. It grows with conversation length and is a core memory constraint.">KV CACHE</span></div>
             <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:var(--ink);" id="nb-kv-gb">28.8 GB</div>
             <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);" id="nb-kv-pct">4.5% of node</div>
           </div>
@@ -2099,7 +2100,7 @@ function drawMsChart(curD, curL, bytesPerParam){
             <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:var(--red);margin-top:4px;">~400 GB/s</div>
             <div style="font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--muted);text-align:center;margin-top:2px;">2.25&times; slower<br>than NVLink</div>
             <div style="margin-top:8px;background:rgba(224,72,72,.12);border:1px solid rgba(224,72,72,.35);border-radius:4px;padding:4px 6px;text-align:center;max-width:90px;">
-              <div style="font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--red);line-height:1.5;">AllReduce crosses<br>this cable <strong>80&times;</strong><br>per token generated</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--red);line-height:1.5;"><span class="tip" data-tip="AllReduce: a collective synchronization step where GPUs exchange and combine partial results so every GPU has the same updated activations before the next layer starts. In tensor-parallel inference it happens after every layer.">AllReduce</span> crosses<br>this cable <strong>80&times;</strong><br>per token generated</div>
             </div>
           </div>
 
@@ -2135,7 +2136,7 @@ function drawMsChart(curD, curL, bytesPerParam){
             <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--green);margin-bottom:3px;">GPU &harr; GPU (same node)</div>
             <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;">NVLink 4</div>
             <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--green);">900 GB/s</div>
-            <div style="font-size:10px;color:var(--muted);margin-top:3px;">AllReduce per layer</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:3px;"><span class="tip" data-tip="AllReduce: a collective synchronization step where GPUs exchange and combine partial results so every GPU has the same updated activations before the next layer starts. In tensor-parallel inference it happens after every layer.">AllReduce</span> per layer</div>
           </div>
           <div style="background:rgba(224,72,72,.08);border:1.5px solid rgba(224,72,72,.4);border-radius:6px;padding:8px 10px;text-align:center;">
             <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--red);margin-bottom:3px;">Node &harr; Node (multi-node)</div>
@@ -2406,7 +2407,7 @@ function drawMsChart(curD, curL, bytesPerParam){
       <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px;padding-left:0;">
         <span style="display:inline-flex;align-items:center;gap:4px;background:rgba(74,144,232,.12);border:1px solid rgba(74,144,232,.3);border-radius:3px;padding:2px 7px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--blue);">&#9633; matrix multiply &mdash; 64 heads in parallel</span>
         <span style="display:inline-flex;align-items:center;gap:4px;background:rgba(232,160,32,.1);border:1px solid rgba(232,160,32,.3);border-radius:3px;padding:2px 7px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--amber);">&#9670; memory bandwidth (weights + KV reads grow with batch)</span>
-        <span style="display:inline-flex;align-items:center;gap:4px;background:rgba(138,110,232,.08);border:1px solid rgba(138,110,232,.2);border-radius:3px;padding:2px 7px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);">rises with batch: KV cache reads scale with users</span>
+        <span style="display:inline-flex;align-items:center;gap:4px;background:rgba(138,110,232,.08);border:1px solid rgba(138,110,232,.2);border-radius:3px;padding:2px 7px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);">rises with batch: <span class="tip" data-tip="KV Cache: the stored Key and Value vectors for prior tokens. They stay in GPU memory so each new token can look back without recomputing the whole history. It grows with conversation length and is a core memory constraint.">KV cache</span> reads scale with users</span>
       </div>
       <div class="fwd-body">In each of the 80 layers, the GPU runs the &ldquo;connect words&rdquo; step from the walkthrough. It loads four big weight tables (the instruction books for Q, K, V, O) from GPU memory into the compute cores, and the cores do the mathematics simultaneously across 64 specialist channels. The result: each word&rsquo;s description gets updated to reflect what it learned from all the other words. <strong style="color:var(--amber);">The bottleneck is loading those tables from memory &mdash; the cores are fast, but the memory bus forces them to wait.</strong> This is why more memory bandwidth = faster output, not more compute cores.</div>
     </div>
@@ -2475,7 +2476,7 @@ function drawMsChart(curD, curL, bytesPerParam){
     <div class="step-num" style="color:var(--amber);border-color:var(--amber);background:var(--amber-d);">&#9317;</div>
     <div>
       <div class="step-label" style="color:var(--amber);">Return Path &mdash; The Generation Loop</div>
-      <div class="step-sub">One token at a time &middot; 80 layers every pass &middot; KV cache grows &middot; stream to browser</div>
+      <div class="step-sub">One token at a time &middot; 80 layers every pass &middot; <span class="tip" data-tip="KV Cache: the stored Key and Value vectors for prior tokens. They stay in GPU memory so each new token can look back without recomputing the whole history. It grows with conversation length and is a core memory constraint.">KV cache</span> grows &middot; stream to browser</div>
     </div>
   </div>
 
@@ -2489,7 +2490,7 @@ function drawMsChart(curD, curL, bytesPerParam){
     <div class="tl-arr">&rarr;</div>
     <div class="tl-stage" id="tls-1"><div class="tl-sname">Embed</div><div class="tl-sdesc">IDs &rarr;<br>8,192-dim vectors</div></div>
     <div class="tl-arr">&rarr;</div>
-    <div class="tl-stage" id="tls-2"><div class="tl-sname">80 &times; Attention</div><div class="tl-sdesc">connect words<br>update KV cache</div></div>
+    <div class="tl-stage" id="tls-2"><div class="tl-sname">80 &times; Attention</div><div class="tl-sdesc">connect words<br>update <span class="tip" data-tip="KV Cache: the stored Key and Value vectors for prior tokens. They stay in GPU memory so each new token can look back without recomputing the whole history. It grows with conversation length and is a core memory constraint.">KV cache</span></div></div>
     <div class="tl-arr">&rarr;</div>
     <div class="tl-stage" id="tls-3"><div class="tl-sname">80 &times; FFN</div><div class="tl-sdesc">look up facts<br>refine meaning</div></div>
     <div class="tl-arr">&rarr;</div>
@@ -2519,7 +2520,7 @@ function drawMsChart(curD, curL, bytesPerParam){
 
   <!-- KV CACHE BAR -->
   <div class="tl-kv-row">
-    <span class="tl-kv-lbl">KV cache size</span>
+    <span class="tl-kv-lbl"><span class="tip" data-tip="KV Cache: the stored Key and Value vectors for prior tokens. They stay in GPU memory so each new token can look back without recomputing the whole history. It grows with conversation length and is a core memory constraint.">KV cache</span> size</span>
     <div class="tl-kv-track"><div class="tl-kv-fill" id="tl-kv-fill"></div></div>
     <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--cyan);width:80px;flex-shrink:0;" id="tl-kv-val">0 MB / 3,600 MB</span>
   </div>
@@ -2610,7 +2611,7 @@ function drawMsChart(curD, curL, bytesPerParam){
     <div style="display:flex;flex-direction:column;gap:7px;">
       <div style="background:var(--panel2);border:1px solid var(--border);border-radius:7px;padding:10px 12px;">
         <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:4px;">TOOL CALLS &amp; CONTEXT GROWTH</div>
-        <div style="font-size:12px;color:var(--muted);line-height:1.6;">Every tool result gets appended to the context. A 10-step agent that retrieves 5 documents per step could accumulate 50,000 tokens in the context window. KV cache cost grows proportionally.</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6;">Every tool result gets appended to the context. A 10-step agent that retrieves 5 documents per step could accumulate 50,000 tokens in the context window. <span class="tip" data-tip="KV Cache: the stored Key and Value vectors for prior tokens. They stay in GPU memory so each new token can look back without recomputing the whole history. It grows with conversation length and is a core memory constraint.">KV cache</span> cost grows proportionally.</div>
       </div>
       <div style="background:var(--panel2);border:1px solid var(--border);border-radius:7px;padding:10px 12px;">
         <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:4px;">WHY REASONING MODELS COST MORE</div>
@@ -2702,11 +2703,11 @@ function drawMsChart(curD, curL, bytesPerParam){
               </div>
               <div style="background:var(--panel2);border:1px solid var(--border);border-radius:7px;padding:10px 12px;">
                 <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:4px;">INT8 / INT4 &mdash; aggressive compression</div>
-                <div style="font-size:12px;color:var(--muted);line-height:1.6;">INT8: 1 byte/weight = 70 GB. Fits a single 8-GPU node with room for KV cache. Small quality degradation, usually acceptable. INT4: 35 GB for 70B. Fits smaller nodes. Noticeable quality drop on complex tasks &mdash; acceptable for many applications.</div>
+                <div style="font-size:12px;color:var(--muted);line-height:1.6;">INT8: 1 byte/weight = 70 GB. Fits a single 8-GPU node with room for <span class="tip" data-tip="KV Cache: the stored Key and Value vectors for prior tokens. They stay in GPU memory so each new token can look back without recomputing the whole history. It grows with conversation length and is a core memory constraint.">KV cache</span>. Small quality degradation, usually acceptable. INT4: 35 GB for 70B. Fits smaller nodes. Noticeable quality drop on complex tasks &mdash; acceptable for many applications.</div>
               </div>
               <div style="background:var(--panel2);border:1px solid var(--border);border-radius:7px;padding:10px 12px;">
-                <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:4px;">GGUF / AWQ / GPTQ &mdash; quantization formats</div>
-                <div style="font-size:12px;color:var(--muted);line-height:1.6;">Different methods for which weights to quantize and how to compensate. AWQ and GPTQ are activation-aware: they preserve precision on weights the model uses most heavily. GGUF is the llama.cpp community format supporting mixed-precision (some layers INT4, others INT8).</div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:4px;">GGUF / <span class="tip" data-tip="AWQ and GPTQ are post-training quantization methods that choose which weights can be compressed most aggressively while preserving quality. They are widely used to fit larger models into smaller memory footprints.">AWQ / GPTQ</span> &mdash; quantization formats</div>
+                <div style="font-size:12px;color:var(--muted);line-height:1.6;">Different methods for which weights to quantize and how to compensate. <span class="tip" data-tip="AWQ and GPTQ are post-training quantization methods that choose which weights can be compressed most aggressively while preserving quality. They are widely used to fit larger models into smaller memory footprints.">AWQ and GPTQ</span> are activation-aware: they preserve precision on weights the model uses most heavily. GGUF is the llama.cpp community format supporting mixed-precision (some layers INT4, others INT8).</div>
               </div>
             </div>
           </div>
@@ -2743,7 +2744,7 @@ function drawMsChart(curD, curL, bytesPerParam){
           </table>
         </div>
         <div style="margin-top:14px;padding:10px 14px;background:rgba(224,72,72,.08);border:1px solid rgba(224,72,72,.25);border-radius:7px;font-size:12px;color:var(--muted);line-height:1.65;">
-          <strong style="color:var(--red);">A10G warning:</strong> No NVLink means multi-GPU communication goes through PCIe (32 GB/s vs 900 GB/s). The AllReduce synchronisation between GPUs after each layer takes longer than the actual computation. Running 70B BF16 across A10Gs is impractical for production &mdash; use quantized 70B (INT4, ~35 GB) on a single A100/H100, or use a 13B model on A10G.
+          <strong style="color:var(--red);">A10G warning:</strong> No NVLink means multi-GPU communication goes through PCIe (32 GB/s vs 900 GB/s). The <span class="tip" data-tip="AllReduce: a collective synchronization step where GPUs exchange and combine partial results so every GPU has the same updated activations before the next layer starts. In tensor-parallel inference it happens after every layer.">AllReduce</span> synchronisation between GPUs after each layer takes longer than the actual computation. Running 70B BF16 across A10Gs is impractical for production &mdash; use quantized 70B (INT4, ~35 GB) on a single A100/H100, or use a 13B model on A10G.
         </div>
       </div>
     </details>
