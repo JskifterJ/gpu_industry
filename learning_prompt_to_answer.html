@@ -1284,7 +1284,6 @@ function navigate(dir) {
   if (currentStep + dir >= STEPS.length) { currentStep = 0; }
   else { currentStep += dir; }
   render();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function goTo(i) {

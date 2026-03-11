@@ -144,11 +144,16 @@ h1{font-family:'IBM Plex Mono',monospace;font-size:clamp(17px,2.4vw,28px);
   font-size:9.5px;color:var(--muted);}
 .mem-line:last-child{border-bottom:none;}
 .mem-v{font-weight:600;}
-.user-ctrl{display:flex;align-items:center;gap:8px;margin:10px 0;}
+.user-ctrl{display:flex;align-items:center;gap:8px;margin:10px 0;flex-wrap:wrap;}
 .user-btn{width:24px;height:24px;border-radius:4px;border:1px solid var(--border2);
   background:var(--panel);color:var(--ink);font-size:14px;cursor:pointer;
   display:flex;align-items:center;justify-content:center;transition:all .15s;}
 .user-btn:hover{border-color:var(--amber);color:var(--amber);}
+.user-slider{flex:1;min-width:170px;accent-color:#e8a020;}
+.user-presets{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+.user-preset{background:var(--panel2);border:1px solid var(--border2);border-radius:999px;padding:4px 10px;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);transition:all .18s;}
+.user-preset:hover{border-color:var(--amber);color:var(--amber);}
+.user-preset.sel{border-color:var(--amber);background:rgba(232,160,32,.08);color:var(--amber);}
 .calc-hw-pick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0 14px;}
 .calc-hw-btn{background:var(--panel2);border:1px solid var(--border2);border-radius:8px;padding:8px 10px;cursor:pointer;transition:all .18s;}
 .calc-hw-btn:hover{border-color:var(--amber);}
@@ -1202,9 +1207,9 @@ var _msPresets = [
 ];
 var _msFitTargets = [
   { name:'A10G', vram:24,  perNode:4,  color:'var(--red)' },
-  { name:'A100 SXM4', vram:80,  perNode:8,  color:'var(--amber)' },
   { name:'H100 SXM5', vram:80,  perNode:8,  color:'var(--green)' },
-  { name:'H200 SXM',  vram:141, perNode:8,  color:'var(--cyan)' }
+  { name:'H200 SXM',  vram:141, perNode:8,  color:'var(--cyan)' },
+  { name:'B200',      vram:192, perNode:8,  color:'var(--amber)' }
 ];
 
 function _setFormulaChipState(kind, active){
@@ -2097,9 +2102,9 @@ function initMsCalculator(){
           <div class="calc-hw-name" style="color:var(--red);">A10G</div>
           <div class="calc-hw-sub">24 GB GDDR6<br>PCIe (no NVLink)</div>
         </button>
-        <button class="calc-hw-btn" id="calc-hw-A100" onclick="selHW('A100')">
-          <div class="calc-hw-name" style="color:var(--amber);">A100 SXM4</div>
-          <div class="calc-hw-sub">80 GB HBM2e<br>NVLink 3.0</div>
+        <button class="calc-hw-btn" id="calc-hw-H200" onclick="selHW('H200')">
+          <div class="calc-hw-name" style="color:var(--cyan);">H200 SXM</div>
+          <div class="calc-hw-sub">141 GB HBM3e<br>NVLink 4.0</div>
         </button>
         <button class="calc-hw-btn sel" id="calc-hw-H100" onclick="selHW('H100')">
           <div class="calc-hw-name" style="color:var(--green);">H100 SXM5</div>
@@ -2138,9 +2143,16 @@ function initMsCalculator(){
             <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:6px;">Concurrent users:</div>
             <div class="user-ctrl">
               <button class="user-btn" onclick="changeUsers(-1)">&#8722;</button>
-              <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--ink);width:24px;text-align:center;" id="user-count">8</span>
+              <input class="user-slider" type="range" id="sl-users" min="1" max="256" value="8" step="1" oninput="setUsers(this.value)">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--ink);width:36px;text-align:center;" id="user-count">8</span>
               <button class="user-btn" onclick="changeUsers(1)">&#43;</button>
               <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--muted);margin-left:6px;" id="user-fit-msg"></span>
+            </div>
+            <div class="user-presets">
+              <button class="user-preset" id="user-preset-1" onclick="setUsers(1)">1</button>
+              <button class="user-preset" id="user-preset-10" onclick="setUsers(10)">10</button>
+              <button class="user-preset" id="user-preset-50" onclick="setUsers(50)">50</button>
+              <button class="user-preset" id="user-preset-100" onclick="setUsers(100)">100</button>
             </div>
           </div>
         </div>
@@ -2501,10 +2513,10 @@ function initMsCalculator(){
       <div class="hw-sub">GDDR6 &middot; 24 GB &middot; 600 GB/s<br>PCIe only &mdash; no NVLink</div>
       <div class="hw-badges"><span class="hw-badge" style="color:var(--red);">&#9888; Cannot run 70B alone</span><span class="hw-badge">~$3,500 / GPU</span></div>
     </div>
-    <div class="hw-card" id="hw-A100" onclick="selHW('A100')" style="border-color:rgba(232,160,32,.35);">
-      <div class="hw-name" style="color:var(--amber);">A100 SXM4</div>
-      <div class="hw-sub">HBM2e &middot; 80 GB &middot; 2.0 TB/s<br>NVLink 3.0 &mdash; 600 GB/s</div>
-      <div class="hw-badges"><span class="hw-badge" style="color:var(--amber);">Solid enterprise</span><span class="hw-badge">~$10,000 / GPU</span></div>
+    <div class="hw-card" id="hw-H200" onclick="selHW('H200')" style="border-color:rgba(26,191,208,.35);">
+      <div class="hw-name" style="color:var(--cyan);">H200 SXM</div>
+      <div class="hw-sub">HBM3e &middot; 141 GB &middot; 4.8 TB/s<br>NVLink 4.0 &mdash; 900 GB/s</div>
+      <div class="hw-badges"><span class="hw-badge" style="color:var(--cyan);">Higher-memory upgrade</span><span class="hw-badge">~$35,000 / GPU</span></div>
     </div>
     <div class="hw-card sel" id="hw-H100" onclick="selHW('H100')">
       <div class="hw-name" style="color:var(--green);">H100 SXM5</div>
@@ -2592,58 +2604,53 @@ function initMsCalculator(){
 
     <!-- Step 1 -->
     <div class="fwd-step">
-      <div class="fwd-hd"><div class="fwd-num" style="color:var(--blue);">1.</div><div class="fwd-name">Your words arrive at the GPU and become numbers</div></div>
+      <div class="fwd-hd"><div class="fwd-num" style="color:var(--blue);">1.</div><div class="fwd-name">PCIe ingress + embedding lookup</div></div>
 <div style="display:flex;flex-wrap:wrap;gap:5px;margin:5px 0 8px 0;"><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);border-radius:4px;padding:2px 9px;white-space:nowrap;">1 user: <strong style="color:var(--ink);"><1%</strong></span><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);border-radius:4px;padding:2px 9px;white-space:nowrap;">20 users: <strong style="color:var(--ink);"><1%</strong></span><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);border-radius:4px;padding:2px 9px;white-space:nowrap;">50 users: <strong style="color:var(--ink);"><1%</strong></span></div>
       <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px;padding-left:0;">
         <span style="display:inline-flex;align-items:center;gap:4px;background:rgba(48,200,112,.1);border:1px solid rgba(48,200,112,.3);border-radius:3px;padding:2px 7px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--green);">&#9670; bottleneck: neither &mdash; PCIe is fine for tiny token IDs</span>
-        <span style="display:inline-flex;align-items:center;gap:4px;background:rgba(48,200,112,.08);border:1px solid rgba(48,200,112,.2);border-radius:3px;padding:2px 7px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);">negligible across all batch sizes</span>
       </div>
       <div class="fwd-body">The token IDs (plain integers like 464, 3361, 4881) travel from CPU to GPU memory over the PCIe cable at 32 GB/s. Since integers are tiny, this takes well under a millisecond. Once in GPU memory, each integer is swapped for its 8,192-number description vector from the embedding table. Now the GPU has a numerical representation of your words it can actually process.</div>
     </div>
 
     <!-- Step 2 -->
     <div class="fwd-step" style="border-color:rgba(138,110,232,.3);">
-      <div class="fwd-hd"><div class="fwd-num" style="color:var(--purple);">2.</div><div class="fwd-name">80 rounds: connecting the words (Attention layers)</div></div>
+      <div class="fwd-hd"><div class="fwd-num" style="color:var(--purple);">2.</div><div class="fwd-name">80x self-attention projection + KV lookup</div></div>
 <div style="display:flex;flex-wrap:wrap;gap:5px;margin:5px 0 8px 0;"><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);border-radius:4px;padding:2px 9px;white-space:nowrap;">1 user: <strong style="color:var(--ink);">~28%</strong></span><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);border-radius:4px;padding:2px 9px;white-space:nowrap;">20 users: <strong style="color:var(--ink);">~33%</strong></span><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);border-radius:4px;padding:2px 9px;white-space:nowrap;">50 users: <strong style="color:var(--ink);">~40%</strong></span></div>
       <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px;padding-left:0;">
         <span style="display:inline-flex;align-items:center;gap:4px;background:rgba(74,144,232,.12);border:1px solid rgba(74,144,232,.3);border-radius:3px;padding:2px 7px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--blue);">&#9633; matrix multiply &mdash; 64 heads in parallel</span>
         <span style="display:inline-flex;align-items:center;gap:4px;background:rgba(232,160,32,.1);border:1px solid rgba(232,160,32,.3);border-radius:3px;padding:2px 7px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--amber);">&#9670; memory bandwidth (weights + KV reads grow with batch)</span>
-        <span style="display:inline-flex;align-items:center;gap:4px;background:rgba(138,110,232,.08);border:1px solid rgba(138,110,232,.2);border-radius:3px;padding:2px 7px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);">rises with batch: <span class="tip" data-tip="KV Cache: the stored Key and Value vectors for prior tokens. They stay in GPU memory so each new token can look back without recomputing the whole history. It grows with conversation length and is a core memory constraint.">KV cache</span> reads scale with users</span>
       </div>
       <div class="fwd-body">In each of the 80 layers, the GPU runs the &ldquo;connect words&rdquo; step from the walkthrough. It loads four big weight tables (the instruction books for Q, K, V, O) from GPU memory into the compute cores, and the cores do the mathematics simultaneously across 64 specialist channels. The result: each word&rsquo;s description gets updated to reflect what it learned from all the other words. <strong style="color:var(--amber);">The bottleneck is loading those tables from memory &mdash; the cores are fast, but the memory bus forces them to wait.</strong> This is why more memory bandwidth = faster output, not more compute cores.</div>
     </div>
 
     <!-- Step 3 -->
     <div class="fwd-step" style="border-color:rgba(232,160,32,.3);">
-      <div class="fwd-hd"><div class="fwd-num" style="color:var(--amber);">3.</div><div class="fwd-name">80 rounds: looking up facts (Fact-recall layers)</div></div>
+      <div class="fwd-hd"><div class="fwd-num" style="color:var(--amber);">3.</div><div class="fwd-name">80x FFN / MLP fact-recall pass</div></div>
 <div style="display:flex;flex-wrap:wrap;gap:5px;margin:5px 0 8px 0;"><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);border-radius:4px;padding:2px 9px;white-space:nowrap;">1 user: <strong style="color:var(--ink);">~58%</strong></span><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);border-radius:4px;padding:2px 9px;white-space:nowrap;">20 users: <strong style="color:var(--ink);">~48%</strong></span><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);border-radius:4px;padding:2px 9px;white-space:nowrap;">50 users: <strong style="color:var(--ink);">~40%</strong></span></div>
       <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px;padding-left:0;">
         <span style="display:inline-flex;align-items:center;gap:4px;background:rgba(74,144,232,.12);border:1px solid rgba(74,144,232,.3);border-radius:3px;padding:2px 7px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--blue);">&#9633; matrix multiply &mdash; expand then compress</span>
         <span style="display:inline-flex;align-items:center;gap:4px;background:rgba(232,160,32,.1);border:1px solid rgba(232,160,32,.3);border-radius:3px;padding:2px 7px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--amber);">&#9670; memory bandwidth &mdash; largest single cost at low batch</span>
-        <span style="display:inline-flex;align-items:center;gap:4px;background:rgba(232,160,32,.08);border:1px solid rgba(232,160,32,.2);border-radius:3px;padding:2px 7px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);">falls as batch grows: weight reads shared across users</span>
       </div>
       <div class="fwd-body">After connecting words, each layer does a second pass: looking up factual knowledge. The description vector gets expanded to ~28,000 numbers (giving the GPU room to search through many possible facts simultaneously), irrelevant facts are muted, and the result is compressed back down. This is where &ldquo;Paris is the capital of France&rdquo; actually gets recalled. This step holds ~72% of all 70 billion parameters &mdash; most of the model&rsquo;s &ldquo;memory&rdquo; &mdash; and loading those parameters from GPU memory every pass is the single biggest time cost.</div>
     </div>
 
     <!-- Step 4 -->
     <div class="fwd-step" style="border-color:rgba(26,191,208,.3);">
-      <div class="fwd-hd"><div class="fwd-num" style="color:var(--cyan);">4.</div><div class="fwd-name">GPUs compare notes over the high-speed cable</div></div>
+      <div class="fwd-hd"><div class="fwd-num" style="color:var(--cyan);">4.</div><div class="fwd-name">Inter-GPU all-reduce over NVLink</div></div>
 <div style="display:flex;flex-wrap:wrap;gap:5px;margin:5px 0 8px 0;"><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);border-radius:4px;padding:2px 9px;white-space:nowrap;">1 user: <strong style="color:var(--ink);">~10%</strong></span><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);border-radius:4px;padding:2px 9px;white-space:nowrap;">20 users: <strong style="color:var(--ink);">~14%</strong></span><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);border-radius:4px;padding:2px 9px;white-space:nowrap;">50 users: <strong style="color:var(--ink);">~16%</strong></span></div>
       <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px;padding-left:0;">
         <span style="display:inline-flex;align-items:center;gap:4px;background:rgba(48,200,112,.1);border:1px solid rgba(48,200,112,.3);border-radius:3px;padding:2px 7px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--green);">&#9670; bottleneck: neither &mdash; NVLink 4.0 is very fast</span>
-        <span style="display:inline-flex;align-items:center;gap:4px;background:rgba(26,191,208,.08);border:1px solid rgba(26,191,208,.2);border-radius:3px;padding:2px 7px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);">fraction rises slightly as FFN shrinks at higher batch</span>
       </div>
       <div class="fwd-body">Because the model is split across 8 GPUs (each holds 1/8 of the weight tables), after every layer each GPU has only a partial answer. They share their partial results over NVLink &mdash; a cable running at 900 GB/s inside the server chassis &mdash; so every GPU gets the complete picture before moving to the next layer. This happens 80 times per token. Without NVLink (as with the cheaper A10G GPU which relies on the slower PCIe cable at 32 GB/s), this synchronisation step would take 28&times; longer and cripple performance.</div>
     </div>
 
     <!-- Step 5 -->
     <div class="fwd-step" style="border-color:rgba(48,200,112,.3);">
-      <div class="fwd-hd"><div class="fwd-num" style="color:var(--green);">5.</div><div class="fwd-name">Picking the next word and sending it to your screen</div></div>
+      <div class="fwd-hd"><div class="fwd-num" style="color:var(--green);">5.</div><div class="fwd-name">Output projection, sampling, and token egress</div></div>
 <div style="display:flex;flex-wrap:wrap;gap:5px;margin:5px 0 8px 0;"><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);border-radius:4px;padding:2px 9px;white-space:nowrap;">1 user: <strong style="color:var(--ink);">~4%</strong></span><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);border-radius:4px;padding:2px 9px;white-space:nowrap;">20 users: <strong style="color:var(--ink);">~5%</strong></span><span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);border-radius:4px;padding:2px 9px;white-space:nowrap;">50 users: <strong style="color:var(--ink);">~4%</strong></span></div>
       <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px;padding-left:0;">
         <span style="display:inline-flex;align-items:center;gap:4px;background:rgba(74,144,232,.12);border:1px solid rgba(74,144,232,.3);border-radius:3px;padding:2px 7px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--blue);">&#9633; matrix multiply &mdash; all 128K tokens scored simultaneously</span>
         <span style="display:inline-flex;align-items:center;gap:4px;background:rgba(232,160,32,.1);border:1px solid rgba(232,160,32,.3);border-radius:3px;padding:2px 7px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--amber);">&#9670; memory bandwidth (unembedding vocab table)</span>
-        <span style="display:inline-flex;align-items:center;gap:4px;background:rgba(48,200,112,.08);border:1px solid rgba(48,200,112,.2);border-radius:3px;padding:2px 7px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);">roughly constant across batch sizes</span>
       </div>
       <div class="fwd-body">After layer 80, the GPU compares the final description vector against all 128,256 possible words simultaneously, producing a probability for each (&ldquo;Paris&rdquo;: 92%, &ldquo;Lyon&rdquo;: 7%, everything else: &lt;1%). The temperature setting shapes these probabilities, and the most likely token is selected. The winning token ID is sent back to the CPU over PCIe, decoded back into text, and pushed to your browser &mdash; where it appears on screen within milliseconds. Then the whole process starts again for the next word.</div>
     </div>
@@ -2687,21 +2694,21 @@ function initMsCalculator(){
 
   <!-- PIPELINE STAGES -->
   <div class="tl-pipe" id="tl-pipe">
-    <div class="tl-stage" id="tls-0"><div class="tl-sname">Input tokens</div><div class="tl-sdesc">context window<br>flat token array</div></div>
+    <div class="tl-stage" id="tls-0"><div class="tl-sname">Token buffer</div><div class="tl-sdesc">context window<br>flat token ID array</div></div>
     <div class="tl-arr">&rarr;</div>
-    <div class="tl-stage" id="tls-1"><div class="tl-sname">Embed</div><div class="tl-sdesc">IDs &rarr;<br>8,192-dim vectors</div></div>
+    <div class="tl-stage" id="tls-1"><div class="tl-sname">Embedding lookup</div><div class="tl-sdesc">token IDs &rarr;<br>8,192-dim vectors</div></div>
     <div class="tl-arr">&rarr;</div>
-    <div class="tl-stage" id="tls-2"><div class="tl-sname">80 &times; Attention</div><div class="tl-sdesc">connect words<br>update <span class="tip" data-tip="KV Cache: the stored Key and Value vectors for prior tokens. They stay in GPU memory so each new token can look back without recomputing the whole history. It grows with conversation length and is a core memory constraint.">KV cache</span></div></div>
+    <div class="tl-stage" id="tls-2"><div class="tl-sname">80x self-attention</div><div class="tl-sdesc">Q/K/V + output<br>update <span class="tip" data-tip="KV Cache: the stored Key and Value vectors for prior tokens. They stay in GPU memory so each new token can look back without recomputing the whole history. It grows with conversation length and is a core memory constraint.">KV cache</span></div></div>
     <div class="tl-arr">&rarr;</div>
-    <div class="tl-stage" id="tls-3"><div class="tl-sname">80 &times; FFN</div><div class="tl-sdesc">look up facts<br>refine meaning</div></div>
+    <div class="tl-stage" id="tls-3"><div class="tl-sname">80x FFN / MLP</div><div class="tl-sdesc">fact recall<br>refine residual stream</div></div>
     <div class="tl-arr">&rarr;</div>
-    <div class="tl-stage" id="tls-4"><div class="tl-sname">Logits</div><div class="tl-sdesc">128K word<br>probabilities</div></div>
+    <div class="tl-stage" id="tls-4"><div class="tl-sname">Output projection</div><div class="tl-sdesc">128K token<br>scores / logits</div></div>
     <div class="tl-arr">&rarr;</div>
-    <div class="tl-stage" id="tls-5"><div class="tl-sname">Sample</div><div class="tl-sdesc">pick token<br>temperature</div></div>
+    <div class="tl-stage" id="tls-5"><div class="tl-sname">Sampling</div><div class="tl-sdesc">temperature / top-p<br>pick next token</div></div>
     <div class="tl-arr">&rarr;</div>
-    <div class="tl-stage" id="tls-6"><div class="tl-sname">Stream</div><div class="tl-sdesc">SSE &rarr; browser<br>appended to output</div></div>
+    <div class="tl-stage" id="tls-6"><div class="tl-sname">Token egress</div><div class="tl-sdesc">decode + SSE<br>append to output</div></div>
     <div class="tl-arr">&rarr;</div>
-    <div class="tl-stage" id="tls-7" style="border-color:rgba(232,160,32,.4);"><div class="tl-sname" style="color:var(--amber);">Loop</div><div class="tl-sdesc">append &rarr;<br>next pass</div></div>
+    <div class="tl-stage" id="tls-7" style="border-color:rgba(232,160,32,.4);"><div class="tl-sname" style="color:var(--amber);">Context append</div><div class="tl-sdesc">append token<br>start next pass</div></div>
   </div>
 
   <!-- STATUS INFO -->
@@ -2856,24 +2863,105 @@ function initMsCalculator(){
   </div>
 
   <div style="background:var(--bg);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:12px 14px;margin-bottom:12px;">
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:9px;text-transform:uppercase;letter-spacing:.09em;">Storage network: who satisfies demand</div>
-    <div style="display:grid;grid-template-columns:1fr 24px 1fr 24px 1fr;gap:8px;align-items:center;">
-      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:8px 9px;font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);">LLM runtime actor<br><strong style="color:var(--ink);">Provider cluster</strong> or <strong style="color:var(--ink);">Enterprise cluster</strong></div>
-      <div style="text-align:center;color:var(--muted);font-family:'IBM Plex Mono',monospace;">&rarr;</div>
-      <div style="background:rgba(74,144,232,.08);border:1px solid rgba(74,144,232,.25);border-radius:6px;padding:8px 9px;font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);">Persistence actor<br><strong style="color:var(--blue);">Provider telemetry</strong> / <strong style="color:var(--green);">Enterprise data plane</strong></div>
-      <div style="text-align:center;color:var(--muted);font-family:'IBM Plex Mono',monospace;">&rarr;</div>
-      <div style="background:rgba(232,160,32,.08);border:1px solid rgba(232,160,32,.25);border-radius:6px;padding:8px 9px;font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);">Business consumer actor<br><strong style="color:var(--amber);">App product + analytics + compliance teams</strong></div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:7px;text-transform:uppercase;letter-spacing:.09em;">Storage handoff (plain English)</div>
+    <div style="font-size:12px;color:var(--muted);line-height:1.65;margin-bottom:10px;">This answers a simple question: <strong style="color:var(--ink);">after a token is generated, who writes the records, where do they land, and who reads them later?</strong> In other words, who &ldquo;satisfies demand&rdquo; when product, analytics, security, or compliance teams need the data.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;align-items:stretch;">
+      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:8px 9px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--blue);margin-bottom:4px;">1) Generate</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:8.4px;color:var(--muted);line-height:1.5;">LLM runtime creates outputs + operational events<br><strong style="color:var(--ink);">(provider cluster or enterprise cluster)</strong></div>
+      </div>
+      <div style="background:rgba(74,144,232,.08);border:1px solid rgba(74,144,232,.25);border-radius:6px;padding:8px 9px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--cyan);margin-bottom:4px;">2) Persist</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:8.4px;color:var(--muted);line-height:1.5;">Transcript DB, telemetry/log pipeline, vector store<br><strong style="color:var(--ink);">(provider-managed and/or customer-managed)</strong></div>
+      </div>
+      <div style="background:rgba(232,160,32,.08);border:1px solid rgba(232,160,32,.25);border-radius:6px;padding:8px 9px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--amber);margin-bottom:4px;">3) Consume</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:8.4px;color:var(--muted);line-height:1.5;">App product, analytics, security, compliance queries<br><strong style="color:var(--ink);">(dashboards, audits, user history features)</strong></div>
+      </div>
     </div>
   </div>
 
   <div style="background:var(--bg);border:1px solid rgba(255,255,255,.08);border-radius:7px;padding:10px 12px;">
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:7px;text-transform:uppercase;letter-spacing:.08em;">Data type, storage class, ownership, and maturity</div>
-    <div style="display:flex;flex-direction:column;gap:4px;font-family:'IBM Plex Mono',monospace;font-size:8.6px;">
-      <div style="display:grid;grid-template-columns:96px 96px 1fr 146px 96px;gap:8px;padding:4px 0;border-bottom:1px solid var(--border);"><span style="color:var(--cyan);">KV cache</span><span style="color:var(--muted);">Runtime buffer</span><span style="color:var(--muted);">GPU HBM / process memory only</span><span style="color:var(--ink);">Provider + Enterprise runtime</span><span style="color:var(--ink);text-align:right;">mature</span></div>
-      <div style="display:grid;grid-template-columns:96px 96px 1fr 146px 96px;gap:8px;padding:4px 0;border-bottom:1px solid var(--border);"><span style="color:var(--blue);">Output text</span><span style="color:var(--muted);">Object / row</span><span style="color:var(--muted);">App DB, object store, transcript store</span><span style="color:var(--ink);">Usually customer app owner</span><span style="color:var(--ink);text-align:right;">mature</span></div>
-      <div style="display:grid;grid-template-columns:96px 96px 1fr 146px 96px;gap:8px;padding:4px 0;border-bottom:1px solid var(--border);"><span style="color:var(--amber);">History</span><span style="color:var(--muted);">Document log</span><span style="color:var(--muted);">Session store + long-term DB</span><span style="color:var(--ink);">Provider app or enterprise app</span><span style="color:var(--ink);text-align:right;">mature</span></div>
-      <div style="display:grid;grid-template-columns:96px 96px 1fr 146px 96px;gap:8px;padding:4px 0;border-bottom:1px solid var(--border);"><span style="color:var(--purple);">Request/usage logs</span><span style="color:var(--muted);">Event logs</span><span style="color:var(--muted);">Telemetry pipeline / SIEM / lake</span><span style="color:var(--ink);">Provider and/or enterprise ops</span><span style="color:var(--ink);text-align:right;">mature</span></div>
-      <div style="display:grid;grid-template-columns:96px 96px 1fr 146px 96px;gap:8px;padding:4px 0;"><span style="color:var(--green);">Vector memory</span><span style="color:var(--muted);">Vector index</span><span style="color:var(--muted);">Vector DB (managed or self-hosted)</span><span style="color:var(--ink);">Often enterprise-owned in regulated envs</span><span style="color:var(--ink);text-align:right;">evolving</span></div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:7px;text-transform:uppercase;letter-spacing:.08em;">Post-prompt data mix (illustrative, left-aligned)</div>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-family:'IBM Plex Mono',monospace;font-size:9px;">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border2);">
+            <th style="text-align:left;padding:7px 8px;color:var(--muted);">Data type</th>
+            <th style="text-align:left;padding:7px 8px;color:var(--muted);">Typical stored payload / request</th>
+            <th style="text-align:left;padding:7px 8px;color:var(--muted);">Primary store</th>
+            <th style="text-align:left;padding:7px 8px;color:var(--muted);">Approx share of persisted bytes</th>
+            <th style="text-align:left;padding:7px 8px;color:var(--muted);">Typical owner</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:7px 8px;color:var(--cyan);">KV cache</td>
+            <td style="padding:7px 8px;color:var(--muted);">Runtime only (not persisted in most systems)</td>
+            <td style="padding:7px 8px;color:var(--muted);">GPU HBM / process memory</td>
+            <td style="padding:7px 8px;color:var(--ink);">~0%</td>
+            <td style="padding:7px 8px;color:var(--ink);">Runtime platform</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:7px 8px;color:var(--blue);">Output text chunks</td>
+            <td style="padding:7px 8px;color:var(--muted);">~20 KB to 200 KB</td>
+            <td style="padding:7px 8px;color:var(--muted);">Transcript store / object store</td>
+            <td style="padding:7px 8px;color:var(--ink);">~5% to 15%</td>
+            <td style="padding:7px 8px;color:var(--ink);">App team</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:7px 8px;color:var(--amber);">Conversation history (prompt + response)</td>
+            <td style="padding:7px 8px;color:var(--muted);">~150 KB to 2 MB</td>
+            <td style="padding:7px 8px;color:var(--muted);">Session DB + long-term transcript DB</td>
+            <td style="padding:7px 8px;color:var(--ink);">~45% to 70%</td>
+            <td style="padding:7px 8px;color:var(--ink);">App team / enterprise platform</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:7px 8px;color:var(--purple);">Request, usage, safety logs</td>
+            <td style="padding:7px 8px;color:var(--muted);">~50 KB to 800 KB</td>
+            <td style="padding:7px 8px;color:var(--muted);">Telemetry pipeline, SIEM, audit lake</td>
+            <td style="padding:7px 8px;color:var(--ink);">~15% to 35%</td>
+            <td style="padding:7px 8px;color:var(--ink);">Provider ops and/or enterprise ops</td>
+          </tr>
+          <tr>
+            <td style="padding:7px 8px;color:var(--green);">Vector memory artifacts</td>
+            <td style="padding:7px 8px;color:var(--muted);">~20 KB to 500 KB (only if memory writes enabled)</td>
+            <td style="padding:7px 8px;color:var(--muted);">Vector DB</td>
+            <td style="padding:7px 8px;color:var(--ink);">~0% to 20%</td>
+            <td style="padding:7px 8px;color:var(--ink);">Usually customer-owned</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="font-size:11px;color:var(--muted);line-height:1.55;margin-top:8px;">Percentages are for <strong style="color:var(--ink);">persisted stores after a request</strong> (not runtime memory), so KV cache is effectively 0% in most architectures.</div>
+  </div>
+
+  <div style="background:rgba(138,110,232,.08);border:1.5px solid rgba(138,110,232,.28);border-radius:8px;padding:11px 12px;margin-top:10px;">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--purple);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em;">Worked example: context-heavy reasoning request (Anthropic-style hosted endpoint)</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:8px;">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);">Scenario:</span>
+      <button class="user-preset" id="stor-scen-light" onclick="setStorageScenario('light')">Light prompt</button>
+      <button class="user-preset sel" id="stor-scen-heavy" onclick="setStorageScenario('heavy')">Heavy prompt</button>
+      <button class="user-preset" id="stor-scen-agentic" onclick="setStorageScenario('agentic')">Agentic multi-tool</button>
+    </div>
+    <div id="stor-scen-desc" style="font-size:12px;color:var(--muted);line-height:1.62;margin-bottom:7px;">Illustrative request profile: ~3K input-context tokens, ~400 reasoning tokens, ~300 final output tokens, standard safety/usage logging, full transcript stored.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div id="stor-scen-bytes" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:8px 9px;font-family:'IBM Plex Mono',monospace;font-size:8.8px;color:var(--muted);line-height:1.65;">
+        Approx persisted bytes per request:<br>
+        Transcript/history: <strong style="color:var(--ink);" id="stor-b-transcript">~240 KB</strong><br>
+        Provider/request/safety logs: <strong style="color:var(--ink);" id="stor-b-logs">~140 KB</strong><br>
+        App analytics metadata: <strong style="color:var(--ink);" id="stor-b-app">~45 KB</strong><br>
+        Vector-memory writes (if enabled): <strong style="color:var(--ink);" id="stor-b-vector">~0 KB</strong><br>
+        <span style="color:var(--purple);" id="stor-b-total">Total persisted: ~425 KB / request</span>
+      </div>
+      <div id="stor-scen-share" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:8px 9px;font-family:'IBM Plex Mono',monospace;font-size:8.8px;color:var(--muted);line-height:1.65;">
+        Approx share of persisted bytes:<br>
+        Transcript/history: <strong style="color:var(--ink);" id="stor-p-transcript">~56%</strong><br>
+        Provider/request/safety logs: <strong style="color:var(--ink);" id="stor-p-logs">~33%</strong><br>
+        App analytics metadata: <strong style="color:var(--ink);" id="stor-p-app">~11%</strong><br>
+        Vector-memory artifacts: <strong style="color:var(--ink);" id="stor-p-vector">~0%</strong><br>
+        <span style="color:var(--purple);">KV cache: 0% persisted (runtime only)</span>
+      </div>
     </div>
   </div>
 
@@ -2987,7 +3075,7 @@ function initMsCalculator(){
   <!-- CHIP COMPARISON -->
   <div class="ref-acc">
     <details>
-      <summary style="color:var(--blue);">GPU Chip Comparison &mdash; A10G vs A100 vs H100</summary>
+      <summary style="color:var(--blue);">GPU Chip Comparison &mdash; A10G vs H100 vs H200</summary>
       <div>
         <div style="overflow-x:auto;">
           <table style="width:100%;border-collapse:collapse;font-family:'IBM Plex Mono',monospace;font-size:10px;">
@@ -2995,24 +3083,24 @@ function initMsCalculator(){
               <tr style="border-bottom:1px solid var(--border2);">
                 <th style="text-align:left;padding:8px 12px;color:var(--muted);">Spec</th>
                 <th style="text-align:right;padding:8px 12px;color:var(--red);">A10G</th>
-                <th style="text-align:right;padding:8px 12px;color:var(--amber);">A100 SXM4</th>
                 <th style="text-align:right;padding:8px 12px;color:var(--green);">H100 SXM5</th>
+                <th style="text-align:right;padding:8px 12px;color:var(--cyan);">H200 SXM</th>
               </tr>
             </thead>
             <tbody>
-              <tr style="border-bottom:1px solid var(--border);"><td style="padding:7px 12px;color:var(--muted);">Memory</td><td style="text-align:right;padding:7px 12px;">24 GB GDDR6</td><td style="text-align:right;padding:7px 12px;">80 GB HBM2e</td><td style="text-align:right;padding:7px 12px;color:var(--green);">80 GB HBM3e</td></tr>
-              <tr style="border-bottom:1px solid var(--border);"><td style="padding:7px 12px;color:var(--muted);">Bandwidth</td><td style="text-align:right;padding:7px 12px;">600 GB/s</td><td style="text-align:right;padding:7px 12px;">2.0 TB/s</td><td style="text-align:right;padding:7px 12px;color:var(--green);">3.35 TB/s</td></tr>
-              <tr style="border-bottom:1px solid var(--border);"><td style="padding:7px 12px;color:var(--muted);">Interconnect</td><td style="text-align:right;padding:7px 12px;color:var(--red);">PCIe only</td><td style="text-align:right;padding:7px 12px;">NVLink 3.0 600 GB/s</td><td style="text-align:right;padding:7px 12px;color:var(--green);">NVLink 4.0 900 GB/s</td></tr>
-              <tr style="border-bottom:1px solid var(--border);"><td style="padding:7px 12px;color:var(--muted);">Run 70B alone?</td><td style="text-align:right;padding:7px 12px;color:var(--red);">No (24 GB)</td><td style="text-align:right;padding:7px 12px;color:var(--amber);">No (80 GB, need 2+)</td><td style="text-align:right;padding:7px 12px;color:var(--amber);">No (80 GB, need 2+)</td></tr>
-              <tr style="border-bottom:1px solid var(--border);"><td style="padding:7px 12px;color:var(--muted);">Run 70B BF16 (8 GPU)?</td><td style="text-align:right;padding:7px 12px;color:var(--red);">No (192 GB total)</td><td style="text-align:right;padding:7px 12px;color:var(--green);">Yes (640 GB)</td><td style="text-align:right;padding:7px 12px;color:var(--green);">Yes (640 GB)</td></tr>
-              <tr style="border-bottom:1px solid var(--border);"><td style="padding:7px 12px;color:var(--muted);">Tok/s decode (70B, bs=1)</td><td style="text-align:right;padding:7px 12px;color:var(--red);">~4 (PCIe multi-GPU)</td><td style="text-align:right;padding:7px 12px;">~25</td><td style="text-align:right;padding:7px 12px;color:var(--green);">~42</td></tr>
-              <tr style="border-bottom:1px solid var(--border);"><td style="padding:7px 12px;color:var(--muted);">GPU list price</td><td style="text-align:right;padding:7px 12px;">~$3,500</td><td style="text-align:right;padding:7px 12px;">~$10,000</td><td style="text-align:right;padding:7px 12px;">~$30,000</td></tr>
-              <tr><td style="padding:7px 12px;color:var(--muted);">Best use case</td><td style="text-align:right;padding:7px 12px;color:var(--muted);">7B/13B models</td><td style="text-align:right;padding:7px 12px;color:var(--muted);">70B production</td><td style="text-align:right;padding:7px 12px;color:var(--green);">70B+ frontier</td></tr>
+              <tr style="border-bottom:1px solid var(--border);"><td style="padding:7px 12px;color:var(--muted);">Memory</td><td style="text-align:right;padding:7px 12px;">24 GB GDDR6</td><td style="text-align:right;padding:7px 12px;color:var(--green);">80 GB HBM3e</td><td style="text-align:right;padding:7px 12px;color:var(--cyan);">141 GB HBM3e</td></tr>
+              <tr style="border-bottom:1px solid var(--border);"><td style="padding:7px 12px;color:var(--muted);">Bandwidth</td><td style="text-align:right;padding:7px 12px;">600 GB/s</td><td style="text-align:right;padding:7px 12px;color:var(--green);">3.35 TB/s</td><td style="text-align:right;padding:7px 12px;color:var(--cyan);">4.8 TB/s</td></tr>
+              <tr style="border-bottom:1px solid var(--border);"><td style="padding:7px 12px;color:var(--muted);">Interconnect</td><td style="text-align:right;padding:7px 12px;color:var(--red);">PCIe only</td><td style="text-align:right;padding:7px 12px;color:var(--green);">NVLink 4.0 900 GB/s</td><td style="text-align:right;padding:7px 12px;color:var(--cyan);">NVLink 4.0 900 GB/s</td></tr>
+              <tr style="border-bottom:1px solid var(--border);"><td style="padding:7px 12px;color:var(--muted);">Run 70B alone?</td><td style="text-align:right;padding:7px 12px;color:var(--red);">No (24 GB)</td><td style="text-align:right;padding:7px 12px;color:var(--amber);">No (80 GB, need 2+)</td><td style="text-align:right;padding:7px 12px;color:var(--cyan);">Barely (141 GB, almost no KV headroom)</td></tr>
+              <tr style="border-bottom:1px solid var(--border);"><td style="padding:7px 12px;color:var(--muted);">Run 70B BF16 (8 GPU)?</td><td style="text-align:right;padding:7px 12px;color:var(--red);">No (192 GB total)</td><td style="text-align:right;padding:7px 12px;color:var(--green);">Yes (640 GB)</td><td style="text-align:right;padding:7px 12px;color:var(--cyan);">Yes (1,128 GB)</td></tr>
+              <tr style="border-bottom:1px solid var(--border);"><td style="padding:7px 12px;color:var(--muted);">Tok/s decode (70B, bs=1)</td><td style="text-align:right;padding:7px 12px;color:var(--red);">~4 (PCIe multi-GPU)</td><td style="text-align:right;padding:7px 12px;color:var(--green);">~42</td><td style="text-align:right;padding:7px 12px;color:var(--cyan);">~54</td></tr>
+              <tr style="border-bottom:1px solid var(--border);"><td style="padding:7px 12px;color:var(--muted);">GPU list price</td><td style="text-align:right;padding:7px 12px;">~$3,500</td><td style="text-align:right;padding:7px 12px;">~$30,000</td><td style="text-align:right;padding:7px 12px;">~$35,000</td></tr>
+              <tr><td style="padding:7px 12px;color:var(--muted);">Best use case</td><td style="text-align:right;padding:7px 12px;color:var(--muted);">7B/13B models</td><td style="text-align:right;padding:7px 12px;color:var(--green);">70B production</td><td style="text-align:right;padding:7px 12px;color:var(--cyan);">70B with larger context / higher density</td></tr>
             </tbody>
           </table>
         </div>
         <div style="margin-top:14px;padding:10px 14px;background:rgba(224,72,72,.08);border:1px solid rgba(224,72,72,.25);border-radius:7px;font-size:12px;color:var(--muted);line-height:1.65;">
-          <strong style="color:var(--red);">A10G warning:</strong> No NVLink means multi-GPU communication goes through PCIe (32 GB/s vs 900 GB/s). The <span class="tip" data-tip="AllReduce: a collective synchronization step where GPUs exchange and combine partial results so every GPU has the same updated activations before the next layer starts. In tensor-parallel inference it happens after every layer.">AllReduce</span> synchronisation between GPUs after each layer takes longer than the actual computation. Running 70B BF16 across A10Gs is impractical for production &mdash; use quantized 70B (INT4, ~35 GB) on a single A100/H100, or use a 13B model on A10G.
+          <strong style="color:var(--red);">A10G warning:</strong> No NVLink means multi-GPU communication goes through PCIe (32 GB/s vs 900 GB/s). The <span class="tip" data-tip="AllReduce: a collective synchronization step where GPUs exchange and combine partial results so every GPU has the same updated activations before the next layer starts. In tensor-parallel inference it happens after every layer.">AllReduce</span> synchronisation between GPUs after each layer takes longer than the actual computation. Running 70B BF16 across A10Gs is impractical for production &mdash; use quantized 70B (INT4, ~35 GB) on a single H200, or use H100/H200 multi-GPU, or use a 13B model on A10G.
         </div>
       </div>
     </details>
@@ -3250,8 +3338,17 @@ function calcMem(){
 }
 
 function changeUsers(d){
-  _users = Math.max(1, Math.min(256, _users + d));
+  setUsers(_users + d);
+}
+
+function setUsers(n){
+  _users = Math.max(1, Math.min(256, parseInt(n,10) || 1));
+  if(el('sl-users')) el('sl-users').value = _users;
   if(el('user-count')) el('user-count').textContent = _users;
+  [1,10,50,100].forEach(function(v){
+    var btn = el('user-preset-'+v);
+    if(btn) btn.classList.toggle('sel', _users === v);
+  });
   calcMem();
 }
 
@@ -3295,13 +3392,13 @@ function renderBatch(){
 var _hw = 'H100', _nodes = 8;
 var HW_SPECS = {
   H100: { bw:3.35, mem:80,  tps_single:42, nvlink:true,  linkGB:900, run70b:true  },
-  A100: { bw:2.0,  mem:80,  tps_single:25, nvlink:true,  linkGB:600, run70b:true  },
+  H200: { bw:4.8,  mem:141, tps_single:54, nvlink:true,  linkGB:900, run70b:true  },
   A10G: { bw:0.6,  mem:24,  tps_single:0,  nvlink:false, linkGB:32,  run70b:false }
 };
 
 function selHW(name){
   _hw = name;
-  ['H100','A100','A10G'].forEach(function(n){
+  ['H100','H200','A10G'].forEach(function(n){
     var c = document.getElementById('hw-'+n);
     if(c) c.classList.toggle('sel', n===name);
     var calcBtn = document.getElementById('calc-hw-'+n);
@@ -3341,7 +3438,7 @@ function renderMFU(){
   var spec = HW_SPECS[_hw];
   var canRun = spec.run70b && spec.mem*_nodes >= 140;
   if(!canRun){
-    area.innerHTML = '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:10px;color:var(--red);padding:8px 0;">\u26a0 '+_hw+' cannot run Llama 70B BF16 with '+_nodes+' GPU'+(_nodes===1?'':' s')+'. Need \u2265140 GB HBM and NVLink. Try A100/H100 with 2+ GPUs or use quantized INT4 model.</div>';
+    area.innerHTML = '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:10px;color:var(--red);padding:8px 0;">\u26a0 '+_hw+' cannot run Llama 70B BF16 with '+_nodes+' GPU'+(_nodes===1?'':' s')+'. Need \u2265140 GB HBM and NVLink. Try H100/H200 with 2+ GPUs or use quantized INT4 model.</div>';
     return;
   }
   var bwScale = spec.bw / 3.35; // relative to H100
@@ -3368,7 +3465,7 @@ var TL = {
   timer: null,
   pass: 0,
   stage: 0,
-  stageNames: ['Input tokens','Embed','80\u00d7 Attention','80\u00d7 FFN','Logits','Sample','Stream','\u21ba Loop'],
+  stageNames: ['Token buffer','Embedding lookup','80\u00d7 self-attention','80\u00d7 FFN / MLP','Output projection','Sampling','Token egress','Context append'],
   stageInfos: [
     'Loading context window: 5 prompt tokens + {n} generated tokens into GPU HBM.',
     'Converting token IDs to 8,192-dim vectors. Each token becomes a point in meaning space.',
@@ -3476,12 +3573,72 @@ function tlReset(){
   tlInfo('Press Play to watch the generation loop animate step by step.');
 }
 
+/* ── STORAGE SCENARIO TOGGLE ───────────────────────────────────── */
+function setStorageScenario(kind){
+  var scenarios = {
+    light: {
+      desc: 'Illustrative request profile: ~3K input-context tokens, ~400 reasoning tokens, ~300 final output tokens, standard safety/usage logging, full transcript stored.',
+      bTranscript: '~240 KB',
+      bLogs: '~140 KB',
+      bApp: '~45 KB',
+      bVector: '~0 KB',
+      bTotal: 'Total persisted: ~425 KB / request',
+      pTranscript: '~56%',
+      pLogs: '~33%',
+      pApp: '~11%',
+      pVector: '~0%'
+    },
+    heavy: {
+      desc: 'Illustrative request profile: ~35K input-context tokens (system + user + retrieved docs + history), ~8K reasoning tokens, ~1.2K final output tokens, safety/usage logging enabled, app stores full transcript.',
+      bTranscript: '~900 KB',
+      bLogs: '~360 KB',
+      bApp: '~90 KB',
+      bVector: '~200 KB',
+      bTotal: 'Total persisted: ~1.55 MB / request',
+      pTranscript: '~58%',
+      pLogs: '~23%',
+      pApp: '~6%',
+      pVector: '~13%'
+    },
+    agentic: {
+      desc: 'Illustrative request profile: ~55K running context, ~12 tool calls, ~14K reasoning tokens, ~2K final output tokens, tool traces + full audit logging + memory writes enabled.',
+      bTranscript: '~1.8 MB',
+      bLogs: '~1.1 MB',
+      bApp: '~260 KB',
+      bVector: '~840 KB',
+      bTotal: 'Total persisted: ~4.0 MB / request',
+      pTranscript: '~45%',
+      pLogs: '~27%',
+      pApp: '~7%',
+      pVector: '~21%'
+    }
+  };
+
+  var s = scenarios[kind] || scenarios.light;
+  if(el('stor-scen-desc')) el('stor-scen-desc').textContent = s.desc;
+  if(el('stor-b-transcript')) el('stor-b-transcript').textContent = s.bTranscript;
+  if(el('stor-b-logs')) el('stor-b-logs').textContent = s.bLogs;
+  if(el('stor-b-app')) el('stor-b-app').textContent = s.bApp;
+  if(el('stor-b-vector')) el('stor-b-vector').textContent = s.bVector;
+  if(el('stor-b-total')) el('stor-b-total').textContent = s.bTotal;
+  if(el('stor-p-transcript')) el('stor-p-transcript').textContent = s.pTranscript;
+  if(el('stor-p-logs')) el('stor-p-logs').textContent = s.pLogs;
+  if(el('stor-p-app')) el('stor-p-app').textContent = s.pApp;
+  if(el('stor-p-vector')) el('stor-p-vector').textContent = s.pVector;
+
+  ['light','heavy','agentic'].forEach(function(n){
+    var btn = el('stor-scen-'+n);
+    if(btn) btn.classList.toggle('sel', n===kind);
+  });
+}
+
 /* ── INIT ────────────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', function(){
   go(0);
-  calcMem();
   renderBatch();
   selHW('H100');
+  setUsers(_users);
+  setStorageScenario('heavy');
   tlReset();
   // speed slider label
   var sp = document.getElementById('tl-speed');
