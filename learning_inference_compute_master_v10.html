@@ -3449,6 +3449,58 @@ function initMsCalculator(){
   </div>
 </div>
 
+<div class="ref-acc" style="margin-top:12px;">
+  <details>
+    <summary style="color:var(--teal);">Software Deployment Layer &mdash; Orchestration and Serving (Backup)</summary>
+    <div>
+      <div style="font-size:12.5px;color:var(--muted);line-height:1.72;margin-bottom:12px;">This is the control plane that turns GPU hardware into a reliable inference service: scheduling, autoscaling, routing, model loading, observability, and policy enforcement. Use this section as backup if the audience asks how deployment actually works beyond the model and infrastructure diagrams.</div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px;">
+        <div style="background:rgba(26,191,208,.09);border:1px solid rgba(26,191,208,.28);border-radius:8px;padding:10px 12px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--cyan);margin-bottom:5px;text-transform:uppercase;letter-spacing:.08em;">Kubernetes-first serving stack</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.62;">Kubernetes handles API services, autoscaling, request routing, and multi-tenant policy controls. Typical components: API gateway, model-router, inference engine pods (vLLM/TensorRT-LLM), metrics stack, and policy/webhook controls.</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:8.6px;color:var(--muted);margin-top:7px;line-height:1.55;">Best for: platform teams, service SLAs, rapid rollout, multi-team governance.</div>
+        </div>
+
+        <div style="background:rgba(138,110,232,.09);border:1px solid rgba(138,110,232,.28);border-radius:8px;padding:10px 12px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--purple);margin-bottom:5px;text-transform:uppercase;letter-spacing:.08em;">Slurm-first HPC scheduling</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.62;">Slurm excels at deterministic GPU allocation, queue-based scheduling, and large batch/throughput jobs. It is common for training, offline inference, and enterprise HPC clusters that already use Slurm as the system scheduler.</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:8.6px;color:var(--muted);margin-top:7px;line-height:1.55;">Best for: fixed-capacity clusters, HPC ops teams, high utilization batch workloads.</div>
+        </div>
+      </div>
+
+      <div style="background:var(--bg);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:10px 12px;margin-bottom:10px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:7px;text-transform:uppercase;letter-spacing:.08em;">Common hybrid model (what many enterprises actually run)</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+          <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:8px 9px;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--teal);margin-bottom:4px;">1) Control Plane</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:8.4px;color:var(--muted);line-height:1.5;">Kubernetes for API ingress, auth, policy, and service lifecycle</div>
+          </div>
+          <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:8px 9px;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--blue);margin-bottom:4px;">2) GPU Scheduling</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:8.4px;color:var(--muted);line-height:1.5;">Slurm or K8s GPU operators place workloads on the right GPU partitions</div>
+          </div>
+          <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:8px 9px;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--amber);margin-bottom:4px;">3) Data Plane</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:8.4px;color:var(--muted);line-height:1.5;">Object storage + vector DB + logs for durable persistence and retrieval</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div style="background:rgba(48,200,112,.08);border:1px solid rgba(48,200,112,.24);border-radius:8px;padding:10px 12px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--green);margin-bottom:5px;">Object storage integration points</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.62;">Model artifacts (weights/checkpoints), transcripts, audit logs, and batch outputs usually land in object storage. This aligns directly with your current service architecture and keeps compute stateless where possible.</div>
+        </div>
+        <div style="background:rgba(224,72,72,.08);border:1px solid rgba(224,72,72,.22);border-radius:8px;padding:10px 12px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--red);margin-bottom:5px;">Operational watch-outs</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.62;">Watch cold-start model load times from object storage, per-tenant QoS, admission control for long-context jobs, and consistent retention policies across object store, vector DB, and telemetry systems.</div>
+        </div>
+      </div>
+    </div>
+  </details>
+</div>
+
     </div>
   </details>
 </div>
