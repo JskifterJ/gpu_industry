@@ -1074,9 +1074,9 @@ footer {
           </div>
           <div class="btn-group" id="modelSizeBtns">
             <button class="btn" onclick="setModel('7B')">7B</button>
-            <button class="btn active" onclick="setModel('70B')">70B</button>
             <button class="btn" onclick="setModel('13B')">13B</button>
             <button class="btn" onclick="setModel('34B')">34B</button>
+            <button class="btn active" onclick="setModel('70B')">70B</button>
             <button class="btn" onclick="setModel('405B')">405B</button>
           </div>
           <div style="margin-top:8px; font-family:var(--mono);font-size:11px;color:var(--text3)">
@@ -1292,13 +1292,15 @@ footer {
           <th>Interconnect BW</th>
           <th>TDP</th>
           <th>Spot $/hr</th>
-          <th>Bandwidth/<br>Dollar (GB/s/$)</th>
+          <th>Single-GPU<br>BW/$</th>
+          <th>70B Fit<br>GPUs Needed</th>
+          <th>Effective BW/$<br>(70B fit)</th>
         </tr>
       </thead>
       <tbody id="gpuSpecBody"></tbody>
     </table>
   </div>
-  <div class="anno" style="margin-top:8px">Spot prices are representative estimates (CoreWeave/Lambda Labs, 2024–2025). "Bandwidth per Dollar" = memory bandwidth / hourly cost — helps for specific latency-sensitive workloads, but <strong>should not be the only criterion</strong>.</div>
+  <div class="anno" style="margin-top:8px">Spot prices are representative estimates (CoreWeave/Lambda Labs, 2024–2025). "Single-GPU BW/$" can overstate cheap PCIe cards; "Effective BW/$ (70B fit)" accounts for the GPUs required to fit a 70B BF16 model plus interconnect efficiency penalties.</div>
 
   <div class="card" style="margin-top:24px;background:var(--surface2);border:2px solid var(--cyan)">
     <div class="card-title">Concrete Example: The All-Reduce Penalty in Practice</div>
@@ -1973,7 +1975,8 @@ function getOrderedGpuEntries(opts = {}) {
       const genYear = genYearMatch ? parseInt(genYearMatch[1], 10) : 0;
       return { name, g, genYear };
     })
-    .sort((a, b) => (b.genYear - a.genYear) || (b.g.bandwidth - a.g.bandwidth) || (b.g.vram - a.g.vram));
+    // Ranking priority: performance (memory BW) -> release date -> VRAM.
+    .sort((a, b) => (b.g.bandwidth - a.g.bandwidth) || (b.genYear - a.genYear) || (b.g.vram - a.g.vram));
 }
 
 const MODELS = {
@@ -2323,7 +2326,7 @@ function buildModelPresets() {
   container.innerHTML = MODEL_PRESETS.map((p, i) => `
     <div class="preset-chip" id="preset_${i}" onclick="selectPreset(${i})" style="border-left:3px solid ${p.color}22">
       <div class="preset-chip-name" style="color:${p.color}">${p.name}</div>
-      <div class="preset-chip-maker">${p.maker} · ~${p.size} · ${p.prec}</div>
+      <div class="preset-chip-maker">${p.maker} · ~${p.size} · ${p.prec} · ${(() => { const m = MODELS[p.size]; return m ? Calc.modelMemGB(m.params, p.prec).toFixed(1) + ' GB' : 'n/a'; })()}</div>
       <div class="preset-chip-note">${p.note}</div>
     </div>`).join('');
 }
@@ -2533,7 +2536,7 @@ function renderModelGpuConfigViz(totalMemGb) {
     return `
     <div class="cfg-gpu-item">
       <div>
-        <div class="cfg-rank">#${idx + 1} best fit (latest/performance)</div>
+        <div class="cfg-rank">#${idx + 1} rank (performance -> release date -> VRAM)</div>
         <div class="cfg-gpu-item-top">
           <div class="cfg-gpu-name" style="color:${e.g.color}">${e.name}</div>
           <span class="cfg-fit-badge ${e.fitClass}">${e.fitText}</span>
@@ -2681,10 +2684,19 @@ function buildGpuCards() {
   // Spec table
   const tbody = document.getElementById('gpuSpecBody');
   const sorted = getOrderedGpuEntries({ exclude: ['A100 PCIe 40GB'] });
-  const maxBpd = Math.max(...sorted.map(({ g }) => g.bandwidth / g.price_spot));
-  tbody.innerHTML = sorted.map(({ name, g }) => {
-    const bpd = (g.bandwidth / g.price_spot).toFixed(0);
-    const isBest = parseFloat(bpd) > maxBpd * 0.9;
+  const model70MemGb = Calc.modelMemGB(MODELS['70B'].params, 'BF16');
+  const effectiveRows = sorted.map(({ name, g }) => {
+    const singleBpd = g.bandwidth / g.price_spot;
+    const usablePerGpu = g.vram * 0.92;
+    const fitGpus = Math.max(1, Math.ceil(model70MemGb / usablePerGpu));
+    const icEff = Calc.icEfficiency(g.ic_type, fitGpus);
+    const effectiveClusterBpd = (g.bandwidth * fitGpus * icEff) / (g.price_spot * fitGpus);
+    return { name, g, singleBpd, fitGpus, effectiveClusterBpd };
+  });
+  const maxEffBpd = Math.max(...effectiveRows.map(r => r.effectiveClusterBpd));
+  tbody.innerHTML = effectiveRows.map(({ name, g, singleBpd, fitGpus, effectiveClusterBpd }) => {
+    const isBest = effectiveClusterBpd > maxEffBpd * 0.9;
+    const interconnectTag = fitGpus > 1 ? ` <span style="color:var(--text3)">(${(Calc.icEfficiency(g.ic_type, fitGpus)*100).toFixed(0)}% eff)</span>` : '';
     return `<tr>
       <td><span style="color:${g.color};font-weight:600">${name}</span></td>
       <td style="color:var(--text2)">${g.gen}</td>
@@ -2694,7 +2706,9 @@ function buildGpuCards() {
       <td style="font-family:var(--mono)">${g.ic_bw} GB/s</td>
       <td style="font-family:var(--mono)">${g.tdp}W</td>
       <td style="font-family:var(--mono)">$${g.price_spot.toFixed(2)}</td>
-      <td class="${isBest ? 'winner' : ''}" style="font-family:var(--mono)">${bpd}</td>
+      <td style="font-family:var(--mono)">${singleBpd.toFixed(0)}</td>
+      <td style="font-family:var(--mono)">${fitGpus}x</td>
+      <td class="${isBest ? 'winner' : ''}" style="font-family:var(--mono)">${effectiveClusterBpd.toFixed(0)}${interconnectTag}</td>
     </tr>`;
   }).join('');
 }
