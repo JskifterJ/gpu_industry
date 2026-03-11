@@ -400,9 +400,77 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
   <div style="margin-bottom:24px;">
     <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:var(--amber);text-transform:uppercase;letter-spacing:.12em;margin-bottom:14px;">The Transformer Structure &mdash; How Llama 70B Is Organised</div>
 
-    <!-- MAIN NEURON NETWORK CANVAS -->
-    <div style="background:var(--bg);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:18px 20px;margin-bottom:14px;overflow-x:auto;">
-      <canvas id="nn-canvas" width="1160" height="380" style="display:block;width:100%;max-width:1160px;"></canvas>
+    <!-- MAIN TRANSFORMER STRUCTURE FIGURE (CRISP SVG) -->
+    <div style="background:var(--bg);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px 16px;margin-bottom:14px;overflow-x:auto;">
+      <svg viewBox="0 0 1160 360" style="display:block;width:100%;max-width:1160px;height:auto;shape-rendering:geometricPrecision;text-rendering:geometricPrecision;">
+        <defs>
+          <linearGradient id="gInput" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="rgba(48,200,112,.30)"/>
+            <stop offset="100%" stop-color="rgba(48,200,112,.08)"/>
+          </linearGradient>
+          <linearGradient id="gAttn" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="rgba(138,110,232,.30)"/>
+            <stop offset="100%" stop-color="rgba(138,110,232,.08)"/>
+          </linearGradient>
+          <linearGradient id="gFfn" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="rgba(74,144,232,.28)"/>
+            <stop offset="100%" stop-color="rgba(74,144,232,.08)"/>
+          </linearGradient>
+          <linearGradient id="gOut" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="rgba(232,160,32,.32)"/>
+            <stop offset="100%" stop-color="rgba(232,160,32,.08)"/>
+          </linearGradient>
+          <marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L8,4 L0,8 z" fill="rgba(232,234,240,.7)"/>
+          </marker>
+        </defs>
+
+        <rect x="28" y="54" width="150" height="248" rx="10" fill="url(#gInput)" stroke="rgba(48,200,112,.45)"/>
+        <text x="103" y="80" fill="var(--green)" font-family="IBM Plex Mono, monospace" font-size="11" text-anchor="middle">INPUT TOKENS</text>
+        <text x="103" y="98" fill="var(--muted)" font-family="IBM Plex Mono, monospace" font-size="9" text-anchor="middle">5 token IDs</text>
+        <text x="45" y="130" fill="var(--ink)" font-family="IBM Plex Mono, monospace" font-size="10">"The"</text>
+        <text x="45" y="154" fill="var(--ink)" font-family="IBM Plex Mono, monospace" font-size="10">"capital"</text>
+        <text x="45" y="178" fill="var(--ink)" font-family="IBM Plex Mono, monospace" font-size="10">"of"</text>
+        <text x="45" y="202" fill="var(--green)" font-family="IBM Plex Mono, monospace" font-size="10">"France"</text>
+        <text x="45" y="226" fill="var(--ink)" font-family="IBM Plex Mono, monospace" font-size="10">"is"</text>
+
+        <rect x="246" y="54" width="290" height="248" rx="10" fill="url(#gAttn)" stroke="rgba(138,110,232,.45)"/>
+        <text x="391" y="80" fill="var(--purple)" font-family="IBM Plex Mono, monospace" font-size="11" text-anchor="middle">80 TRANSFORMER LAYERS</text>
+        <text x="391" y="98" fill="var(--muted)" font-family="IBM Plex Mono, monospace" font-size="9" text-anchor="middle">Attention + FFN repeated</text>
+        <rect x="274" y="122" width="236" height="58" rx="8" fill="rgba(138,110,232,.12)" stroke="rgba(138,110,232,.45)"/>
+        <text x="392" y="145" fill="var(--ink)" font-family="IBM Plex Mono, monospace" font-size="10" text-anchor="middle">Multi-Head Attention</text>
+        <text x="392" y="162" fill="var(--muted)" font-family="IBM Plex Mono, monospace" font-size="8" text-anchor="middle">connect relevant tokens</text>
+        <rect x="274" y="190" width="236" height="58" rx="8" fill="rgba(74,144,232,.12)" stroke="rgba(74,144,232,.45)"/>
+        <text x="392" y="213" fill="var(--ink)" font-family="IBM Plex Mono, monospace" font-size="10" text-anchor="middle">Feed-Forward Network</text>
+        <text x="392" y="230" fill="var(--muted)" font-family="IBM Plex Mono, monospace" font-size="8" text-anchor="middle">refine per-token meaning</text>
+        <text x="392" y="270" fill="var(--amber)" font-family="IBM Plex Mono, monospace" font-size="9" text-anchor="middle">Residual stream keeps adding signal</text>
+
+        <rect x="604" y="54" width="220" height="248" rx="10" fill="url(#gFfn)" stroke="rgba(74,144,232,.45)"/>
+        <text x="714" y="80" fill="var(--blue)" font-family="IBM Plex Mono, monospace" font-size="11" text-anchor="middle">FINAL HIDDEN VECTOR</text>
+        <text x="714" y="98" fill="var(--muted)" font-family="IBM Plex Mono, monospace" font-size="9" text-anchor="middle">1 x 8,192 numbers</text>
+        <rect x="638" y="120" width="152" height="120" rx="8" fill="rgba(74,144,232,.08)" stroke="rgba(74,144,232,.35)"/>
+        <text x="714" y="144" fill="var(--ink)" font-family="IBM Plex Mono, monospace" font-size="9" text-anchor="middle">[+0.34, -0.11, +1.20, ...]</text>
+        <text x="714" y="163" fill="var(--ink)" font-family="IBM Plex Mono, monospace" font-size="9" text-anchor="middle">...</text>
+        <text x="714" y="182" fill="var(--ink)" font-family="IBM Plex Mono, monospace" font-size="9" text-anchor="middle">8,192 dims</text>
+        <text x="714" y="214" fill="var(--muted)" font-family="IBM Plex Mono, monospace" font-size="8" text-anchor="middle">encodes context + facts + grammar</text>
+
+        <rect x="890" y="54" width="242" height="248" rx="10" fill="url(#gOut)" stroke="rgba(232,160,32,.45)"/>
+        <text x="1011" y="80" fill="var(--amber)" font-family="IBM Plex Mono, monospace" font-size="11" text-anchor="middle">OUTPUT PROJECTION</text>
+        <text x="1011" y="98" fill="var(--muted)" font-family="IBM Plex Mono, monospace" font-size="9" text-anchor="middle">128,256 token scores (logits)</text>
+        <rect x="922" y="124" width="174" height="20" rx="4" fill="rgba(48,200,112,.30)"/>
+        <text x="929" y="138" fill="var(--green)" font-family="IBM Plex Mono, monospace" font-size="9">" Paris" 92%</text>
+        <rect x="922" y="151" width="28" height="20" rx="4" fill="rgba(232,160,32,.35)"/>
+        <text x="958" y="165" fill="var(--amber)" font-family="IBM Plex Mono, monospace" font-size="9">" Lyon" 7%</text>
+        <rect x="922" y="178" width="8" height="20" rx="4" fill="rgba(120,130,150,.35)"/>
+        <text x="938" y="192" fill="var(--muted)" font-family="IBM Plex Mono, monospace" font-size="9">128,254 others &lt;1%</text>
+        <text x="1011" y="226" fill="var(--ink)" font-family="IBM Plex Mono, monospace" font-size="9" text-anchor="middle">highest-probability token is selected</text>
+
+        <line x1="178" y1="178" x2="246" y2="178" stroke="rgba(232,234,240,.6)" stroke-width="1.5" marker-end="url(#arr)"/>
+        <line x1="536" y1="178" x2="604" y2="178" stroke="rgba(232,234,240,.6)" stroke-width="1.5" marker-end="url(#arr)"/>
+        <line x1="824" y1="178" x2="890" y2="178" stroke="rgba(232,234,240,.6)" stroke-width="1.5" marker-end="url(#arr)"/>
+
+        <text x="580" y="334" fill="var(--muted)" font-family="IBM Plex Mono, monospace" font-size="9" text-anchor="middle">Crisp vector rendering: zoom-safe on retina and large displays</text>
+      </svg>
     </div>
 
     <!-- TOKEN VECTOR EVOLUTION -->
@@ -955,7 +1023,8 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
     <!-- ③ QUANTIZATION -->
     <div style="background:rgba(232,160,32,.06);border:1px solid rgba(232,160,32,.25);border-radius:8px;padding:14px 16px;margin-bottom:18px;">
       <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--amber);margin-bottom:8px;text-transform:uppercase;letter-spacing:.09em;">Quantization &mdash; trading precision for size</div>
-      <div style="font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:10px;">Numbers can be stored at different precisions. <strong style="color:var(--ink);">FP</strong> = Floating Point (scientific notation, flexible range). <strong style="color:var(--ink);">BF</strong> = Brain Float (same range as FP32, fewer fraction digits). <strong style="color:var(--ink);">INT</strong> = Integer (no decimals, fixed range).</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:10px;">Numbers can be stored at different precisions. <strong style="color:var(--ink);">FP</strong> = Floating Point (scientific notation, <span class="tip" data-tip="Range means how small and how large a number format can represent (for example, tiny values near 0 and very large values).">range</span> is flexible). <strong style="color:var(--ink);">BF</strong> = Brain Float (same <span class="tip" data-tip="BF16 keeps the same exponent width as FP32, so it keeps similar numeric range but lower precision in decimals.">range as FP32</span>, fewer fraction digits). <strong style="color:var(--ink);">INT</strong> = Integer (no decimals, fixed range).</div>
+      <div style="font-size:10px;color:var(--muted);line-height:1.55;margin-bottom:8px;">Bit counts are <strong style="color:var(--ink);">storage fields</strong>, not decimal digits shown to humans. So <span class="tip" data-tip="8 exponent bits means the exponent field uses 8 binary slots (0 or 1), giving 2^8 possible encoded states, not an 8-digit decimal number.">8 exponent bits</span> does <em>not</em> mean an 8-digit exponent, and <span class="tip" data-tip="Fraction bits are binary precision bits (mantissa/significand), controlling decimal detail. More fraction bits = finer precision.">fraction bits</span> are binary precision slots, not decimal places.</div>
       <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);margin-bottom:8px;letter-spacing:.03em;">All memory and size examples below assume a <strong style="color:var(--ink);">70B parameter</strong> model.</div>
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
@@ -969,12 +1038,12 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
           </div>
           <div style="background:#1a2030;border-radius:2px;height:8px;overflow:hidden;margin-bottom:3px;"><div style="width:100%;height:100%;background:rgba(74,144,232,.6);border-radius:2px;"></div></div>
           <div style="margin-bottom:4px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:5px 6px;display:flex;justify-content:space-between;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:7.5px;">
-            <span style="color:var(--red);">Sign<br><strong style="color:var(--ink);">+</strong></span>
-            <span style="color:var(--amber);">Exponent<br><strong style="color:var(--ink);">127</strong></span>
-            <span style="color:var(--blue);">Fraction<br><strong style="color:var(--ink);">0.625</strong></span>
-            <span style="color:var(--muted);">Example value<br><strong style="color:var(--ink);">+1.625</strong></span>
+            <span style="color:var(--red);"><span class="tip" data-tip="Sign bit chooses positive (+) or negative (-).">Sign</span><br><strong style="color:var(--ink);">+</strong></span>
+            <span style="color:var(--amber);"><span class="tip" data-tip="Exponent field sets numeric scale (roughly where the decimal point sits).">Exponent</span><br><strong style="color:var(--ink);">127</strong></span>
+            <span style="color:var(--blue);"><span class="tip" data-tip="Fraction (mantissa/significand) stores fine-grained detail after scaling.">Fraction</span><br><strong style="color:var(--ink);">0.625</strong></span>
+            <span style="color:var(--muted);"><span class="tip" data-tip="Example value reconstructed from sign + exponent + fraction fields.">Example value</span><br><strong style="color:var(--ink);">+1.625</strong></span>
           </div>
-          <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);"><span>1 sign + 8 exponent + 23 fraction bits</span><span style="color:var(--blue);">Baseline accuracy</span></div>
+          <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);"><span>1 <span class="tip" data-tip="One sign bit (+/-).">sign</span> + 8 <span class="tip" data-tip="Exponent bits define numeric range. 8 bits gives 256 encoded exponent states.">exponent bits</span> + 23 <span class="tip" data-tip="Fraction bits define precision detail.">fraction bits</span></span><span style="color:var(--blue);">Baseline accuracy</span></div>
         </div>
 
         <div style="background:rgba(48,200,112,.06);border:1.5px solid rgba(48,200,112,.4);border-radius:5px;padding:7px 9px;">
@@ -987,12 +1056,12 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
           </div>
           <div style="background:#1a2030;border-radius:2px;height:8px;overflow:hidden;margin-bottom:3px;"><div style="width:50%;height:100%;background:var(--green);border-radius:2px;"></div></div>
           <div style="margin-bottom:4px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:5px 6px;display:flex;justify-content:space-between;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:7.5px;">
-            <span style="color:var(--red);">Sign<br><strong style="color:var(--ink);">+</strong></span>
-            <span style="color:var(--amber);">Exponent<br><strong style="color:var(--ink);">127</strong></span>
-            <span style="color:var(--green);">Fraction<br><strong style="color:var(--ink);">0.62</strong></span>
-            <span style="color:var(--muted);">Example value<br><strong style="color:var(--ink);">+1.62</strong></span>
+            <span style="color:var(--red);"><span class="tip" data-tip="Sign bit chooses positive (+) or negative (-).">Sign</span><br><strong style="color:var(--ink);">+</strong></span>
+            <span style="color:var(--amber);"><span class="tip" data-tip="Exponent keeps BF16 range similar to FP32.">Exponent</span><br><strong style="color:var(--ink);">127</strong></span>
+            <span style="color:var(--green);"><span class="tip" data-tip="Fewer fraction bits than FP32, so fewer decimal details are preserved.">Fraction</span><br><strong style="color:var(--ink);">0.62</strong></span>
+            <span style="color:var(--muted);"><span class="tip" data-tip="Example value reconstructed from sign + exponent + fraction fields.">Example value</span><br><strong style="color:var(--ink);">+1.62</strong></span>
           </div>
-          <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);"><span>1 sign + 8 exponent + 7 fraction bits</span><span style="color:var(--green);">~99.9% of FP32 quality</span></div>
+          <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);"><span>1 <span class="tip" data-tip="One sign bit (+/-).">sign</span> + 8 <span class="tip" data-tip="Exponent bits define range. BF16 keeps 8 like FP32.">exponent bits</span> + 7 <span class="tip" data-tip="Fraction bits define precision detail. BF16 has fewer than FP32.">fraction bits</span></span><span style="color:var(--green);">~99.9% of FP32 quality</span></div>
           <div style="font-size:10px;color:var(--green);margin-top:3px;">Production standard &mdash; same numeric range as FP32, fewer decimals. Negligible quality loss.</div>
         </div>
 
@@ -1006,12 +1075,13 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
           </div>
           <div style="background:#1a2030;border-radius:2px;height:8px;overflow:hidden;margin-bottom:3px;"><div style="width:25%;height:100%;background:var(--amber);border-radius:2px;"></div></div>
           <div style="margin-bottom:4px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:5px 6px;display:flex;justify-content:space-between;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:7.5px;">
-            <span style="color:var(--red);">Sign<br><strong style="color:var(--ink);">+</strong></span>
-            <span style="color:var(--amber);">Integer bucket<br><strong style="color:var(--ink);">104</strong></span>
-            <span style="color:var(--muted);">Scale factor<br><strong style="color:var(--ink);">x0.0156</strong></span>
-            <span style="color:var(--muted);">Example value<br><strong style="color:var(--ink);">+1.62</strong></span>
+            <span style="color:var(--red);"><span class="tip" data-tip="Sign bit chooses positive (+) or negative (-).">Sign</span><br><strong style="color:var(--ink);">+</strong></span>
+            <span style="color:var(--amber);"><span class="tip" data-tip="Integer bucket is the stored quantized integer code before de-quantization.">Integer bucket</span><br><strong style="color:var(--ink);">104</strong></span>
+            <span style="color:var(--muted);"><span class="tip" data-tip="Scale factor converts integer buckets back to approximate real values: real_value ≈ integer_bucket × scale_factor.">Scale factor</span><br><strong style="color:var(--ink);">x0.0156</strong></span>
+            <span style="color:var(--muted);"><span class="tip" data-tip="Example de-quantized value after applying sign and scale factor.">Example value</span><br><strong style="color:var(--ink);">+1.62</strong></span>
           </div>
-          <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);"><span>Integer storage: sign + value bits (no exponent field)</span><span style="color:var(--amber);">~98&ndash;99% of FP32 quality</span></div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:7.8px;color:var(--muted);margin:-1px 0 4px 0;"><span class="tip" data-tip="Simple de-quantization example. Actual kernels often also use a zero-point and per-channel/per-group scales.">Worked example:</span> <strong style="color:var(--ink);">(+1) &times; 104 &times; 0.0156 &asymp; +1.62</strong></div>
+          <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);"><span>Integer storage: <span class="tip" data-tip="One sign bit (+/-).">sign</span> + <span class="tip" data-tip="Value bits hold integer codes. For INT8, 7 bits plus sign are commonly shown in this simplified view.">value bits</span> (no exponent field)</span><span style="color:var(--amber);">~98&ndash;99% of FP32 quality</span></div>
           <div style="font-size:10px;color:var(--muted);margin-top:3px;">Frontier labs use this in production. Fits a single 8-GPU node. Small logic/math degradation.</div>
         </div>
 
@@ -1025,12 +1095,13 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
           </div>
           <div style="background:#1a2030;border-radius:2px;height:8px;overflow:hidden;margin-bottom:3px;"><div style="width:12.5%;height:100%;background:var(--red);border-radius:2px;"></div></div>
           <div style="margin-bottom:4px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:5px 6px;display:flex;justify-content:space-between;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:7.5px;">
-            <span style="color:var(--red);">Sign<br><strong style="color:var(--ink);">+</strong></span>
-            <span style="color:#d08686;">Integer bucket<br><strong style="color:var(--ink);">5</strong></span>
-            <span style="color:var(--muted);">Scale factor<br><strong style="color:var(--ink);">x0.32</strong></span>
-            <span style="color:var(--muted);">Example value<br><strong style="color:var(--ink);">+1.60</strong></span>
+            <span style="color:var(--red);"><span class="tip" data-tip="Sign bit chooses positive (+) or negative (-).">Sign</span><br><strong style="color:var(--ink);">+</strong></span>
+            <span style="color:#d08686;"><span class="tip" data-tip="Integer bucket is the stored quantized code at 4-bit precision.">Integer bucket</span><br><strong style="color:var(--ink);">5</strong></span>
+            <span style="color:var(--muted);"><span class="tip" data-tip="Scale factor converts low-bit integer codes back to approximate real values.">Scale factor</span><br><strong style="color:var(--ink);">x0.32</strong></span>
+            <span style="color:var(--muted);"><span class="tip" data-tip="Example de-quantized value after applying sign and scale factor.">Example value</span><br><strong style="color:var(--ink);">+1.60</strong></span>
           </div>
-          <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);"><span>Integer storage: sign + value bits (no exponent field)</span><span style="color:var(--red);">~92&ndash;95% of FP32 quality</span></div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:7.8px;color:var(--muted);margin:-1px 0 4px 0;"><span class="tip" data-tip="Simple de-quantization example. Actual kernels often also use a zero-point and per-channel/per-group scales.">Worked example:</span> <strong style="color:var(--ink);">(+1) &times; 5 &times; 0.32 = +1.60</strong></div>
+          <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);"><span>Integer storage: <span class="tip" data-tip="One sign bit (+/-).">sign</span> + <span class="tip" data-tip="Value bits hold integer codes. Fewer bits shrink memory but reduce precision.">value bits</span> (no exponent field)</span><span style="color:var(--red);">~92&ndash;95% of FP32 quality</span></div>
           <div style="font-size:10px;color:var(--red);margin-top:3px;line-height:1.5;"><strong>Edge performance degrades first:</strong> complex reasoning, multi-step math, code generation.</div>
         </div>
       </div>
@@ -1040,6 +1111,11 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
     <div style="background:rgba(48,200,112,.05);border:1.5px solid rgba(48,200,112,.3);border-radius:9px;padding:16px 18px;">
       <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:.12em;margin-bottom:4px;">Interactive: Build Your Own Model</div>
       <div style="font-size:11.5px;color:var(--muted);margin-bottom:14px;">Adjust d, L, and quantization to see how parameter count and memory scale. Notice how d has the most dramatic effect.</div>
+
+      <div style="margin-bottom:14px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em;">Model presets</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;" id="ms-presets"></div>
+      </div>
 
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:14px;">
         <div>
@@ -1096,7 +1172,17 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
         </div>
       </div>
 
-      <canvas id="ms-chart" width="900" height="100" style="display:block;width:100%;border-radius:5px;margin-bottom:10px;"></canvas>
+      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:10px 12px;margin-bottom:10px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;">
+          <div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;">Workload Configuration -> Required GPU Configuration</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink);">Live configuration fit across 4 key GPU models</div>
+          </div>
+          <div id="ms-fit-summary" style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--amber);text-align:right;">70B · BF16 · 140 GB weights</div>
+        </div>
+        <div id="ms-fit-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);margin-top:8px;">Assumes ~8% runtime reserve per GPU (usable VRAM = 92% of nominal).</div>
+      </div>
 
       <div style="background:rgba(255,255,255,.03);border-left:3px solid var(--amber);border-radius:0 5px 5px 0;padding:9px 12px;font-size:11.5px;color:var(--muted);line-height:1.7;">
         <strong style="color:var(--ink);">What determines the optimal d and L?</strong> Scaling law research (Kaplan et al. 2020, Hoffmann et al. 2022 "Chinchilla") shows that for a given compute budget C, the optimal model has roughly d ∝ C<sup>⅓</sup> and L ∝ C<sup>⅓</sup>, meaning width and depth should scale together. Adding more layers with a fixed small d gives diminishing returns; similarly, a very wide but shallow model underperforms a balanced one. In practice, researchers also constrain d to powers of 64 or 128 for GPU tensor-core efficiency.
@@ -1107,6 +1193,19 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
 var _msQuant = 2; // bytes per param
 var _msQuantName = 'BF16';
 var _msPinnedFormulaBlock = '';
+var _msPresetIdx = 1;
+var _msPresets = [
+  { name:'Llama 3.1 8B', maker:'Meta (Open)', d:4096,  L:32, quant:2, qName:'BF16', note:'~8B class, fast + low-cost', color:'var(--blue)' },
+  { name:'Llama 3.1 70B', maker:'Meta (Open)', d:8192,  L:80, quant:2, qName:'BF16', note:'production-grade quality', color:'var(--amber)' },
+  { name:'Claude Sonnet class', maker:'Anthropic (est.)', d:8192,  L:80, quant:2, qName:'BF16', note:'estimated 70B-class profile', color:'var(--green)' },
+  { name:'Llama 3.1 405B', maker:'Meta (Open)', d:16384, L:126, quant:2, qName:'BF16', note:'frontier-scale deployment', color:'var(--red)' }
+];
+var _msFitTargets = [
+  { name:'A10G', vram:24,  perNode:4,  color:'var(--red)' },
+  { name:'A100 SXM4', vram:80,  perNode:8,  color:'var(--amber)' },
+  { name:'H100 SXM5', vram:80,  perNode:8,  color:'var(--green)' },
+  { name:'H200 SXM',  vram:141, perNode:8,  color:'var(--cyan)' }
+];
 
 function _setFormulaChipState(kind, active){
   var chip = document.getElementById(kind==='attn' ? 'ms-attn-chip' : 'ms-ffn-chip');
@@ -1210,79 +1309,68 @@ function calcModelSize(){
     document.getElementById('ms-gpus').style.color = gpus>8?'var(--red)':gpus>2?'var(--amber)':'var(--green)';
   }
 
-  // Draw the d-vs-params chart
-  try { drawMsChart(d, L, _msQuant); } catch(e) { /* Keep numeric outputs live even if canvas draw fails */ }
+  // Live GPU fit view (replaces chart)
+  renderMsConfigFit(totalB, vramGB);
 }
 
-function drawMsChart(curD, curL, bytesPerParam){
-  var c = document.getElementById('ms-chart');
-  if(!c) return;
-  var dpr = window.devicePixelRatio||1;
-  var cw=900, ch=100;
-  c.width=Math.round(cw*dpr); c.height=Math.round(ch*dpr);
-  c.style.width='100%'; c.style.height='auto';
-  var ctx2=c.getContext('2d'); ctx2.scale(dpr,dpr);
+function renderMsConfigFit(totalB, vramGB){
+  var summary = document.getElementById('ms-fit-summary');
+  if(summary){
+    summary.textContent = totalB.toFixed(1)+'B · '+_msQuantName+' · '+vramGB.toFixed(0)+' GB weights';
+  }
+  var grid = document.getElementById('ms-fit-grid');
+  if(!grid) return;
 
-  var dValues=[512,1024,2048,4096,8192,12288,16384];
-  var params=dValues.map(function(d){ return curL*12*d*d/1e9; });
-  var maxP=params[params.length-1];
-
-  ctx2.fillStyle='rgba(255,255,255,.03)'; ctx2.fillRect(0,0,cw,ch);
-
-  // Grid lines
-  ctx2.strokeStyle='rgba(255,255,255,.05)'; ctx2.lineWidth=1;
-  [0.25,0.5,0.75,1].forEach(function(f){
-    ctx2.beginPath(); ctx2.moveTo(0,ch*(1-f*0.85)-8); ctx2.lineTo(cw,ch*(1-f*0.85)-8); ctx2.stroke();
+  var html = '';
+  _msFitTargets.forEach(function(t){
+    var usable = t.vram * 0.92;
+    var gpus = Math.max(1, Math.ceil(vramGB / usable));
+    var nodes = Math.ceil(gpus / t.perNode);
+    var fit = gpus === 1 ? 'single GPU' : gpus <= 4 ? 'small cluster' : 'large cluster';
+    var fitColor = gpus === 1 ? 'var(--green)' : gpus <= 4 ? 'var(--amber)' : 'var(--red)';
+    var fill = Math.min(100, (vramGB / (gpus * usable)) * 100);
+    html += '<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:8px 9px;">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px;">';
+    html += '<span style="font-family:\'IBM Plex Mono\',monospace;font-size:9px;color:'+t.color+';font-weight:600;">'+t.name+'</span>';
+    html += '<span style="font-family:\'IBM Plex Mono\',monospace;font-size:8px;color:'+fitColor+';">'+fit+'</span>';
+    html += '</div>';
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-family:\'IBM Plex Mono\',monospace;font-size:8px;color:var(--muted);margin-bottom:5px;">';
+    html += '<div>GPUs: <strong style="color:var(--ink);">'+gpus+'</strong></div>';
+    html += '<div>Nodes: <strong style="color:var(--ink);">'+nodes+'</strong></div>';
+    html += '<div>VRAM/GPU: <strong style="color:var(--ink);">'+t.vram+' GB</strong></div>';
+    html += '<div>Usable: <strong style="color:var(--ink);">'+usable.toFixed(1)+' GB</strong></div>';
+    html += '</div>';
+    html += '<div style="height:8px;background:#1a2030;border-radius:3px;overflow:hidden;">';
+    html += '<div style="height:100%;width:'+fill.toFixed(1)+'%;background:'+t.color+';opacity:.75;"></div>';
+    html += '</div>';
+    html += '</div>';
   });
+  grid.innerHTML = html;
+}
 
-  // Curve
-  ctx2.beginPath();
-  dValues.forEach(function(d,i){
-    var x=(d-512)/(16384-512)*(cw-20)+10;
-    var y=ch-8-(params[i]/maxP)*0.85*(ch-16);
-    i===0?ctx2.moveTo(x,y):ctx2.lineTo(x,y);
-  });
-  ctx2.strokeStyle='rgba(232,160,32,.7)'; ctx2.lineWidth=2; ctx2.stroke();
+function buildMsPresets(){
+  var wrap = document.getElementById('ms-presets');
+  if(!wrap) return;
+  wrap.innerHTML = _msPresets.map(function(p, i){
+    var active = i === _msPresetIdx;
+    return '<button onclick="selectMsPreset('+i+')" style="text-align:left;background:'+(active?'rgba(232,160,32,.09)':'rgba(255,255,255,.03)')+';border:'+(active?'1.5px solid rgba(232,160,32,.45)':'1px solid rgba(255,255,255,.12)')+';border-radius:6px;padding:7px 9px;cursor:pointer;">'+
+      '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:9px;font-weight:600;color:'+p.color+';">'+p.name+'</div>'+
+      '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:8px;color:var(--muted);margin-top:2px;">'+p.maker+' · '+p.qName+'</div>'+
+      '<div style="font-size:10px;color:var(--muted);margin-top:3px;line-height:1.35;">'+p.note+'</div>'+
+    '</button>';
+  }).join('');
+}
 
-  // Fill under curve
-  ctx2.beginPath();
-  dValues.forEach(function(d,i){
-    var x=(d-512)/(16384-512)*(cw-20)+10;
-    var y=ch-8-(params[i]/maxP)*0.85*(ch-16);
-    i===0?ctx2.moveTo(x,y):ctx2.lineTo(x,y);
-  });
-  ctx2.lineTo(cw-10,ch-8); ctx2.lineTo(10,ch-8); ctx2.closePath();
-  var grad=ctx2.createLinearGradient(0,0,0,ch);
-  grad.addColorStop(0,'rgba(232,160,32,.25)'); grad.addColorStop(1,'rgba(232,160,32,.02)');
-  ctx2.fillStyle=grad; ctx2.fill();
-
-  // Current d marker
-  var cx2=(curD-512)/(16384-512)*(cw-20)+10;
-  var paramsAtCur=curL*12*curD*curD/1e9;
-  var cy2=ch-8-(paramsAtCur/maxP)*0.85*(ch-16);
-  ctx2.beginPath(); ctx2.arc(cx2,cy2,6,0,Math.PI*2);
-  ctx2.fillStyle='var(--amber)'; ctx2.fill();
-  ctx2.strokeStyle='rgba(255,255,255,.6)'; ctx2.lineWidth=1.5; ctx2.stroke();
-
-  // VRAM bar
-  var vram=(curL*12*curD*curD+128256*curD)*bytesPerParam/1e9;
-  var vramPct=Math.min(vram/640,1);
-  var barY=ch-6, barH=4;
-  ctx2.fillStyle='rgba(255,255,255,.06)'; ctx2.fillRect(10,barY,cw-20,barH);
-  ctx2.fillStyle=vram>640?'var(--red)':vram>140?'var(--amber)':'var(--green)';
-  ctx2.fillRect(10,barY,Math.min(vramPct*(cw-20),cw-20),barH);
-
-  // Labels
-  ctx2.fillStyle='rgba(200,200,200,.45)'; ctx2.font='7.5px "IBM Plex Mono",monospace';
-  dValues.forEach(function(d,i){
-    var x=(d-512)/(16384-512)*(cw-20)+10;
-    ctx2.textAlign='center';
-    ctx2.fillText(d>=1000?(d/1000)+'k':d, x, ch-10);
-  });
-  ctx2.textAlign='left'; ctx2.fillStyle='rgba(232,160,32,.7)';
-  ctx2.fillText('params (d-axis, fixed L='+curL+')', 10, 11);
-  ctx2.textAlign='right'; ctx2.fillStyle='rgba(255,255,255,.3)';
-  ctx2.fillText(paramsAtCur.toFixed(1)+'B params at d='+curD.toLocaleString(), cw-10, cy2-8);
+function selectMsPreset(i){
+  var p = _msPresets[i];
+  if(!p) return;
+  _msPresetIdx = i;
+  var dInput = document.getElementById('ms-d');
+  var lInput = document.getElementById('ms-l');
+  if(dInput) dInput.value = p.d;
+  if(lInput) lInput.value = p.L;
+  setQuant(p.quant, p.qName);
+  buildMsPresets();
 }
 
 function initMsCalculator(){
@@ -1303,7 +1391,8 @@ function initMsCalculator(){
     });
   });
 
-  setQuant(2, 'BF16');
+  buildMsPresets();
+  selectMsPreset(_msPresetIdx);
 }
 </script>
 
@@ -1389,6 +1478,51 @@ function initMsCalculator(){
         [4]: <span style="color:var(--cyan);">+0.891</span> &nbsp;
         &hellip; <span style="color:var(--muted);">8,187 more</span>
       </div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);margin:10px 0 6px;text-transform:uppercase;letter-spacing:.09em;">2D/3D intuition: one token as a point in a huge coordinate system</div>
+      <svg viewBox="0 0 520 170" style="display:block;width:100%;height:auto;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:6px;margin-bottom:8px;">
+        <!-- perspective grid -->
+        <g stroke="rgba(255,255,255,.08)" stroke-width="1">
+          <line x1="86" y1="144" x2="430" y2="144"/>
+          <line x1="86" y1="144" x2="160" y2="38"/>
+          <line x1="86" y1="144" x2="28" y2="92"/>
+          <line x1="150" y1="144" x2="205" y2="64"/>
+          <line x1="214" y1="144" x2="250" y2="89"/>
+          <line x1="278" y1="144" x2="295" y2="114"/>
+          <line x1="342" y1="144" x2="340" y2="138"/>
+          <line x1="406" y1="144" x2="385" y2="162"/>
+        </g>
+
+        <!-- axes -->
+        <g stroke-width="1.5">
+          <line x1="86" y1="144" x2="442" y2="144" stroke="rgba(26,191,208,.8)"/>
+          <line x1="86" y1="144" x2="166" y2="30" stroke="rgba(138,110,232,.85)"/>
+          <line x1="86" y1="144" x2="20" y2="84" stroke="rgba(232,160,32,.85)"/>
+        </g>
+        <text x="448" y="147" fill="var(--cyan)" font-family="IBM Plex Mono, monospace" font-size="9">dim i</text>
+        <text x="168" y="26" fill="var(--purple)" font-family="IBM Plex Mono, monospace" font-size="9">dim j</text>
+        <text x="8" y="80" fill="var(--amber)" font-family="IBM Plex Mono, monospace" font-size="9">dim k</text>
+
+        <!-- semantic clusters -->
+        <g>
+          <circle cx="255" cy="108" r="4.5" fill="rgba(74,144,232,.95)"/>
+          <circle cx="268" cy="100" r="4" fill="rgba(74,144,232,.75)"/>
+          <circle cx="241" cy="114" r="3.8" fill="rgba(74,144,232,.65)"/>
+          <text x="278" y="97" fill="rgba(74,144,232,.9)" font-family="IBM Plex Mono, monospace" font-size="8">countries</text>
+
+          <circle cx="296" cy="92" r="4.4" fill="rgba(26,191,208,.95)"/>
+          <circle cx="309" cy="85" r="3.8" fill="rgba(26,191,208,.72)"/>
+          <circle cx="284" cy="99" r="3.6" fill="rgba(26,191,208,.62)"/>
+          <text x="318" y="83" fill="rgba(26,191,208,.9)" font-family="IBM Plex Mono, monospace" font-size="8">capitals</text>
+
+          <circle cx="198" cy="126" r="3.9" fill="rgba(232,160,32,.85)"/>
+          <circle cx="188" cy="132" r="3.4" fill="rgba(232,160,32,.62)"/>
+          <text x="155" y="138" fill="rgba(232,160,32,.85)" font-family="IBM Plex Mono, monospace" font-size="8">food words</text>
+        </g>
+
+        <!-- highlight token -->
+        <circle cx="255" cy="108" r="7.5" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.2"/>
+        <text x="226" y="80" fill="var(--ink)" font-family="IBM Plex Mono, monospace" font-size="9">"France" vector</text>
+      </svg>
       <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin:10px 0 6px;text-transform:uppercase;letter-spacing:.09em;">Words in similar contexts end up with similar coordinates:</div>
       <div class="attn-bar-row"><span class="attn-word">&ldquo;France&rdquo;</span><div class="attn-track"><div class="attn-fill" style="width:82%;background:var(--blue);"></div></div><span class="attn-pct" style="color:var(--muted);">reference</span></div>
       <div class="attn-bar-row"><span class="attn-word">&ldquo;Germany&rdquo;</span><div class="attn-track"><div class="attn-fill" style="width:79%;background:var(--blue);opacity:.75;"></div></div><span class="attn-pct" style="color:var(--muted);">very close</span></div>
@@ -1600,8 +1734,9 @@ function initMsCalculator(){
 <div class="sp-grid">
   <div>
     <div class="sp-intro">After layer 80 we have one refined 8,192-number vector. To select the next output, the model compares this vector against every entry in its vocabulary &mdash; all 128,256 <strong style="color:var(--ink);">tokens</strong> &mdash; and assigns a probability to each. Importantly, the model is <em>not</em> scoring words: it is scoring <strong style="color:var(--amber);">tokens</strong>, which may be whole words, word fragments, punctuation, spaces, or code symbols. The winning token is then looked up in a token&rarr;string table to get the actual text to display.</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);margin:8px 0 10px;padding:8px 10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:6px;">Quick legend: <span style="color:var(--ink);">128,256</span> = how many vocabulary tokens are scored. <span style="color:var(--green);">92%</span> = probability of one specific token (&ldquo; Paris&rdquo;) after scoring.</div>
     <div class="sp-demo">
-      <div class="sp-demo-lbl">All 128,256 <strong style="color:var(--amber);">tokens</strong> get a probability score. Top token results for our example:</div>
+      <div class="sp-demo-lbl">All 128,256 <strong style="color:var(--amber);">tokens</strong> get scored once per step; the percentages below are probabilities for individual tokens.</div>
       <div style="margin-top:8px;">
         <div class="attn-bar-row"><span class="attn-word">&ldquo; Paris&rdquo;</span><div class="attn-track"><div class="attn-fill" style="width:92%;background:var(--green);opacity:.85;"></div></div><span class="attn-pct" style="color:var(--green);">92%</span></div>
         <div class="attn-bar-row"><span class="attn-word">&ldquo; Lyon&rdquo;</span><div class="attn-track"><div class="attn-fill" style="width:7%;background:var(--amber);opacity:.8;"></div></div><span class="attn-pct" style="color:var(--amber);">7%</span></div>
