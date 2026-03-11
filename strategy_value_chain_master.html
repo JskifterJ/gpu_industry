@@ -1235,7 +1235,7 @@ body.theme-light .btn.nav-active{
 .cmp-tldr-text{color:#334155;}
 .cmp-tldr-tension{background:rgba(59,130,246,.09);border-color:rgba(59,130,246,.28);}
 .cmp-tldr-tension-body{color:#1F2937;}
-.cmp-layer-title{color:#FFFFFF;border-color:#D6DEEA;}
+.cmp-layer-title{color:#1F2937;border-color:#D6DEEA;}
 .cmp-layer-title span{color:#64748B;}
 .cmp-layer-grid{border-color:#D6DEEA;}
 .cmp-col:first-child{border-right-color:#D6DEEA;}
@@ -3224,20 +3224,20 @@ let cmpA = 'H', cmpB = 'I';
 let selectedCmpNode = null;
 
 const LAYER_ORDER = [
-  { key:'ext',    label:'External Inputs', color:'#2D2D4E',        ids:['grid','altpower','realdata','synthdata','internet','entprem'] },
-  { key:'l0',     label:'L0 — Silicon & Supply Chain', color:'#3A2A1A', ids:['gpuvendors','customasic','netsilicon','foundries','memory','packaging','oem','supplychain'] },
-  { key:'l1',     label:'L1 — Physical Infrastructure', color:'#2E2A14', ids:['colo','power','cooling','physec','gpunodes','cpunodes','storagehw','infiniband','ethernet','extconn'] },
-  { key:'l2',     label:'L2 — Firmware, Drivers & Libraries', color:'#162236', ids:['vbios','bmc','cuda','rocm','oneapi','nccl','mpi','gpudirect','cudnn','pytorch','tensorflow'] },
-  { key:'l3',     label:'L3 — Virtualisation & Orchestration', color:'#162614', ids:['baremetal','vgpu','containerrt','mig','k8s','jobsched','workflow','servicemesh','federation','capagg','spotmgmt'] },
-  { key:'l4-tr',  label:'L4 — Execution: Training', color:'#1A1F36',  ids:['disttrain','mixedprec','gradckpt','ckpttrain','compilertrain','profiling'] },
-  { key:'l4-ft',  label:'L4 — Execution: Fine-Tuning', color:'#1E1A36', ids:['lora','rlhf','sft','adaptermgmt','ckptft'] },
-  { key:'l4-inf', label:'L4 — Execution: Inference', color:'#1A2A20',  ids:['quant','kvcache','contbatch','infcompiler','infengine'] },
-  { key:'mlops',  label:'MLOps — Cross-Channel Operations', color:'#231635', ids:['exptrack','modelreg','dataver','cicdml','featurestore','evalbench'] },
-  { key:'l5-tr',  label:'L5 — Training Data Pipelines', color:'#1A1F36', ids:['datasetstore','dataloaders','preproc','datacatalog'] },
-  { key:'l5-ft',  label:'L5 — Fine-Tune Data', color:'#1E1A36',        ids:['ftdataset','rlhfdata','synthgen'] },
-  { key:'l5-inf', label:'L5 — Inference Serving', color:'#1A2A20',     ids:['vectordb','modelserving','apigateway','batchrt','semcache'] },
-  { key:'l6',     label:'L6 — Control Plane · FinOps · Security', color:'#241E08', ids:['controlplane','modelrouter','infraobs','llmobs','logarchive','costattrib','capstrategy','marketplace','iam','dataprivacy','compliance'] },
-  { key:'l7',     label:'L7 — Application & End-User Interface', color:'#0E2215', ids:['rag','kg','agents','toolcall','workflowauto','chatui','apiproduct','entintegration'] },
+  { key:'ext',    label:'External Inputs', color:'#EEEEF8',        ids:['grid','altpower','realdata','synthdata','internet','entprem'] },
+  { key:'l0',     label:'L0 — Silicon & Supply Chain', color:'#F9C99A', ids:['gpuvendors','customasic','netsilicon','foundries','memory','packaging','oem','supplychain'] },
+  { key:'l1',     label:'L1 — Physical Infrastructure', color:'#FFE98A', ids:['colo','power','cooling','physec','gpunodes','cpunodes','storagehw','infiniband','ethernet','extconn'] },
+  { key:'l2',     label:'L2 — Firmware, Drivers & Libraries', color:'#9FD1F5', ids:['vbios','bmc','cuda','rocm','oneapi','nccl','mpi','gpudirect','cudnn','pytorch','tensorflow'] },
+  { key:'l3',     label:'L3 — Virtualisation & Orchestration', color:'#A2D8A6', ids:['baremetal','vgpu','containerrt','mig','k8s','jobsched','workflow','servicemesh','federation','capagg','spotmgmt'] },
+  { key:'l4-tr',  label:'L4 — Execution: Training', color:'#93BFFF',  ids:['disttrain','mixedprec','gradckpt','ckpttrain','compilertrain','profiling'] },
+  { key:'l4-ft',  label:'L4 — Execution: Fine-Tuning', color:'#C4B0FF', ids:['lora','rlhf','sft','adaptermgmt','ckptft'] },
+  { key:'l4-inf', label:'L4 — Execution: Inference', color:'#86E6B2',  ids:['quant','kvcache','contbatch','infcompiler','infengine'] },
+  { key:'mlops',  label:'MLOps — Cross-Channel Operations', color:'#D8BFF5', ids:['exptrack','modelreg','dataver','cicdml','featurestore','evalbench'] },
+  { key:'l5-tr',  label:'L5 — Training Data Pipelines', color:'#93BFFF', ids:['datasetstore','dataloaders','preproc','datacatalog'] },
+  { key:'l5-ft',  label:'L5 — Fine-Tune Data', color:'#C4B0FF',        ids:['ftdataset','rlhfdata','synthgen'] },
+  { key:'l5-inf', label:'L5 — Inference Serving', color:'#86E6B2',     ids:['vectordb','modelserving','apigateway','batchrt','semcache'] },
+  { key:'l6',     label:'L6 — Control Plane · FinOps · Security', color:'#FFCC80', ids:['controlplane','modelrouter','infraobs','llmobs','logarchive','costattrib','capstrategy','marketplace','iam','dataprivacy','compliance'] },
+  { key:'l7',     label:'L7 — Application & End-User Interface', color:'#CE93D8', ids:['rag','kg','agents','toolcall','workflowauto','chatui','apiproduct','entintegration'] },
 ];
 
 // "Facilitates" overrides — where a model enables others but doesn\'t exclusively "own"
