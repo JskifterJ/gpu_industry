@@ -484,13 +484,15 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
 
         <rect x="246" y="54" width="290" height="248" rx="10" fill="url(#gAttn)" stroke="rgba(138,110,232,.45)"/>
         <text x="391" y="80" fill="var(--purple)" font-family="IBM Plex Mono, monospace" font-size="11" text-anchor="middle">80 TRANSFORMER LAYERS</text>
-        <text x="391" y="98" fill="var(--muted)" font-family="IBM Plex Mono, monospace" font-size="9" text-anchor="middle">Attention + FFN repeated</text>
+        <text x="391" y="98" fill="var(--muted)" font-family="IBM Plex Mono, monospace" font-size="9" text-anchor="middle">Each layer updates every token state (1 x 8,192)</text>
         <rect x="274" y="122" width="236" height="58" rx="8" fill="rgba(138,110,232,.12)" stroke="rgba(138,110,232,.45)"/>
         <text x="392" y="145" fill="var(--ink)" font-family="IBM Plex Mono, monospace" font-size="10" text-anchor="middle">Multi-Head Attention</text>
-        <text x="392" y="162" fill="var(--muted)" font-family="IBM Plex Mono, monospace" font-size="8" text-anchor="middle">connect relevant tokens</text>
+        <text x="392" y="160" fill="var(--muted)" font-family="IBM Plex Mono, monospace" font-size="8" text-anchor="middle">Q·K scores choose which prior tokens matter</text>
+        <text x="392" y="173" fill="var(--muted)" font-family="IBM Plex Mono, monospace" font-size="8" text-anchor="middle">weighted V mix updates current token meaning</text>
         <rect x="274" y="190" width="236" height="58" rx="8" fill="rgba(74,144,232,.12)" stroke="rgba(74,144,232,.45)"/>
         <text x="392" y="213" fill="var(--ink)" font-family="IBM Plex Mono, monospace" font-size="10" text-anchor="middle">Feed-Forward Network</text>
-        <text x="392" y="230" fill="var(--muted)" font-family="IBM Plex Mono, monospace" font-size="8" text-anchor="middle">refine per-token meaning</text>
+        <text x="392" y="228" fill="var(--muted)" font-family="IBM Plex Mono, monospace" font-size="8" text-anchor="middle">8,192 -&gt; 28,672 -&gt; 8,192 nonlinear feature edits</text>
+        <text x="392" y="241" fill="var(--muted)" font-family="IBM Plex Mono, monospace" font-size="8" text-anchor="middle">per token: sharpen facts, syntax, and intent</text>
         <text x="392" y="270" fill="var(--amber)" font-family="IBM Plex Mono, monospace" font-size="9" text-anchor="middle">Residual stream keeps adding signal</text>
 
         <rect x="604" y="54" width="220" height="248" rx="10" fill="url(#gFfn)" stroke="rgba(74,144,232,.45)"/>
@@ -511,7 +513,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
         <text x="958" y="165" fill="var(--amber)" font-family="IBM Plex Mono, monospace" font-size="9">" Lyon" 7%</text>
         <rect x="922" y="178" width="8" height="20" rx="4" fill="rgba(120,130,150,.35)"/>
         <text x="938" y="192" fill="var(--muted)" font-family="IBM Plex Mono, monospace" font-size="9">128,254 others &lt;1%</text>
-        <text x="1011" y="226" fill="var(--ink)" font-family="IBM Plex Mono, monospace" font-size="9" text-anchor="middle">highest-probability token is selected</text>
+        <text x="1011" y="226" fill="var(--ink)" font-family="IBM Plex Mono, monospace" font-size="9" text-anchor="middle">logits = h_final &middot; W_U (nearest token vectors score highest)</text>
 
         <line x1="178" y1="178" x2="246" y2="178" stroke="rgba(232,234,240,.6)" stroke-width="1.5" marker-end="url(#arr)"/>
         <line x1="536" y1="178" x2="604" y2="178" stroke="rgba(232,234,240,.6)" stroke-width="1.5" marker-end="url(#arr)"/>
@@ -523,43 +525,53 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
     <!-- ANIMATED TENSOR / LAYER / NEURON EXPLAINER CARDS -->
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px;margin-bottom:14px;">
 
-      <!-- CARD 1: Token tensor shape — bars pulse staggered like waterfall update -->
+      <!-- CARD 1: One token vector through 80 layers -->
       <div style="background:rgba(48,200,112,.08);border:1px solid rgba(48,200,112,.26);border-radius:8px;padding:10px 12px;">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--green);text-transform:uppercase;margin-bottom:5px;">Tensor Shape Per Layer</div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--ink);margin-bottom:6px;">X shape = <span style="color:var(--green);">5 tokens</span> &times; <span style="color:var(--amber);">8,192 dims</span></div>
-        <!-- Each bar = one token; bars animate sequentially to show forward pass sweeping left→right -->
-        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:2px;height:56px;align-items:end;margin-bottom:5px;">
-          <div style="background:rgba(48,200,112,.42);height:38px;border-radius:2px;transform-origin:bottom;animation:tokPulse 2s ease-in-out infinite;animation-delay:0s;"></div>
-          <div style="background:rgba(48,200,112,.42);height:47px;border-radius:2px;transform-origin:bottom;animation:tokPulse 2s ease-in-out infinite;animation-delay:.3s;"></div>
-          <div style="background:rgba(48,200,112,.42);height:31px;border-radius:2px;transform-origin:bottom;animation:tokPulse 2s ease-in-out infinite;animation-delay:.6s;"></div>
-          <div style="background:rgba(48,200,112,.55);height:52px;border-radius:2px;transform-origin:bottom;animation:tokPulse 2s ease-in-out infinite;animation-delay:.9s;"></div>
-          <div style="background:rgba(48,200,112,.42);height:41px;border-radius:2px;transform-origin:bottom;animation:tokPulse 2s ease-in-out infinite;animation-delay:1.2s;"></div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--green);text-transform:uppercase;margin-bottom:5px;">One Token State: 1 &times; 8,192</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--ink);margin-bottom:7px;">For token <span style="color:var(--green);">&ldquo;France&rdquo;</span>, the shape stays 1&times;8,192 in every layer. What changes is where this point sits in semantic space.</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:6px;">
+          <div style="background:rgba(255,255,255,.03);border:1px solid rgba(48,200,112,.25);border-radius:6px;padding:6px;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--green);margin-bottom:3px;">L0 Embedding</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);line-height:1.5;">token ID lookup<br/>h0 in R^8192</div>
+          </div>
+          <div style="background:rgba(255,255,255,.03);border:1px solid rgba(138,110,232,.25);border-radius:6px;padding:6px;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--purple);margin-bottom:3px;">L1-L20</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);line-height:1.5;">attention adds context<br/>FFN adds local features</div>
+          </div>
+          <div style="background:rgba(255,255,255,.03);border:1px solid rgba(74,144,232,.25);border-radius:6px;padding:6px;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--blue);margin-bottom:3px;">L21-L60</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);line-height:1.5;">facts and relations<br/>build on residual stream</div>
+          </div>
+          <div style="background:rgba(255,255,255,.03);border:1px solid rgba(232,160,32,.25);border-radius:6px;padding:6px;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--amber);margin-bottom:3px;">L61-L80</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);line-height:1.5;">answer state h80<br/>ready for vocab scoring</div>
+          </div>
         </div>
-        <div style="font-size:11px;color:var(--muted);line-height:1.5;">Each bar is one token. Shape stays <strong style="color:var(--ink);">5&times;8,192</strong> every layer — only the <em>values</em> inside change.</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.55;">Per layer intuition: <strong style="color:var(--purple);">Attention</strong> moves the token toward context-consistent meaning; <strong style="color:var(--blue);">FFN</strong> applies nonlinear feature edits (8,192 &rarr; 28,672 &rarr; 8,192); residual adds each edit into the running state.</div>
       </div>
 
-      <!-- CARD 2: 80-layer depth — three representative bars cascade with a travelling bright band -->
+      <!-- CARD 2: Final vector to top-probability words -->
       <div style="background:rgba(138,110,232,.08);border:1px solid rgba(138,110,232,.26);border-radius:8px;padding:10px 12px;">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--purple);text-transform:uppercase;margin-bottom:5px;">Depth &mdash; 80 Refinement Passes</div>
-        <!-- Layer bars, animating in cascade to suggest signal sweeping through layers -->
-        <div style="display:flex;align-items:flex-end;gap:3px;height:52px;margin-bottom:7px;overflow:hidden;">
-          <div style="flex:1;border-radius:3px 3px 0 0;background:rgba(138,110,232,.5);height:18px;animation:layerFlow 3.2s ease-in-out infinite;animation-delay:0s;"></div>
-          <div style="flex:1;border-radius:3px 3px 0 0;background:rgba(138,110,232,.5);height:24px;animation:layerFlow 3.2s ease-in-out infinite;animation-delay:.2s;"></div>
-          <div style="flex:1;border-radius:3px 3px 0 0;background:rgba(138,110,232,.5);height:30px;animation:layerFlow 3.2s ease-in-out infinite;animation-delay:.4s;"></div>
-          <div style="flex:1;border-radius:3px 3px 0 0;background:rgba(138,110,232,.5);height:38px;animation:layerFlow 3.2s ease-in-out infinite;animation-delay:.6s;"></div>
-          <div style="flex:1;border-radius:3px 3px 0 0;background:rgba(138,110,232,.5);height:44px;animation:layerFlow 3.2s ease-in-out infinite;animation-delay:.8s;"></div>
-          <div style="flex:1;border-radius:3px 3px 0 0;background:rgba(138,110,232,.5);height:52px;animation:layerFlow 3.2s ease-in-out infinite;animation-delay:1s;"></div>
-          <div style="flex:1;border-radius:3px 3px 0 0;background:rgba(138,110,232,.5);height:46px;animation:layerFlow 3.2s ease-in-out infinite;animation-delay:1.2s;"></div>
-          <div style="flex:1;border-radius:3px 3px 0 0;background:rgba(138,110,232,.5);height:40px;animation:layerFlow 3.2s ease-in-out infinite;animation-delay:1.4s;"></div>
-          <div style="flex:1;border-radius:3px 3px 0 0;background:rgba(138,110,232,.5);height:34px;animation:layerFlow 3.2s ease-in-out infinite;animation-delay:1.6s;"></div>
-          <div style="flex:1;border-radius:3px 3px 0 0;background:rgba(138,110,232,.5);height:28px;animation:layerFlow 3.2s ease-in-out infinite;animation-delay:1.8s;"></div>
-          <div style="flex:1;border-radius:3px 3px 0 0;background:rgba(138,110,232,.5);height:22px;animation:layerFlow 3.2s ease-in-out infinite;animation-delay:2s;"></div>
-          <div style="flex:1;border-radius:3px 3px 0 0;background:rgba(72,214,128,.6);height:30px;animation:layerFlow 3.2s ease-in-out infinite;animation-delay:2.2s;"></div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--purple);text-transform:uppercase;margin-bottom:5px;">From Final State to Top Words</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--ink);line-height:1.55;margin-bottom:7px;">Yes, conceptually correct: after 80 layers, h80 is projected onto every vocab token direction. Tokens with larger alignment (dot product) get higher logits and probabilities.</div>
+        <div style="background:rgba(0,0,0,.16);border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:7px 8px;margin-bottom:7px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);line-height:1.65;">logits = h80 &middot; W_U + b<br/>p(next token) = softmax(logits)</div>
         </div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--ink);line-height:1.6;">
-          L1: syntax &nbsp;&rarr;&nbsp; L20: phrase relations<br>
-          L60: facts &nbsp;&rarr;&nbsp; <strong style="color:var(--green);">L80: &ldquo;Paris&rdquo; signal</strong>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:6px;">
+          <div style="background:rgba(48,200,112,.10);border:1px solid rgba(48,200,112,.28);border-radius:6px;padding:6px;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--green);">High alignment</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--ink);">&ldquo; Paris&rdquo;</div>
+          </div>
+          <div style="background:rgba(232,160,32,.10);border:1px solid rgba(232,160,32,.28);border-radius:6px;padding:6px;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--amber);">Medium alignment</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--ink);">&ldquo; Lyon&rdquo;</div>
+          </div>
+          <div style="background:rgba(120,130,150,.14);border:1px solid rgba(120,130,150,.3);border-radius:6px;padding:6px;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);">Low alignment</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--ink);">most other tokens</div>
+          </div>
         </div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.55;">So the 80-layer stack is not changing dimensionality; it is steering one 8,192-D point into a region where correct next-token vectors score highest.</div>
       </div>
 
       <!-- CARD 3: FFN neuron expand/compress — hourglass that breathes -->
@@ -1618,6 +1630,31 @@ function renderMsConfigFit(totalB, vramGB){
     var fit = gpus === 1 ? 'single GPU' : gpus <= 4 ? 'small cluster' : 'large cluster';
     var fitColor = gpus === 1 ? 'var(--green)' : gpus <= 4 ? 'var(--amber)' : 'var(--red)';
     var fill = Math.min(100, (vramGB / (gpus * usable)) * 100);
+
+    var nodeCards = '';
+    var visibleNodes = Math.min(nodes, 4);
+    var gpusLeft = gpus;
+    for(var n = 1; n <= visibleNodes; n++){
+      var inNode = Math.min(t.perNode, gpusLeft);
+      gpusLeft -= inNode;
+      var maxSlots = Math.min(8, t.perNode);
+      var dots = '';
+      for(var i = 0; i < maxSlots; i++){
+        var on = i < inNode;
+        dots += '<span style="width:10px;height:10px;border-radius:2px;border:1px solid rgba(255,255,255,.2);background:' + (on ? t.color : 'rgba(255,255,255,.12)') + ';display:block;"></span>';
+      }
+      nodeCards += '<div style="border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.03);border-radius:6px;padding:6px;min-width:92px;">';
+      nodeCards += '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:8px;color:var(--muted);margin-bottom:5px;">Node ' + n + ' (' + inNode + '/' + t.perNode + ')</div>';
+      nodeCards += '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;">' + dots + '</div>';
+      nodeCards += '</div>';
+      if(n < visibleNodes){
+        nodeCards += '<span style="font-family:\'IBM Plex Mono\',monospace;font-size:11px;color:var(--muted);">-&gt;</span>';
+      }
+    }
+    if(nodes > visibleNodes){
+      nodeCards += '<span style="font-family:\'IBM Plex Mono\',monospace;font-size:8px;color:var(--muted);">+' + (nodes - visibleNodes) + ' more node(s)</span>';
+    }
+
     html += '<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:8px 9px;">';
     html += '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px;">';
     html += '<span style="font-family:\'IBM Plex Mono\',monospace;font-size:9px;color:'+t.color+';font-weight:600;">'+t.name+'</span>';
@@ -1628,6 +1665,10 @@ function renderMsConfigFit(totalB, vramGB){
     html += '<div>Nodes: <strong style="color:var(--ink);">'+nodes+'</strong></div>';
     html += '<div>VRAM/GPU: <strong style="color:var(--ink);">'+t.vram+' GB</strong></div>';
     html += '<div>Usable: <strong style="color:var(--ink);">'+usable.toFixed(1)+' GB</strong></div>';
+    html += '</div>';
+    html += '<div style="border:1px dashed rgba(255,255,255,.18);border-radius:6px;padding:7px;background:rgba(255,255,255,.02);margin-bottom:6px;">';
+    html += '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">Cluster topology (nodes chained by interconnect)</div>';
+    html += '<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">' + nodeCards + '</div>';
     html += '</div>';
     html += '<div style="height:8px;background:#1a2030;border-radius:3px;overflow:hidden;">';
     html += '<div style="height:100%;width:'+fill.toFixed(1)+'%;background:'+t.color+';opacity:.75;"></div>';
