@@ -647,20 +647,24 @@ textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
 }
 .cfg-gpu-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  grid-template-columns: 1fr;
   gap: 10px;
 }
 .cfg-gpu-item {
   background: var(--surface2);
   border: 1px solid var(--border2);
   border-radius: 7px;
-  padding: 10px;
+  padding: 12px;
+  display: grid;
+  grid-template-columns: minmax(180px, 1.2fr) minmax(280px, 1.8fr) minmax(210px, 1fr);
+  gap: 12px;
+  align-items: center;
 }
 .cfg-gpu-item-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 .cfg-gpu-name {
   font-family: var(--mono);
@@ -695,7 +699,7 @@ textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 6px 10px;
-  margin-bottom: 8px;
+  margin-bottom: 0;
 }
 .cfg-gpu-k {
   font-family: var(--mono);
@@ -710,7 +714,7 @@ textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
   color: var(--text);
 }
 .cfg-gpu-fill {
-  margin-top: 4px;
+  margin-top: 0;
 }
 .cfg-gpu-fill-label {
   display: flex;
@@ -730,6 +734,73 @@ textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
 .cfg-gpu-fill-bar {
   height: 100%;
   background: linear-gradient(90deg, rgba(245,158,11,0.55), rgba(34,211,238,0.5));
+}
+.cfg-rank {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text3);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.cfg-topology {
+  border: 1px dashed var(--border2);
+  border-radius: 6px;
+  padding: 8px;
+  background: rgba(148,163,184,0.05);
+}
+.cfg-topology-title {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text3);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.cfg-node-chain {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.cfg-node {
+  border: 1px solid var(--border2);
+  background: var(--surface);
+  border-radius: 6px;
+  padding: 6px;
+  min-width: 94px;
+}
+.cfg-node-h {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text2);
+  margin-bottom: 5px;
+}
+.cfg-node-gpus {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+}
+.cfg-gpu-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  border: 1px solid var(--border2);
+  background: rgba(148,163,184,0.18);
+}
+.cfg-gpu-dot.on {
+  border-color: transparent;
+  background: var(--amber);
+}
+.cfg-node-arrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text3);
+}
+@media (max-width: 980px) {
+  .cfg-gpu-item {
+    grid-template-columns: 1fr;
+  }
 }
 
 ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -1893,6 +1964,18 @@ const GPUS = {
   },
 };
 
+function getOrderedGpuEntries(opts = {}) {
+  const excludeSet = new Set(opts.exclude || []);
+  return Object.entries(GPUS)
+    .filter(([name]) => !excludeSet.has(name))
+    .map(([name, g]) => {
+      const genYearMatch = String(g.gen || '').match(/(\d{4})/);
+      const genYear = genYearMatch ? parseInt(genYearMatch[1], 10) : 0;
+      return { name, g, genYear };
+    })
+    .sort((a, b) => (b.genYear - a.genYear) || (b.g.bandwidth - a.g.bandwidth) || (b.g.vram - a.g.vram));
+}
+
 const MODELS = {
   '7B':   { params: 7,   hidden: 4096,  layers: 32,  kv_heads: 32, ex: 'Llama 3.1 8B · Mistral 7B · Gemma 2 9B · Claude Haiku-class · GPT-4o-mini-class' },
   '13B':  { params: 13,  hidden: 5120,  layers: 40,  kv_heads: 40, ex: 'Llama 2 13B · Phi-3 Medium · Gemma 2 12B' },
@@ -2424,8 +2507,8 @@ function renderModelGpuConfigViz(totalMemGb) {
   const wrap = document.getElementById('modelGpuConfigViz');
   if (!wrap) return;
 
-  const entries = Object.entries(GPUS)
-    .map(([name, g]) => {
+  const entries = getOrderedGpuEntries({ exclude: ['A100 PCIe 40GB'] })
+    .map(({ name, g }) => {
       const usable = g.vram * 0.92;
       const gpuCount = Math.max(1, Math.ceil(totalMemGb / usable));
       const nodes = Math.ceil(gpuCount / g.gpu_per_chassis);
@@ -2434,15 +2517,30 @@ function renderModelGpuConfigViz(totalMemGb) {
       const fitClass = gpuCount <= 1 ? 'good' : gpuCount <= 4 ? 'warn' : 'bad';
       const fitText = gpuCount <= 1 ? 'single GPU' : gpuCount <= 4 ? 'small cluster' : 'large cluster';
       return { name, g, usable, gpuCount, nodes, fillPct, hourly, fitClass, fitText };
-    })
-    .sort((a, b) => a.g.bandwidth - b.g.bandwidth);
+    });
 
-  wrap.innerHTML = entries.map(e => `
+  wrap.innerHTML = entries.map((e, idx) => {
+    const nodeCards = [];
+    let gpusLeft = e.gpuCount;
+    for (let n = 1; n <= e.nodes; n += 1) {
+      const inNode = Math.min(e.g.gpu_per_chassis, gpusLeft);
+      gpusLeft -= inNode;
+      const maxSlots = Math.min(8, e.g.gpu_per_chassis);
+      const dots = Array.from({ length: maxSlots }, (_, i) => `<span class="cfg-gpu-dot ${i < inNode ? 'on' : ''}" style="${i < inNode ? `background:${e.g.color};` : ''}"></span>`).join('');
+      nodeCards.push(`<div class="cfg-node"><div class="cfg-node-h">Node ${n} (${inNode}/${e.g.gpu_per_chassis})</div><div class="cfg-node-gpus">${dots}</div></div>`);
+    }
+    const chain = nodeCards.join('<span class="cfg-node-arrow">-&gt;</span>');
+    return `
     <div class="cfg-gpu-item">
-      <div class="cfg-gpu-item-top">
-        <div class="cfg-gpu-name" style="color:${e.g.color}">${e.name}</div>
-        <span class="cfg-fit-badge ${e.fitClass}">${e.fitText}</span>
+      <div>
+        <div class="cfg-rank">#${idx + 1} best fit (latest/performance)</div>
+        <div class="cfg-gpu-item-top">
+          <div class="cfg-gpu-name" style="color:${e.g.color}">${e.name}</div>
+          <span class="cfg-fit-badge ${e.fitClass}">${e.fitText}</span>
+        </div>
+        <div class="cfg-gpu-k">${e.g.gen} · ${e.g.bandwidth >= 1000 ? (e.g.bandwidth/1000).toFixed(2) + ' TB/s' : e.g.bandwidth + ' GB/s'} · ${e.g.vram} GB VRAM</div>
       </div>
+
       <div class="cfg-gpu-metrics">
         <div>
           <div class="cfg-gpu-k">GPUs Needed</div>
@@ -2461,12 +2559,20 @@ function renderModelGpuConfigViz(totalMemGb) {
           <div class="cfg-gpu-v">$${e.hourly.toFixed(2)}</div>
         </div>
       </div>
-      <div class="cfg-gpu-fill">
-        <div class="cfg-gpu-fill-label"><span>Memory fill across allocated GPUs</span><span>${Math.round(e.fillPct)}%</span></div>
-        <div class="cfg-gpu-fill-track"><div class="cfg-gpu-fill-bar" style="width:${e.fillPct}%;"></div></div>
+
+      <div>
+        <div class="cfg-topology">
+          <div class="cfg-topology-title">Cluster topology (nodes chained by interconnect)</div>
+          <div class="cfg-node-chain">${chain}</div>
+        </div>
+        <div class="cfg-gpu-fill" style="margin-top:8px;">
+          <div class="cfg-gpu-fill-label"><span>Memory fill across allocated GPUs</span><span>${Math.round(e.fillPct)}%</span></div>
+          <div class="cfg-gpu-fill-track"><div class="cfg-gpu-fill-bar" style="width:${e.fillPct}%;"></div></div>
+        </div>
       </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
 
   const summary = document.getElementById('cfgGpuSummary');
   if (summary) {
@@ -2540,7 +2646,8 @@ document.getElementById('batchSize').addEventListener('input', updateModelMemory
 // ══════════════════════════════════════════════════════════════════
 function buildGpuCards() {
   const grid = document.getElementById('gpuCardGrid');
-  grid.innerHTML = Object.entries(GPUS).map(([name, g]) => {
+  const ordered = getOrderedGpuEntries({ exclude: ['A100 PCIe 40GB'] });
+  grid.innerHTML = ordered.map(({ name, g }) => {
     const bpd = (g.bandwidth / g.price_spot).toFixed(0);
     const vramClass = g.vram >= 80 ? 'good' : g.vram >= 40 ? 'warn' : 'bad';
     return `<div class="gpu-card" style="--gpu-color:${g.color}" onclick="highlightGpu('${name}')">
@@ -2573,9 +2680,9 @@ function buildGpuCards() {
 
   // Spec table
   const tbody = document.getElementById('gpuSpecBody');
-  const sorted = Object.entries(GPUS).sort((a,b) => b[1].bandwidth - a[1].bandwidth);
-  const maxBpd = Math.max(...sorted.map(([,g]) => g.bandwidth/g.price_spot));
-  tbody.innerHTML = sorted.map(([name, g]) => {
+  const sorted = getOrderedGpuEntries({ exclude: ['A100 PCIe 40GB'] });
+  const maxBpd = Math.max(...sorted.map(({ g }) => g.bandwidth / g.price_spot));
+  tbody.innerHTML = sorted.map(({ name, g }) => {
     const bpd = (g.bandwidth / g.price_spot).toFixed(0);
     const isBest = parseFloat(bpd) > maxBpd * 0.9;
     return `<tr>
@@ -2598,11 +2705,11 @@ function highlightGpu(name) {}
 // SECTION 4 – GPU UTILIZATION VIZ + LATENCY COMPARE
 // ══════════════════════════════════════════════════════════════════
 function buildCompareSelects() {
-  const keys = Object.keys(GPUS);
+  const keys = getOrderedGpuEntries({ exclude: ['A100 PCIe 40GB'] }).map(e => e.name);
   const opts = keys.map(k => `<option value="${k}">${k}</option>`).join('');
   const selA = document.getElementById('compareGpuA');
   const selB = document.getElementById('compareGpuB');
-  if (selA) { selA.innerHTML = opts; selA.value = 'H100 SXM5'; }
+  if (selA) { selA.innerHTML = opts; selA.value = keys.includes('B200 SXM') ? 'B200 SXM' : keys[0]; }
   if (selB) { selB.innerHTML = opts; selB.value = 'RTX 4090'; }
 }
 
@@ -3014,10 +3121,11 @@ function buildPenaltyTable() {
 // SECTION 5 – ECONOMICS
 // ══════════════════════════════════════════════════════════════════
 function populateGpuSelects() {
-  const keys = Object.keys(GPUS);
+  const keys = getOrderedGpuEntries({ exclude: ['A100 PCIe 40GB'] }).map(e => e.name);
+  const defaults = ['B200 SXM', 'H200 SXM5', 'H100 SXM5'];
   ['A','B','C'].forEach((col, i) => {
     const sel = document.getElementById('econGpu' + col);
-    sel.innerHTML = keys.map(k => `<option value="${k}" ${i===0&&k==='H100 SXM5'||i===1&&k==='A100 SXM4 80GB'||i===2&&k==='V100 SXM2 32GB'?'selected':''}>${k}</option>`).join('');
+    sel.innerHTML = keys.map(k => `<option value="${k}" ${k===defaults[i]?'selected':''}>${k}</option>`).join('');
   });
 }
 
