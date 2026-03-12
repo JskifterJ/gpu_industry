@@ -984,6 +984,9 @@ body.theme-light .layer-guide-item{border:1px solid #E5E7EB;}
 .db-table{width:100%;border-collapse:collapse;font-size:8.5px;}
 .db-table th{font-family:'JetBrains Mono',monospace;font-size:7.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;padding:6px 10px;background:#F9FAFB;border-bottom:2px solid #E5E7EB;color:#6B7280;cursor:pointer;white-space:nowrap;position:sticky;top:0;}
 .db-table th:hover{background:#F3F4F6;}
+.db-th-wrap{display:flex;flex-direction:column;gap:4px;align-items:flex-start;}
+.db-th-label{line-height:1;}
+.db-th-filter{font-family:'JetBrains Mono',monospace;font-size:7px;padding:2px 4px;border:1px solid #D1D5DB;border-radius:4px;background:#fff;color:#374151;min-width:78px;text-transform:none;letter-spacing:0;}
 .db-table td{padding:7px 10px;border-bottom:1px solid #F3F4F6;vertical-align:middle;}
 .db-table tr:hover td{background:#F9FAFB;}
 .db-co-name{font-family:'JetBrains Mono',monospace;font-weight:700;color:#111827;font-size:9px;}
@@ -1026,23 +1029,6 @@ body.theme-light .mkt-filters,body.theme-light .db-filters{background:#fff;}
 #page-intro .page-content-wrap{max-width:1100px;margin:0 auto;padding:28px 32px 48px;}
 #page-intro .intro-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#111827;margin-bottom:4px;}
 #page-intro .intro-sub{font-size:11px;color:#9CA3AF;font-family:'JetBrains Mono',monospace;margin-bottom:24px;}
-#page-intro .intro-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:-12px 0 18px;}
-#page-intro .intro-controls-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:#6B7280;text-transform:uppercase;letter-spacing:.5px;}
-#page-intro .intro-toggle{font-family:'JetBrains Mono',monospace;font-size:9px;padding:4px 9px;border-radius:12px;border:1px solid #D1D5DB;background:#FFFFFF;color:#374151;cursor:pointer;transition:all .12s;}
-#page-intro .intro-toggle:hover{background:#F9FAFB;}
-#page-intro .intro-toggle.off{background:#F3F4F6;color:#9CA3AF;border-color:#E5E7EB;}
-#page-intro .sf-l45-layout{display:flex;gap:10px;align-items:stretch;width:100%;}
-#page-intro .sf-l45-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;}
-#page-intro .sf-mlops-side{width:255px;flex-shrink:0;background:#F3E8FF;border:1px solid #D8B4FE;border-radius:10px;padding:10px 11px;display:flex;flex-direction:column;}
-#page-intro .sf-mlops-side-title{font-family:'Syne',sans-serif;font-size:11px;font-weight:800;color:#7C3AED;margin-bottom:2px;}
-#page-intro .sf-mlops-side-sub{font-family:'JetBrains Mono',monospace;font-size:7.5px;color:#9333EA;opacity:.75;margin-bottom:8px;}
-#page-intro .sf-track{display:block;}
-#page-intro .sf-track.is-hidden{display:none!important;}
-@media (max-width: 980px){
-  #page-intro .sf-l45-layout{flex-direction:column;}
-  #page-intro .sf-mlops-side{width:100%;}
-  #page-intro .page-content-wrap{padding:22px 18px 36px;}
-}
 #page-intro .sf-name{color:#111827!important;}
 #page-intro .sf-desc{color:#374151!important;}
 #page-intro .sf-num{color:#9CA3AF!important;}
@@ -1055,6 +1041,34 @@ body.theme-light .mkt-filters,body.theme-light .db-filters{background:#fff;}
 #page-intro .sf-bm.user .sf-bm-name{color:#6B7280;}
 #page-intro .users-node{background:#F0F2F5!important;border-color:#D1D5DB!important;color:#374151!important;}
 #page-intro .lg-section h3{color:#111827;}
+
+/* Intro: L4/L5 split + side MLOps + channel toggle */
+#page-intro .intro-stack-controls{display:flex;justify-content:flex-end;gap:10px;margin:-8px 0 14px;}
+#page-intro .intro-stack-toggle{display:inline-flex;align-items:center;gap:7px;padding:6px 10px;border:1px solid #D1D5DB;border-radius:6px;background:#FFFFFF;font-family:'JetBrains Mono',monospace;font-size:9px;color:#374151;cursor:pointer;user-select:none;}
+#page-intro .intro-stack-toggle input{accent-color:#2563EB;cursor:pointer;}
+#page-intro .intro-l45-layout{display:flex;gap:10px;width:100%;align-items:stretch;}
+#page-intro .intro-l45-main{flex:1;display:flex;flex-direction:column;gap:8px;}
+#page-intro .intro-l45-main .sf-layer{margin:0;}
+#page-intro .intro-l45-arrow{display:flex;align-items:center;justify-content:center;}
+#page-intro .intro-l45-arrow .sf-arrow{width:100%;}
+#page-intro .intro-mlops-side{width:270px;flex-shrink:0;display:flex;flex-direction:column;}
+#page-intro .intro-mlops-label{font-family:'Syne',sans-serif;font-size:11px;font-weight:800;color:#7C3AED;background:#F6EEFB;border:1.5px solid #D8BFF5;border-bottom:none;border-radius:10px 10px 0 0;padding:8px 12px;display:flex;flex-direction:column;gap:2px;}
+#page-intro .intro-mlops-label span{font-family:'JetBrains Mono',monospace;font-size:7.5px;font-weight:500;color:#9333EA;opacity:.72;}
+#page-intro .intro-mlops-layer{flex:1;border-radius:0 0 10px 10px!important;display:flex;flex-direction:column;margin:0!important;}
+#page-intro .intro-mlops-layer .sf-content{display:flex;flex-direction:column;height:100%;}
+#page-intro .intro-mlops-layer .sf-name,#page-intro .intro-mlops-layer .sf-desc{display:none;}
+#page-intro .intro-mlops-layer .sf-bms{display:grid;grid-template-columns:1fr;gap:6px;margin-top:2px;}
+#page-intro .intro-mlops-layer .sf-bm{width:100%;justify-content:flex-start;background:rgba(255,255,255,.7);border:1px solid rgba(216,191,245,.65);}
+#page-intro .intro-hide-trainft .intro-ch-train,
+#page-intro .intro-hide-trainft .intro-ch-ft{display:none;}
+#page-intro .intro-hide-trainft .intro-split-three{grid-template-columns:1fr;}
+
+@media (max-width: 980px){
+  #page-intro .intro-stack-controls{justify-content:flex-start;}
+  #page-intro .intro-l45-layout{flex-direction:column;}
+  #page-intro .intro-mlops-side{width:100%;}
+  #page-intro .intro-mlops-layer{border-radius:0 0 10px 10px!important;}
+}
 
 /* Compare – light */
 #page-compare{background:#F4F5F7;}
@@ -1890,6 +1904,13 @@ body.theme-light .btn.nav-active{
       <div class="intro-title">Stack Overview</div>
   <div class="intro-sub">Plain-English walkthrough · 8 layers · what each does, why it matters, which business models operate there</div>
 
+  <div class="intro-stack-controls">
+    <label class="intro-stack-toggle" for="introHideTrainFt">
+      <input type="checkbox" id="introHideTrainFt" onchange="toggleIntroTrainFt()">
+      Hide Training + Fine-Tuning (Inference-only)
+    </label>
+  </div>
+
   <div class="stack-flow">
 
     <!-- External Inputs -->
@@ -1994,47 +2015,92 @@ body.theme-light .btn.nav-active{
 
     <div class="sf-arrow"><div class="sf-arrow-line"></div><div class="sf-arrow-inner">↓</div><div class="sf-arrow-line"></div></div>
 
-    <!-- L4/5 -->
+    <!-- L4 + L5 with side MLOps -->
     <div class="sf-row">
-      <div class="sf-layer" style="background:#E8EEF8;border:1px solid #93BFFF;flex-direction:column;">
-        <div style="display:flex;gap:14px;align-items:flex-start;">
-          <div class="sf-num" style="color:#6B7280;">4/5</div>
-          <div class="sf-content">
-            <div class="sf-name" style="color:#1E3A6E;">Workload Execution, MLOps &amp; Data Pipelines</div>
-            <div class="sf-desc" style="color:#374151;">Three parallel workload channels (split below) plus cross-cutting MLOps. <strong>L4 Execution</strong> is where the computational work happens — training distributes batches across all GPUs via NCCL, inference batches requests using continuous batching engines (vLLM, TensorRT-LLM) that maximize GPU utilization. <strong>L5 Data Pipelines</strong> feeds the workloads: training data at petabyte scale requires GPU-direct I/O and prefetching to saturate GPU memory bandwidth (~1.4TB/s for H100 HBM3e). MLOps cross-cuts both: experiment tracking, model versioning, eval gates, CI/CD automation ensures reproducibility and quality gates before deployment. <strong>Key BM divergence</strong>: Hyperscaler and Inf. API / Model Provider own end-to-end stacks (data to model). Neocloud provides raw compute infrastructure. DePIN struggles with training due to IB topology but viable for inference/fine-tune.</div>
+      <div class="intro-l45-layout">
+        <div class="intro-l45-main">
+          <div class="sf-layer" style="background:#E8EEF8;border:1px solid #93BFFF;flex-direction:column;">
+            <div style="display:flex;gap:14px;align-items:flex-start;">
+              <div class="sf-num" style="color:#6B7280;">4</div>
+              <div class="sf-content">
+                <div class="sf-name" style="color:#1E3A6E;">Execution &amp; Optimization</div>
+                <div class="sf-desc" style="color:#374151;">Where compute work is executed. Training and fine-tuning run distributed jobs and alignment loops; inference serves requests continuously with latency-sensitive runtimes.</div>
+              </div>
+            </div>
+            <div class="sf-split intro-split-three">
+              <div class="sf-col intro-ch-train" style="background:#EBF2FF;border:1px solid #93BFFF;">
+                <div class="sf-col-h" style="color:#1D4ED8;">⚡ Training</div>
+                <div class="sf-col-d" style="color:#374151;">Distributed training (FSDP/Megatron), mixed precision, checkpointing, compiler stack. Requires tight IB fabric and co-located GPUs.</div>
+                <div class="sf-bms" style="margin-top:5px;flex-wrap:wrap;gap:3px;">
+                  <div class="sf-bm owner" style="padding:2px 5px;"><div class="sf-bm-dot" style="background:#2563EB"></div><span class="sf-bm-name" style="font-size:7.5px;color:#374151;">H</span></div>
+                  <div class="sf-bm owner" style="padding:2px 5px;"><div class="sf-bm-dot" style="background:#059669"></div><span class="sf-bm-name" style="font-size:7.5px;color:#374151;">N (infra)</span></div>
+                  <div class="sf-bm owner" style="padding:2px 5px;"><div class="sf-bm-dot" style="background:#0891B2"></div><span class="sf-bm-name" style="font-size:7.5px;color:#374151;">I (pipeline)</span></div>
+                  <div class="sf-bm owner" style="padding:2px 5px;"><div class="sf-bm-dot" style="background:#475569"></div><span class="sf-bm-name" style="font-size:7.5px;color:#374151;">B</span></div>
+                </div>
+              </div>
+              <div class="sf-col intro-ch-ft" style="background:#F2EEFF;border:1px solid #C4B0FF;">
+                <div class="sf-col-h" style="color:#5B21B6;">🔧 Fine-Tuning</div>
+                <div class="sf-col-d" style="color:#374151;">LoRA/QLoRA, RLHF/DPO, SFT, adapter management and alignment loops. PEFT methods make this viable on smaller clusters.</div>
+                <div class="sf-bms" style="margin-top:5px;flex-wrap:wrap;gap:3px;">
+                  <div class="sf-bm owner" style="padding:2px 5px;"><div class="sf-bm-dot" style="background:#2563EB"></div><span class="sf-bm-name" style="font-size:7.5px;color:#374151;">H</span></div>
+                  <div class="sf-bm owner" style="padding:2px 5px;"><div class="sf-bm-dot" style="background:#059669"></div><span class="sf-bm-name" style="font-size:7.5px;color:#374151;">N</span></div>
+                  <div class="sf-bm owner" style="padding:2px 5px;"><div class="sf-bm-dot" style="background:#0891B2"></div><span class="sf-bm-name" style="font-size:7.5px;color:#374151;">I</span></div>
+                  <div class="sf-bm owner" style="padding:2px 5px;"><div class="sf-bm-dot" style="background:#7C3AED"></div><span class="sf-bm-name" style="font-size:7.5px;color:#374151;">O</span></div>
+                  <div class="sf-bm owner" style="padding:2px 5px;"><div class="sf-bm-dot" style="background:#DC2626"></div><span class="sf-bm-name" style="font-size:7.5px;color:#374151;">D (LoRA)</span></div>
+                </div>
+              </div>
+              <div class="sf-col" style="background:#E8FAF0;border:1px solid #86E6B2;">
+                <div class="sf-col-h" style="color:#065F46;">🚀 Inference</div>
+                <div class="sf-col-d" style="color:#374151;">Quantization, KV cache, continuous batching, TensorRT-LLM/vLLM runtimes and high-RPS serving optimization.</div>
+                <div class="sf-bms" style="margin-top:5px;flex-wrap:wrap;gap:3px;">
+                  <div class="sf-bm owner" style="padding:2px 5px;"><div class="sf-bm-dot" style="background:#2563EB"></div><span class="sf-bm-name" style="font-size:7.5px;color:#374151;">H</span></div>
+                  <div class="sf-bm owner" style="padding:2px 5px;"><div class="sf-bm-dot" style="background:#059669"></div><span class="sf-bm-name" style="font-size:7.5px;color:#374151;">N</span></div>
+                  <div class="sf-bm owner" style="padding:2px 5px;"><div class="sf-bm-dot" style="background:#0891B2"></div><span class="sf-bm-name" style="font-size:7.5px;color:#374151;">I</span></div>
+                  <div class="sf-bm owner" style="padding:2px 5px;"><div class="sf-bm-dot" style="background:#D97706"></div><span class="sf-bm-name" style="font-size:7.5px;color:#374151;">A</span></div>
+                  <div class="sf-bm owner" style="padding:2px 5px;"><div class="sf-bm-dot" style="background:#DC2626"></div><span class="sf-bm-name" style="font-size:7.5px;color:#374151;">D (batch)</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="intro-l45-arrow"><div class="sf-arrow"><div class="sf-arrow-line"></div><div class="sf-arrow-inner">↓</div><div class="sf-arrow-line"></div></div></div>
+
+          <div class="sf-layer" style="background:#E0F7FA;border:1px solid #80DEEA;flex-direction:column;">
+            <div style="display:flex;gap:14px;align-items:flex-start;">
+              <div class="sf-num" style="color:#6B7280;">5</div>
+              <div class="sf-content">
+                <div class="sf-name" style="color:#0C4A6E;">Data Pipelines &amp; Serving</div>
+                <div class="sf-desc" style="color:#374151;">The data and serving substrate that feeds each workload channel: training corpora, fine-tune datasets, and production inference endpoints.</div>
+              </div>
+            </div>
+            <div class="sf-split intro-split-three">
+              <div class="sf-col intro-ch-train" style="background:#EBF2FF;border:1px solid #93BFFF;">
+                <div class="sf-col-h" style="color:#1D4ED8;">⚡ Training Data</div>
+                <div class="sf-col-d" style="color:#374151;">Dataset storage, high-throughput loaders, preprocessing and catalog/lineage for petabyte-scale training corpora.</div>
+              </div>
+              <div class="sf-col intro-ch-ft" style="background:#F2EEFF;border:1px solid #C4B0FF;">
+                <div class="sf-col-h" style="color:#5B21B6;">🔧 Fine-Tune Data</div>
+                <div class="sf-col-d" style="color:#374151;">Instruction JSONL datasets, preference pairs, synthetic data generation and curation pipelines.</div>
+              </div>
+              <div class="sf-col" style="background:#E8FAF0;border:1px solid #86E6B2;">
+                <div class="sf-col-h" style="color:#065F46;">🚀 Inference Serving</div>
+                <div class="sf-col-d" style="color:#374151;">Vector DB, model serving runtimes, API gateways, semantic cache and batch vs real-time routing.</div>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="sf-split">
-          <div class="sf-col" style="background:#EBF2FF;border:1px solid #93BFFF;">
-            <div class="sf-col-h" style="color:#1D4ED8;">⚡ Training</div>
-            <div class="sf-col-d" style="color:#374151;">Distributed training (FSDP/Megatron), mixed precision, checkpointing, compiler, data pipelines at petabyte scale. Requires co-located IB fabric — DePIN absent.</div>
-            <div class="sf-bms" style="margin-top:5px;flex-wrap:wrap;gap:3px;">
-              <div class="sf-bm owner" style="padding:2px 5px;"><div class="sf-bm-dot" style="background:#2563EB"></div><span class="sf-bm-name" style="font-size:7.5px;color:#374151;">H</span></div>
-              <div class="sf-bm owner" style="padding:2px 5px;"><div class="sf-bm-dot" style="background:#059669"></div><span class="sf-bm-name" style="font-size:7.5px;color:#374151;">N (infra)</span></div>
-              <div class="sf-bm owner" style="padding:2px 5px;"><div class="sf-bm-dot" style="background:#0891B2"></div><span class="sf-bm-name" style="font-size:7.5px;color:#374151;">I (pipeline)</span></div>
-              <div class="sf-bm owner" style="padding:2px 5px;"><div class="sf-bm-dot" style="background:#475569"></div><span class="sf-bm-name" style="font-size:7.5px;color:#374151;">B</span></div>
-            </div>
-          </div>
-          <div class="sf-col" style="background:#F2EEFF;border:1px solid #C4B0FF;">
-            <div class="sf-col-h" style="color:#5B21B6;">🔧 Fine-Tuning</div>
-            <div class="sf-col-d" style="color:#374151;">LoRA/QLoRA, RLHF/DPO alignment pipelines, SFT, adapter management, preference data. PEFT methods enable fine-tuning on consumer GPUs — DePIN viable.</div>
-            <div class="sf-bms" style="margin-top:5px;flex-wrap:wrap;gap:3px;">
-              <div class="sf-bm owner" style="padding:2px 5px;"><div class="sf-bm-dot" style="background:#2563EB"></div><span class="sf-bm-name" style="font-size:7.5px;color:#374151;">H</span></div>
-              <div class="sf-bm owner" style="padding:2px 5px;"><div class="sf-bm-dot" style="background:#059669"></div><span class="sf-bm-name" style="font-size:7.5px;color:#374151;">N</span></div>
-              <div class="sf-bm owner" style="padding:2px 5px;"><div class="sf-bm-dot" style="background:#0891B2"></div><span class="sf-bm-name" style="font-size:7.5px;color:#374151;">I</span></div>
-              <div class="sf-bm owner" style="padding:2px 5px;"><div class="sf-bm-dot" style="background:#7C3AED"></div><span class="sf-bm-name" style="font-size:7.5px;color:#374151;">O</span></div>
-              <div class="sf-bm owner" style="padding:2px 5px;"><div class="sf-bm-dot" style="background:#DC2626"></div><span class="sf-bm-name" style="font-size:7.5px;color:#374151;">D (LoRA)</span></div>
-            </div>
-          </div>
-          <div class="sf-col" style="background:#E8FAF0;border:1px solid #86E6B2;">
-            <div class="sf-col-h" style="color:#065F46;">🚀 Inference</div>
-            <div class="sf-col-d" style="color:#374151;">Quantization, KV cache (PagedAttention), continuous batching, TensorRT-LLM, vLLM, vector DB, API gateway, semantic cache, batch vs. real-time routing.</div>
-            <div class="sf-bms" style="margin-top:5px;flex-wrap:wrap;gap:3px;">
-              <div class="sf-bm owner" style="padding:2px 5px;"><div class="sf-bm-dot" style="background:#2563EB"></div><span class="sf-bm-name" style="font-size:7.5px;color:#374151;">H</span></div>
-              <div class="sf-bm owner" style="padding:2px 5px;"><div class="sf-bm-dot" style="background:#059669"></div><span class="sf-bm-name" style="font-size:7.5px;color:#374151;">N</span></div>
-              <div class="sf-bm owner" style="padding:2px 5px;"><div class="sf-bm-dot" style="background:#0891B2"></div><span class="sf-bm-name" style="font-size:7.5px;color:#374151;">I</span></div>
-              <div class="sf-bm owner" style="padding:2px 5px;"><div class="sf-bm-dot" style="background:#D97706"></div><span class="sf-bm-name" style="font-size:7.5px;color:#374151;">A</span></div>
-              <div class="sf-bm owner" style="padding:2px 5px;"><div class="sf-bm-dot" style="background:#DC2626"></div><span class="sf-bm-name" style="font-size:7.5px;color:#374151;">D (batch)</span></div>
+
+        <div class="intro-mlops-side">
+          <div class="intro-mlops-label">MLOps<span>Cross-cutting - spans L4 &amp; L5</span></div>
+          <div class="sf-layer intro-mlops-layer" style="background:#F6EEFB;border:1px solid #D8BFF5;">
+            <div class="sf-content">
+              <div class="sf-bms">
+                <div class="sf-bm owner"><div class="sf-bm-dot" style="background:#9333EA"></div><span class="sf-bm-name">Experiment Tracking (W&amp;B, MLflow)</span></div>
+                <div class="sf-bm owner"><div class="sf-bm-dot" style="background:#9333EA"></div><span class="sf-bm-name">Model Registry + Versioning</span></div>
+                <div class="sf-bm owner"><div class="sf-bm-dot" style="background:#9333EA"></div><span class="sf-bm-name">Data Versioning + Lineage</span></div>
+                <div class="sf-bm owner"><div class="sf-bm-dot" style="background:#9333EA"></div><span class="sf-bm-name">CI/CD + Eval Gates + Rollback</span></div>
+                <div class="sf-bm owner"><div class="sf-bm-dot" style="background:#9333EA"></div><span class="sf-bm-name">Feature Store + Train/Serve Consistency</span></div>
+              </div>
             </div>
           </div>
         </div>
@@ -2256,6 +2322,13 @@ body.theme-light .btn.nav-active{
       <option value="asia_pacific">Asia-Pacific</option>
       <option value="middle_east">Middle East</option>
       <option value="latin_america">Latin America</option>
+    </select>
+    <select id="dbTier" onchange="renderDB()" style="font-family:'JetBrains Mono',monospace;font-size:8px;padding:3px 6px;border:1px solid #D1D5DB;border-radius:4px;background:#F9FAFB;color:#374151;">
+      <option value="">All Stack Coverage</option>
+      <option value="bmaas">BMaaS</option>
+      <option value="gpuaas">GPUaaS</option>
+      <option value="mlaas">MLaaS</option>
+      <option value="waas">WaaS</option>
     </select>
     <select id="dbCM" onchange="renderDB()" style="font-family:'JetBrains Mono',monospace;font-size:8px;padding:3px 6px;border:1px solid #D1D5DB;border-radius:4px;background:#F9FAFB;color:#374151;">
       <option value="">All ClusterMAX tiers</option>
@@ -4469,11 +4542,26 @@ function renderMarketMatrix(){
 // RENDER COMPANY DATABASE
 // ═══════════════════════════════════════════════════════════════
 var dbSortKey='name', dbSortAsc=true;
+var dbHeaderFilters={tier:'',region:'',cm:'',s3:'',ib:'',soc2:'',pub:'',eu:''};
+
+function dbSetHeaderFilter(key,val){
+  dbHeaderFilters[key]=val||'';
+  renderDB();
+}
+
+function dbFilterBool(v,filterVal){
+  if(!filterVal) return true;
+  if(filterVal==='yes') return !!v;
+  if(filterVal==='no') return !v;
+  return true;
+}
+
 function renderDB(){
   var q=(document.getElementById('dbSearch').value||'').toLowerCase();
   var revMin=stepVal(REV_STEPS,parseInt(document.getElementById('dbRev').value)||0);
   var fteMin=stepVal(FTE_STEPS,parseInt(document.getElementById('dbFte').value)||0);
   var region=document.getElementById('dbRegion').value;
+  var tier=document.getElementById('dbTier').value;
   var cm=document.getElementById('dbCM').value;
   document.getElementById('dbRevVal').textContent=fmtRev(revMin===Infinity?10000:revMin);
   document.getElementById('dbFteVal').textContent=fmtFte(fteMin===Infinity?10000:fteMin);
@@ -4481,6 +4569,15 @@ function renderDB(){
   var rows=COMPANY_DB.filter(function(co){
     if(!companyMatchesFilter(co,revMin,fteMin,2024,region,dbActiveToggles))return false;
     if(cm&&co.cm!==cm)return false;
+    if(tier&&co.tiers.indexOf(tier)<0)return false;
+    if(dbHeaderFilters.tier&&co.tiers.indexOf(dbHeaderFilters.tier)<0)return false;
+    if(dbHeaderFilters.region&&co.hq.region!==dbHeaderFilters.region)return false;
+    if(dbHeaderFilters.cm&&co.cm!==dbHeaderFilters.cm)return false;
+    if(!dbFilterBool(co.s3,dbHeaderFilters.s3))return false;
+    if(!dbFilterBool(co.ib,dbHeaderFilters.ib))return false;
+    if(!dbFilterBool(co.soc2,dbHeaderFilters.soc2))return false;
+    if(!dbFilterBool(co.pub,dbHeaderFilters.pub))return false;
+    if(!dbFilterBool(co.eu,dbHeaderFilters.eu))return false;
     if(q&&co.name.toLowerCase().indexOf(q)<0&&co.desc.toLowerCase().indexOf(q)<0)return false;
     return true;
   });
@@ -4496,17 +4593,25 @@ function renderDB(){
   
   var tierLabels={bmaas:'BMaaS',gpuaas:'GPUaaS',mlaas:'MLaaS',waas:'WaaS'};
   var cmBadge=function(cm){var cl={platinum:'cm-platinum',gold:'cm-gold',silver:'cm-silver',bronze:'cm-bronze',unrated:'cm-unrated'};return '<span class="mbadge '+cl[cm]+'">'+cm+'</span>';};
+  var ynOpts='<option value="">All</option><option value="yes">✓ Yes</option><option value="no">· No</option>';
+  var regionOpts='<option value="">All</option><option value="north_america">North America</option><option value="europe">Europe</option><option value="asia_pacific">Asia-Pacific</option><option value="middle_east">Middle East</option><option value="latin_america">Latin America</option>';
+  var stackOpts='<option value="">All</option><option value="bmaas">BMaaS</option><option value="gpuaas">GPUaaS</option><option value="mlaas">MLaaS</option><option value="waas">WaaS</option>';
+  var cmOpts='<option value="">All</option><option value="platinum">Platinum</option><option value="gold">Gold</option><option value="silver">Silver</option><option value="bronze">Bronze</option><option value="unrated">Unrated</option>';
   
   var s='<table class="db-table"><thead><tr>'
     +'<th onclick="dbSort(\'name\')">Company ↕</th>'
     +'<th onclick="dbSort(\'bm\')">BM ↕</th>'
-    +'<th>Tiers</th>'
-    +'<th>HQ</th>'
+    +'<th><div class="db-th-wrap"><span class="db-th-label">Stack Coverage</span><select class="db-th-filter" onchange="dbSetHeaderFilter(\'tier\',this.value)" onclick="event.stopPropagation()">'+stackOpts+'</select></div></th>'
+    +'<th><div class="db-th-wrap"><span class="db-th-label">HQ Region</span><select class="db-th-filter" onchange="dbSetHeaderFilter(\'region\',this.value)" onclick="event.stopPropagation()">'+regionOpts+'</select></div></th>'
     +'<th onclick="dbSort(\'founded\')">Founded ↕</th>'
     +'<th onclick="dbSort(\'rev\')">Rev $M ↕</th>'
     +'<th onclick="dbSort(\'fte\')">FTE ↕</th>'
-    +'<th onclick="dbSort(\'cm\')">ClusterMAX ↕</th>'
-    +'<th>S3</th><th>IB</th><th>SOC2</th><th>Public</th><th>EU/Sov</th>'
+    +'<th><div class="db-th-wrap"><span class="db-th-label">ClusterMAX</span><select class="db-th-filter" onchange="dbSetHeaderFilter(\'cm\',this.value)" onclick="event.stopPropagation()">'+cmOpts+'</select></div></th>'
+    +'<th><div class="db-th-wrap"><span class="db-th-label">S3</span><select class="db-th-filter" onchange="dbSetHeaderFilter(\'s3\',this.value)" onclick="event.stopPropagation()">'+ynOpts+'</select></div></th>'
+    +'<th><div class="db-th-wrap"><span class="db-th-label">IB</span><select class="db-th-filter" onchange="dbSetHeaderFilter(\'ib\',this.value)" onclick="event.stopPropagation()">'+ynOpts+'</select></div></th>'
+    +'<th><div class="db-th-wrap"><span class="db-th-label">SOC2</span><select class="db-th-filter" onchange="dbSetHeaderFilter(\'soc2\',this.value)" onclick="event.stopPropagation()">'+ynOpts+'</select></div></th>'
+    +'<th><div class="db-th-wrap"><span class="db-th-label">Public</span><select class="db-th-filter" onchange="dbSetHeaderFilter(\'pub\',this.value)" onclick="event.stopPropagation()">'+ynOpts+'</select></div></th>'
+    +'<th><div class="db-th-wrap"><span class="db-th-label">EU/Sov</span><select class="db-th-filter" onchange="dbSetHeaderFilter(\'eu\',this.value)" onclick="event.stopPropagation()">'+ynOpts+'</select></div></th>'
     +'<th style="min-width:200px;">Differentiator</th>'
     +'</tr></thead><tbody>';
   
@@ -4553,6 +4658,13 @@ var _activePage='canvas';
 var _sidebarOpen=true;
 var _COLLAPSE_PAGES=['compare','market','db'];
 
+function toggleIntroTrainFt(){
+  var intro=document.getElementById('page-intro');
+  var cb=document.getElementById('introHideTrainFt');
+  if(!intro||!cb) return;
+  intro.classList.toggle('intro-hide-trainft', !!cb.checked);
+}
+
 function showPage(id){
   document.querySelectorAll('.page-panel').forEach(function(p){
     p.classList.remove('page-active');
@@ -4580,6 +4692,7 @@ function showPage(id){
   }
   // sidebar
   setSidebar(_COLLAPSE_PAGES.indexOf(id)<0);
+  if(id==='intro') toggleIntroTrainFt();
   // lazy renders
   if(id==='compare'){buildCmpSelectors();renderCompare();}
   // market/db as fixed overlays
