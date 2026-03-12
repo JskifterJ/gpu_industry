@@ -417,8 +417,8 @@ details>summary::-webkit-details-marker{display:none;}
 .emb3d-note{margin-top:9px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);line-height:1.6;}
 
 /* HORIZONTAL COLUMN FLOW VISUALIZATION */
-.emb3d-flow-columns{display:flex;gap:8px;overflow-x:auto;padding:8px 0;align-items:flex-start;}
-.emb3d-flow-col{display:flex;flex-direction:column;gap:2px;flex-shrink:0;}
+.emb3d-flow-columns{display:flex;gap:6px;overflow-x:auto;padding:8px 0;align-items:flex-start;}
+.emb3d-flow-col{display:flex;flex-direction:column;gap:1px;flex-shrink:0;}
 .emb3d-flow-header{background:rgba(26,191,208,.12);border:1px solid rgba(26,191,208,.3);border-radius:4px 4px 0 0;padding:6px 8px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--cyan);font-weight:600;text-align:center;min-width:68px;line-height:1.3;}
 .emb3d-flow-cell{background:rgba(255,255,255,.03);border:1px solid var(--border2);border-radius:3px;padding:5px 7px;font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--ink);min-width:68px;text-align:center;height:20px;display:flex;align-items:center;justify-content:center;}
 .emb3d-flow-cell.dim-label{color:var(--cyan);font-size:8px;}
@@ -2004,13 +2004,14 @@ function emb3dUpdateMeta(){
   if(stageDesc) stageDesc.textContent = info.desc;
 
   var cur = emb3dVectorAt(EMB3D.layer);
-  var prev = emb3dVectorAt(Math.max(1, EMB3D.layer - 1));
+  var base = EMB3D.baseVec;
   var p = emb3dToyProbs(EMB3D.layer, cur);
   var winner = p.rows.find(function(row){ return row.isWinner; }) || p.rows[0];
 
   // Build horizontal column flow visualization
   var html = '';
-  html += '<div class="emb3d-flow-col-intro">Each dimension of the 8,192-element hidden vector is multiplied by the output weight matrix, creating votes for each token. These votes sum to logits, which become probabilities via softmax.</div>';
+  var ctxMsg = EMB3D.layer === 80 ? '<strong style="color:var(--amber);">⚠ Layer 80 (Final Output Head):</strong> ' : '';
+  html += '<div class="emb3d-flow-col-intro">' + ctxMsg + 'Each dimension of the 8,192-element hidden vector is multiplied by the output weight matrix (one row per token in vocabulary), creating dot-product votes. These votes sum to logits, which become probabilities via softmax.</div>';
   html += '<div class="emb3d-flow-columns">';
   
   // Column 1: Hidden Vector (8 visible dims)
@@ -2022,22 +2023,11 @@ function emb3dUpdateMeta(){
     html += '<div class="emb3d-flow-cell">' + val.toFixed(3) + '</div>';
   }
   html += '<div class="emb3d-flow-cell truncate">...+8,184<br>more</div>';
+  var cumulativeLogit = base.reduce(function(s,v){ return s+v; },0) * 0.1 + winner.voteSum + winner.bias;
+  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);border-top:2px solid rgba(232,160,32,.4);margin-top:4px;padding-top:4px;color:var(--amber);font-weight:600;font-size:8px;">cum:\n' + cumulativeLogit.toFixed(2) + '</div>';
   html += '</div>';
   
-  // Column 2: Delta (changes from prior layer)
-  html += '<div class="emb3d-flow-col">';
-  html += '<div class="emb3d-flow-header">Change<br>(Δ)</div>';
-  for(var i=0; i<cur.length; i++){
-    var d = cur[i] - prev[i];
-    var cls = d >= 0 ? 'delta-pos' : 'delta-neg';
-    var sign = d >= 0 ? '+' : '';
-    html += '<div class="emb3d-flow-cell dim-label">dim ' + i + '</div>';
-    html += '<div class="emb3d-flow-cell ' + cls + '">' + sign + d.toFixed(3) + '</div>';
-  }
-  html += '<div class="emb3d-flow-cell truncate">avg<br>change</div>';
-  html += '</div>';
-  
-  // Columns 3-6: Token rows with contributions and result
+  // Columns 2+: Token rows with contributions and result (extended all the way down)
   p.rows.forEach(function(row, rowIdx){
     var winClass = row.isWinner ? ' style="border-color:rgba(232,160,32,.5);background:rgba(232,160,32,.1);"' : '';
     html += '<div class="emb3d-flow-col"' + winClass + '>';
@@ -2050,23 +2040,40 @@ function emb3dUpdateMeta(){
       html += '<div class="emb3d-flow-cell">' + sign + contrib.toFixed(3) + '</div>';
     }
     
-    // Logit and probability
-    html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.05);color:var(--blue);"><small style="opacity:.7;">logit:</small><br>' + row.logit.toFixed(2) + '</div>';
+    // Truncation label
+    html += '<div class="emb3d-flow-cell truncate">...+8k<br>dims</div>';
+    
+    // Sum of contributions
+    html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.06);border-top:1px solid rgba(255,255,255,.1);color:var(--blue);font-size:8px;">' + row.voteSum.toFixed(2) + '</div>';
+    
+    // Bias row
+    html += '<div class="emb3d-flow-cell" style="background:rgba(0,0,0,.2);color:var(--muted);font-size:7px;">+' + row.bias.toFixed(2) + '</div>';
+    
+    // Final logit
+    html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);border-top:2px solid ' + (row.isWinner ? 'rgba(232,160,32,.5)' : 'rgba(48,200,112,.3)') + ';color:' + (row.isWinner ? 'var(--amber)' : 'var(--green)') + ';">' + row.logit.toFixed(2) + '</div>';
+    
+    // Final probability
     html += '<div class="emb3d-flow-result">' + (row.prob*100).toFixed(0) + '%</div>';
     html += '</div>';
   });
   
-  // Column 7: Remaining vocabulary indicator
+  // Column: Remaining vocabulary indicator (extended)
   html += '<div class="emb3d-flow-col">';
-  html += '<div class="emb3d-flow-header" style="color:var(--muted);">Other<br>tokens</div>';
-  html += '<div class="emb3d-flow-cell truncate">...+128,252<br>more words</div>';
+  html += '<div class="emb3d-flow-header" style="color:var(--muted);font-size:7px;">...128k+<br>other</div>';
+  html += '<div class="emb3d-flow-cell truncate">dims</div>';
   for(var i=1; i<cur.length; i++){
-    html += '<div class="emb3d-flow-cell truncate">~<br>0.1%</div>';
+    html += '<div class="emb3d-flow-cell truncate">·</div>';
   }
+  html += '<div class="emb3d-flow-cell truncate">more</div>';
+  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.06);">tiny</div>';
+  html += '<div class="emb3d-flow-cell" style="background:rgba(0,0,0,.2);">~0</div>';
+  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);">~0</div>';
+  html += '<div class="emb3d-flow-cell truncate">~0%</div>';
   html += '</div>';
   
   html += '</div>'; // Close flow-columns
-  html += '<div class="emb3d-choice" style="margin-top:8px;">At layer ' + EMB3D.layer + ': <strong style="color:var(--amber);">' + winner.label + '</strong> is most likely with ' + (winner.prob*100).toFixed(0) + '% probability. The hidden state has evolved through transformer layers to amplify this token direction.</div>';
+  var layerNote = EMB3D.layer === 80 ? 'The prompt token vector is now fully context-infused and fact-grounded. This dot-product with the vocabulary matrix produces probability scores for all 128,256 tokens.' : 'The vector is still evolving through layers; at layer 80 it will be ready for the final output projection.';
+  html += '<div class="emb3d-choice" style="margin-top:8px;">At layer ' + EMB3D.layer + ': <strong style="color:var(--amber);">' + winner.label + '</strong> leads with ' + (winner.prob*100).toFixed(0) + '% probability. ' + layerNote + '</div>';
   
   var processEl = document.getElementById('emb3d-process');
   if(processEl){
@@ -2167,13 +2174,22 @@ function drawEmb3d(ts){
   ];
   clusters.forEach(function(cl){
     var p = emb3dProject(cl.x, cl.y, cl.z, c);
-    ctx.fillStyle = cl.col;
-    ctx.globalAlpha = 0.75;
-    ctx.beginPath(); ctx.arc(p.x, p.y, 9, 0, Math.PI*2); ctx.fill();
+    var dotCount = 5;
+    for(var d=0; d<dotCount; d++){
+      var angle = (d / dotCount) * Math.PI * 2;
+      var offset = 4.5;
+      var dx = p.x + Math.cos(angle) * offset;
+      var dy = p.y + Math.sin(angle) * offset;
+      ctx.fillStyle = cl.col;
+      ctx.globalAlpha = 0.6 + (d % 2) * 0.25;
+      ctx.beginPath(); ctx.arc(dx, dy, 3.5, 0, Math.PI*2); ctx.fill();
+    }
     ctx.globalAlpha = 1;
     ctx.fillStyle = isLight ? '#1f2937' : '#cbd5e1';
-    ctx.font = '10px IBM Plex Mono';
-    ctx.fillText(cl.n, p.x + 12, p.y + 3);
+    ctx.font = '9px IBM Plex Mono';
+    ctx.textAlign = 'center';
+    ctx.fillText(cl.n, p.x, p.y - 18);
+    ctx.textAlign = 'left';
   });
 
   var path = [];
