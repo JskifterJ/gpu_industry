@@ -99,6 +99,17 @@ header{padding:10px 18px;background:#1A1A2E;color:#fff;display:flex;align-items:
 .nd{width:7px;height:7px;border-radius:50%;opacity:.85;}
 .s3-badge{position:absolute;bottom:4px;right:6px;font-size:8px;color:#F59E0B;font-family:'JetBrains Mono',monospace;font-weight:600;}
 
+/* Optional node-level BM relevance details (default hidden). */
+.node-bm-lines{margin-top:6px;padding-top:5px;border-top:1px dashed rgba(0,0,0,0.16);display:flex;flex-direction:column;gap:4px;max-height:154px;overflow:auto;}
+.node-bm-line{display:flex;flex-direction:column;gap:1px;padding:3px 4px;border-radius:4px;border:1px solid rgba(0,0,0,0.06);background:rgba(255,255,255,0.52);}
+.node-bm-line.owns{border-left:3px solid #059669;}
+.node-bm-line.uses{border-left:3px solid #6B7280;}
+.node-bm-line.na{border-left:3px solid #9CA3AF;opacity:.78;}
+.node-bm-head{display:flex;align-items:center;gap:4px;}
+.node-bm-name{font-family:'JetBrains Mono',monospace;font-size:7.2px;font-weight:700;line-height:1.1;}
+.node-bm-state{font-family:'JetBrains Mono',monospace;font-size:6.8px;color:#6B7280;text-transform:uppercase;letter-spacing:.2px;}
+.node-bm-role{font-size:7.3px;color:#4B5563;line-height:1.35;}
+
 /* PHYSICAL HIERARCHY */
 .phys-hier{background:rgba(255,255,255,0.6);border:1.5px solid #E8C840;border-radius:8px;padding:10px 12px;margin-bottom:7px;width:100%;}
 .ph-title{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;color:#92730A;margin-bottom:8px;}
@@ -641,7 +652,7 @@ header{padding:10px 18px;background:#1A1A2E;color:#fff;display:flex;align-items:
 /* ─── COMPARE MODE ─── */
 .cmp-overlay{position:fixed;inset:0;z-index:300;background:rgba(15,15,30,.85);backdrop-filter:blur(4px);display:flex;align-items:stretch;justify-content:center;overflow:auto;}
 .cmp-overlay.hidden{display:none;}
-.cmp-panel{background:#1A1A2E;color:#fff;width:100%;display:flex;flex-direction:column;height:100%;overflow:hidden;}
+.cmp-panel{background:#1A1A2E;color:#fff;width:100%;max-width:920px;display:flex;flex-direction:column;height:100%;overflow:hidden;}
 .cmp-header{padding:16px 20px 12px;border-bottom:1px solid #2D2D4E;display:flex;align-items:center;gap:12px;flex-shrink:0;}
 .cmp-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;flex:1;}
 .cmp-close{background:rgba(255,255,255,.1);border:none;color:#fff;cursor:pointer;border-radius:6px;padding:4px 10px;font-size:12px;font-family:'JetBrains Mono',monospace;}
@@ -1167,10 +1178,18 @@ body.theme-light .mkt-filters,body.theme-light .db-filters{background:#fff;}
   border-color:rgba(59,130,246,.55)!important;
   color:#93C5FD!important;
 }
+.btn.btn-toggle-on{
+  background:rgba(16,185,129,.2)!important;
+  border-color:rgba(16,185,129,.42)!important;
+}
 body.theme-light .btn.nav-active{
   background:rgba(37,99,235,.12)!important;
   border-color:rgba(37,99,235,.4)!important;
   color:#1D4ED8!important;
+}
+body.theme-light .btn.btn-toggle-on{
+  background:rgba(16,185,129,.12)!important;
+  border-color:rgba(16,185,129,.35)!important;
 }
 
 
@@ -1344,6 +1363,7 @@ body.theme-light .btn.nav-active{
     </div>
     <div style="width:1px;height:16px;background:rgba(255,255,255,.1);margin:0 3px;"></div>
     <button class="btn" id="bigpicBtn" onclick="toggleBigPicture()" style="background:rgba(59,130,246,.18);border-color:rgba(59,130,246,.35);">◫ Big Picture</button>
+    <button class="btn" id="bmRelToggleBtn" onclick="toggleBmRelevance()">≡ BM Relevance: Off</button>
     <button class="btn" id="introNavBtn" onclick="showPage('intro')">◈ Stack Overview</button>
     <button class="btn" id="mktBtn" onclick="showPage('market')">⊞ Market Map</button>
     <button class="btn" id="dbBtn" onclick="showPage('db')">⬡ Company DB</button>
@@ -3075,6 +3095,65 @@ const bmDefaults = {
 // BM FILTER STATE
 // ═══════════════════════════════════════════
 let activeFilters = new Set(['H','N','A','O','D','B','I']);
+let showBmRelevance = false;
+
+function bmRoleTextFor(data, code) {
+  if (data.bmRoles && data.bmRoles[code]) return data.bmRoles[code];
+  return bmDefaults[code] || 'Not a relevant component for this business model.';
+}
+
+function buildNodeBmRelevance(el, data) {
+  el.querySelectorAll('.node-bm-lines').forEach(x => x.remove());
+  if (!showBmRelevance || !data) return;
+
+  const owns = data.owns || [];
+  const uses = data.uses || [];
+  const panel = document.createElement('div');
+  panel.className = 'node-bm-lines';
+
+  Object.keys(BM).forEach(code => {
+    const bm = BM[code];
+    const isOwner = owns.includes(code);
+    const isUser = uses.includes(code);
+    const status = isOwner ? 'owns/operates' : (isUser ? 'supplier input' : 'not relevant');
+    const cls = isOwner ? 'owns' : (isUser ? 'uses' : 'na');
+    const roleText = isOwner || isUser
+      ? bmRoleTextFor(data, code)
+      : 'Not a relevant component for this business model.';
+
+    const row = document.createElement('div');
+    row.className = `node-bm-line ${cls}`;
+    row.innerHTML = `
+      <div class="node-bm-head">
+        <span class="node-bm-name" style="color:${bm.color}">${bm.label}</span>
+        <span class="node-bm-state">${status}</span>
+      </div>
+      <div class="node-bm-role">${roleText}</div>
+    `;
+    panel.appendChild(row);
+  });
+
+  el.appendChild(panel);
+}
+
+function renderBmRelevancePanels() {
+  document.querySelectorAll('.node[data-id]').forEach(el => {
+    const id = el.getAttribute('data-id');
+    const data = nodes[id];
+    if (!data) return;
+    buildNodeBmRelevance(el, data);
+  });
+}
+
+function toggleBmRelevance() {
+  showBmRelevance = !showBmRelevance;
+  const btn = document.getElementById('bmRelToggleBtn');
+  if (btn) {
+    btn.textContent = showBmRelevance ? '≡ BM Relevance: On' : '≡ BM Relevance: Off';
+    btn.classList.toggle('btn-toggle-on', showBmRelevance);
+  }
+  renderBmRelevancePanels();
+}
 
 function toggleFilter(code) {
   if (activeFilters.has(code)) {
@@ -3259,6 +3338,7 @@ function closeDrawer() {
 // ═══════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
   addDots();
+  renderBmRelevancePanels();
 
   document.querySelectorAll('.node[data-id]').forEach(el => {
     el.addEventListener('click', e => {

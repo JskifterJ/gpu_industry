@@ -365,10 +365,12 @@ details>summary::-webkit-details-marker{display:none;}
 .tf-dyn-toolbar-label{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;}
 .tf-dyn-select{background:var(--panel2);border:1px solid var(--border2);border-radius:6px;color:var(--ink);padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:10px;}
 .tf-dyn-context{font-size:11px;color:var(--muted);line-height:1.55;}
-.tf-dyn-track{display:flex;align-items:stretch;gap:8px;overflow-x:auto;padding-bottom:4px;}
-.tf-dyn-stage{min-width:215px;flex:1 0 215px;border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:10px 11px;background:rgba(255,255,255,.03);}
-.tf-dyn-stage-title{font-family:'IBM Plex Mono',monospace;font-size:8.5px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;}
-.tf-dyn-stage-sub{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);margin-bottom:8px;line-height:1.45;}
+.tf-dyn-track{display:flex;align-items:stretch;gap:6px;overflow:visible;flex-wrap:nowrap;}
+.tf-dyn-link{display:flex;align-items:center;justify-content:center;color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:12px;min-width:14px;flex-shrink:0;}
+.tf-dyn-stage{min-width:0;flex:1 1 0;border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:10px 11px;background:rgba(255,255,255,.03);}
+.tf-dyn-stage-plain{font-size:11px;color:var(--ink);line-height:1.55;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--border2);}
+.tf-dyn-stage-title{font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px;opacity:.7;}
+.tf-dyn-stage-sub{font-family:'IBM Plex Mono',monospace;font-size:7.5px;color:var(--muted);margin-bottom:6px;line-height:1.4;}
 .tf-dyn-stage-body{font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--ink);line-height:1.6;display:flex;flex-direction:column;gap:4px;}
 .tf-dyn-link{display:flex;align-items:center;justify-content:center;color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:12px;min-width:18px;}
 .tf-dyn-line{padding:2px 6px;border-radius:4px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);}
@@ -595,9 +597,14 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
           select.appendChild(opt);
         });
 
-        function makeStage(tone, title, subtitle, lines){
+        function makeStage(tone, title, subtitle, plain, lines){
           const stage = document.createElement('div');
           stage.className = 'tf-dyn-stage tf-dyn-t-' + tone;
+
+          const p = document.createElement('div');
+          p.className = 'tf-dyn-stage-plain';
+          p.textContent = plain;
+          stage.appendChild(p);
 
           const t = document.createElement('div');
           t.className = 'tf-dyn-stage-title';
@@ -627,6 +634,11 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
           const stage = document.createElement('div');
           stage.className = 'tf-dyn-stage tf-dyn-t-output';
 
+          const p = document.createElement('div');
+          p.className = 'tf-dyn-stage-plain';
+          p.textContent = 'The model scores every word in its vocabulary and picks the most likely next token.';
+          stage.appendChild(p);
+
           const t = document.createElement('div');
           t.className = 'tf-dyn-stage-title';
           t.textContent = '5. Output projection';
@@ -634,7 +646,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
 
           const s = document.createElement('div');
           s.className = 'tf-dyn-stage-sub';
-          s.textContent = 'h_final dot W_U -> 128,256 token scores';
+          s.textContent = 'h_final · W_U -> 128,256 token scores';
           stage.appendChild(s);
 
           const bars = document.createElement('div');
@@ -672,18 +684,26 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
           track.innerHTML = '';
 
           const stages = [
-            makeStage('input', '1. Input token IDs', 'Tokenizer output (5 positions)', ex.input),
-            makeStage('embed', '2. Embedding lookup', 'ID -> embedding table row', ex.embedding),
-            makeStage('transform', '3. 80 transformer layers', 'Each layer updates 1 x 8,192 token state', [
-              'Attention: route to relevant prior tokens',
-              'FFN: 8,192 -> 28,672 -> 8,192 feature edits',
-              'Residual stream accumulates deltas'
-            ]),
-            makeStage('hidden', '4. Final hidden vector', 'Single token state before vocab scoring', [
-              ex.hidden,
-              'Carries context + facts + grammar',
-              'Same dimensionality: 1 x 8,192'
-            ]),
+            makeStage('input', '1. Input token IDs', 'Tokenizer output (5 positions)',
+              'Your text is split into numbered word-pieces — one ID per word or sub-word the model knows.',
+              ex.input),
+            makeStage('embed', '2. Embedding lookup', 'ID → embedding table row',
+              'Each number is swapped for 8,192 floats — a point in a mathematical ‘meaning-space’ learned during training.',
+              ex.embedding),
+            makeStage('transform', '3. 80 transformer layers', 'Each layer updates 1×8,192 token state',
+              'The model re-reads all tokens 80 times. Each pass asks “what context matters here?” and sharpens every token’s meaning.',
+              [
+                'Attention: route to relevant prior tokens',
+                'FFN: 8,192 → 28,672 → 8,192 feature edits',
+                'Residual stream accumulates deltas'
+              ]),
+            makeStage('hidden', '4. Final hidden vector', 'Single token state before vocab scoring',
+              'After 80 passes, one 8,192-value summary captures everything the model “knows” about what comes next.',
+              [
+                ex.hidden,
+                'Carries context + facts + grammar',
+                'Same dimensionality: 1×8,192'
+              ]),
             makeOutputStage(ex)
           ];
 
@@ -739,9 +759,9 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
       <!-- CARD 2: Final vector to top-probability words -->
       <div style="background:rgba(138,110,232,.08);border:1px solid rgba(138,110,232,.26);border-radius:8px;padding:10px 12px;">
         <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--purple);text-transform:uppercase;margin-bottom:5px;">From Final State to Top Words</div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--ink);line-height:1.55;margin-bottom:7px;">After 80 layers, h80 is projected onto every vocab token direction. Tokens with larger alignment (dot product) get higher logits and probabilities.</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--ink);line-height:1.55;margin-bottom:7px;">After 80 layers, h80 is projected onto every vocab token direction. Tokens with larger alignment (dot product) get higher <span class="tip" data-tip="Logits are raw scores (before probability conversion). Higher logits = more likely tokens.">logits</span> and probabilities.</div>
         <div style="background:rgba(0,0,0,.16);border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:7px 8px;margin-bottom:7px;">
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);line-height:1.65;">logits = h80 &middot; W_U + b<br/>p(next token) = softmax(logits)</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);line-height:1.65;"><span class="tip" data-tip="Logits: raw alignment scores.">logits</span> = h80 &middot; W_U + b<br/>p(next token) = <span class="tip" data-tip="Softmax converts any list of numbers into probabilities that sum to 1. Larger logits → larger probabilities.">softmax</span>(logits)</div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:6px;">
           <div style="background:rgba(48,200,112,.10);border:1px solid rgba(48,200,112,.28);border-radius:6px;padding:6px;">
@@ -1338,7 +1358,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
           <div style="margin-top:12px;padding:12px 14px;background:rgba(138,110,232,.10);border:1px solid rgba(138,110,232,.35);border-radius:8px;">
             <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--purple);text-transform:uppercase;letter-spacing:.12em;margin-bottom:10px;">A &mdash; Multi-Head Self-Attention</div>
 
-            <div style="font-size:11.5px;color:var(--muted);line-height:1.7;margin-bottom:10px;">Every token generates three vectors from its current state: a <strong style="color:var(--purple);">Query</strong> (what am I looking for?), a <strong style="color:var(--blue);">Key</strong> (what do I offer others?), and a <strong style="color:var(--cyan);">Value</strong> (what should be copied if I am selected?). Each Query is scored against every Key, softmax converts the scores into routing weights, and those weights blend the Values into a new context-aware state per token.</div>
+            <div style="font-size:11.5px;color:var(--muted);line-height:1.7;margin-bottom:10px;">Every token generates three vectors from its current state: a <strong style="color:var(--purple);"><span class="tip" data-tip="Query: 'What information do I need from other tokens?'">Query</span></strong> (what am I looking for?), a <strong style="color:var(--blue);"><span class="tip" data-tip="Key: 'Here's what kind of information I have.'">Key</span></strong> (what do I offer others?), and a <strong style="color:var(--cyan);"><span class="tip" data-tip="Value: 'If you pick me, here's what you get.'">Value</span></strong> (what should be copied if I am selected?). Each Query is scored against every Key, <span class="tip" data-tip="Softmax turns raw scores into weighting probabilities.">softmax</span> converts the scores into routing weights, and those weights blend the Values into a new context-aware state per token.</div>
 
             <!-- GQA config -->
             <div style="background:rgba(255,255,255,.04);border-radius:6px;padding:10px 12px;margin-bottom:10px;">
@@ -1366,7 +1386,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
               <div style="background:rgba(138,110,232,.08);border:1px solid rgba(138,110,232,.25);border-radius:5px;padding:8px 9px;">
                 <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--purple);margin-bottom:5px;">&#9312; Score</div>
                 <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--ink);margin-bottom:5px;background:rgba(255,255,255,.05);padding:5px 8px;border-radius:4px;">S = Q &middot; K&#7488; / &radic;128</div>
-                <div style="font-size:11px;color:var(--muted);line-height:1.5;">Dot-product of each Query against every Key. Dividing by &radic;128 (= &radic;head_dim) stops scores from exploding as dimensionality grows, keeping softmax gradients healthy.</div>
+                <div style="font-size:11px;color:var(--muted);line-height:1.5;">Dot-product of each Query against every Key. Dividing by &radic;128 (= &radic;head_dim) stops scores from exploding as dimensionality grows, keeping <span class="tip" data-tip="Softmax gradient health: the numeric stability of the probability conversion step during learning.">softmax gradients</span> healthy.</div>
                 <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);margin-top:5px;">Shape: [5 &times; 5] per head &mdash; one score per (token, token) pair</div>
               </div>
               <div style="background:rgba(138,110,232,.08);border:1px solid rgba(138,110,232,.25);border-radius:5px;padding:8px 9px;">
@@ -3403,8 +3423,8 @@ function initMsCalculator(){
               <input type="range" id="econxOutput" min="64" max="4096" step="64" value="512" oninput="econxUpdate()">
             </div>
             <div class="econx-ctrl">
-              <div class="econx-ctrl-row"><span>Batch size</span><span id="econxBatchLabel">64</span></div>
-              <input type="range" id="econxBatch" min="1" max="512" step="1" value="64" oninput="econxUpdate()">
+              <div class="econx-ctrl-row"><span>Batch size</span><span id="econxBatchLabel">1</span></div>
+              <input type="range" id="econxBatch" min="1" max="32" step="1" value="1" oninput="econxUpdate()">
             </div>
             <div class="econx-ctrl">
               <div class="econx-ctrl-row"><span>Electricity $/kWh</span><span id="econxElecLabel">$0.10</span></div>
@@ -3461,8 +3481,6 @@ function initMsCalculator(){
             <button type="button" class="econx-batch-btn" data-batch="20" onclick="econxSetScaleBatch(20)">20</button>
             <button type="button" class="econx-batch-btn" data-batch="50" onclick="econxSetScaleBatch(50)">50</button>
             <button type="button" class="econx-batch-btn" data-batch="100" onclick="econxSetScaleBatch(100)">100</button>
-            <button type="button" class="econx-batch-btn" data-batch="200" onclick="econxSetScaleBatch(200)">200</button>
-            <button type="button" class="econx-batch-btn" data-batch="400" onclick="econxSetScaleBatch(400)">400</button>
           </div>
           <div class="econx-chart-wrap"><canvas id="econxScaleChart"></canvas></div>
         </div>
@@ -3514,7 +3532,58 @@ function initMsCalculator(){
     </div>
   </div>
 
+  <!-- OPTIONAL OPERATIONAL EXTENSIONS -->
+  <div class="ref-acc optional-fold">
+    <details open>
+      <summary>Optional Operational Sections &mdash; Reasoning Loops and Retention</summary>
+      <div>
+
+  <div style="padding:12px 16px 4px;font-size:11.5px;color:var(--muted);line-height:1.6;">These sections are useful for platform, security, and agentic-workflow discussions, but they are not required for the main mechanics-to-economics walkthrough above.</div>
+
   <!-- CONNECTOR -->
+<div class="conn">
+  <div class="conn-line"></div>
+  <div class="conn-label">extended runs: reasoning &amp; agentic loops</div>
+  <div class="pulse-wrap"><div class="pulse" style="background:var(--purple);animation-delay:.35s;"></div></div>
+</div>
+
+<!-- R REASONING / AGENTIC -->
+<div class="box" style="border-color:rgba(138,110,232,0.35);">
+  <div class="step-badge">
+    <div class="step-num" style="color:var(--purple);border-color:var(--purple);background:var(--purple-d);font-size:11px;">R</div>
+    <div>
+      <div class="step-label" style="color:var(--purple);">Reasoning &amp; Agentic Loops</div>
+      <div class="step-sub">Extended token generation &middot; tool calls &middot; multi-step plans</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+    <div>
+      <div style="font-size:12.5px;color:var(--muted);line-height:1.75;margin-bottom:12px;">Models like Claude can generate thousands of &ldquo;thinking&rdquo; tokens before producing a final answer. Each thinking token runs the same 80-layer forward pass. A model that thinks for 10,000 tokens before answering is running ~10,000 complete forward passes at full GPU cost.</div>
+      <div style="background:rgba(138,110,232,.08);border:1px solid rgba(138,110,232,.25);border-radius:7px;padding:12px 14px;margin-bottom:10px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--purple);margin-bottom:6px;">AGENTIC LOOP COST</div>
+        <div style="display:flex;flex-direction:column;gap:4px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--muted);">
+          <div style="display:flex;justify-content:space-between;"><span>Plan (think)</span><span style="color:var(--ink);">~500 tokens</span></div>
+          <div style="display:flex;justify-content:space-between;"><span>Tool call</span><span style="color:var(--ink);">~200 tokens</span></div>
+          <div style="display:flex;justify-content:space-between;"><span>Tool result (injected)</span><span style="color:var(--amber);">~2,000 tokens context growth</span></div>
+          <div style="display:flex;justify-content:space-between;"><span>Evaluate &amp; re-plan</span><span style="color:var(--ink);">~800 tokens</span></div>
+          <div style="display:flex;justify-content:space-between;border-top:1px solid var(--border);margin-top:4px;padding-top:4px;"><span>5-step task total</span><span style="color:var(--red);">~15,000 output tokens</span></div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:7px;">
+      <div style="background:var(--panel2);border:1px solid var(--border);border-radius:7px;padding:10px 12px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:4px;">TOOL CALLS &amp; CONTEXT GROWTH</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6;">Every tool result gets appended to the context. A 10-step agent that retrieves 5 documents per step could accumulate 50,000 tokens in the context window. <span class="tip" data-tip="KV Cache: the stored Key and Value vectors for prior tokens. They stay in GPU memory so each new token can look back without recomputing the whole history. It grows with conversation length and is a core memory constraint.">KV cache</span> cost grows proportionally.</div>
+      </div>
+      <div style="background:var(--panel2);border:1px solid var(--border);border-radius:7px;padding:10px 12px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:4px;">WHY REASONING MODELS COST MORE</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6;">Thinking tokens are billed at the same per-token rate as output tokens &mdash; they require the same GPU compute. A model that thinks for 8,000 tokens then outputs 200 tokens is 40&times; more compute-intensive than one that just outputs 200 tokens.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONNECTOR -->
 <div class="conn">
   <div class="conn-line"></div>
   <div class="conn-label">response complete &rarr; persistence and storage routing</div>
@@ -3658,57 +3727,6 @@ function initMsCalculator(){
     <div style="background:rgba(224,72,72,.08);border:1px solid rgba(224,72,72,.25);border-radius:7px;padding:10px 12px;">
       <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--red);margin-bottom:4px;">Policy caveat</div>
       <div style="font-size:12px;color:var(--muted);line-height:1.6;">Exact retention, training use, and data residency are contract/SKU dependent and still evolving in some enterprise offerings. Always treat these as deployment-specific controls, not universal defaults.</div>
-    </div>
-  </div>
-</div>
-
-  <!-- CONNECTOR -->
-<div class="conn">
-  <div class="conn-line"></div>
-  <div class="conn-label">extended runs: reasoning &amp; agentic loops</div>
-  <div class="pulse-wrap"><div class="pulse" style="background:var(--purple);animation-delay:.35s;"></div></div>
-</div>
-
-  <!-- OPTIONAL OPERATIONAL EXTENSIONS -->
-  <div class="ref-acc optional-fold">
-    <details>
-      <summary>Optional Operational Sections &mdash; Reasoning and Deployment</summary>
-      <div>
-
-  <div style="padding:12px 16px 4px;font-size:11.5px;color:var(--muted);line-height:1.6;">These sections are useful for platform, security, and agentic-workflow discussions, but they are not required for the main mechanics-to-economics walkthrough above.</div>
-
-<!-- R REASONING / AGENTIC -->
-<div class="box" style="border-color:rgba(138,110,232,0.35);">
-  <div class="step-badge">
-    <div class="step-num" style="color:var(--purple);border-color:var(--purple);background:var(--purple-d);font-size:11px;">R</div>
-    <div>
-      <div class="step-label" style="color:var(--purple);">Reasoning &amp; Agentic Loops</div>
-      <div class="step-sub">Extended token generation &middot; tool calls &middot; multi-step plans</div>
-    </div>
-  </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
-    <div>
-      <div style="font-size:12.5px;color:var(--muted);line-height:1.75;margin-bottom:12px;">Models like Claude can generate thousands of &ldquo;thinking&rdquo; tokens before producing a final answer. Each thinking token runs the same 80-layer forward pass. A model that thinks for 10,000 tokens before answering is running ~10,000 complete forward passes at full GPU cost.</div>
-      <div style="background:rgba(138,110,232,.08);border:1px solid rgba(138,110,232,.25);border-radius:7px;padding:12px 14px;margin-bottom:10px;">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--purple);margin-bottom:6px;">AGENTIC LOOP COST</div>
-        <div style="display:flex;flex-direction:column;gap:4px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--muted);">
-          <div style="display:flex;justify-content:space-between;"><span>Plan (think)</span><span style="color:var(--ink);">~500 tokens</span></div>
-          <div style="display:flex;justify-content:space-between;"><span>Tool call</span><span style="color:var(--ink);">~200 tokens</span></div>
-          <div style="display:flex;justify-content:space-between;"><span>Tool result (injected)</span><span style="color:var(--amber);">~2,000 tokens context growth</span></div>
-          <div style="display:flex;justify-content:space-between;"><span>Evaluate &amp; re-plan</span><span style="color:var(--ink);">~800 tokens</span></div>
-          <div style="display:flex;justify-content:space-between;border-top:1px solid var(--border);margin-top:4px;padding-top:4px;"><span>5-step task total</span><span style="color:var(--red);">~15,000 output tokens</span></div>
-        </div>
-      </div>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:7px;">
-      <div style="background:var(--panel2);border:1px solid var(--border);border-radius:7px;padding:10px 12px;">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:4px;">TOOL CALLS &amp; CONTEXT GROWTH</div>
-        <div style="font-size:12px;color:var(--muted);line-height:1.6;">Every tool result gets appended to the context. A 10-step agent that retrieves 5 documents per step could accumulate 50,000 tokens in the context window. <span class="tip" data-tip="KV Cache: the stored Key and Value vectors for prior tokens. They stay in GPU memory so each new token can look back without recomputing the whole history. It grows with conversation length and is a core memory constraint.">KV cache</span> cost grows proportionally.</div>
-      </div>
-      <div style="background:var(--panel2);border:1px solid var(--border);border-radius:7px;padding:10px 12px;">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:4px;">WHY REASONING MODELS COST MORE</div>
-        <div style="font-size:12px;color:var(--muted);line-height:1.6;">Thinking tokens are billed at the same per-token rate as output tokens &mdash; they require the same GPU compute. A model that thinks for 8,000 tokens then outputs 200 tokens is 40&times; more compute-intensive than one that just outputs 200 tokens.</div>
-      </div>
     </div>
   </div>
 </div>
@@ -4342,16 +4360,16 @@ var ECONX_IC_EFF = {
 };
 
 var ECONX_GPUS = {
-  'V100 SXM2 32GB': { vram:32, bandwidth:900, tflops:112, tdp:300, interconnect:'NVLink 2.0', ic_bw:300, ic_lat:2.5, ic_type:'nvlink', node_ic_bw:100, node_ic_lat:3.0, price:2.96, sustained:0.94, chassis_u:3, gpu_per_chassis:8, ecc:true, color:'#7c3aed' },
-  'A100 PCIe 40GB': { vram:40, bandwidth:1555, tflops:312, tdp:250, interconnect:'PCIe 4.0', ic_bw:32, ic_lat:6, ic_type:'pcie', node_ic_bw:100, node_ic_lat:3.0, price:2.65, sustained:0.95, chassis_u:4, gpu_per_chassis:4, ecc:true, color:'#0284c7' },
-  'A40':            { vram:48, bandwidth:696, tflops:149, tdp:300, interconnect:'PCIe 4.0', ic_bw:32, ic_lat:6, ic_type:'pcie', node_ic_bw:100, node_ic_lat:3.0, price:1.32, sustained:0.94, chassis_u:2, gpu_per_chassis:4, ecc:true, color:'#2dd4bf' },
-  'L40S 48GB':      { vram:48, bandwidth:864, tflops:733, tdp:350, interconnect:'PCIe 5.0', ic_bw:64, ic_lat:5, ic_type:'pcie', node_ic_bw:200, node_ic_lat:2.5, price:1.88, sustained:0.95, chassis_u:4, gpu_per_chassis:8, ecc:true, color:'#7c3aed' },
-  'A100 SXM4 80GB': { vram:80, bandwidth:2000, tflops:312, tdp:400, interconnect:'NVLink 3.0', ic_bw:600, ic_lat:1.2, ic_type:'nvlink', node_ic_bw:200, node_ic_lat:2.0, price:1.87, sustained:0.96, chassis_u:6, gpu_per_chassis:8, ecc:true, color:'#06b6d4' },
-  'H100 PCIe':      { vram:80, bandwidth:2000, tflops:756, tdp:350, interconnect:'PCIe 5.0', ic_bw:64, ic_lat:5, ic_type:'pcie', node_ic_bw:200, node_ic_lat:2.0, price:3.33, sustained:0.96, chassis_u:4, gpu_per_chassis:4, ecc:true, color:'#d97706' },
-  'RTX 4090':       { vram:24, bandwidth:1008, tflops:165, tdp:450, interconnect:'PCIe 4.0', ic_bw:32, ic_lat:7, ic_type:'pcie', node_ic_bw:50, node_ic_lat:4.0, price:0.29, sustained:0.76, chassis_u:4, gpu_per_chassis:4, ecc:false, color:'#16a34a' },
-  'H100 SXM5':      { vram:80, bandwidth:3350, tflops:989, tdp:700, interconnect:'NVLink 4.0', ic_bw:900, ic_lat:0.8, ic_type:'nvlink', node_ic_bw:400, node_ic_lat:1.5, price:2.99, sustained:0.97, chassis_u:10, gpu_per_chassis:8, ecc:true, color:'#f59e0b' },
-  'H200 SXM5':      { vram:141, bandwidth:4800, tflops:1979, tdp:700, interconnect:'NVLink 4.0', ic_bw:900, ic_lat:0.8, ic_type:'nvlink', node_ic_bw:400, node_ic_lat:1.5, price:4.23, sustained:0.97, chassis_u:10, gpu_per_chassis:8, ecc:true, color:'#fb923c' },
-  'B200 SXM':       { vram:192, bandwidth:8000, tflops:4500, tdp:1000, interconnect:'NVLink 5.0', ic_bw:1800, ic_lat:0.5, ic_type:'nvlink', node_ic_bw:800, node_ic_lat:1.2, price:3.94, sustained:0.97, chassis_u:10, gpu_per_chassis:8, ecc:true, color:'#e879f9' }
+  'V100 SXM2 32GB': { vram:32, bandwidth:900, tflops:112, tdp:300, interconnect:'NVLink 2.0', ic_bw:300, ic_lat:2.5, ic_type:'nvlink', price:2.96, sustained:0.94, chassis_u:3, gpu_per_chassis:8, ecc:true, color:'#7c3aed' },
+  'A100 PCIe 40GB': { vram:40, bandwidth:1555, tflops:312, tdp:250, interconnect:'PCIe 4.0', ic_bw:32, ic_lat:6, ic_type:'pcie', price:2.65, sustained:0.95, chassis_u:4, gpu_per_chassis:4, ecc:true, color:'#0284c7' },
+  'A40':            { vram:48, bandwidth:696, tflops:149, tdp:300, interconnect:'PCIe 4.0', ic_bw:32, ic_lat:6, ic_type:'pcie', price:1.32, sustained:0.94, chassis_u:2, gpu_per_chassis:4, ecc:true, color:'#2dd4bf' },
+  'L40S 48GB':      { vram:48, bandwidth:864, tflops:733, tdp:350, interconnect:'PCIe 5.0', ic_bw:64, ic_lat:5, ic_type:'pcie', price:1.88, sustained:0.95, chassis_u:4, gpu_per_chassis:8, ecc:true, color:'#7c3aed' },
+  'A100 SXM4 80GB': { vram:80, bandwidth:2000, tflops:312, tdp:400, interconnect:'NVLink 3.0', ic_bw:600, ic_lat:1.2, ic_type:'nvlink', price:1.87, sustained:0.96, chassis_u:6, gpu_per_chassis:8, ecc:true, color:'#06b6d4' },
+  'H100 PCIe':      { vram:80, bandwidth:2000, tflops:756, tdp:350, interconnect:'PCIe 5.0', ic_bw:64, ic_lat:5, ic_type:'pcie', price:3.33, sustained:0.96, chassis_u:4, gpu_per_chassis:4, ecc:true, color:'#d97706' },
+  'RTX 4090':       { vram:24, bandwidth:1008, tflops:165, tdp:450, interconnect:'PCIe 4.0', ic_bw:32, ic_lat:7, ic_type:'pcie', price:0.29, sustained:0.76, chassis_u:4, gpu_per_chassis:4, ecc:false, color:'#16a34a' },
+  'H100 SXM5':      { vram:80, bandwidth:3350, tflops:989, tdp:700, interconnect:'NVLink 4.0', ic_bw:900, ic_lat:0.8, ic_type:'nvlink', price:2.99, sustained:0.97, chassis_u:10, gpu_per_chassis:8, ecc:true, color:'#f59e0b' },
+  'H200 SXM5':      { vram:141, bandwidth:4800, tflops:1979, tdp:700, interconnect:'NVLink 4.0', ic_bw:900, ic_lat:0.8, ic_type:'nvlink', price:4.23, sustained:0.97, chassis_u:10, gpu_per_chassis:8, ecc:true, color:'#fb923c' },
+  'B200 SXM':       { vram:192, bandwidth:8000, tflops:4500, tdp:1000, interconnect:'NVLink 5.0', ic_bw:1800, ic_lat:0.5, ic_type:'nvlink', price:3.94, sustained:0.97, chassis_u:10, gpu_per_chassis:8, ecc:true, color:'#e879f9' }
 };
 
 var ECONX_MODELS = {
@@ -4364,7 +4382,7 @@ var ECONX_MODELS = {
 
 var ECONX_BPP = { FP32:4, BF16:2, INT8:1, INT4:0.5 };
 var ECONX_GPU_COUNTS = [1, 2, 4, 8, 16];
-var ECONX_SCALE_BATCH = 100;
+var ECONX_SCALE_BATCH = 20;
 var econxCostChart = null;
 var econxScaleChart = null;
 
@@ -4436,24 +4454,11 @@ function econxIcEff(type, n){
   return eff;
 }
 
-function econxNodeCount(gpu, n){
-  return Math.max(1, Math.ceil(n / (gpu.gpu_per_chassis || 8)));
-}
-
-function econxNodeIcEff(nodes){
-  if(nodes <= 1) return 1.0;
-  if(nodes <= 2) return 0.85;
-  if(nodes <= 4) return 0.72;
-  if(nodes <= 8) return 0.60;
-  return 0.50;
-}
-
 function econxDecodeMetrics(modelMemGB, model, n, gpu){
   var readMs = (modelMemGB / n * 1000) / gpu.bandwidth;
-  var nodes = econxNodeCount(gpu, n);
   if(n === 1){
     var effRead = readMs / (gpu.sustained || 1.0);
-    return { read_ms: effRead, comms_ms: 0, node_comms_ms: 0, total_ms: effRead, tps: 1000 / effRead, ic_eff: 1.0, nodes: nodes };
+    return { read_ms: effRead, comms_ms: 0, total_ms: effRead, tps: 1000 / effRead, ic_eff: 1.0 };
   }
   // All-reduce: ring all-reduce sends 2*(N-1)/N * data through the ring
   var arBytes = 2 * model.hidden * 2;
@@ -4463,32 +4468,10 @@ function econxDecodeMetrics(modelMemGB, model, n, gpu){
   var bwMs = (2 * (n - 1) / n * arBytes * nAr) / (effectiveIcBw * 1e9) * 1000;
   var latMs = nAr * gpu.ic_lat / 1000;
   var commMs = bwMs + latMs;
-
-  // Cross-node synchronization is materially slower than within-node NVLink/PCIe fabrics.
-  var nodeCommsMs = 0;
-  if(nodes > 1){
-    var nodeEff = econxNodeIcEff(nodes);
-    var nodeBw = (gpu.node_ic_bw || 200) * nodeEff;
-    var nodeLat = gpu.node_ic_lat || 2.0;
-    var crossNodeShare = (nodes - 1) / nodes;
-    var nodeBwMs = (2 * (n - 1) / n * arBytes * nAr) / (nodeBw * 1e9) * 1000;
-    var nodeLatMs = nAr * nodeLat / 1000;
-    nodeCommsMs = (nodeBwMs + nodeLatMs) * crossNodeShare;
-    commMs += nodeCommsMs;
-  }
-
   // Apply sustained efficiency to all components
   var rawTotal = readMs + commMs;
   var total = rawTotal / (gpu.sustained || 1.0);
-  return {
-    read_ms: readMs / (gpu.sustained || 1.0),
-    comms_ms: commMs / (gpu.sustained || 1.0),
-    node_comms_ms: nodeCommsMs / (gpu.sustained || 1.0),
-    total_ms: total,
-    tps: 1000 / total,
-    ic_eff: icEff,
-    nodes: nodes
-  };
+  return { read_ms: readMs / (gpu.sustained || 1.0), comms_ms: commMs / (gpu.sustained || 1.0), total_ms: total, tps: 1000 / total, ic_eff: icEff };
 }
 
 function econxTTFTMs(model, inputTok, n, gpu){
@@ -4529,16 +4512,6 @@ function econxBuildResult(gpu, model, modelMem, inputTok, outputTok, batch, elec
   var reliabilityOverhead = totalCost - subtotal;
   var tpsEffective = (outputTok * batch) / (totalMs / 1000);
 
-  var nodes = econxNodeCount(gpu, n);
-  var gpusOnMostLoadedNode = Math.min(gpu.gpu_per_chassis || 8, n);
-  var nodeMemGB = gpusOnMostLoadedNode * gpu.vram;
-  var modelAndOvhdPerNode = (modelMem * 1.10) * (gpusOnMostLoadedNode / n);
-  var kvPerUserGB = econxKvCacheGB(model, inputTok + outputTok, 1);
-  var maxUsersNode = kvPerUserGB > 0 ? Math.floor(Math.max(nodeMemGB - modelAndOvhdPerNode, 0) / kvPerUserGB) : 0;
-  if(maxUsersNode < 1) maxUsersNode = 1;
-  var nodesByWorkload = Math.ceil(batch / maxUsersNode);
-  var decodeMsCard = ((modelMem * 1000) / gpu.bandwidth) / (gpu.sustained || 1.0);
-
   return {
     gpu: gpu,
     model: model,
@@ -4547,7 +4520,6 @@ function econxBuildResult(gpu, model, modelMem, inputTok, outputTok, batch, elec
     kv_mem: kvMem,
     total_mem: totalMem,
     decode: decode,
-    decode_ms_card: decodeMsCard,
     ttft_ms: ttft,
     total_ms: totalMs,
     compute_cost: computeCost,
@@ -4559,11 +4531,6 @@ function econxBuildResult(gpu, model, modelMem, inputTok, outputTok, batch, elec
     total_power_kw: totalPowerKw,
     reliability_mult: reliability,
     rack_u: rackU,
-    nodes: nodes,
-    max_users_node: maxUsersNode,
-    nodes_by_workload: nodesByWorkload,
-    node_mem_gb: nodeMemGB,
-    kv_per_user_gb: kvPerUserGB,
     rack_cost_hr: rackCostHr,
     total_cost: totalCost,
     tps_effective: tpsEffective,
@@ -4662,12 +4629,8 @@ function econxMetricValue(metric, r){
   if(!r) return null;
   if(metric === 'gpus') return r.n;
   if(metric === 'rack') return r.rack_u;
-  if(metric === 'nodes') return r.nodes;
-  if(metric === 'max_users_node') return r.max_users_node;
   if(metric === 'ttft') return r.ttft_ms;
-  if(metric === 'decode_card') return r.decode_ms_card;
   if(metric === 'decode') return r.decode.total_ms;
-  if(metric === 'node_penalty') return r.decode.node_comms_ms;
   if(metric === 'tps') return r.tps_effective;
   if(metric === 'time1m') return r.time_for_1m_s;
   if(metric === 'total') return r.total_ms;
@@ -4847,14 +4810,10 @@ function econxUpdate(){
 
   var metrics = [
     { key:'gpus', label:'GPUs needed', best:'min', fmt:function(r){ return r ? econxFmtNum(r.n, 0) + 'x' : 'N/A'; } },
-    { key:'nodes', label:'Nodes required', best:'min', fmt:function(r){ return r ? econxFmtNum(r.nodes, 0) + 'x' : 'N/A'; } },
-    { key:'max_users_node', label:'Max users / node', best:'max', fmt:function(r){ return r ? econxFmtNum(r.max_users_node, 0) : 'N/A'; } },
     { key:'interconnect', label:'Interconnect type', best:'none', fmt:function(r, gpu){ return r ? gpu.interconnect : 'N/A'; } },
-    { key:'node_penalty', label:'Node interconnect / token', best:'min', fmt:function(r){ return r ? econxFmtMs(r.decode.node_comms_ms || 0, 2) : 'N/A'; } },
     { key:'rack', label:'Rack size required', best:'min', fmt:function(r){ return r ? econxFmtNum(r.rack_u, 1) + 'U' : 'N/A'; } },
     { key:'ttft', label:'TTFT (prefill)', best:'min', fmt:function(r){ return r ? econxFmtMs(r.ttft_ms, 1) : 'N/A'; } },
-    { key:'decode_card', label:'Decode / token per card (ms)', best:'min', fmt:function(r){ return r ? econxFmtMs(r.decode_ms_card, 2) : 'N/A'; } },
-    { key:'decode', label:'Decode / token (ms, lower=better)', best:'min', fmt:function(r){ return r ? econxFmtMs(r.decode.total_ms, 2) : 'N/A'; } },
+    { key:'decode', label:'Decode / token', best:'min', fmt:function(r){ return r ? econxFmtMs(r.decode.total_ms, 2) : 'N/A'; } },
     { key:'tps', label:'Tokens/sec', best:'max', fmt:function(r){ return r ? econxFmtNum(r.tps_effective, 1) : 'N/A'; } },
     { key:'total', label:'Total response time', best:'min', fmt:function(r){ return r ? econxFmtResponseTime(r.total_ms) : 'N/A'; } },
     { key:'gpu_power', label:'Power draw / card', best:'min', fmt:function(r){ return r ? econxFmtKw(r.power_per_gpu_kw, 2) : 'N/A'; } },
@@ -4963,7 +4922,7 @@ document.addEventListener('DOMContentLoaded', function(){
   setStorageScenario('heavy');
   econxPopulateGpuSelects();
   econxBuildInterconnectBars();
-  econxSetScaleBatch(ECONX_SCALE_BATCH);
+  econxSetScaleBatch(20);
   tlReset();
   // speed slider label
   var sp = document.getElementById('tl-speed');

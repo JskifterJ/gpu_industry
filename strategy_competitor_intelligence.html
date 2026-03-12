@@ -595,7 +595,7 @@ const LAYERS_DEF = [
 
 const PROVIDERS = [
   {
-    id:'coreweave', name:'CoreWeave', tier:'platinum', model:'Neocloud · Bare Metal + DPU',
+    id:'coreweave', name:'CoreWeave', tier:'platinum', model:'Neocloud',
     headline:'The industry benchmark. Sole Platinum-tier provider. Bare metal with BlueField DPUs for hyperscaler-grade isolation. SUNK is the most mature Slurm-on-K8s solution. Commands 10–15% pricing premium over nearest competitors.',
     scores:{Security:5,Lifecycle:5,Orchestration:5,Storage:5,Networking:5,Reliability:5,Monitoring:5,Pricing:2,Partnerships:5,Availability:4},
     stack:['full','partial','full','partial','full','full','none'],
@@ -614,7 +614,7 @@ const PROVIDERS = [
     uniqueTags:['Industry benchmark']
   },
   {
-    id:'nebius', name:'Nebius', tier:'gold', model:'Neocloud · KubeVirt VM Stack',
+    id:'nebius', name:'Nebius', tier:'gold', model:'Neocloud',
     headline:'CoreWeave\'s closest rival. Bare-metal-equivalent performance via KubeVirt confirmed by MLPerf v5.1 on GB200 NVL72. Only Gold-tier neocloud with robust spot/preemptible market. Open-source Soperator gives full roadmap transparency.',
     scores:{Security:3,Lifecycle:4,Orchestration:4,Storage:4,Networking:4,Reliability:4,Monitoring:3,Pricing:4,Partnerships:3,Availability:4},
     stack:['full','partial','full','partial','full','partial','partial'],
@@ -634,7 +634,7 @@ const PROVIDERS = [
     uniqueTags:['Only Gold neocloud with spot market']
   },
   {
-    id:'oracle', name:'Oracle', tier:'gold', model:'Hyperscaler · 45 Regions',
+    id:'oracle', name:'Oracle', tier:'gold', model:'Hyperscaler',
     headline:'Most cost-effective hyperscaler. Anchors 60%+ of US Stargate. Fastest capacity deployment. Wins enterprise deals with OpenAI, Meta, ByteDance, Nvidia. Oracle Linux default and poor CycleCloud-equivalent UX creates friction.',
     scores:{Security:4,Lifecycle:3,Orchestration:4,Storage:4,Networking:3,Reliability:4,Monitoring:3,Pricing:4,Partnerships:5,Availability:5},
     stack:['full','partial','full','partial','partner','partial','none'],
@@ -653,7 +653,7 @@ const PROVIDERS = [
     uniqueTags:['AGI-neutral hyperscaler']
   },
   {
-    id:'azure', name:'Azure', tier:'gold', model:'Hyperscaler · Enterprise',
+    id:'azure', name:'Azure', tier:'gold', model:'Hyperscaler',
     headline:'Enterprise-grade security and the only hyperscaler deploying InfiniBand + SHARP at scale. AKS (Kubernetes) is strong; CycleCloud (Slurm) is weak and user-burden-heavy. OpenAI anchor tenant consuming most capacity.',
     scores:{Security:5,Lifecycle:3,Orchestration:3,Storage:4,Networking:4,Reliability:3,Monitoring:3,Pricing:2,Partnerships:4,Availability:3},
     stack:['full','full','full','partial','full','full','partial'],
@@ -672,7 +672,7 @@ const PROVIDERS = [
     uniqueTags:['Only hyperscaler with IB+SHARP']
   },
   {
-    id:'fluidstack', name:'FluidStack', tier:'gold', model:'Operator · Zero Owned Infra',
+    id:'fluidstack', name:'FluidStack', tier:'gold', model:'Neocloud',
     headline:'No owned infrastructure — turns partner DCs into Gold-tier experiences. Unique forward-deployed engineering model. Google-backstopped via Terawulf/Cipher capacity. Meta, Poolside, Blackforest Labs customers.',
     scores:{Security:3,Lifecycle:4,Orchestration:4,Storage:3,Networking:4,Reliability:3,Monitoring:4,Pricing:4,Partnerships:4,Availability:3},
     stack:['none','none','full','partial','partner','full','none'],
@@ -691,7 +691,7 @@ const PROVIDERS = [
     uniqueTags:['Operator-as-a-Service']
   },
   {
-    id:'crusoe', name:'Crusoe', tier:'gold', model:'Neocloud · VM (cloud-hypervisor)',
+    id:'crusoe', name:'Crusoe', tier:'gold', model:'Neocloud',
     headline:'3.4GW claimed DC footprint. Oracle JV on Stargate (Abilene). SonK is early-stage and not production-ready. Engineering culture concerns with key IC departures. Pivoting from cloud provider to DC infrastructure.',
     scores:{Security:3,Lifecycle:3,Orchestration:2,Storage:3,Networking:3,Reliability:3,Monitoring:3,Pricing:3,Partnerships:4,Availability:4},
     stack:['full','partial','limited','partial','partial','partial','none'],
@@ -709,7 +709,7 @@ const PROVIDERS = [
     uniqueTags:['Digital Flare Mitigation']
   },
   {
-    id:'gcp', name:'Google Cloud', tier:'silver', model:'Hyperscaler · Full Stack',
+    id:'gcp', name:'Google Cloud', tier:'silver', model:'Hyperscaler',
     headline:'Best-in-class GKE Kubernetes with Kueue/JobSet out of the box. CoMMA straggler detection unique. gIB plugin UX creates friction. NVL36×2 not true NVL72. Fast-tracking to Gold — strongest silver provider.',
     scores:{Security:4,Lifecycle:3,Orchestration:5,Storage:4,Networking:3,Reliability:3,Monitoring:4,Pricing:2,Partnerships:4,Availability:4},
     stack:['full','full','full','full','full','full','full'],
@@ -728,7 +728,7 @@ const PROVIDERS = [
     uniqueTags:['CoMMA straggler detection']
   },
   {
-    id:'aws', name:'AWS', tier:'silver', model:'Hyperscaler · Full Stack',
+    id:'aws', name:'AWS', tier:'silver', model:'Hyperscaler',
     headline:'World\'s largest cloud. SageMaker HyperPod setup took SemiAnalysis 14 hours and 4 attempts. EFA is opaque vs InfiniBand. Monitoring near-absent for Slurm. Ecosystem lock-in is the real moat.',
     scores:{Security:4,Lifecycle:1,Orchestration:2,Storage:4,Networking:2,Reliability:3,Monitoring:2,Pricing:2,Partnerships:4,Availability:5},
     stack:['full','full','partial','full','full','full','full'],
@@ -747,7 +747,7 @@ const PROVIDERS = [
     uniqueTags:['Custom AI silicon at scale']
   },
   {
-    id:'together', name:'Together.ai', tier:'silver', model:'Neocloud + Inference API',
+    id:'together', name:'Together.ai', tier:'silver', model:'Orchestrator',
     headline:'Serverless inference endpoint business offsets idle cluster compute. TKC/FlashAttention is a genuine kernel differentiator. #1 in customer reliability complaints due to multi-DC partner variance. Instant Clusters (KubeVirt+Slinky) is promising.',
     scores:{Security:3,Lifecycle:3,Orchestration:4,Storage:3,Networking:3,Reliability:2,Monitoring:3,Pricing:4,Partnerships:3,Availability:3},
     stack:['partner','partial','full','full','full','partial','full'],
@@ -765,7 +765,7 @@ const PROVIDERS = [
     uniqueTags:['Dedicated kernel team']
   },
   {
-    id:'lambda', name:'Lambda', tier:'silver', model:'Neocloud · HPC Background',
+    id:'lambda', name:'Lambda', tier:'silver', model:'Neocloud',
     headline:'Largest on-demand GPU fleet but frequently sold out. Deep HPC hardware expertise not yet translated to polished cloud UX. Microsoft $1.5B+ deal. Exiting inference API to focus purely on clusters.',
     scores:{Security:3,Lifecycle:2,Orchestration:3,Storage:3,Networking:3,Reliability:3,Monitoring:2,Pricing:3,Partnerships:4,Availability:4},
     stack:['full','partial','partial','partial','partner','limited','none'],
@@ -783,7 +783,7 @@ const PROVIDERS = [
     uniqueTags:['Largest OD fleet when available']
   },
   {
-    id:'scaleway', name:'Scaleway', tier:'silver', model:'Sovereign EU Cloud',
+    id:'scaleway', name:'Scaleway', tier:'silver', model:'Neocloud',
     headline:'EU GDPR-sovereign premium. Slurm-only (no Kubernetes strategy). Spectrum-X RoCE. Targets funded European AI startups. H100 only; no Blackwell yet. Strong niche, limited TAM.',
     scores:{Security:3,Lifecycle:3,Orchestration:2,Storage:2,Networking:3,Reliability:3,Monitoring:3,Pricing:3,Partnerships:2,Availability:2},
     stack:['full','partial','partial','none','limited','partial','none'],
@@ -801,7 +801,7 @@ const PROVIDERS = [
     uniqueTags:['EU data sovereignty']
   },
   {
-    id:'gcore', name:'GCORE', tier:'silver', model:'CDN→GPU · European Multi-DC',
+    id:'gcore', name:'GCORE', tier:'silver', model:'Neocloud',
     headline:'Enterprise-grade hyperscaler-style console. EU+US footprint. Kubernetes solid OOB with VAST storage. Monitoring and health checks entirely left to the user — a significant gap for production training.',
     scores:{Security:4,Lifecycle:3,Orchestration:3,Storage:3,Networking:3,Reliability:3,Monitoring:1,Pricing:3,Partnerships:3,Availability:3},
     stack:['full','partial','partial','none','partner','partial','none'],
@@ -819,7 +819,7 @@ const PROVIDERS = [
     uniqueTags:['PCI DSS + GPU cloud']
   },
   {
-    id:'vultr', name:'Vultr', tier:'silver', model:'Traditional Cloud → GPU',
+    id:'vultr', name:'Vultr', tier:'silver', model:'Neocloud',
     headline:'32 global regions. AMD MI355X (AMD-backed) + Nvidia B200. CVEs found in testing. Cluster features early-stage but improving rapidly. Joined NVIDIA embargo program. Motivated AMD to create their own security program.',
     scores:{Security:2,Lifecycle:3,Orchestration:2,Storage:3,Networking:3,Reliability:2,Monitoring:2,Pricing:3,Partnerships:4,Availability:4},
     stack:['full','partial','limited','partial','partial','limited','none'],
@@ -837,7 +837,7 @@ const PROVIDERS = [
     uniqueTags:['Catalyzed AMD security program']
   },
   {
-    id:'voltagep', name:'Voltage Park', tier:'silver', model:'Neocloud · Reformed · H100-only',
+    id:'voltagep', name:'Voltage Park', tier:'silver', model:'Neocloud',
     headline:'Lowest prices in the market. H100-only today. SonK foundation improving rapidly (24-hour turnaround on feedback). Manual failure remediation. CVE vulnerabilities. Recovering from reputational issues; strong technical foundation.',
     scores:{Security:2,Lifecycle:3,Orchestration:3,Storage:3,Networking:3,Reliability:2,Monitoring:1,Pricing:5,Partnerships:2,Availability:2},
     stack:['partial','partial','partial','none','partial','limited','none'],
@@ -855,7 +855,7 @@ const PROVIDERS = [
     uniqueTags:['Cheapest H100 in market']
   },
   {
-    id:'tensorwave', name:'TensorWave', tier:'silver', model:'AMD-Exclusive · MI325X',
+    id:'tensorwave', name:'TensorWave', tier:'silver', model:'Neocloud',
     headline:'AMD-only (8,192 MI325X, Tucson AZ). $100M Series A from AMD Ventures. 7 outages in 2-month testing window. No DCGM equivalent for AMD (RDC-based monitoring absent). Team is responsive but ops maturity is early.',
     scores:{Security:3,Lifecycle:2,Orchestration:2,Storage:3,Networking:3,Reliability:1,Monitoring:1,Pricing:3,Partnerships:4,Availability:2},
     stack:['full','partial','limited','partial','partner','limited','none'],
