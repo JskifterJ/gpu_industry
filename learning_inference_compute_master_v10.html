@@ -390,14 +390,28 @@ details>summary::-webkit-details-marker{display:none;}
 .tf-dyn-t-output{border-color:rgba(232,160,32,.35);background:rgba(232,160,32,.08);}
 .tf-dyn-t-output .tf-dyn-stage-title{color:var(--amber);}
 
-/* EMBEDDING SPACE (3D ANALOGY) */
+/* EMBEDDING SPACE TRACKER */
 .emb3d-wrap{background:rgba(255,255,255,.03);border:1px solid var(--border2);border-radius:10px;padding:14px 16px;margin-bottom:18px;}
 .emb3d-h{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:9px;}
 .emb3d-title{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--cyan);text-transform:uppercase;letter-spacing:.08em;}
 .emb3d-btns{display:flex;gap:6px;flex-wrap:wrap;}
 .emb3d-btn{font-family:'IBM Plex Mono',monospace;font-size:8.5px;padding:4px 10px;border-radius:4px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;}
 .emb3d-btn.on{border-color:var(--cyan);background:rgba(26,191,208,.12);color:var(--cyan);}
-.emb3d-canvas{width:100%;height:280px;display:block;border-radius:8px;border:1px solid var(--border2);background:rgba(0,0,0,.35);}
+.emb3d-canvas{width:100%;height:300px;display:block;border-radius:8px;border:1px solid var(--border2);background:rgba(0,0,0,.35);}
+.emb3d-controls{display:grid;grid-template-columns:auto 1fr auto auto;gap:8px;align-items:center;margin-top:10px;}
+.emb3d-play{font-family:'IBM Plex Mono',monospace;font-size:8.5px;padding:4px 10px;border-radius:4px;border:1px solid var(--border2);background:rgba(255,255,255,.03);color:var(--ink);cursor:pointer;}
+.emb3d-speed{font-family:'IBM Plex Mono',monospace;font-size:8.5px;padding:4px 8px;border-radius:4px;border:1px solid var(--border2);background:var(--panel2);color:var(--ink);}
+.emb3d-ctrl-label{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;}
+.emb3d-layer{width:100%;accent-color:var(--cyan);}
+.emb3d-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
+.emb3d-card{background:rgba(255,255,255,.03);border:1px solid var(--border2);border-radius:7px;padding:8px 10px;}
+.emb3d-card h4{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;}
+.emb3d-card p{font-size:11px;color:var(--muted);line-height:1.5;}
+.emb3d-stage-name{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--ink);margin-bottom:4px;}
+.emb3d-array{font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--ink);line-height:1.7;word-break:break-all;}
+.emb3d-array .dim{color:var(--cyan);}
+.emb3d-array .delta-pos{color:var(--green);}
+.emb3d-array .delta-neg{color:var(--red);}
 .emb3d-note{margin-top:9px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);line-height:1.6;}
 
 /* QUANTIZATION + MODEL SIZE VISUAL SIMPLIFICATION */
@@ -414,6 +428,8 @@ details>summary::-webkit-details-marker{display:none;}
   .tf-dyn-track{display:grid;grid-template-columns:1fr;overflow:visible;}
   .tf-dyn-stage{min-width:0;}
   .tf-dyn-link{min-width:0;justify-content:flex-start;padding-left:8px;transform:rotate(90deg);height:16px;}
+  .emb3d-controls{grid-template-columns:1fr;}
+  .emb3d-meta{grid-template-columns:1fr;}
 }
 
 /* MISC */
@@ -515,7 +531,28 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
       </div>
     </div>
     <canvas id="emb3d-canvas" class="emb3d-canvas"></canvas>
-    <div id="emb3d-note" class="emb3d-note"><strong style="color:var(--cyan);">Prefill:</strong> all prompt tokens are processed together and can attend to each other in one pass. <strong style="color:var(--amber);">Decode:</strong> one new token is added each step, attending over cached history.</div>
+    <div class="emb3d-controls">
+      <button id="emb3d-play" class="emb3d-play" onclick="toggleEmb3dPlay()">Play layers</button>
+      <input id="emb3d-layer" class="emb3d-layer" type="range" min="1" max="80" value="1" oninput="setEmb3dLayer(parseInt(this.value,10), true)">
+      <span id="emb3d-layer-label" class="emb3d-ctrl-label">Layer 1 / 80</span>
+      <select id="emb3d-speed" class="emb3d-speed" onchange="setEmb3dSpeed(this.value)">
+        <option value="slow">Slow</option>
+        <option value="medium" selected>Medium</option>
+        <option value="fast">Fast</option>
+      </select>
+    </div>
+    <div class="emb3d-meta">
+      <div class="emb3d-card">
+        <h4>Layer Effect</h4>
+        <div id="emb3d-stage-name" class="emb3d-stage-name">Layer 1-16: grammar and word placement scaffolding</div>
+        <p id="emb3d-stage-desc">Attention builds sentence structure and local dependencies; FFN starts shaping short-range language patterns.</p>
+      </div>
+      <div class="emb3d-card">
+        <h4>Tracked Hidden Array (First 8 dims)</h4>
+        <div id="emb3d-array" class="emb3d-array"></div>
+      </div>
+    </div>
+    <div id="emb3d-note" class="emb3d-note"><strong style="color:var(--cyan);">What “local features” means:</strong> punctuation style, nearby phrase templates, capitalization behavior, short-range syntax cues, and token-level formatting patterns. Later layers add longer-range relations and factual retrieval.</div>
   </div>
 
   <!-- PART 1: PLAIN ENGLISH INTRO -->
@@ -1839,18 +1876,126 @@ function setQuant(bytes, name){
   calcModelSize();
 }
 
-var _emb3dPhase = 'prefill';
+var EMB3D = {
+  phase: 'prefill',
+  layer: 1,
+  playing: false,
+  lastTs: 0,
+  speedMs: 650,
+  baseVec: [0.18,-0.44,0.07,0.31,-0.12,0.22,-0.05,0.11],
+  targetDecode: [0.84,-0.16,0.70,0.76,0.58,0.51,0.73,0.66],
+  targetPrefill: [0.56,-0.20,0.33,0.47,0.24,0.29,0.37,0.30]
+};
+
+function setEmb3dSpeed(v){
+  EMB3D.speedMs = v === 'slow' ? 950 : (v === 'fast' ? 280 : 650);
+}
+
+function toggleEmb3dPlay(){
+  if(EMB3D.layer >= 80){
+    EMB3D.layer = 1;
+    setEmb3dLayer(1, false);
+  }
+  EMB3D.playing = !EMB3D.playing;
+  var btn = document.getElementById('emb3d-play');
+  if(btn) btn.textContent = EMB3D.playing ? 'Pause layers' : 'Play layers';
+}
+
 function setEmb3dPhase(phase){
-  _emb3dPhase = phase;
+  EMB3D.phase = phase;
+  EMB3D.layer = 1;
+  EMB3D.playing = false;
   var pre = document.getElementById('emb3d-prefill');
   var dec = document.getElementById('emb3d-decode');
   if(pre) pre.classList.toggle('on', phase === 'prefill');
   if(dec) dec.classList.toggle('on', phase === 'decode');
+  var playBtn = document.getElementById('emb3d-play');
+  if(playBtn) playBtn.textContent = 'Play layers';
+  setEmb3dLayer(1, false);
   var note = document.getElementById('emb3d-note');
   if(note){
     note.innerHTML = phase === 'prefill'
-      ? '<strong style="color:var(--cyan);">Prefill:</strong> all prompt tokens are processed together and can attend to each other in one pass. <strong style="color:var(--amber);">Decode:</strong> one new token is added each step, attending over cached history.'
-      : '<strong style="color:var(--amber);">Decode:</strong> one new token is generated each loop from the current hidden state, while keys/values from prior tokens are reused from cache. <strong style="color:var(--cyan);">Prefill:</strong> remains the parallel prompt-processing stage.';
+      ? '<strong style="color:var(--cyan);">Prefill:</strong> all prompt tokens run through the same layer index together. You are seeing the tracked "last prompt token" while neighboring tokens form grammar and context constraints in parallel.'
+      : '<strong style="color:var(--amber);">Decode:</strong> one token candidate is refined layer-by-layer. Early layers shape grammar/placement, mid layers add local phrase features, and later layers inject facts/relations that pull the vector toward the capital-city cluster.';
+  }
+}
+
+function setEmb3dLayer(layer, fromSlider){
+  EMB3D.layer = Math.max(1, Math.min(80, layer || 1));
+  if(fromSlider){
+    EMB3D.playing = false;
+    var btn = document.getElementById('emb3d-play');
+    if(btn) btn.textContent = 'Play layers';
+  }
+  var sl = document.getElementById('emb3d-layer');
+  if(sl && !fromSlider) sl.value = EMB3D.layer;
+  var lbl = document.getElementById('emb3d-layer-label');
+  if(lbl) lbl.textContent = 'Layer ' + EMB3D.layer + ' / 80';
+  emb3dUpdateMeta();
+}
+
+function emb3dEase(t){
+  return t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t + 2, 2)/2;
+}
+
+function emb3dStageInfo(layer){
+  if(layer <= 16) return {
+    name: 'Layers 1-16: grammar + placement scaffolding',
+    desc: 'Attention: resolves short syntax links (article -> noun, noun -> verb). FFN: strengthens local formatting cues (capitalization, punctuation, phrase templates).'
+  };
+  if(layer <= 36) return {
+    name: 'Layers 17-36: local feature composition',
+    desc: 'Attention: combines nearby phrase evidence. FFN: builds local features such as title-case pattern, city-name morphology, and sentence continuation style.'
+  };
+  if(layer <= 56) return {
+    name: 'Layers 37-56: relation routing',
+    desc: 'Attention: routes to relevant context tokens ("capital", "France"). FFN: amplifies relation features like country->capital mapping candidates.'
+  };
+  if(layer <= 72) return {
+    name: 'Layers 57-72: factual retrieval pressure',
+    desc: 'Attention: heavier pull from fact-bearing context directions. FFN: increases confidence on factual entity subspace and suppresses unrelated clusters.'
+  };
+  return {
+    name: 'Layers 73-80: output alignment',
+    desc: 'Attention + FFN finalize the hidden state so output projection aligns strongly with the capital-city token directions (e.g. Paris, Lyon second-best).'
+  };
+}
+
+function emb3dVectorAt(layer){
+  var t = emb3dEase((layer - 1) / 79);
+  var target = EMB3D.phase === 'decode' ? EMB3D.targetDecode : EMB3D.targetPrefill;
+  var v = [];
+  for(var i=0; i<8; i++){
+    var base = EMB3D.baseVec[i];
+    var dst = target[i];
+    var stageWiggle = 0;
+    if(layer <= 16) stageWiggle = Math.sin(layer*0.22 + i*0.8) * 0.015;
+    else if(layer <= 36) stageWiggle = Math.sin(layer*0.18 + i*0.6) * 0.028;
+    else if(layer <= 56) stageWiggle = Math.sin(layer*0.15 + i*0.55) * 0.020;
+    else stageWiggle = Math.sin(layer*0.1 + i*0.4) * 0.010;
+    v.push(base + (dst - base) * t + stageWiggle);
+  }
+  return v;
+}
+
+function emb3dUpdateMeta(){
+  var info = emb3dStageInfo(EMB3D.layer);
+  var stageName = document.getElementById('emb3d-stage-name');
+  var stageDesc = document.getElementById('emb3d-stage-desc');
+  if(stageName) stageName.textContent = info.name;
+  if(stageDesc) stageDesc.textContent = info.desc;
+
+  var cur = emb3dVectorAt(EMB3D.layer);
+  var prev = emb3dVectorAt(Math.max(1, EMB3D.layer - 1));
+  var arrayEl = document.getElementById('emb3d-array');
+  if(arrayEl){
+    var parts = [];
+    for(var i=0; i<cur.length; i++){
+      var d = cur[i] - prev[i];
+      var cls = d >= 0 ? 'delta-pos' : 'delta-neg';
+      parts.push('<span class="dim">h[' + i + ']</span>=' + cur[i].toFixed(3) + ' <span class="' + cls + '">' + (d>=0?'+':'') + d.toFixed(3) + '</span>');
+    }
+    arrayEl.innerHTML = parts.join(' &nbsp;|&nbsp; ');
   }
 }
 
@@ -1867,9 +2012,34 @@ function initEmb3dCanvas(){
   return { ctx: ctx, w: w, h: h };
 }
 
+function emb3dProject(x, y, z, c){
+  return {
+    x: c.x + x*c.rx + z*22,
+    y: c.y + y*c.ry - z*16,
+    z: z
+  };
+}
+
 function drawEmb3d(ts){
   var state = initEmb3dCanvas();
   if(!state) return;
+  if(!EMB3D.lastTs) EMB3D.lastTs = ts;
+  var dt = ts - EMB3D.lastTs;
+  EMB3D.lastTs = ts;
+
+  if(EMB3D.playing){
+    EMB3D._acc = (EMB3D._acc || 0) + dt;
+    if(EMB3D._acc >= EMB3D.speedMs){
+      EMB3D._acc = 0;
+      if(EMB3D.layer < 80) setEmb3dLayer(EMB3D.layer + 1, false);
+      else {
+        EMB3D.playing = false;
+        var b = document.getElementById('emb3d-play');
+        if(b) b.textContent = 'Replay from layer 1';
+      }
+    }
+  }
+
   var ctx = state.ctx, w = state.w, h = state.h;
   var isLight = document.body.classList.contains('light');
   ctx.clearRect(0,0,w,h);
@@ -1885,50 +2055,71 @@ function drawEmb3d(ts){
     ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke();
   }
 
-  var cx = w*0.5, cy = h*0.56, rx = Math.max(90, w*0.34), ry = h*0.24;
-  var count = _emb3dPhase === 'prefill' ? 8 : 1;
-  var labels = _emb3dPhase === 'prefill' ? ['The','capital','of','France','is','in','Europe','.'] : ['Paris'];
-  var pts = [];
-  for(var i=0; i<count; i++){
-    var a = (i/Math.max(count,1))*Math.PI*2 + ts*0.00035;
-    var x3 = Math.cos(a), y3 = Math.sin(a*1.27), z3 = Math.sin(a*0.63 + 1.1);
-    pts.push({
-      x: cx + x3*rx + z3*24,
-      y: cy + y3*ry - z3*14,
-      z: z3,
-      lbl: labels[i] || ('t'+i)
-    });
+  var c = { x:w*0.52, y:h*0.56, rx:Math.max(92,w*0.32), ry:h*0.22 };
+  var clusters = [
+    { n:'CAPITAL CITIES', x: 0.76, y:-0.24, z:0.62, col: isLight ? '#0f766e' : '#34d399' },
+    { n:'COUNTRIES',      x: 0.52, y:-0.05, z:0.34, col: isLight ? '#0369a1' : '#38bdf8' },
+    { n:'FOODS',          x:-0.58, y: 0.24, z:-0.22, col: isLight ? '#b45309' : '#f59e0b' },
+    { n:'ANIMALS',        x:-0.72, y:-0.14, z: 0.12, col: isLight ? '#6d28d9' : '#a78bfa' },
+    { n:'PROGRAMMING',    x: 0.15, y: 0.46, z:-0.36, col: isLight ? '#be123c' : '#fb7185' }
+  ];
+  clusters.forEach(function(cl){
+    var p = emb3dProject(cl.x, cl.y, cl.z, c);
+    ctx.fillStyle = cl.col;
+    ctx.globalAlpha = 0.75;
+    ctx.beginPath(); ctx.arc(p.x, p.y, 9, 0, Math.PI*2); ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = isLight ? '#1f2937' : '#cbd5e1';
+    ctx.font = '10px IBM Plex Mono';
+    ctx.fillText(cl.n, p.x + 12, p.y + 3);
+  });
+
+  var path = [];
+  for(var l=1; l<=EMB3D.layer; l++){
+    var v = emb3dVectorAt(l);
+    path.push(emb3dProject(v[0], v[1], v[2], c));
+  }
+  if(path.length > 1){
+    ctx.strokeStyle = isLight ? 'rgba(16,185,129,.42)' : 'rgba(34,197,94,.55)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(path[0].x, path[0].y);
+    for(var pi=1; pi<path.length; pi++) ctx.lineTo(path[pi].x, path[pi].y);
+    ctx.stroke();
   }
 
-  var link = isLight ? 'rgba(40,170,130,.30)' : 'rgba(48,200,112,.40)';
-  if(_emb3dPhase === 'prefill'){
-    for(var p=0; p<pts.length; p++){
-      for(var q=p+1; q<pts.length; q++){
-        if((p+q)%3===0){
-          ctx.strokeStyle = link;
-          ctx.beginPath(); ctx.moveTo(pts[p].x, pts[p].y); ctx.lineTo(pts[q].x, pts[q].y); ctx.stroke();
-        }
-      }
+  var cur = path[path.length-1];
+  var label = EMB3D.phase === 'decode' ? 'candidate next token state' : 'tracked prompt-token state';
+  if(cur){
+    ctx.fillStyle = isLight ? '#dc2626' : '#ff6b6b';
+    ctx.beginPath(); ctx.arc(cur.x, cur.y, 7, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = isLight ? '#111827' : '#e2e8f0';
+    ctx.font = '11px IBM Plex Mono';
+    ctx.fillText(label, cur.x + 10, cur.y - 9);
+  }
+
+  if(EMB3D.phase === 'prefill'){
+    var toks = ['The','capital','of','France','is'];
+    for(var ti=0; ti<toks.length; ti++){
+      var av = emb3dVectorAt(Math.max(1, EMB3D.layer - (ti%3)));
+      var p2 = emb3dProject(av[0] - 0.16 + ti*0.07, av[1] + 0.08 - ti*0.03, av[2] - 0.05 + ti*0.04, c);
+      ctx.fillStyle = isLight ? 'rgba(37,99,235,.65)' : 'rgba(96,165,250,.72)';
+      ctx.beginPath(); ctx.arc(p2.x, p2.y, 4.3, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = isLight ? '#1f2937' : '#94a3b8';
+      ctx.font = '9px IBM Plex Mono';
+      ctx.fillText(toks[ti], p2.x + 6, p2.y + 3);
     }
   } else {
     for(var k=0; k<7; k++){
-      var tx = cx - rx + (k/6)*(2*rx);
-      var ty = cy + Math.sin((k*0.75)+(ts*0.002))*8 + 24;
-      ctx.fillStyle = isLight ? 'rgba(40,50,70,.28)' : 'rgba(212,208,200,.28)';
-      ctx.beginPath(); ctx.arc(tx, ty, 3.4, 0, Math.PI*2); ctx.fill();
-      ctx.strokeStyle = link;
-      ctx.beginPath(); ctx.moveTo(tx,ty); ctx.lineTo(pts[0].x,pts[0].y); ctx.stroke();
+      var tx = c.x - c.rx + (k/6)*(2*c.rx);
+      var ty = c.y + Math.sin((k*0.8)+(ts*0.002))*8 + 22;
+      ctx.fillStyle = isLight ? 'rgba(40,50,70,.27)' : 'rgba(212,208,200,.27)';
+      ctx.beginPath(); ctx.arc(tx, ty, 3.2, 0, Math.PI*2); ctx.fill();
+      if(cur){
+        ctx.strokeStyle = isLight ? 'rgba(16,185,129,.25)' : 'rgba(34,197,94,.32)';
+        ctx.beginPath(); ctx.moveTo(tx,ty); ctx.lineTo(cur.x,cur.y); ctx.stroke();
+      }
     }
-  }
-
-  pts.sort(function(a,b){ return a.z-b.z; });
-  for(var n=0; n<pts.length; n++){
-    var r = 4.2 + (pts[n].z+1)*2.2;
-    ctx.fillStyle = isLight ? '#C94D4D' : '#FF6B6B';
-    ctx.beginPath(); ctx.arc(pts[n].x, pts[n].y, r, 0, Math.PI*2); ctx.fill();
-    ctx.fillStyle = isLight ? '#1F2937' : '#D4D0C8';
-    ctx.font = '11px IBM Plex Mono';
-    ctx.fillText(pts[n].lbl, pts[n].x + 8, pts[n].y - 7);
   }
 
   window.requestAnimationFrame(drawEmb3d);
