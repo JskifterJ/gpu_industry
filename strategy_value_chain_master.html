@@ -1941,8 +1941,8 @@ body.theme-light .btn.nav-active{
       <div class="sf-layer" style="background:#E2F0FD;border:1px solid #9FD1F5;">
         <div class="sf-num" style="color:#6B7280;">2</div>
         <div class="sf-content">
-          <div class="sf-name" style="color:#1E40AF;">Firmware, Drivers &amp; Compute Libraries</div>
-          <div class="sf-desc" style="color:#374151;">The software layer that bridges your AI code and the physical GPU hardware. CUDA is NVIDIA's programming language for GPUs — it\'s the dominant standard, like Windows for PCs. NCCL (pronounced 'Nickel') coordinates communication between multiple GPUs during training, like a conductor keeping an orchestra in sync. PyTorch and JAX are the frameworks AI researchers write their models in.</div>
+          <div class="sf-name" style="color:#1E40AF;">L2: Hardware Abstraction Layer (HAL)</div>
+          <div class="sf-desc" style="color:#374151;">The software layer that bridges AI code to physical GPU hardware, defining compute capability and performance baseline. <strong>CUDA</strong> is NVIDIA's programming language — the dominant standard (90%+ of ML workloads), like Windows for GPUs. <strong>NCCL</strong> (pronounced 'Nickel') orchestrates multi-GPU communication 100× faster than IP-based alternatives; collective operations (AllReduce, AllGather) run synchronously during every training backward pass. <strong>PyTorch, JAX, TensorFlow</strong> compile to CUDA kernels. Custom kernels (FlashAttention, Triton) exploit GPU-specific architecture for 10–100× speedups on critical operations.</div>
           <div class="sf-bms">
             <div class="sf-bm owner"><div class="sf-bm-dot" style="background:#2563EB"></div><span class="sf-bm-name">Hyperscaler</span><span class="sf-tag"style="background:#DBEAFE;color:#111827;border:1px solid #2563EB33">custom kernels + XLA</span></div>
             <div class="sf-bm owner"><div class="sf-bm-dot" style="background:#059669"></div><span class="sf-bm-name">Neocloud</span><span class="sf-tag"style="background:#D1FAE5;color:#111827;border:1px solid #05966933">manages CUDA fleet</span></div>
@@ -1984,7 +1984,7 @@ body.theme-light .btn.nav-active{
           <div class="sf-num" style="color:#6B7280;">4/5</div>
           <div class="sf-content">
             <div class="sf-name" style="color:#1E3A6E;">Workload Execution, MLOps &amp; Data Pipelines</div>
-            <div class="sf-desc" style="color:#374151;">Three parallel workload channels (split below) plus cross-cutting MLOps. Key BM divergence: Hyperscaler and Inf. API / Model Provider own the training stack. Neocloud provides the compute. DePIN struggles with training but viable for inference/fine-tune.</div>
+            <div class="sf-desc" style="color:#374151;">Three parallel workload channels (split below) plus cross-cutting MLOps. <strong>L4 Execution</strong> is where the computational work happens — training distributes batches across all GPUs via NCCL, inference batches requests using continuous batching engines (vLLM, TensorRT-LLM) that maximize GPU utilization. <strong>L5 Data Pipelines</strong> feeds the workloads: training data at petabyte scale requires GPU-direct I/O and prefetching to saturate GPU memory bandwidth (~1.4TB/s for H100 HBM3e). MLOps cross-cuts both: experiment tracking, model versioning, eval gates, CI/CD automation ensures reproducibility and quality gates before deployment. <strong>Key BM divergence</strong>: Hyperscaler and Inf. API / Model Provider own end-to-end stacks (data to model). Neocloud provides raw compute infrastructure. DePIN struggles with training due to IB topology but viable for inference/fine-tune.</div>
           </div>
         </div>
         <div class="sf-split">
