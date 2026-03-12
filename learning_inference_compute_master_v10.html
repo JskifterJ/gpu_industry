@@ -4340,14 +4340,16 @@ var ECONX_IC_EFF = {
 };
 
 var ECONX_GPUS = {
-  'L40S 48GB':      { vram:48, bandwidth:864, tflops:733, tdp:350, interconnect:'PCIe 5.0',   ic_bw:64,  ic_lat:5.0, ic_type:'pcie',   price:1.88, sustained:0.95, chassis_u:4, gpu_per_chassis:8, ecc:true, color:'#7c3aed' },
-  'A40':            { vram:48, bandwidth:696, tflops:149, tdp:300, interconnect:'PCIe 4.0',   ic_bw:32,  ic_lat:6.0, ic_type:'pcie',   price:1.32, sustained:0.94, chassis_u:2, gpu_per_chassis:4, ecc:true, color:'#2dd4bf' },
-  'RTX 4090':       { vram:24, bandwidth:1008,tflops:165, tdp:450, interconnect:'PCIe 4.0',   ic_bw:32,  ic_lat:7.0, ic_type:'pcie',   price:0.29, sustained:0.76, chassis_u:4, gpu_per_chassis:4, ecc:false,color:'#16a34a' },
-  'A100 SXM4 80GB': { vram:80, bandwidth:2000,tflops:312, tdp:400, interconnect:'NVLink 3.0', ic_bw:600, ic_lat:1.2, ic_type:'nvlink', price:1.87, sustained:0.96, chassis_u:6, gpu_per_chassis:8, ecc:true, color:'#06b6d4' },
-  'H100 PCIe':      { vram:80, bandwidth:2000,tflops:756, tdp:350, interconnect:'PCIe 5.0',   ic_bw:64,  ic_lat:5.0, ic_type:'pcie',   price:3.33, sustained:0.96, chassis_u:4, gpu_per_chassis:4, ecc:true, color:'#d97706' },
-  'H100 SXM5':      { vram:80, bandwidth:3350,tflops:989, tdp:700, interconnect:'NVLink 4.0', ic_bw:900, ic_lat:0.8, ic_type:'nvlink', price:2.99, sustained:0.97, chassis_u:10,gpu_per_chassis:8, ecc:true, color:'#f59e0b' },
-  'H200 SXM5':      { vram:141,bandwidth:4800,tflops:1979,tdp:700, interconnect:'NVLink 4.0', ic_bw:900, ic_lat:0.8, ic_type:'nvlink', price:4.23, sustained:0.97, chassis_u:10,gpu_per_chassis:8, ecc:true, color:'#fb923c' },
-  'B200 SXM':       { vram:192,bandwidth:8000,tflops:4500,tdp:1000,interconnect:'NVLink 5.0', ic_bw:1800,ic_lat:0.5, ic_type:'nvlink', price:3.94, sustained:0.97, chassis_u:10,gpu_per_chassis:8, ecc:true, color:'#e879f9' }
+  'V100 SXM2 32GB': { vram:32, bandwidth:900, tflops:112, tdp:300, interconnect:'NVLink 2.0', ic_bw:300, ic_lat:2.5, ic_type:'nvlink', price:2.96, sustained:0.94, chassis_u:3, gpu_per_chassis:8, ecc:true, color:'#7c3aed' },
+  'A100 PCIe 40GB': { vram:40, bandwidth:1555, tflops:312, tdp:250, interconnect:'PCIe 4.0', ic_bw:32, ic_lat:6, ic_type:'pcie', price:2.65, sustained:0.95, chassis_u:4, gpu_per_chassis:4, ecc:true, color:'#0284c7' },
+  'A40':            { vram:48, bandwidth:696, tflops:149, tdp:300, interconnect:'PCIe 4.0', ic_bw:32, ic_lat:6, ic_type:'pcie', price:1.32, sustained:0.94, chassis_u:2, gpu_per_chassis:4, ecc:true, color:'#2dd4bf' },
+  'L40S 48GB':      { vram:48, bandwidth:864, tflops:733, tdp:350, interconnect:'PCIe 5.0', ic_bw:64, ic_lat:5, ic_type:'pcie', price:1.88, sustained:0.95, chassis_u:4, gpu_per_chassis:8, ecc:true, color:'#7c3aed' },
+  'A100 SXM4 80GB': { vram:80, bandwidth:2000, tflops:312, tdp:400, interconnect:'NVLink 3.0', ic_bw:600, ic_lat:1.2, ic_type:'nvlink', price:1.87, sustained:0.96, chassis_u:6, gpu_per_chassis:8, ecc:true, color:'#06b6d4' },
+  'H100 PCIe':      { vram:80, bandwidth:2000, tflops:756, tdp:350, interconnect:'PCIe 5.0', ic_bw:64, ic_lat:5, ic_type:'pcie', price:3.33, sustained:0.96, chassis_u:4, gpu_per_chassis:4, ecc:true, color:'#d97706' },
+  'RTX 4090':       { vram:24, bandwidth:1008, tflops:165, tdp:450, interconnect:'PCIe 4.0', ic_bw:32, ic_lat:7, ic_type:'pcie', price:0.29, sustained:0.76, chassis_u:4, gpu_per_chassis:4, ecc:false, color:'#16a34a' },
+  'H100 SXM5':      { vram:80, bandwidth:3350, tflops:989, tdp:700, interconnect:'NVLink 4.0', ic_bw:900, ic_lat:0.8, ic_type:'nvlink', price:2.99, sustained:0.97, chassis_u:10, gpu_per_chassis:8, ecc:true, color:'#f59e0b' },
+  'H200 SXM5':      { vram:141, bandwidth:4800, tflops:1979, tdp:700, interconnect:'NVLink 4.0', ic_bw:900, ic_lat:0.8, ic_type:'nvlink', price:4.23, sustained:0.97, chassis_u:10, gpu_per_chassis:8, ecc:true, color:'#fb923c' },
+  'B200 SXM':       { vram:192, bandwidth:8000, tflops:4500, tdp:1000, interconnect:'NVLink 5.0', ic_bw:1800, ic_lat:0.5, ic_type:'nvlink', price:3.94, sustained:0.97, chassis_u:10, gpu_per_chassis:8, ecc:true, color:'#e879f9' }
 };
 
 var ECONX_MODELS = {
@@ -4434,17 +4436,21 @@ function econxIcEff(type, n){
 function econxDecodeMetrics(modelMemGB, model, n, gpu){
   var readMs = (modelMemGB / n * 1000) / gpu.bandwidth;
   if(n === 1){
-    var effRead = readMs / gpu.sustained;
-    return { read_ms: effRead, comms_ms: 0, total_ms: effRead, tps: 1000 / effRead, ic_eff: 1 };
+    var effRead = readMs / (gpu.sustained || 1.0);
+    return { read_ms: effRead, comms_ms: 0, total_ms: effRead, tps: 1000 / effRead, ic_eff: 1.0 };
   }
+  // All-reduce: ring all-reduce sends 2*(N-1)/N * data through the ring
   var arBytes = 2 * model.hidden * 2;
-  var allReduces = 2 * model.layers;
-  var effIcBw = gpu.ic_bw * econxIcEff(gpu.ic_type, n);
-  var bwMs = (2 * (n - 1) / n * arBytes * allReduces) / (effIcBw * 1e9) * 1000;
-  var latMs = allReduces * gpu.ic_lat / 1000;
-  var comms = bwMs + latMs;
-  var total = (readMs + comms) / gpu.sustained;
-  return { read_ms: readMs / gpu.sustained, comms_ms: comms / gpu.sustained, total_ms: total, tps: 1000 / total, ic_eff: econxIcEff(gpu.ic_type, n) };
+  var nAr = 2 * model.layers;
+  var icEff = econxIcEff(gpu.ic_type, n);
+  var effectiveIcBw = gpu.ic_bw * icEff;
+  var bwMs = (2 * (n - 1) / n * arBytes * nAr) / (effectiveIcBw * 1e9) * 1000;
+  var latMs = nAr * gpu.ic_lat / 1000;
+  var commMs = bwMs + latMs;
+  // Apply sustained efficiency to all components
+  var rawTotal = readMs + commMs;
+  var total = rawTotal / (gpu.sustained || 1.0);
+  return { read_ms: readMs / (gpu.sustained || 1.0), comms_ms: commMs / (gpu.sustained || 1.0), total_ms: total, tps: 1000 / total, ic_eff: icEff };
 }
 
 function econxTTFTMs(model, inputTok, n, gpu){
