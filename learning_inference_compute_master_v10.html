@@ -404,12 +404,12 @@ details>summary::-webkit-details-marker{display:none;}
 .emb3d-ctrl-label{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;}
 .emb3d-layer{width:100%;accent-color:var(--cyan);}
 .emb3d-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
-.emb3d-meta2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+.emb3d-meta2{display:grid;grid-template-columns:1fr;gap:8px;margin-top:8px;}
 .emb3d-card{background:rgba(255,255,255,.03);border:1px solid var(--border2);border-radius:7px;padding:8px 10px;}
 .emb3d-card h4{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;}
 .emb3d-card p{font-size:11px;color:var(--muted);line-height:1.5;}
 .emb3d-stage-name{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--ink);margin-bottom:4px;}
-.emb3d-array{font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--ink);line-height:1.7;word-break:break-all;}
+.emb3d-array{font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--ink);line-height:1.6;display:flex;flex-direction:column;gap:2px;}
 .emb3d-array .dim{color:var(--cyan);}
 .emb3d-array .delta-pos{color:var(--green);}
 .emb3d-array .delta-neg{color:var(--red);}
@@ -418,6 +418,11 @@ details>summary::-webkit-details-marker{display:none;}
 .emb3d-mini .good{color:var(--green);}
 .emb3d-mini .warn{color:var(--amber);}
 .emb3d-mini .bad{color:var(--red);}
+.emb3d-events{display:flex;flex-direction:column;gap:4px;min-height:86px;}
+.emb3d-event{font-family:'IBM Plex Mono',monospace;font-size:8.5px;line-height:1.45;transition:opacity .18s linear, transform .18s linear;}
+.emb3d-process{display:grid;grid-template-columns:1fr 24px 1fr 24px 1fr 24px 1fr;gap:0;align-items:start;}
+.emb3d-proc-col{padding:4px 6px;}
+.emb3d-proc-arrow{display:flex;align-items:center;justify-content:center;color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:12px;padding-top:16px;}
 .emb3d-note{margin-top:9px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);line-height:1.6;}
 
 /* QUANTIZATION + MODEL SIZE VISUAL SIMPLIFICATION */
@@ -437,6 +442,8 @@ details>summary::-webkit-details-marker{display:none;}
   .emb3d-controls{grid-template-columns:1fr;}
   .emb3d-meta{grid-template-columns:1fr;}
   .emb3d-meta2{grid-template-columns:1fr;}
+  .emb3d-process{grid-template-columns:1fr;}
+  .emb3d-proc-arrow{display:none;}
 }
 
 /* MISC */
@@ -561,12 +568,12 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
     </div>
     <div class="emb3d-meta2">
       <div class="emb3d-card">
-        <h4>ID -> Token Path</h4>
-        <div id="emb3d-idpath" class="emb3d-mini"></div>
+        <h4>Learning Trace (Current Layer, Fades Out)</h4>
+        <div id="emb3d-events" class="emb3d-events"></div>
       </div>
       <div class="emb3d-card">
-        <h4>Logits -> Softmax (Toy Vocab)</h4>
-        <div id="emb3d-probs" class="emb3d-mini"></div>
+        <h4>Vector -> Token ID -> Logits -> Softmax</h4>
+        <div id="emb3d-process" class="emb3d-process"></div>
       </div>
     </div>
     <div id="emb3d-note" class="emb3d-note"><strong style="color:var(--cyan);">Green lines in decode:</strong> these are attention reads from cached prior-token states into the current candidate-token state at this layer. <strong style="color:var(--cyan);">What “local features” means:</strong> punctuation style, nearby phrase templates, capitalization behavior, short-range syntax cues, and token-level formatting patterns. Later layers add longer-range relations and factual retrieval.</div>
@@ -1906,25 +1913,93 @@ var EMB3D = {
 };
 
 function emb3dEventForLayer(layer){
-  if(layer <= 8) return { t:'+ grammar scaffold', c:'var(--cyan)' };
-  if(layer <= 16) return { t:'+ token placement priors', c:'var(--cyan)' };
-  if(layer <= 24) return { t:'+ local phrase template', c:'var(--green)' };
-  if(layer <= 36) return { t:'+ capitalization/style cue', c:'var(--green)' };
-  if(layer <= 48) return { t:'+ relation: capital(country, ?)', c:'var(--amber)' };
-  if(layer <= 60) return { t:'+ factual retrieval pressure', c:'var(--amber)' };
-  if(layer <= 72) return { t:'+ suppress unrelated clusters', c:'var(--red)' };
-  return { t:'+ align to vocab logits', c:'var(--green)' };
+  if(layer <= 8) return {
+    c:'var(--cyan)',
+    lines:[
+      'L' + layer + ': parses article->noun grammar links',
+      'attention adds short-range syntax signal',
+      'ffn adds punctuation/case priors',
+      'hidden state moves toward grammatical continuation',
+      'logit gap remains small at this stage'
+    ]
+  };
+  if(layer <= 16) return {
+    c:'var(--cyan)',
+    lines:[
+      'L' + layer + ': token placement becomes clearer',
+      'attention sharpens local word order constraints',
+      'ffn reinforces phrase-slot templates',
+      'vector drifts away from unrelated clusters',
+      'candidate token set narrows'
+    ]
+  };
+  if(layer <= 36) return {
+    c:'var(--green)',
+    lines:[
+      'L' + layer + ': local features accumulate',
+      'attention links "capital" with nearby context',
+      'ffn amplifies city-name morphology patterns',
+      'vector begins moving toward geo-entity region',
+      'Paris/Lyon logits start separating from noise'
+    ]
+  };
+  if(layer <= 56) return {
+    c:'var(--amber)',
+    lines:[
+      'L' + layer + ': relation routing dominates',
+      'attention pulls from "France" and capital relation tokens',
+      'ffn adds country->capital feature interactions',
+      'vector trajectory bends toward capital-city cluster',
+      'incorrect semantic branches are suppressed'
+    ]
+  };
+  if(layer <= 72) return {
+    c:'var(--amber)',
+    lines:[
+      'L' + layer + ': factual retrieval pressure rises',
+      'attention reads deeper cached facts from prior tokens',
+      'ffn boosts fact-consistent coordinates',
+      'vector stabilizes near capital-city manifold',
+      'top logits become strongly concentrated'
+    ]
+  };
+  return {
+    c:'var(--green)',
+    lines:[
+      'L' + layer + ': final output alignment',
+      'attention + ffn perform final calibration',
+      'hidden vector aligns with output vocab directions',
+      'softmax sharpens winner probability',
+      'next token ID is sampled and decoded to text'
+    ]
+  };
 }
 
 function emb3dPushEvent(layer){
   var ev = emb3dEventForLayer(layer);
-  EMB3D.events.push({
-    txt: 'L' + layer + ' ' + ev.t,
-    life: 1.0,
-    y: 0,
-    color: ev.c
+  ev.lines.forEach(function(line, idx){
+    EMB3D.events.push({
+      txt: line,
+      life: 1.0 - idx*0.03,
+      y: 0,
+      color: ev.c
+    });
   });
-  if(EMB3D.events.length > 14) EMB3D.events.shift();
+  if(EMB3D.events.length > 30) EMB3D.events = EMB3D.events.slice(EMB3D.events.length - 30);
+}
+
+function emb3dRenderEvents(){
+  var wrap = document.getElementById('emb3d-events');
+  if(!wrap) return;
+  EMB3D.events.forEach(function(ev){
+    ev.life = Math.max(0, ev.life - 0.012);
+    ev.y += 0.35;
+  });
+  EMB3D.events = EMB3D.events.filter(function(ev){ return ev.life > 0; });
+  var latest = EMB3D.events.slice(-5);
+  wrap.innerHTML = latest.map(function(ev){
+    return '<div class="emb3d-event" style="opacity:' + ev.life.toFixed(3) + ';transform:translateY(' + ev.y.toFixed(1) + 'px);color:' + ev.color + ';">' + ev.txt + '</div>';
+  }).join('');
 }
 
 function setEmb3dSpeed(v){
@@ -2036,34 +2111,47 @@ function emb3dUpdateMeta(){
     for(var i=0; i<cur.length; i++){
       var d = cur[i] - prev[i];
       var cls = d >= 0 ? 'delta-pos' : 'delta-neg';
-      parts.push('<span class="dim">h[' + i + ']</span>=' + cur[i].toFixed(3) + ' <span class="' + cls + '">' + (d>=0?'+':'') + d.toFixed(3) + '</span>');
+      parts.push('<div><span class="dim">h[' + i + ']</span> = ' + cur[i].toFixed(3) + ' &nbsp; <span class="' + cls + '">Δ ' + (d>=0?'+':'') + d.toFixed(3) + '</span></div>');
     }
-    arrayEl.innerHTML = parts.join(' &nbsp;|&nbsp; ');
+    arrayEl.innerHTML = parts.join('');
   }
 
-  var idPath = document.getElementById('emb3d-idpath');
-  if(idPath){
+  var processEl = document.getElementById('emb3d-process');
+  if(processEl){
     var tok = EMB3D.phase === 'decode' ? 'candidate(next)' : 'tracked_prompt_token';
     var tokId = EMB3D.phase === 'decode' ? 14357 : 318;
-    idPath.innerHTML = '<span class="mut">input IDs:</span> [464, 3361, 286, 4881, 318] &rarr; '
-      + '<span class="mut">focus:</span> <strong>' + tok + '</strong> (ID ' + tokId + ')<br>'
-      + '<span class="mut">embedding lookup:</span> ID ' + tokId + ' &rarr; h0 in R<sup>8192</sup><br>'
-      + '<span class="mut">layer update:</span> h<sub>' + EMB3D.layer + '</sub> = h<sub>' + (EMB3D.layer-1) + '</sub> + &Delta;<sub>attn</sub> + &Delta;<sub>ffn</sub>';
-  }
-
-  var probsEl = document.getElementById('emb3d-probs');
-  if(probsEl){
     var p = emb3dToyProbs(EMB3D.layer);
-    probsEl.innerHTML = '<span class="mut">logits:</span> Paris=' + p.logits.paris.toFixed(2)
-      + ', Lyon=' + p.logits.lyon.toFixed(2)
-      + ', Pizza=' + p.logits.pizza.toFixed(2)
-      + ', Other=' + p.logits.other.toFixed(2) + '<br>'
-      + '<span class="mut">softmax:</span> '
-      + '<span class="good">Paris ' + (p.probs.paris*100).toFixed(1) + '%</span> | '
-      + '<span class="warn">Lyon ' + (p.probs.lyon*100).toFixed(1) + '%</span> | '
-      + '<span class="bad">Pizza ' + (p.probs.pizza*100).toFixed(1) + '%</span> | '
-      + '<span class="mut">Other ' + (p.probs.other*100).toFixed(1) + '%</span><br>'
-      + '<span class="mut">across full vocabulary:</span> 1 chosen token sampled from 128,256 token probabilities.';
+    processEl.innerHTML = ''
+      + '<div class="emb3d-proc-col emb3d-mini">'
+      + '<div class="mut">Hidden vector (slice)</div>'
+      + '<div>[' + cur.map(function(v){ return v.toFixed(2); }).join(', ') + ']</div>'
+      + '<div class="mut">Layer rule:</div>'
+      + '<div>h<sub>' + EMB3D.layer + '</sub>=h<sub>' + (EMB3D.layer-1) + '</sub>+Δ<sub>attn</sub>+Δ<sub>ffn</sub></div>'
+      + '</div>'
+      + '<div class="emb3d-proc-arrow">→</div>'
+      + '<div class="emb3d-proc-col emb3d-mini">'
+      + '<div class="mut">Token focus</div>'
+      + '<div><strong>' + tok + '</strong></div>'
+      + '<div class="mut">Token ID</div>'
+      + '<div>' + tokId + '</div>'
+      + '</div>'
+      + '<div class="emb3d-proc-arrow">→</div>'
+      + '<div class="emb3d-proc-col emb3d-mini">'
+      + '<div class="mut">Logits (toy subset)</div>'
+      + '<div>Paris: ' + p.logits.paris.toFixed(2) + '</div>'
+      + '<div>Lyon: ' + p.logits.lyon.toFixed(2) + '</div>'
+      + '<div>Pizza: ' + p.logits.pizza.toFixed(2) + '</div>'
+      + '<div>Other: ' + p.logits.other.toFixed(2) + '</div>'
+      + '</div>'
+      + '<div class="emb3d-proc-arrow">→</div>'
+      + '<div class="emb3d-proc-col emb3d-mini">'
+      + '<div class="mut">Softmax probs</div>'
+      + '<div class="good">Paris: ' + (p.probs.paris*100).toFixed(1) + '%</div>'
+      + '<div class="warn">Lyon: ' + (p.probs.lyon*100).toFixed(1) + '%</div>'
+      + '<div class="bad">Pizza: ' + (p.probs.pizza*100).toFixed(1) + '%</div>'
+      + '<div class="mut">Other: ' + (p.probs.other*100).toFixed(1) + '%</div>'
+      + '<div class="mut">Then sampled across full 128,256 vocab</div>'
+      + '</div>';
   }
 }
 
@@ -2205,7 +2293,7 @@ function drawEmb3d(ts){
   } else {
     for(var k=0; k<7; k++){
       var tx = c.x - c.rx + (k/6)*(2*c.rx);
-      var ty = c.y + Math.sin((k*0.8)+(ts*0.002))*8 + 22;
+      var ty = c.y + ((k%2===0) ? -10 : 12) + (k-3)*1.4;
       ctx.fillStyle = isLight ? 'rgba(40,50,70,.27)' : 'rgba(212,208,200,.27)';
       ctx.beginPath(); ctx.arc(tx, ty, 3.2, 0, Math.PI*2); ctx.fill();
       if(cur){
@@ -2215,18 +2303,7 @@ function drawEmb3d(ts){
     }
   }
 
-  // Decaying learning event text that drops down and fades
-  EMB3D.events.forEach(function(ev, i){
-    ev.life = Math.max(0, ev.life - 0.0105);
-    ev.y += 0.35;
-    if(ev.life <= 0) return;
-    ctx.globalAlpha = ev.life;
-    ctx.fillStyle = ev.color;
-    ctx.font = '11px IBM Plex Mono';
-    ctx.fillText(ev.txt, 16, 24 + i*16 + ev.y);
-    ctx.globalAlpha = 1;
-  });
-  EMB3D.events = EMB3D.events.filter(function(ev){ return ev.life > 0; });
+  emb3dRenderEvents();
 
   window.requestAnimationFrame(drawEmb3d);
 }
