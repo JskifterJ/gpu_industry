@@ -553,7 +553,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
       <!-- CARD 2: Final vector to top-probability words -->
       <div style="background:rgba(138,110,232,.08);border:1px solid rgba(138,110,232,.26);border-radius:8px;padding:10px 12px;">
         <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--purple);text-transform:uppercase;margin-bottom:5px;">From Final State to Top Words</div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--ink);line-height:1.55;margin-bottom:7px;">Yes, conceptually correct: after 80 layers, h80 is projected onto every vocab token direction. Tokens with larger alignment (dot product) get higher logits and probabilities.</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--ink);line-height:1.55;margin-bottom:7px;">After 80 layers, h80 is projected onto every vocab token direction. Tokens with larger alignment (dot product) get higher logits and probabilities.</div>
         <div style="background:rgba(0,0,0,.16);border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:7px 8px;margin-bottom:7px;">
           <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);line-height:1.65;">logits = h80 &middot; W_U + b<br/>p(next token) = softmax(logits)</div>
         </div>
@@ -574,82 +574,115 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
         <div style="font-size:11px;color:var(--muted);line-height:1.55;">So the 80-layer stack is not changing dimensionality; it is steering one 8,192-D point into a region where correct next-token vectors score highest.</div>
       </div>
 
-      <!-- CARD 3: FFN neuron expand/compress — hourglass that breathes -->
-      <div style="background:rgba(74,144,232,.08);border:1px solid rgba(74,144,232,.28);border-radius:8px;padding:10px 12px;">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--blue);text-transform:uppercase;margin-bottom:5px;">Per-Layer Neuron Expansion</div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--ink);margin-bottom:6px;">8,192 &rarr; <span style="color:var(--cyan);">28,672</span> &rarr; 8,192</div>
-        <!-- Hourglass shape: narrow → wide → narrow, middle breathes -->
-        <div style="display:flex;align-items:center;justify-content:space-between;height:54px;margin-bottom:5px;gap:2px;">
-          <!-- input column -->
-          <div style="display:flex;flex-direction:column;gap:2px;justify-content:center;width:18%;">
-            <div style="height:4px;border-radius:2px;background:rgba(74,144,232,.55);"></div>
-            <div style="height:4px;border-radius:2px;background:rgba(74,144,232,.55);"></div>
-            <div style="height:4px;border-radius:2px;background:rgba(74,144,232,.55);"></div>
-            <div style="height:4px;border-radius:2px;background:rgba(74,144,232,.55);"></div>
-            <div style="height:4px;border-radius:2px;background:rgba(74,144,232,.55);"></div>
+      <!-- CARD 3: KV cache write/read impact on next token -->
+      <div style="background:rgba(26,191,208,.08);border:1px solid rgba(26,191,208,.28);border-radius:8px;padding:10px 12px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--cyan);text-transform:uppercase;margin-bottom:5px;">Generated Token -&gt; KV Cache -&gt; Next Token</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--ink);margin-bottom:7px;line-height:1.55;">When token <span style="color:var(--green);">t</span> is chosen (for example, <span style="color:var(--green);">" Paris"</span>), each layer stores that token's K and V vectors. On token <span style="color:var(--amber);">t+1</span>, attention reads those cached vectors to decide what context to focus on.</div>
+
+        <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:6px;align-items:center;margin-bottom:7px;">
+          <div style="background:rgba(48,200,112,.1);border:1px solid rgba(48,200,112,.28);border-radius:6px;padding:7px;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--green);margin-bottom:4px;">1) Output at step t</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--ink);">selected token: " Paris"</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);margin-top:3px;">logit winner after softmax</div>
           </div>
-          <!-- arrows pointing in -->
-          <div style="font-size:13px;color:rgba(74,144,232,.6);">&rarr;</div>
-          <!-- middle expanded column — breathes -->
-          <div style="display:flex;flex-direction:column;gap:1.5px;justify-content:center;width:34%;animation:ffnBreathe 2.4s ease-in-out infinite;">
-            <div style="height:3px;border-radius:2px;background:rgba(26,191,208,.75);"></div>
-            <div style="height:3px;border-radius:2px;background:rgba(26,191,208,.75);"></div>
-            <div style="height:3px;border-radius:2px;background:rgba(26,191,208,.75);"></div>
-            <div style="height:3px;border-radius:2px;background:rgba(26,191,208,.75);"></div>
-            <div style="height:3px;border-radius:2px;background:rgba(26,191,208,.75);"></div>
-            <div style="height:3px;border-radius:2px;background:rgba(26,191,208,.75);"></div>
-            <div style="height:3px;border-radius:2px;background:rgba(26,191,208,.75);"></div>
-            <div style="height:3px;border-radius:2px;background:rgba(26,191,208,.75);"></div>
+
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);">-&gt;</div>
+
+          <div style="background:rgba(26,191,208,.1);border:1px solid rgba(26,191,208,.28);border-radius:6px;padding:7px;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--cyan);margin-bottom:4px;">2) KV write (all 80 layers)</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--ink);">cache += {K_t^l, V_t^l}</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);margin-top:3px;">meaning attributes are now retrievable</div>
           </div>
-          <!-- arrows pointing out -->
-          <div style="font-size:13px;color:rgba(74,144,232,.6);">&rarr;</div>
-          <!-- output column -->
-          <div style="display:flex;flex-direction:column;gap:2px;justify-content:center;width:18%;">
-            <div style="height:4px;border-radius:2px;background:rgba(74,144,232,.55);"></div>
-            <div style="height:4px;border-radius:2px;background:rgba(74,144,232,.55);"></div>
-            <div style="height:4px;border-radius:2px;background:rgba(74,144,232,.55);"></div>
-            <div style="height:4px;border-radius:2px;background:rgba(74,144,232,.55);"></div>
-            <div style="height:4px;border-radius:2px;background:rgba(74,144,232,.55);"></div>
+
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);">-&gt;</div>
+
+          <div style="background:rgba(232,160,32,.1);border:1px solid rgba(232,160,32,.28);border-radius:6px;padding:7px;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--amber);margin-bottom:4px;">3) Next run (t+1)</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--ink);">Q_(t+1) attends to cached K,V</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);margin-top:3px;">biases toward punctuation or follow-up facts</div>
           </div>
         </div>
-        <div style="font-size:11px;color:var(--muted);line-height:1.5;">Neurons fan out to test ~3.5&times; more features simultaneously, then compress back. The residual stream adds the result.</div>
+
+        <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:7px 8px;margin-bottom:6px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);line-height:1.65;">After "... France is <span style='color:var(--green);'>Paris</span>", the next query often attends strongly to that cached "Paris" state, making the next token likely <span style='color:var(--amber);'>"."</span> or a continuation about Paris.</div>
+        </div>
+
+        <div style="font-size:11px;color:var(--muted);line-height:1.55;">Key idea: each generated token contributes persistent context via KV cache. That stored context directly shapes attention in the very next decode pass.</div>
       </div>
     </div>
 
-    <!-- TOKEN VECTOR EVOLUTION -->
-    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:14px;">
-      <!-- Vector at each stage — shown as mini bar charts -->
-      <div style="background:var(--bg);border:1px solid rgba(48,200,112,.25);border-radius:7px;padding:10px 12px;display:flex;flex-direction:column;justify-content:flex-start;align-items:flex-start;">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--green);margin-bottom:6px;text-transform:uppercase;">Input &mdash; &ldquo;France&rdquo;</div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);margin-bottom:5px;">Raw embedding lookup</div>
-        <div id="vec-in" style="display:flex;gap:1px;align-items:flex-end;height:36px;"></div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:7.5px;color:var(--muted);margin-top:5px;line-height:1.5;">8,192 numbers, each a coordinate in meaning-space. Nearby tokens like &ldquo;Germany&rdquo; have similar vectors.</div>
+    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:10px 12px;margin-bottom:10px;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--cyan);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;">Tracked dimensions example (illustrative): how one token vector changes and drives output</div>
+      <div style="font-size:11px;color:var(--muted);line-height:1.58;margin-bottom:8px;">Below we track 4 sample coordinates of the <span style="color:var(--ink);">1 &times; 8,192</span> state for token <span style="color:var(--green);">"France"</span>. Each layer applies <span style="color:var(--purple);">Attention</span> and <span style="color:var(--blue);">FFN</span>, then adds both via residual: <span style="font-family:'IBM Plex Mono',monospace;color:var(--ink);">h(l+1) = h(l) + Delta_attn + Delta_ffn</span>.</div>
+
+      <div style="overflow-x:auto;margin-bottom:8px;">
+        <table style="width:100%;border-collapse:collapse;font-family:'IBM Plex Mono',monospace;font-size:8.5px;min-width:760px;">
+          <thead>
+            <tr style="border-bottom:1px solid rgba(255,255,255,.14);">
+              <th style="text-align:left;padding:6px 8px;color:var(--muted);">Dim</th>
+              <th style="text-align:right;padding:6px 8px;color:var(--muted);">h0</th>
+              <th style="text-align:right;padding:6px 8px;color:var(--purple);">L20 Delta_attn</th>
+              <th style="text-align:right;padding:6px 8px;color:var(--blue);">L20 Delta_ffn</th>
+              <th style="text-align:right;padding:6px 8px;color:var(--ink);">h20</th>
+              <th style="text-align:right;padding:6px 8px;color:var(--ink);">h60</th>
+              <th style="text-align:right;padding:6px 8px;color:var(--green);">h80 (final)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid rgba(255,255,255,.08);">
+              <td style="padding:6px 8px;color:var(--cyan);">d117 (&ldquo;country&rdquo; feature)</td>
+              <td style="padding:6px 8px;text-align:right;color:var(--muted);">+0.42</td>
+              <td style="padding:6px 8px;text-align:right;color:var(--purple);">+0.18</td>
+              <td style="padding:6px 8px;text-align:right;color:var(--blue);">-0.05</td>
+              <td style="padding:6px 8px;text-align:right;color:var(--ink);">+0.55</td>
+              <td style="padding:6px 8px;text-align:right;color:var(--ink);">+0.81</td>
+              <td style="padding:6px 8px;text-align:right;color:var(--green);">+0.93</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(255,255,255,.08);">
+              <td style="padding:6px 8px;color:var(--cyan);">d904 (&ldquo;capital relation&rdquo;)</td>
+              <td style="padding:6px 8px;text-align:right;color:var(--muted);">-0.11</td>
+              <td style="padding:6px 8px;text-align:right;color:var(--purple);">+0.37</td>
+              <td style="padding:6px 8px;text-align:right;color:var(--blue);">+0.12</td>
+              <td style="padding:6px 8px;text-align:right;color:var(--ink);">+0.38</td>
+              <td style="padding:6px 8px;text-align:right;color:var(--ink);">+0.74</td>
+              <td style="padding:6px 8px;text-align:right;color:var(--green);">+1.02</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(255,255,255,.08);">
+              <td style="padding:6px 8px;color:var(--cyan);">d2011 (&ldquo;punctuation readiness&rdquo;)</td>
+              <td style="padding:6px 8px;text-align:right;color:var(--muted);">+0.08</td>
+              <td style="padding:6px 8px;text-align:right;color:var(--purple);">+0.06</td>
+              <td style="padding:6px 8px;text-align:right;color:var(--blue);">+0.14</td>
+              <td style="padding:6px 8px;text-align:right;color:var(--ink);">+0.28</td>
+              <td style="padding:6px 8px;text-align:right;color:var(--ink);">+0.41</td>
+              <td style="padding:6px 8px;text-align:right;color:var(--green);">+0.57</td>
+            </tr>
+            <tr>
+              <td style="padding:6px 8px;color:var(--cyan);">d4820 (irrelevant topic)</td>
+              <td style="padding:6px 8px;text-align:right;color:var(--muted);">+0.31</td>
+              <td style="padding:6px 8px;text-align:right;color:var(--purple);">-0.22</td>
+              <td style="padding:6px 8px;text-align:right;color:var(--blue);">-0.17</td>
+              <td style="padding:6px 8px;text-align:right;color:var(--ink);">-0.08</td>
+              <td style="padding:6px 8px;text-align:right;color:var(--ink);">-0.20</td>
+              <td style="padding:6px 8px;text-align:right;color:var(--green);">-0.33</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-      <div style="background:var(--bg);border:1px solid rgba(138,110,232,.25);border-radius:7px;padding:10px 12px;display:flex;flex-direction:column;justify-content:flex-start;align-items:flex-start;">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--purple);margin-bottom:6px;text-transform:uppercase;">After L1&ndash;L20</div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);margin-bottom:5px;">Grammar &amp; position absorbed</div>
-        <div id="vec-l20" style="display:flex;gap:1px;align-items:flex-end;height:36px;"></div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:7.5px;color:var(--muted);margin-top:5px;line-height:1.5;">The vector has been adjusted to reflect where &ldquo;France&rdquo; sits in the sentence — subject, following &ldquo;of&rdquo;.</div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div style="background:rgba(138,110,232,.08);border:1px solid rgba(138,110,232,.22);border-radius:6px;padding:8px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--purple);margin-bottom:4px;">Attention effect in plain terms</div>
+          <div style="font-size:11px;color:var(--muted);line-height:1.55;">The current token query pulls in value vectors from other prompt tokens (for this case: strong from &ldquo;capital&rdquo; and &ldquo;of&rdquo;). That increases dimensions tied to country-capital semantics and suppresses unrelated ones.</div>
+        </div>
+        <div style="background:rgba(74,144,232,.08);border:1px solid rgba(74,144,232,.22);border-radius:6px;padding:8px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--blue);margin-bottom:4px;">FFN effect in plain terms</div>
+          <div style="font-size:11px;color:var(--muted);line-height:1.55;">FFN applies per-token nonlinear feature transforms, amplifying useful combinations (&ldquo;France + capital&rdquo;) and damping noise before returning to 8,192 dims for the next layer.</div>
+        </div>
       </div>
-      <div style="background:var(--bg);border:1px solid rgba(74,144,232,.25);border-radius:7px;padding:10px 12px;display:flex;flex-direction:column;justify-content:flex-start;align-items:flex-start;">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--blue);margin-bottom:6px;text-transform:uppercase;">After L40&ndash;L60</div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);margin-bottom:5px;">World knowledge integrated</div>
-        <div id="vec-l60" style="display:flex;gap:1px;align-items:flex-end;height:36px;"></div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:7.5px;color:var(--muted);margin-top:5px;line-height:1.5;">Neurons encoding &ldquo;European country,&rdquo; &ldquo;has a capital,&rdquo; &ldquo;capital = Paris&rdquo; fire strongly.</div>
-      </div>
-      <div style="background:var(--bg);border:1px solid rgba(232,160,32,.25);border-radius:7px;padding:10px 12px;display:flex;flex-direction:column;justify-content:flex-start;align-items:flex-start;">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--amber);margin-bottom:6px;text-transform:uppercase;">After L80</div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);margin-bottom:5px;">Final answer encoded</div>
-        <div id="vec-l80" style="display:flex;gap:1px;align-items:flex-end;height:36px;"></div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:7.5px;color:var(--muted);margin-top:5px;line-height:1.5;">The vector now strongly points toward &ldquo;Paris&rdquo; in output space. One projection away from the answer.</div>
-      </div>
-      <!-- KV Cache -->
-      <div style="background:var(--bg);border:1.5px solid rgba(26,191,208,.4);border-radius:7px;padding:10px 12px;display:flex;flex-direction:column;justify-content:flex-start;align-items:flex-start;">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--cyan);margin-bottom:6px;text-transform:uppercase;"><span class="tip" data-tip="KV Cache: the stored Key and Value vectors for prior tokens. They stay in GPU memory so each new token can look back without recomputing the whole history. It grows with conversation length and is a core memory constraint.">KV Cache</span> (GPU HBM)</div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);margin-bottom:6px;">Written per layer, per token</div>
-        <!-- KV cache grid -->
-        <div style="display:grid;grid-template-columns:repeat(8,1fr);gap:2px;margin-bottom:5px;" id="kv-grid"></div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:7.5px;color:var(--muted);line-height:1.5;">Each layer saves the K and V vectors for &ldquo;France&rdquo; so future tokens don&rsquo;t recompute from scratch. 80 layers &times; 2 (K+V) &times; 128 dims &times; 8 heads = 163,840 numbers saved <em>per token per layer</em>.</div>
+
+      <div style="background:rgba(48,200,112,.08);border:1px solid rgba(48,200,112,.22);border-radius:6px;padding:8px;margin-top:8px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--green);margin-bottom:4px;">How final vector becomes output token</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);line-height:1.65;">score(" Paris") = h80 · u_paris = 12.4 &nbsp;&nbsp; score(" Lyon") = h80 · u_lyon = 10.1 &nbsp;&nbsp; score(" pizza") = h80 · u_pizza = 1.9<br/>softmax turns these scores into probabilities, so the highest alignment direction is sampled most often.</div>
       </div>
     </div>
 
