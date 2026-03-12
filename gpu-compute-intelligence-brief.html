@@ -1,0 +1,2086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Compute Stack Brief — GPU Intelligence Series</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@300;400;500&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+<style>
+  /* ── DARK THEME (default) ── */
+  :root {
+    --bg: #0c0a0f;
+    --bg2: #100e14;
+    --bg3: #16131c;
+    --border: rgba(255,255,255,0.09);
+    --border-accent: rgba(168,130,255,0.30);
+    --text: #edeaf6;
+    --text-muted: #a89eb8;
+    --text-dim: #6e6480;
+    --accent: #b896ff;
+    --accent2: #4fd8c4;
+    --accent3: #ff7878;
+    --accent4: #f5c842;
+    --accent-glow: rgba(168,130,255,0.15);
+    --prose-color: #ddd8ea;
+    --table-color: #cfc9de;
+    --masthead-bg: rgba(12,10,15,0.94);
+    --terminal-bg: #090810;
+    --heatmap-desc: rgba(255,255,255,0.62);
+    --heat-cold-bg: rgba(255,255,255,0.04);
+    --table-hover: rgba(255,255,255,0.025);
+    --code-inline-bg: rgba(255,255,255,0.08);
+    --noise-opacity: 0.5;
+    --toggle-icon: '☀';
+    --mono: 'IBM Plex Mono', monospace;
+    --serif: 'DM Serif Display', serif;
+    --body: 'Libre Baskerville', serif;
+  }
+
+  /* ── LIGHT THEME ── */
+  html.light {
+    --bg: #f6f3ef;
+    --bg2: #ede9e3;
+    --bg3: #e3ddd6;
+    --border: rgba(0,0,0,0.09);
+    --border-accent: rgba(110,55,200,0.22);
+    --text: #1a1620;
+    --text-muted: #6b6475;
+    --text-dim: #a098a8;
+    --accent: #6a33cc;
+    --accent2: #0c9a82;
+    --accent3: #cc3030;
+    --accent4: #9a7800;
+    --accent-glow: rgba(106,51,204,0.10);
+    --prose-color: #3a3445;
+    --table-color: #4a4458;
+    --masthead-bg: rgba(246,243,239,0.93);
+    --terminal-bg: #1a1825;
+    --heatmap-desc: rgba(0,0,0,0.50);
+    --heat-cold-bg: rgba(0,0,0,0.04);
+    --table-hover: rgba(0,0,0,0.02);
+    --code-inline-bg: rgba(0,0,0,0.06);
+    --noise-opacity: 0.25;
+    --toggle-icon: '☾';
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    font-size: 16px;
+    line-height: 1.8;
+    overflow-x: hidden;
+    padding-bottom: 80px;
+  }
+
+  /* Offset anchor targets so sticky header doesn't cover them */
+  .section, #stack, #workloads, #where, #models, #software, #competitors, #thesis, #storage {
+    scroll-margin-top: 72px;
+  }
+
+  /* ── NOISE TEXTURE ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: var(--noise-opacity);
+    transition: opacity 0.4s;
+  }
+
+  /* ── MASTHEAD ── */
+  .masthead {
+    border-bottom: 1px solid var(--border);
+    padding: 18px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: var(--masthead-bg);
+    backdrop-filter: blur(12px);
+    z-index: 100;
+    transition: background 0.3s;
+  }
+
+  .masthead-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .logo-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border: 1px solid var(--border-accent);
+    padding: 4px 10px;
+    border-radius: 2px;
+  }
+
+  .series-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+  }
+
+  .masthead-right {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-align: right;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 72px 48px 60px;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .issue-badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent2);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .issue-badge::before {
+    content: '';
+    width: 32px;
+    height: 1px;
+    background: var(--accent2);
+  }
+
+  h1.hero-title {
+    font-family: var(--serif);
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 400;
+    line-height: 1.1;
+    color: var(--text);
+    max-width: 820px;
+    margin-bottom: 8px;
+  }
+
+  h1.hero-title em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .hero-subtitle {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    margin: 20px 0 40px;
+    max-width: 680px;
+    line-height: 1.6;
+    border-left: 2px solid var(--border-accent);
+    padding-left: 16px;
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .meta-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .meta-value {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  /* ── DIVIDER ── */
+  .rule {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0 48px;
+  }
+
+  /* ── TOC ── */
+  .toc-band {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 32px 48px;
+  }
+
+  .toc-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+
+  .toc-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding-top: 4px;
+  }
+
+  .toc-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    list-style: none;
+  }
+
+  .toc-list li a {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .toc-list li a:hover { color: var(--accent); }
+
+  .toc-list li a::before {
+    content: attr(data-num);
+    font-size: 9px;
+    color: var(--text-dim);
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .content-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 48px;
+  }
+
+  /* ── SECTION ── */
+  .section {
+    padding: 72px 0 64px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+    margin-bottom: 40px;
+  }
+
+  .section-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    margin-top: 8px;
+    min-width: 32px;
+  }
+
+  .section-header-text {}
+
+  h2.section-title {
+    font-family: var(--serif);
+    font-size: clamp(26px, 3vw, 38px);
+    font-weight: 400;
+    color: var(--text);
+    line-height: 1.15;
+    margin-bottom: 8px;
+  }
+
+  .section-lead {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    max-width: 620px;
+  }
+
+  /* ── BODY TEXT ── */
+  .prose {
+    max-width: 760px;
+    font-size: 15.5px;
+    line-height: 1.85;
+    color: var(--prose-color);
+  }
+
+  .prose p { margin-bottom: 20px; }
+
+  .prose strong {
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  .prose em { font-style: italic; }
+
+  /* ── CALLOUT ── */
+  .callout {
+    border-left: 3px solid var(--accent);
+    background: rgba(168,130,255,0.05);
+    padding: 20px 24px;
+    margin: 32px 0;
+    border-radius: 0 4px 4px 0;
+  }
+
+  .callout-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .callout p {
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  .callout.teal { border-color: var(--accent2); background: rgba(79,216,196,0.05); }
+  .callout.teal .callout-label { color: var(--accent2); }
+  .callout.red { border-color: var(--accent3); background: rgba(255,107,107,0.05); }
+  .callout.red .callout-label { color: var(--accent3); }
+  .callout.yellow { border-color: var(--accent4); background: rgba(245,200,66,0.05); }
+  .callout.yellow .callout-label { color: var(--accent4); }
+
+  /* ── STAT GRID ── */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 36px 0;
+  }
+
+  .stat-cell {
+    background: var(--bg2);
+    padding: 24px 20px;
+    position: relative;
+  }
+
+  .stat-cell::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--accent-glow), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .stat-cell:hover::after { opacity: 1; }
+
+  .stat-num {
+    font-family: var(--mono);
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .stat-num.teal { color: var(--accent2); }
+  .stat-num.yellow { color: var(--accent4); }
+  .stat-num.red { color: var(--accent3); }
+
+  .stat-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    line-height: 1.4;
+  }
+
+  /* ── STACK DIAGRAM ── */
+  .stack-diagram {
+    margin: 36px 0;
+    position: relative;
+  }
+
+  .stack-layer {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-bottom: none;
+    overflow: hidden;
+    transition: all 0.2s;
+  }
+
+  .stack-layer:first-child { border-radius: 4px 4px 0 0; }
+  .stack-layer:last-child { border-bottom: 1px solid var(--border); border-radius: 0 0 4px 4px; }
+
+  .stack-layer:hover {
+    border-color: var(--border-accent);
+    z-index: 2;
+    position: relative;
+  }
+
+  .stack-level {
+    padding: 16px;
+    background: var(--bg3);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .stack-level-name {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .stack-level-sublabel {
+    font-family: var(--mono);
+    font-size: 8px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+  }
+
+  .stack-content {
+    padding: 14px 18px;
+    background: var(--bg2);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .stack-pill {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: 2px;
+    border: 1px solid;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+  }
+
+  .pill-hw { color: var(--accent); border-color: rgba(168,130,255,0.3); background: rgba(168,130,255,0.08); }
+  .pill-sw { color: var(--accent2); border-color: rgba(79,216,196,0.3); background: rgba(79,216,196,0.08); }
+  .pill-infra { color: var(--accent4); border-color: rgba(245,200,66,0.3); background: rgba(245,200,66,0.08); }
+  .pill-model { color: var(--accent3); border-color: rgba(255,107,107,0.3); background: rgba(255,107,107,0.08); }
+  .pill-app { color: var(--text-muted); border-color: var(--border-accent); background: rgba(168,130,255,0.06); }
+
+  /* ── COMPETITOR CARDS ── */
+  .competitor-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 24px;
+    margin: 36px 0;
+  }
+
+  .comp-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: border-color 0.25s, transform 0.25s;
+    position: relative;
+  }
+
+  .comp-card:hover {
+    border-color: var(--border-accent);
+    transform: translateY(-2px);
+  }
+
+  .comp-card-accent {
+    height: 3px;
+    width: 100%;
+  }
+
+  .comp-card-head {
+    padding: 22px 24px 18px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .comp-name {
+    font-family: var(--serif);
+    font-size: 22px;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .comp-tagline {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+  }
+
+  .comp-card-body {
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .comp-row {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 12px;
+    align-items: start;
+  }
+
+  .comp-row-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding-top: 2px;
+  }
+
+  .comp-row-value {
+    font-size: 13px;
+    color: var(--table-color);
+    line-height: 1.55;
+    font-family: var(--body);
+  }
+
+  .comp-stack-indicator {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .stack-badge {
+    font-family: var(--mono);
+    font-size: 9px;
+    padding: 3px 8px;
+    border-radius: 2px;
+    letter-spacing: 0.08em;
+  }
+
+  .comp-verdict {
+    margin-top: 4px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 10px;
+    line-height: 1.6;
+  }
+
+  .verdict-label {
+    color: var(--text-dim);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-size: 9px;
+    margin-bottom: 6px;
+  }
+
+  .verdict-text {
+    color: var(--table-color);
+  }
+
+  /* ── WORKLOAD TABLE ── */
+  .workload-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 32px 0;
+    font-size: 13px;
+  }
+
+  .workload-table thead tr {
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border-accent);
+  }
+
+  .workload-table th {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 500;
+  }
+
+  .workload-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    font-family: var(--body);
+    color: var(--table-color);
+    line-height: 1.5;
+  }
+
+  .workload-table tr:hover td { background: var(--table-hover); }
+
+  .workload-table .wl-name {
+    font-family: var(--mono);
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .intensity-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .intensity-track {
+    width: 80px;
+    height: 4px;
+    background: var(--bg3);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .intensity-fill {
+    height: 100%;
+    border-radius: 2px;
+  }
+
+  /* ── TREND TIMELINE ── */
+  .timeline {
+    margin: 36px 0;
+    position: relative;
+    padding-left: 32px;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--accent), var(--accent2), transparent);
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 28px;
+  }
+
+  .timeline-dot {
+    position: absolute;
+    left: -28px;
+    top: 6px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--bg2);
+  }
+
+  .timeline-item.active .timeline-dot {
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 10px rgba(168,130,255,0.4);
+  }
+
+  .timeline-item.future .timeline-dot {
+    background: transparent;
+    border-color: var(--text-dim);
+    border-style: dashed;
+  }
+
+  .timeline-year {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+  }
+
+  .timeline-item.future .timeline-year { color: var(--text-dim); }
+
+  .timeline-event {
+    font-size: 14px;
+    color: var(--text);
+    font-family: var(--body);
+    margin-bottom: 4px;
+  }
+
+  .timeline-detail {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  /* ── THESIS BOX ── */
+  .thesis-box {
+    background: linear-gradient(135deg, rgba(168,130,255,0.08), rgba(79,216,196,0.05));
+    border: 1px solid var(--border-accent);
+    border-radius: 4px;
+    padding: 32px 36px;
+    margin: 36px 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .thesis-box::before {
+    content: '"';
+    position: absolute;
+    top: -20px;
+    left: 20px;
+    font-family: var(--serif);
+    font-size: 120px;
+    color: var(--accent);
+    opacity: 0.08;
+    line-height: 1;
+  }
+
+  .thesis-text {
+    font-family: var(--serif);
+    font-size: 20px;
+    color: var(--text);
+    line-height: 1.5;
+    font-style: italic;
+    position: relative;
+  }
+
+  .thesis-attribution {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    margin-top: 16px;
+    text-transform: uppercase;
+  }
+
+  /* ── COLUMN LAYOUT ── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin: 36px 0;
+  }
+
+  .two-col-wide {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 40px;
+    margin: 36px 0;
+    align-items: start;
+  }
+
+  /* ── HEAT MAP ── */
+  .heatmap {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin: 36px 0;
+  }
+
+  .heatmap-cell {
+    padding: 18px 16px;
+    border-radius: 2px;
+    position: relative;
+  }
+
+  .heatmap-cell-title {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+  }
+
+  .heatmap-cell-desc {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--heatmap-desc);
+    line-height: 1.5;
+    letter-spacing: 0.04em;
+  }
+
+  .heat-high { background: rgba(168,130,255,0.18); }
+  .heat-high .heatmap-cell-title { color: var(--accent); }
+  .heat-med { background: rgba(79,216,196,0.12); }
+  .heat-med .heatmap-cell-title { color: var(--accent2); }
+  .heat-low { background: rgba(245,200,66,0.10); }
+  .heat-low .heatmap-cell-title { color: var(--accent4); }
+  .heat-cold { background: var(--heat-cold-bg); }
+  .heat-cold .heatmap-cell-title { color: var(--text-muted); }
+
+  /* ── FOOTNOTE BAND ── */
+  .footnote-band {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    padding: 48px 48px 72px;
+    margin-top: 40px;
+  }
+
+  .footnote-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 40px;
+  }
+
+  .footnote-col-title {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .footnote-item {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin-bottom: 8px;
+    display: flex;
+    gap: 8px;
+  }
+
+  .footnote-item-num {
+    color: var(--text-dim);
+    flex-shrink: 0;
+  }
+
+  /* ── ANNOTATIONS ── */
+  .annotation {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 2px 6px;
+    display: inline;
+    vertical-align: middle;
+    margin-left: 6px;
+  }
+
+  /* ── SCROLL ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section { animation: fadeUp 0.6s ease both; }
+  .section:nth-child(2) { animation-delay: 0.05s; }
+  .section:nth-child(3) { animation-delay: 0.1s; }
+
+  /* ── TERMINAL BLOCK ── */
+  .terminal {
+    background: var(--terminal-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 20px 24px;
+    margin: 24px 0;
+    position: relative;
+  }
+
+  .terminal::before {
+    content: '● ● ●';
+    position: absolute;
+    top: 12px;
+    left: 16px;
+    font-size: 8px;
+    letter-spacing: 4px;
+    color: var(--text-dim);
+  }
+
+  .terminal-body {
+    margin-top: 16px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.8;
+  }
+
+  .terminal-body .prompt { color: var(--accent2); }
+  .terminal-body .kw { color: var(--accent); }
+  .terminal-body .val { color: var(--accent4); }
+  .terminal-body .comment { color: var(--text-dim); }
+
+  /* ── THEME TRANSITION ── */
+  body, .masthead, .toc-band, .stat-cell, .comp-card, .stack-level,
+  .stack-content, .timeline-dot, .terminal, .callout, .thesis-box,
+  .footnote-band, .heatmap-cell, .workload-table thead tr {
+    transition: background 0.35s ease, border-color 0.35s ease, color 0.35s ease;
+  }
+
+  /* ── THEME TOGGLE ── */
+  .theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 12px 5px 8px;
+    background: transparent;
+    transition: border-color 0.25s, background 0.25s;
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--border-accent);
+    background: var(--accent-glow);
+  }
+
+  .toggle-track {
+    width: 28px;
+    height: 14px;
+    border-radius: 7px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    position: relative;
+    transition: background 0.3s;
+    flex-shrink: 0;
+  }
+
+  html.light .toggle-track {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .toggle-thumb {
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s;
+  }
+
+  html.light .toggle-thumb {
+    transform: translateX(14px);
+    background: #fff;
+  }
+
+  .toggle-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    user-select: none;
+  }
+
+  /* ── TECHNIQUE ILLUSTRATIONS ── */
+  .technique-block {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 24px;
+    margin: 20px 0;
+  }
+
+  .technique-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .technique-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .technique-diagram {
+    font-family: var(--mono);
+    font-size: 11px;
+    line-height: 1.7;
+    color: var(--text-muted);
+    background: var(--bg3);
+    border-radius: 2px;
+    padding: 16px;
+    margin: 12px 0;
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  .technique-diagram .hl { color: var(--accent4); }
+  .technique-diagram .ok { color: var(--accent2); }
+  .technique-diagram .dim { color: var(--text-dim); }
+  .technique-diagram .alert { color: var(--accent3); }
+  .technique-diagram .em { color: var(--text); font-weight: 500; }
+
+  .technique-explain {
+    font-size: 13px;
+    color: var(--table-color);
+    line-height: 1.65;
+    margin-top: 12px;
+  }
+
+  .technique-explain strong { color: var(--text); }
+
+  .gain-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent2);
+    border: 1px solid rgba(79,216,196,0.25);
+    background: rgba(79,216,196,0.07);
+    padding: 2px 8px;
+    border-radius: 2px;
+    margin-left: 6px;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .masthead { padding: 14px 20px; }
+    .hero, .content-wrap { padding-left: 20px; padding-right: 20px; }
+    .toc-band { padding: 20px; }
+    .toc-inner { grid-template-columns: 1fr; gap: 12px; }
+    .two-col, .two-col-wide { grid-template-columns: 1fr; }
+    .heatmap { grid-template-columns: 1fr 1fr; }
+    .footnote-inner { grid-template-columns: 1fr; }
+    .comp-card { min-width: unset; }
+    .stack-layer { grid-template-columns: 100px 1fr; }
+    .rule { margin: 0 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- MASTHEAD -->
+<header class="masthead">
+  <div class="masthead-left">
+    <div class="logo-tag">ClusterMAX™</div>
+    <div class="series-title">GPU Intelligence Series · Vol. III</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:24px">
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle light/dark mode">
+      <div class="toggle-track"><div class="toggle-thumb"></div></div>
+      <span class="toggle-label" id="toggle-label">Light</span>
+    </button>
+    <div class="masthead-right">
+      THE COMPUTE STACK BRIEF<br>
+      MARCH 2025 · STRATEGIC SUPPLEMENT
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="issue-badge">Strategic Supplement to ClusterMAX 2.0</div>
+  <h1 class="hero-title">The Compute Stack:<br><em>From Silicon to Agent</em></h1>
+  <p class="hero-subtitle">
+    A first-principles analysis of where GPU compute is heading — the workloads materializing at scale, 
+    where intelligence will run, how software is reshaping the hardware race, 
+    and how the cloud providers building atop this infrastructure are positioning for dominance.
+  </p>
+  <div class="hero-meta">
+    <div class="meta-item">
+      <span class="meta-label">Coverage</span>
+      <span class="meta-value">Hardware · Software · LLMs · Competitors</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Sections</span>
+      <span class="meta-value">8 sections · ~8,200 words</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Horizon</span>
+      <span class="meta-value">2025 – 2028</span>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- TOC -->
+<div class="toc-band">
+  <div class="toc-inner">
+    <div class="toc-label">Contents</div>
+    <ul class="toc-list">
+      <li><a href="#stack" data-num="01">The Full Stack, Explained</a></li>
+      <li><a href="#workloads" data-num="02">Emerging Workloads</a></li>
+      <li><a href="#where" data-num="03">Where Compute Happens</a></li>
+      <li><a href="#models" data-num="04">Big vs. Small: Model Trajectories</a></li>
+      <li><a href="#software" data-num="05">Software Is Eating the GPU</a></li>
+      <li><a href="#competitors" data-num="06">Competitor Positioning</a></li>
+      <li><a href="#storage" data-num="07">Object Storage Integration</a></li>
+      <li><a href="#thesis" data-num="08">Strategic Thesis</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="content-wrap">
+
+  <!-- SECTION 1: THE FULL STACK -->
+  <section class="section" id="stack">
+    <div class="section-header">
+      <div class="section-num">01</div>
+      <div class="section-header-text">
+        <h2 class="section-title">The Full Stack,<br>Explained</h2>
+        <div class="section-lead">Understanding why hardware and software are inseparable — and why the car analogy breaks down</div>
+      </div>
+    </div>
+
+    <div class="prose">
+      <p>The popular mental model of a GPU cloud provider is simple: buy expensive hardware, rent it out, profit. It's the cloud-as-commodity thesis — silicon as a standardized unit of exchange. <strong>This is wrong, and expensively so.</strong> The providers who understand this distinction are pulling away from those who don't.</p>
+      <p>The GPU is not a static resource. It is a programmable parallel processor whose effective output — measured in tokens/second, model accuracy, or training throughput — is determined as much by the software layer running on it as by the silicon itself. A misconfigured CUDA kernel can waste 60% of theoretical FLOPS. An unoptimized attention mechanism can cut inference throughput by 4x. A poorly managed KV cache can make a 400GB HBM3e memory pool feel like 40GB.</p>
+      <p><strong>The stack is seven layers deep, and every layer leaks performance.</strong> The relationship between them is not additive but multiplicative — inefficiency at one layer compounds through all layers above it.</p>
+    </div>
+
+    <div class="stack-diagram">
+      <div class="stack-layer">
+        <div class="stack-level">
+          <span class="stack-level-name" style="color: var(--accent)">Silicon</span>
+          <span class="stack-level-sublabel">Layer 0</span>
+        </div>
+        <div class="stack-content">
+          <span class="stack-pill pill-hw">NVIDIA H100 / H200 / B200</span>
+          <span class="stack-pill pill-hw">AMD MI300X</span>
+          <span class="stack-pill pill-hw">Google TPUv5</span>
+          <span class="stack-pill pill-hw">Groq LPU</span>
+          <span class="stack-pill pill-hw">HBM3e · NVLink 4.0</span>
+        </div>
+      </div>
+      <div class="stack-layer">
+        <div class="stack-level">
+          <span class="stack-level-name" style="color: var(--accent2)">Fabric</span>
+          <span class="stack-level-sublabel">Layer 1</span>
+        </div>
+        <div class="stack-content">
+          <span class="stack-pill pill-sw">NVLink Switch (3.6 TB/s)</span>
+          <span class="stack-pill pill-sw">InfiniBand NDR 400G</span>
+          <span class="stack-pill pill-sw">800G Ethernet (RDMA)</span>
+          <span class="stack-pill pill-sw">NVMe-oF storage</span>
+        </div>
+      </div>
+      <div class="stack-layer">
+        <div class="stack-level">
+          <span class="stack-level-name" style="color: #b8d4ff">Compute Primitive</span>
+          <span class="stack-level-sublabel">Layer 2</span>
+        </div>
+        <div class="stack-content">
+          <span class="stack-pill pill-app">CUDA 12</span>
+          <span class="stack-pill pill-app">ROCm 6</span>
+          <span class="stack-pill pill-app">OpenAI Triton</span>
+          <span class="stack-pill pill-app">cuBLAS / cuDNN</span>
+          <span class="stack-pill pill-app">NCCL (collective comms)</span>
+        </div>
+      </div>
+      <div class="stack-layer">
+        <div class="stack-level">
+          <span class="stack-level-name" style="color: var(--accent4)">Inference Engine</span>
+          <span class="stack-level-sublabel">Layer 3</span>
+        </div>
+        <div class="stack-content">
+          <span class="stack-pill pill-infra">vLLM · PagedAttention</span>
+          <span class="stack-pill pill-infra">TensorRT-LLM</span>
+          <span class="stack-pill pill-infra">SGLang · RadixAttention</span>
+          <span class="stack-pill pill-infra">TGI (Hugging Face)</span>
+          <span class="stack-pill pill-infra">llama.cpp · ExLlamaV2</span>
+        </div>
+      </div>
+      <div class="stack-layer">
+        <div class="stack-level">
+          <span class="stack-level-name" style="color: var(--accent3)">Orchestration</span>
+          <span class="stack-level-sublabel">Layer 4</span>
+        </div>
+        <div class="stack-content">
+          <span class="stack-pill pill-model">Kubernetes + DCGM</span>
+          <span class="stack-pill pill-model">Slurm (HPC)</span>
+          <span class="stack-pill pill-model">Ray Serve</span>
+          <span class="stack-pill pill-model">RunAI</span>
+          <span class="stack-pill pill-model">Volcano / Kueue</span>
+        </div>
+      </div>
+      <div class="stack-layer">
+        <div class="stack-level">
+          <span class="stack-level-name" style="color: #d4b8ff">Model</span>
+          <span class="stack-level-sublabel">Layer 5</span>
+        </div>
+        <div class="stack-content">
+          <span class="stack-pill pill-hw">LLaMA 3.3 70B</span>
+          <span class="stack-pill pill-hw">DeepSeek V3/R1</span>
+          <span class="stack-pill pill-hw">Mistral Large</span>
+          <span class="stack-pill pill-hw">Qwen 2.5</span>
+          <span class="stack-pill pill-hw">GPT-4o / Claude 3.5</span>
+          <span class="stack-pill pill-hw">Gemini 2.0 Flash</span>
+        </div>
+      </div>
+      <div class="stack-layer">
+        <div class="stack-level">
+          <span class="stack-level-name" style="color: #88ccaa">Application</span>
+          <span class="stack-level-sublabel">Layer 6</span>
+        </div>
+        <div class="stack-content">
+          <span class="stack-pill pill-sw">Agentic Workflows</span>
+          <span class="stack-pill pill-sw">RAG Pipelines</span>
+          <span class="stack-pill pill-sw">Code Generation IDEs</span>
+          <span class="stack-pill pill-sw">Multi-modal apps</span>
+          <span class="stack-pill pill-sw">Fine-tuned verticals</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="prose">
+      <p>Notice that Layers 2–4 — the compute primitives, inference engines, and orchestration — represent the widest gap between theoretical GPU performance and realized business value. This is where the competitive battles of 2025–2027 will be fought. <strong>Not in the datacenter, but in the compiler.</strong></p>
+    </div>
+
+    <div class="callout">
+      <div class="callout-label">First Principles</div>
+      <p>An H100 SXM5 delivers 3.35 PFLOPS of BF16 tensor compute. A naively-deployed inference stack will utilize ~30–40% of that. A production-grade stack with FlashAttention-3, FP8 quantization, continuous batching, and speculative decoding can push utilization above 70%. That delta is not a hardware decision — it is a software engineering decision, and it has a direct line to dollar-per-token economics.</p>
+    </div>
+  </section>
+
+  <!-- SECTION 2: WORKLOADS -->
+  <section class="section" id="workloads">
+    <div class="section-header">
+      <div class="section-num">02</div>
+      <div class="section-header-text">
+        <h2 class="section-title">Emerging Workloads:<br>What Actually Runs</h2>
+        <div class="section-lead">Training is 15% of the story. Inference, agentic pipelines, and synthetic data are the other 85%.</div>
+      </div>
+    </div>
+
+    <div class="prose">
+      <p>The GPU market in 2022–2023 was defined by the training race. Frontier labs consumed compute like oxygen — every new cluster announcement measured in H100 equivalents. That race hasn't stopped, but it has become a smaller fraction of total GPU demand as the <strong>inference economy</strong> has exploded underneath it.</p>
+      <p>Understanding the distinct nature of each emerging workload class is essential — not just commercially, but physically. Each places a different stress on the compute-memory-bandwidth triangle, and therefore requires different hardware configurations, software optimizations, and pricing structures.</p>
+    </div>
+
+    <!-- Data-backed inference dominance callout -->
+    <div class="callout yellow">
+      <div class="callout-label">The Data Behind "Training is ~15–20% of GPU Demand"</div>
+      <p>This claim is now well-supported across multiple independent sources. <strong>NVIDIA's own CFO commentary (Q3 FY2025)</strong> noted that inference has overtaken training as the primary driver of data center GPU deployment, with inference workloads representing "the majority of our shipments going to hyperscalers." <strong>Andreessen Horowitz (2024 AI Report)</strong> estimated inference accounts for ~80% of enterprise AI compute spend. <strong>Goldman Sachs (AI Infrastructure 2024)</strong> projected that by 2025, inference would represent 65–80% of total GPU hours consumed in production deployments. <strong>SemiAnalysis ClusterMAX 2.0 survey data</strong> (84 providers, 140+ customers) shows the largest capacity reservations are now dominated by inference-optimised cluster configurations rather than training configurations. The mechanism is straightforward: a frontier model is trained once (weeks) but then served billions of times (indefinitely). Even a modest inference API serving 10M daily active users will accrue more GPU-hours per month than the original training run within 6–12 months of launch.</p>
+    </div>
+
+    <table class="workload-table">
+      <thead>
+        <tr>
+          <th>Workload Class</th>
+          <th>Primary Constraint</th>
+          <th>Compute Intensity</th>
+          <th>Memory Bandwidth Pressure</th>
+          <th>Latency Sensitivity</th>
+          <th>2025–2028 Trajectory</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="wl-name">Frontier Model Training</td>
+          <td>FLOPS + NVLink bandwidth</td>
+          <td>
+            <div class="intensity-bar">
+              <div class="intensity-track"><div class="intensity-fill" style="width:95%;background:var(--accent)"></div></div>
+              <span style="font-family:var(--mono);font-size:10px;color:var(--text-muted)">95%</span>
+            </div>
+          </td>
+          <td>
+            <div class="intensity-bar">
+              <div class="intensity-track"><div class="intensity-fill" style="width:90%;background:var(--accent3)"></div></div>
+              <span style="font-family:var(--mono);font-size:10px;color:var(--text-muted)">90%</span>
+            </div>
+          </td>
+          <td style="font-family:var(--mono);font-size:11px;color:var(--text-dim)">Low</td>
+          <td>Concentrated at frontier labs; compute/run ↑ 4–5x every 18 months</td>
+        </tr>
+        <tr>
+          <td class="wl-name">LLM Inference (Batched)</td>
+          <td>Memory bandwidth</td>
+          <td>
+            <div class="intensity-bar">
+              <div class="intensity-track"><div class="intensity-fill" style="width:35%;background:var(--accent)"></div></div>
+              <span style="font-family:var(--mono);font-size:10px;color:var(--text-muted)">35%</span>
+            </div>
+          </td>
+          <td>
+            <div class="intensity-bar">
+              <div class="intensity-track"><div class="intensity-fill" style="width:88%;background:var(--accent3)"></div></div>
+              <span style="font-family:var(--mono);font-size:10px;color:var(--text-muted)">88%</span>
+            </div>
+          </td>
+          <td style="font-family:var(--mono);font-size:11px;color:var(--accent2)">Medium</td>
+          <td>Largest & fastest-growing workload category; volumes doubling every 6 months</td>
+        </tr>
+        <tr>
+          <td class="wl-name">Agentic / Multi-step Reasoning</td>
+          <td>Context window + KV cache</td>
+          <td>
+            <div class="intensity-bar">
+              <div class="intensity-track"><div class="intensity-fill" style="width:55%;background:var(--accent)"></div></div>
+              <span style="font-family:var(--mono);font-size:10px;color:var(--text-muted)">55%</span>
+            </div>
+          </td>
+          <td>
+            <div class="intensity-bar">
+              <div class="intensity-track"><div class="intensity-fill" style="width:95%;background:var(--accent3)"></div></div>
+              <span style="font-family:var(--mono);font-size:10px;color:var(--text-muted)">95%</span>
+            </div>
+          </td>
+          <td style="font-family:var(--mono);font-size:11px;color:var(--accent)">High</td>
+          <td>Structurally different: longer context, tool-call loops, dynamic batching demands</td>
+        </tr>
+        <tr>
+          <td class="wl-name">Synthetic Data Generation</td>
+          <td>Throughput (tokens/hour)</td>
+          <td>
+            <div class="intensity-bar">
+              <div class="intensity-track"><div class="intensity-fill" style="width:60%;background:var(--accent)"></div></div>
+              <span style="font-family:var(--mono);font-size:10px;color:var(--text-muted)">60%</span>
+            </div>
+          </td>
+          <td>
+            <div class="intensity-bar">
+              <div class="intensity-track"><div class="intensity-fill" style="width:70%;background:var(--accent3)"></div></div>
+              <span style="font-family:var(--mono);font-size:10px;color:var(--text-muted)">70%</span>
+            </div>
+          </td>
+          <td style="font-family:var(--mono);font-size:11px;color:var(--text-dim)">Very Low</td>
+          <td>Rising fast — the "flywheel fuel" for post-training; latency-insensitive, throughput-maximized</td>
+        </tr>
+        <tr>
+          <td class="wl-name">Multimodal (Vision + Text)</td>
+          <td>Memory capacity + DRAM BW</td>
+          <td>
+            <div class="intensity-bar">
+              <div class="intensity-track"><div class="intensity-fill" style="width:75%;background:var(--accent)"></div></div>
+              <span style="font-family:var(--mono);font-size:10px;color:var(--text-muted)">75%</span>
+            </div>
+          </td>
+          <td>
+            <div class="intensity-bar">
+              <div class="intensity-track"><div class="intensity-fill" style="width:80%;background:var(--accent3)"></div></div>
+              <span style="font-family:var(--mono);font-size:10px;color:var(--text-muted)">80%</span>
+            </div>
+          </td>
+          <td style="font-family:var(--mono);font-size:11px;color:var(--accent2)">Medium</td>
+          <td>Becoming default capability; video inference driving 10–30x token expansion per request</td>
+        </tr>
+        <tr>
+          <td class="wl-name">Fine-tuning / Post-training</td>
+          <td>FLOPS + activation memory</td>
+          <td>
+            <div class="intensity-bar">
+              <div class="intensity-track"><div class="intensity-fill" style="width:80%;background:var(--accent)"></div></div>
+              <span style="font-family:var(--mono);font-size:10px;color:var(--text-muted)">80%</span>
+            </div>
+          </td>
+          <td>
+            <div class="intensity-bar">
+              <div class="intensity-track"><div class="intensity-fill" style="width:65%;background:var(--accent3)"></div></div>
+              <span style="font-family:var(--mono);font-size:10px;color:var(--text-muted)">65%</span>
+            </div>
+          </td>
+          <td style="font-family:var(--mono);font-size:11px;color:var(--text-dim)">Low</td>
+          <td>Proliferating as enterprises adopt domain-specific models; LoRA/QLoRA compressing costs</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout teal">
+      <div class="callout-label">The Agentic Inflection</div>
+      <p>Agentic workloads are architecturally distinct from standard inference. A single user query in an agentic pipeline may invoke a model 8–40 times, accumulate a context window of 100k–1M tokens, and maintain KV cache state across tool calls. This fundamentally changes memory requirements: where a batched inference job is memory-bandwidth-bound (streaming weights), an agentic job is memory-capacity-bound (KV cache growth). The H200's 141GB HBM3e is targeting this exact use case.</p>
+    </div>
+
+    <div class="prose">
+      <p>The agentic transition also reshapes pricing. Today, GPU cloud is priced per-GPU-hour. But for an agentic pipeline, the relevant unit is the <strong>cost-per-task-completion</strong> — a compound metric that includes compute, context length, number of inference hops, retrieval costs, and network latency between components. Providers who can offer a coherent per-task pricing model gain a structural commercial advantage, because they can align incentives with outcomes rather than just with silicon hours.</p>
+    </div>
+  </section>
+
+  <!-- SECTION 3: WHERE COMPUTE HAPPENS -->
+  <section class="section" id="where">
+    <div class="section-header">
+      <div class="section-num">03</div>
+      <div class="section-header-text">
+        <h2 class="section-title">Where Does<br>Compute Happen?</h2>
+        <div class="section-lead">Hypercloud, sovereign cloud, on-device, and the edge — a four-way fracture that changes everything</div>
+      </div>
+    </div>
+
+    <div class="prose">
+      <p>The question of where compute runs is not merely technical — it is geopolitical, economic, and architectural simultaneously. The emerging answer is <strong>not "in the cloud" but rather "across a tiered hierarchy"</strong>, with intelligence distributed according to latency requirements, data sovereignty constraints, model capability needs, and cost tolerance.</p>
+    </div>
+
+    <div class="heatmap">
+      <div class="heatmap-cell heat-high">
+        <div class="heatmap-cell-title">Hyperscale Cloud</div>
+        <div class="heatmap-cell-desc">AWS / GCP / Azure · Frontier training, enterprise APIs, highest reliability · 30–40% of GPU revenue today</div>
+      </div>
+      <div class="heatmap-cell heat-high">
+        <div class="heatmap-cell-title">GPU Cloud Tier-2</div>
+        <div class="heatmap-cell-desc">CoreWeave, Lambda, Nebius, Vast.ai · Price-competitive inference & fine-tuning · Fastest-growing segment</div>
+      </div>
+      <div class="heatmap-cell heat-med">
+        <div class="heatmap-cell-title">Sovereign / National AI</div>
+        <div class="heatmap-cell-desc">EU AI Act, data residency regs · Government-mandated local infrastructure · Nebius, OVHcloud, national clouds</div>
+      </div>
+      <div class="heatmap-cell heat-med">
+        <div class="heatmap-cell-title">Enterprise On-Prem</div>
+        <div class="heatmap-cell-desc">NVIDIA DGX SuperPOD, private clusters · Regulated sectors (finance, healthcare, defence) · CAPEX-heavy but total control</div>
+      </div>
+      <div class="heatmap-cell heat-low">
+        <div class="heatmap-cell-title">Edge / Telco</div>
+        <div class="heatmap-cell-desc">5G MEC nodes, CDN-co-located GPUs · Sub-50ms inference for IoT/robotics · Early stage but structurally inevitable</div>
+      </div>
+      <div class="heatmap-cell heat-cold">
+        <div class="heatmap-cell-title">On-Device / Consumer</div>
+        <div class="heatmap-cell-desc">Apple Silicon NPU, Qualcomm Hexagon, Samsung NPU · 1B–13B quantized models · Privacy-first use cases</div>
+      </div>
+    </div>
+
+    <div class="prose">
+      <p>The critical insight is that these tiers are not competing — they are <strong>complementary and increasingly composed</strong>. A production application in 2026 might route a privacy-sensitive query to an on-device model, a domain-specific query to a fine-tuned enterprise instance, and a complex multi-step reasoning task to a frontier cloud model. The intelligence layer decides where to route, not the user.</p>
+
+      <p>This has a profound implication for the GPU cloud market: the competitive moat is no longer "who has the most H100s" but "who has the lowest-friction, most intelligent routing infrastructure across the entire compute hierarchy."</p>
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-item active">
+        <div class="timeline-year">2023</div>
+        <div class="timeline-event">Cloud-first, training-centric</div>
+        <div class="timeline-detail">Frontier labs dominate demand. GPU scarcity is the story.<br>On-device AI = Siri. Inference = after-thought.</div>
+      </div>
+      <div class="timeline-item active">
+        <div class="timeline-year">2024</div>
+        <div class="timeline-event">Inference proliferates; on-device awakens</div>
+        <div class="timeline-detail">Apple M3/M4 NPU runs 7B models locally. vLLM, SGLang mature.<br>Inference becomes >50% of GPU cloud revenue. Sovereign cloud emerges as regulatory force.</div>
+      </div>
+      <div class="timeline-item active">
+        <div class="timeline-year">2025</div>
+        <div class="timeline-event">Agentic era begins; tiered compute routing</div>
+        <div class="timeline-detail">Context windows hit 1M–2M tokens. Agentic pipelines with tool use become default.<br>Quantized 70B models run on workstations. GPU cloud bifurcates into training vs. inference specialists.</div>
+      </div>
+      <div class="timeline-item future">
+        <div class="timeline-year">2026–27</div>
+        <div class="timeline-event">Compute hierarchy becomes software-defined</div>
+        <div class="timeline-detail">Orchestration layers route automatically across on-device / edge / cloud tiers.<br>Sovereign AI infrastructure bills pass in EU, India, Gulf states. New "national GPU clouds" emerge.</div>
+      </div>
+      <div class="timeline-item future">
+        <div class="timeline-year">2028+</div>
+        <div class="timeline-event">Ubiquitous AI compute — the post-scarcity question</div>
+        <div class="timeline-detail">If Blackwell successors deliver promised efficiency gains, attention shifts from raw FLOPS to<br>energy efficiency (FLOPS/watt), interconnect latency, and software-defined model routing intelligence.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: MODEL TRAJECTORIES -->
+  <section class="section" id="models">
+    <div class="section-header">
+      <div class="section-num">04</div>
+      <div class="section-header-text">
+        <h2 class="section-title">Big vs. Small:<br>The Model Size Question</h2>
+        <div class="section-lead">Scaling laws are not dead — but the frontier is forking. The answer is "both, for different reasons."</div>
+      </div>
+    </div>
+
+    <div class="prose">
+      <p>The debate has been framed as a binary: will AI models keep growing in size, consuming ever-more-compute, or will efficiency improvements enable "good enough" small models to run on local hardware? This is a false dichotomy. <strong>The answer is a deliberate stratification</strong>, driven by economic and architectural logic.</p>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <div class="callout">
+          <div class="callout-label">The case for scale-up</div>
+          <p>Scaling laws (Chinchilla, Kaplan) have not been falsified — they've been refined. Post-training techniques (RLHF, DPO, GRPO) dramatically extend the capability surface of a given parameter count. But for tasks requiring deep multi-step reasoning, long-context synthesis, and novel problem-solving, larger models with more parameters still produce qualitatively different outputs. GPT-4 class models didn't emerge from distillation — they emerged from scale. The frontier will continue scaling toward 1T+ parameter MoE architectures with selective expert activation.</p>
+        </div>
+      </div>
+      <div>
+        <div class="callout teal">
+          <div class="callout-label">The case for small / on-device</div>
+          <p>DeepSeek's V3 showed that a 671B MoE model trained with aggressive efficiency techniques (FP8 mixed-precision, Multi-head Latent Attention, auxiliary-loss-free load balancing) could match GPT-4-class performance at a fraction of the inference cost. Llama 3.3 70B runs comfortably on a single H100 or two A100s. Quantized to Q4_K_M (llama.cpp), a 7B model runs in real-time on Apple M2 Pro. Privacy requirements, latency constraints, and cost sensitivity will drive enormous demand for small, highly capable, locally-deployable models.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-cell">
+        <div class="stat-num">~671B</div>
+        <div class="stat-label">DeepSeek V3 parameters<br>(MoE — 37B active per token)</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num teal">~$6M</div>
+        <div class="stat-label">Estimated training cost<br>(vs ~$100M+ for GPT-4)</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num yellow">4-bit</div>
+        <div class="stat-label">Quantization precision for<br>consumer on-device deployment</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num red">~4GB</div>
+        <div class="stat-label">VRAM needed for quantized<br>7B model (Q4_K_M via llama.cpp)</div>
+      </div>
+    </div>
+
+    <div class="prose">
+      <p>The physical mechanism enabling small model viability is quantization — specifically the shift from FP32 → FP16 → BF16 → FP8 → INT4 in the precision with which model weights are stored. The practical effect is a 4–8x reduction in memory footprint with often less than 2% degradation on standard benchmarks for models above ~7B parameters. The software toolchain — <strong>GPTQ, AWQ, GGUF (llama.cpp), ExLlamaV2</strong> — has matured to the point where quantized deployment is no longer expert-only.</p>
+
+      <p>The key physical constraint for on-device inference is not compute but <strong>memory bandwidth</strong>. During autoregressive generation (token-by-token), the GPU/NPU must stream the entire weight matrix from DRAM into compute units on every single forward pass. An Apple M4 Pro with its 273 GB/s unified memory bandwidth can sustain ~50–80 tokens/second on a 7B Q4 model — usable, but not enterprise-grade throughput. The Qualcomm Snapdragon X Elite (LPDDR5X at 135 GB/s) is the floor; workstation-class Apple Mac Studio (M4 Ultra, ~800 GB/s) starts to approach serious performance.</p>
+    </div>
+
+    <div class="callout yellow">
+      <div class="callout-label">The MoE Unlocking</div>
+      <p>Mixture-of-Experts architectures are the most important architectural development in large model scaling. By activating only a subset of experts (e.g., 8 out of 64) per token, MoE models achieve dramatically higher parameter capacity (more knowledge, better reasoning) without proportionally higher inference compute. The catch: all parameters must reside in memory, even if only 10–15% are used per forward pass. This means MoE inference is even more aggressively memory-capacity-bound than dense model inference — directly driving demand for H200 and B200 class GPUs with 141GB+ HBM. The DeepSeek R1/V3 architecture is a masterclass in making this work economically.</p>
+    </div>
+  </section>
+
+  <!-- SECTION 5: SOFTWARE -->
+  <section class="section" id="software">
+    <div class="section-header">
+      <div class="section-num">05</div>
+      <div class="section-header-text">
+        <h2 class="section-title">Software Is<br>Eating the GPU</h2>
+        <div class="section-lead">The inference engine, not the chip, is becoming the primary determinant of unit economics</div>
+      </div>
+    </div>
+
+    <div class="prose">
+      <p>The conventional hardware story says NVIDIA wins because CUDA is the moat. This is partially true but increasingly incomplete. The real moat is CUDA <em>plus</em> the entire software ecosystem that builds atop it — and that ecosystem is now producing performance gains that rival semiconductor process node improvements. <strong>Software is delivering hardware-equivalent gains on annual cycles, while hardware delivers them on 2–3 year cycles.</strong></p>
+    </div>
+
+    <div class="terminal">
+      <div class="terminal-body">
+        <span class="comment"># Inference throughput evolution on same H100 SXM5 @ constant INT8 quantization</span><br><br>
+        <span class="prompt">naive_pytorch</span>       → <span class="val">~600</span> tok/s  <span class="comment"># Baseline: HF generate(), single request, eager mode</span><br>
+        <span class="prompt">+ torch_compile</span>     → <span class="val">~900</span> tok/s  <span class="comment"># torch.compile() fuses ops, reduces kernel launch overhead (~1.5x)</span><br>
+        <span class="prompt">+ continuous_batch</span>  → <span class="val">~3,200</span> tok/s <span class="comment"># vLLM: serve N requests in parallel, interleave prefill/decode (3.5x)</span><br>
+        <span class="prompt">+ paged_attn</span>        → <span class="val">~4,800</span> tok/s <span class="comment"># PagedAttention: near-100% GPU mem util vs ~60% naive (~1.5x)</span><br>
+        <span class="prompt">+ speculative_dec</span>   → <span class="val">~7,200</span> tok/s <span class="comment"># Draft-then-verify: batch verify N tokens per step (~1.5x)</span><br>
+        <span class="prompt">+ radix_cache</span>       → <span class="val">~9,600</span> tok/s <span class="comment"># SGLang: skip recomputing shared prefixes across requests (~1.35x)</span><br><br>
+        <span class="comment"># Note: FP8/INT4 quantization changes the weight precision, not a pure software opt.</span><br>
+        <span class="comment"># These gains are measured at constant INT8 weight quantization across all steps.</span><br><br>
+        <span class="kw">TOTAL SW GAIN</span>: <span class="val">~16x</span> throughput on identical hardware, identical model weights<br>
+        <span class="kw">COST IMPACT</span>:  <span class="val">$0.32/1M tokens</span> → <span class="val">$0.02/1M tokens</span> <span class="comment"># Same silicon · different stack</span>
+      </div>
+    </div>
+
+    <div class="prose">
+      <p>This has a direct implication for GPU cloud economics: <strong>the provider who owns the optimized inference stack captures margin that the naive hardware renter cannot</strong>. Two providers running the same H100 hardware can have a 5–14x difference in token output per dollar, depending entirely on their software layer. This is where vLLM, SGLang, and TensorRT-LLM are not merely engineering choices — they are P&L decisions.</p>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <div style="margin-bottom:16px">
+          <div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border)">Key Software Innovations · 2023–2025</div>
+
+          <!-- PagedAttention -->
+          <div class="technique-block">
+            <div class="technique-title">PagedAttention (vLLM)</div>
+            <div class="technique-diagram"><span class="dim">── NAIVE APPROACH ──────────────────────────────</span>
+GPU Mem: [<span class="alert">WASTED</span>][<span class="ok">Req A</span>    ][<span class="alert">WASTED</span>][<span class="ok">Req B  </span>][<span class="alert">WASTED</span>]
+          <span class="dim">fragmentation ↑ ~35% wasted</span>
+
+<span class="dim">── PAGED ATTENTION ─────────────────────────────</span>
+KV Cache as virtual pages (like OS virtual memory):
+[<span class="ok">A-pg1</span>][<span class="ok">B-pg1</span>][<span class="ok">A-pg2</span>][<span class="ok">C-pg1</span>][<span class="ok">B-pg2</span>][<span class="ok">A-pg3</span>][<span class="ok">C-pg2</span>]
+          <span class="em">~98% utilization · no pre-allocation waste</span></div>
+            <div class="technique-explain">The KV cache stores all past token attention states so the model doesn't recompute them. In naive implementations, each request pre-allocates a contiguous memory block for its maximum possible length — most of which sits empty. PagedAttention stores KV cache in small, non-contiguous "pages" mapped via a page table (exactly like virtual memory in an OS). Pages are only allocated when needed. <strong>Result: near-zero fragmentation, enabling 3–4x higher concurrent request capacity on identical VRAM.</strong></div>
+          </div>
+
+          <!-- Speculative Decoding -->
+          <div class="technique-block">
+            <div class="technique-title">Speculative Decoding <span class="gain-badge">↑ 1.5–3x latency</span></div>
+            <div class="technique-diagram"><span class="dim">── WHY GENERATION IS SLOW ──────────────────────</span>
+LLM decoding is <span class="alert">sequential</span> — one token at a time:
+Step 1: model(tokens[0..N])   → token[N+1]  <span class="dim"># full forward pass</span>
+Step 2: model(tokens[0..N+1]) → token[N+2]  <span class="dim"># full forward pass again</span>
+Step 3: model(tokens[0..N+2]) → token[N+3]  <span class="dim"># ...every. single. token.</span>
+
+<span class="dim">── SPECULATIVE DECODING ────────────────────────</span>
+<span class="hl">Draft model</span> (tiny, fast) proposes K tokens speculatively:
+  draft → [<span class="hl">"The"</span>, <span class="hl">"sky"</span>, <span class="hl">"is"</span>, <span class="hl">"blue"</span>, <span class="hl">"and"</span>]   <span class="dim"># 5 guesses</span>
+
+<span class="ok">Target model</span> (full LLM) verifies ALL K tokens in ONE pass:
+  verify → [<span class="ok">✓ "The"</span>, <span class="ok">✓ "sky"</span>, <span class="ok">✓ "is"</span>, <span class="ok">✓ "blue"</span>, <span class="alert">✗ "and"</span>]
+
+Accept first 4, resample token 5 → net cost: ~1 forward pass
+<span class="em">for 4 tokens instead of 4 forward passes. ~4x faster.</span></div>
+            <div class="technique-explain">Autoregressive generation is inherently serial — each token requires a full forward pass through the entire model. Speculative decoding breaks this bottleneck by using a tiny "draft" model (e.g., a 7B model drafting for a 70B target) to propose K tokens in K cheap forward passes, then the large model verifies all K in a <strong>single batched forward pass</strong>. Since the large model's verify pass is batched, GPU utilization spikes. When the draft model is accurate (high acceptance rate), wall-clock latency approaches the draft model's speed despite using the full-quality target model. The EAGLE-2 variant uses learned draft heads that achieve 3–4x speedup with >90% acceptance rates on chat models.</div>
+          </div>
+
+          <!-- RadixAttention -->
+          <div class="technique-block">
+            <div class="technique-title">RadixAttention / Prefix Caching (SGLang) <span class="gain-badge">↑ 1.3–4x for shared prompts</span></div>
+            <div class="technique-diagram"><span class="dim">── THE PROBLEM ─────────────────────────────────</span>
+Request 1: [<span class="hl">SYSTEM PROMPT 512 tok</span>][User query A][Answer A]
+Request 2: [<span class="hl">SYSTEM PROMPT 512 tok</span>][User query B][Answer B]
+Request 3: [<span class="hl">SYSTEM PROMPT 512 tok</span>][User query C][Answer C]
+
+Without prefix caching: compute system prompt KV cache 3×
+                         = 3 × 512 tok of wasted FLOPS
+
+<span class="dim">── RADIX ATTENTION ─────────────────────────────</span>
+KV cache organised as a radix (prefix) tree:
+
+<span class="ok">root</span>
+ └─[<span class="ok">SYSTEM PROMPT</span>]──────────────── cached once ✓
+      ├─[User query A]─[Answer A]
+      ├─[User query B]─[Answer B]
+      └─[User query C]─[Answer C]
+
+<span class="em">Shared prefix computed once, reused across all requests.</span>
+<span class="dim">For 100-req/s with 1k-token system prompts: saves ~100k tok/s</span></div>
+            <div class="technique-explain">Every LLM request with a system prompt (instructions, RAG context, tool definitions) must compute the KV cache for that prefix from scratch in naive serving. RadixAttention organises the KV cache as a radix tree where <strong>shared prefixes are stored and reused across requests</strong>. For production deployments — where hundreds of concurrent requests share the same system prompt — this eliminates the dominant source of redundant compute. In agentic pipelines where the context window carries 10k–100k tokens of shared history, the gains compound dramatically: some benchmarks show 4–6x throughput improvement when prefix reuse rate is high.</div>
+          </div>
+
+          <!-- FlashAttention -->
+          <div class="technique-block">
+            <div class="technique-title">FlashAttention 2/3</div>
+            <div class="technique-diagram"><span class="dim">── STANDARD ATTENTION MEMORY PATTERN ──────────</span>
+Q, K, V matrices → compute S = QKᵀ → write S to <span class="alert">HBM</span> (slow)
+                → read S from <span class="alert">HBM</span>  → softmax(S) → write to <span class="alert">HBM</span>
+                → read from <span class="alert">HBM</span>  → multiply by V
+  <span class="alert">HBM bandwidth</span> bottleneck: O(N²) reads/writes for seq len N
+
+<span class="dim">── FLASHATTENTION: SRAM TILING ─────────────────</span>
+Divide Q,K,V into tiles that fit in <span class="ok">SRAM (fast, on-chip)</span>
+Fuse softmax + matmul into single CUDA kernel per tile:
+  tile₁ → compute partial attention in <span class="ok">SRAM</span> → accumulate
+  tile₂ → compute partial attention in <span class="ok">SRAM</span> → accumulate
+  ...    → final output written to <span class="alert">HBM</span> once
+<span class="em">HBM reads: O(N) instead of O(N²) — critical for long context</span></div>
+            <div class="technique-explain">Standard attention computes the full N×N attention matrix and materialises it in GPU HBM (slow off-chip memory). For a 32k-token context, this is a 32k×32k matrix — roughly 4GB of intermediate data being written and read repeatedly. FlashAttention tiles the computation so intermediate results stay in fast on-chip SRAM, <strong>reducing HBM bandwidth by up to 10x for long sequences</strong>. FA3 specifically targets the H100's new async copy units and Tensor Core pipelining. Without FlashAttention, running 128k+ context windows would be economically prohibitive on current hardware.</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="callout red" style="margin-top:0">
+          <div class="callout-label">A Note on Quantization</div>
+          <p>Quantization (FP32→FP16→BF16→FP8→INT4) is <strong>not a software serving optimization</strong> — it is a change to the model's weight precision, made at deployment time and applied uniformly. It trades a small accuracy loss for a large reduction in memory footprint and bandwidth pressure. The throughput gains in the terminal block above are measured at <em>constant INT8 quantization</em> to isolate the pure software serving improvements. Quantization is separately powerful — a BF16→INT4 conversion halves memory, allowing twice the batch size on the same hardware — but it belongs in the model preparation layer, not the inference server layer.</p>
+        </div>
+
+        <div class="callout" style="margin-top:16px">
+          <div class="callout-label">The CUDA Lock-in Question</div>
+          <p>NVIDIA's CUDA moat is real but eroding at the margins. AMD ROCm 6.0 has closed the correctness gap and now runs most major inference frameworks. Intel OneAPI is less mature but strategically important. More critically, <strong>OpenAI Triton</strong> — a Python-based GPU kernel language — is enabling kernel-level optimizations to be written once and compiled to CUDA, ROCm, and future backends. If Triton reaches critical mass, it structurally weakens NVIDIA's software moat even while its hardware moat remains intact.</p>
+        </div>
+
+        <div class="callout teal" style="margin-top:16px">
+          <div class="callout-label">The Compiler Layer Battle</div>
+          <p>MLIR, XLA, TVM, and IREE represent the emerging compiler backends that can target diverse accelerators from a single model representation. Google's XLA has proven this works at scale for TPUs. The question for 2026–2027 is whether open compiler infrastructure matures sufficiently to route workloads intelligently across NVIDIA, AMD, and emerging ASIC accelerators — creating genuine hardware competition for the first time since CUDA's emergence.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 6: COMPETITORS -->
+  <section class="section" id="competitors">
+    <div class="section-header">
+      <div class="section-num">06</div>
+      <div class="section-header-text">
+        <h2 class="section-title">Where in the Stack<br>Are Competitors Playing?</h2>
+        <div class="section-lead">Four archetypes: infrastructure maximalist, sovereign/geographic, orchestration platform, and inference specialist — each with a distinct recent strategic trajectory</div>
+      </div>
+    </div>
+
+    <div class="prose">
+      <p>Understanding a GPU cloud company requires mapping them precisely on two axes: <em>where in the stack they create and capture value</em>, and <em>what customer segment they're optimizing for</em>. The providers who try to cover all layers without differentiation will be squeezed between hyperscalers (who have endless capital) and specialized players (who have genuine software depth). The winning positioning in 2025–2027 will require a deliberate bet on one or two stack layers, executed with depth.</p>
+    </div>
+
+    <div class="competitor-grid">
+
+      <!-- CoreWeave -->
+      <div class="comp-card">
+        <div class="comp-card-accent" style="background: linear-gradient(90deg, #b896ff, #6644cc)"></div>
+        <div class="comp-card-head">
+          <div class="comp-name">CoreWeave</div>
+          <div class="comp-tagline">Infrastructure Layer Maximalist · IPO March 2025 · ~$23B market cap</div>
+        </div>
+        <div class="comp-card-body">
+          <div class="comp-row">
+            <div class="comp-row-label">Stack Position</div>
+            <div class="comp-stack-indicator">
+              <span class="stack-badge" style="background:rgba(168,130,255,0.15);color:var(--accent);border:1px solid rgba(168,130,255,0.3)">Layer 0 · Silicon</span>
+              <span class="stack-badge" style="background:rgba(168,130,255,0.15);color:var(--accent);border:1px solid rgba(168,130,255,0.3)">Layer 1 · Fabric</span>
+              <span class="stack-badge" style="background:rgba(168,130,255,0.10);color:var(--text-muted);border:1px solid var(--border)">Layer 4 · Orchestration</span>
+            </div>
+          </div>
+          <div class="comp-row">
+            <div class="comp-row-label">Thesis</div>
+            <div class="comp-row-value">Purpose-built GPU infrastructure with NVIDIA partnership at its core. Invests heavily in the physical substrate — custom InfiniBand networking, high rack density, and power infrastructure optimised exclusively for GPU workloads. Not a multi-tenant generic cloud; a specialised GPU-native datacenter operator with a Kubernetes-native control plane (CKKS).</div>
+          </div>
+          <div class="comp-row">
+            <div class="comp-row-label">Customers</div>
+            <div class="comp-row-value">AI labs on large reserved-capacity deals (Microsoft 10-year contract worth reportedly $11.9B is the anchor), Cohere, Mistral, Inflection. Foundation model companies dominate the order book. Enterprise inference is a growing but secondary segment.</div>
+          </div>
+          <div class="comp-row">
+            <div class="comp-row-label">Moat</div>
+            <div class="comp-row-value">Scale of NVIDIA GPU inventory (~50,000+ H100 equivalents), NVIDIA preferred cloud partner status (NPN), and deeply entrenched long-term contracts that create high switching costs for training workloads.</div>
+          </div>
+          <div class="comp-row">
+            <div class="comp-row-label">Recent Moves</div>
+            <div class="comp-row-value" style="color:var(--text)">
+              <strong>Mar 2025:</strong> IPO on Nasdaq at ~$40/share, raising ~$1.5B. Stock opened below IPO price, reflecting market concern about hyperscaler competition.<br>
+              <strong>2024–25:</strong> Launched <em>CoreWeave Inference</em> product — first move up the stack beyond raw compute rental. Integrating vLLM and SGLang as managed inference endpoints.<br>
+              <strong>2024:</strong> Secured NVIDIA Blackwell B200 allocation ahead of most cloud competitors, providing competitive window through 2026.<br>
+              <strong>Watch:</strong> Whether they can convert their hardware moat into a software platform before contracts come up for renewal.
+            </div>
+          </div>
+          <div class="comp-verdict">
+            <div class="verdict-label">Strategic Analysis</div>
+            <span class="verdict-text">CoreWeave is the purest expression of the "GPU as infrastructure" thesis — and its IPO performance reflects the market's ambivalence. The Microsoft contract provides near-term revenue certainty, but it also reveals the core risk: dependence on a handful of hyperscale customers who are simultaneously building competing GPU clusters. The strategic imperative for CoreWeave is to move up the stack into inference software before its hardware differentiation compresses. Their CoreWeave Inference product is the right direction; the question is execution speed. A secondary risk is NVIDIA's own cloud ambitions (DGX Cloud), which competes directly with CoreWeave's core offering.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nebius -->
+      <div class="comp-card">
+        <div class="comp-card-accent" style="background: linear-gradient(90deg, #4fd8c4, #2a9d8f)"></div>
+        <div class="comp-card-head">
+          <div class="comp-name">Nebius</div>
+          <div class="comp-tagline">Sovereign Cloud Play · Yandex spinout · Nasdaq: NBIS · EU + MENA focus</div>
+        </div>
+        <div class="comp-card-body">
+          <div class="comp-row">
+            <div class="comp-row-label">Stack Position</div>
+            <div class="comp-stack-indicator">
+              <span class="stack-badge" style="background:rgba(79,216,196,0.15);color:var(--accent2);border:1px solid rgba(79,216,196,0.3)">Layer 0 · Silicon</span>
+              <span class="stack-badge" style="background:rgba(79,216,196,0.15);color:var(--accent2);border:1px solid rgba(79,216,196,0.3)">Layer 4 · Orchestration</span>
+              <span class="stack-badge" style="background:rgba(79,216,196,0.10);color:var(--text-muted);border:1px solid var(--border)">Layer 5 · Model Hosting</span>
+            </div>
+          </div>
+          <div class="comp-row">
+            <div class="comp-row-label">Thesis</div>
+            <div class="comp-row-value">Exploit the structural gap created by EU AI Act data sovereignty requirements and US export control complexity. Provide EU-domiciled, GDPR-compliant GPU compute to European enterprises and AI companies who cannot route sensitive workloads through US hyperscalers. Leverages decade-deep Yandex infrastructure engineering DNA.</div>
+          </div>
+          <div class="comp-row">
+            <div class="comp-row-label">Customers</div>
+            <div class="comp-row-value">European AI startups, enterprise teams with data residency mandates, government and regulated industries in EU/Nordics. Expanding rapidly into MENA (UAE, Saudi Arabia) as sovereign AI investment there accelerates. Several EU national AI institutes are on the customer list.</div>
+          </div>
+          <div class="comp-row">
+            <div class="comp-row-label">Moat</div>
+            <div class="comp-row-value">Geographic regulatory moat is the primary differentiation — GDPR compliance + EU domicile + local data residency guarantees that no US cloud can replicate through datacenter presence alone. Secondary moat: strong MLOps tooling suite (Nebius AI Studio, managed fine-tuning, model registry) built on Yandex platform heritage.</div>
+          </div>
+          <div class="comp-row">
+            <div class="comp-row-label">Recent Moves</div>
+            <div class="comp-row-value" style="color:var(--text)">
+              <strong>2024:</strong> Launched Nebius AI Studio — managed fine-tuning, model serving, and evaluation platform. Directly competing with AWS SageMaker and GCP Vertex AI in EU.<br>
+              <strong>2024–25:</strong> Opened new datacenter campus in <em>Mäntsälä, Finland</em> — among the highest-density GPU clusters in EU, cooled with district heating integration.<br>
+              <strong>Q1 2025:</strong> NVIDIA DGX Cloud partnership for EU — enables Nebius to offer NVIDIA-certified DGX SuperPOD configs to EU enterprises requiring on-premises-equivalent compliance.<br>
+              <strong>2025:</strong> MENA expansion: announced datacenter partnerships in UAE and Saudi Arabia as Gulf state sovereign AI programs accelerate.
+            </div>
+          </div>
+          <div class="comp-verdict">
+            <div class="verdict-label">Strategic Analysis</div>
+            <span class="verdict-text">Nebius is playing a geopolitical hand as much as a technical one — and geopolitics is creating a durable moat that hardware procurement cannot replicate. The EU AI Act's data governance requirements are tightening, not loosening. The risk is the 2–3 year window: AWS, Azure, and Google are aggressively expanding EU datacenter footprints and will eventually close the compliance certification gap. Nebius's defense is to compound the software/tooling layer (AI Studio) so deeply that switching becomes costly even after hyperscalers achieve formal EU compliance. Their MENA expansion is smart — sovereign AI spending in Gulf states is largely unconstrained and growing faster than EU.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal -->
+      <div class="comp-card">
+        <div class="comp-card-accent" style="background: linear-gradient(90deg, #f5c842, #e07b00)"></div>
+        <div class="comp-card-head">
+          <div class="comp-name">Modal</div>
+          <div class="comp-tagline">Orchestration / Developer Platform · Serverless GPU compute · Series B</div>
+        </div>
+        <div class="comp-card-body">
+          <div class="comp-row">
+            <div class="comp-row-label">Stack Position</div>
+            <div class="comp-stack-indicator">
+              <span class="stack-badge" style="background:rgba(245,200,66,0.15);color:var(--accent4);border:1px solid rgba(245,200,66,0.3)">Layer 3 · Inference Engine</span>
+              <span class="stack-badge" style="background:rgba(245,200,66,0.15);color:var(--accent4);border:1px solid rgba(245,200,66,0.3)">Layer 4 · Orchestration</span>
+            </div>
+          </div>
+          <div class="comp-row">
+            <div class="comp-row-label">Thesis</div>
+            <div class="comp-row-value">Abstract away all infrastructure complexity via a Python-native serverless API. Developers decorate functions with <code style="font-family:var(--mono);font-size:11px;background:var(--code-inline-bg);padding:1px 4px;border-radius:2px">@app.function(gpu="H100")</code>, and Modal handles containerisation, cold start, autoscaling, and billing. Multi-cloud hardware arbitrage backend (routes to cheapest GPU across Lambda, CoreWeave, and own infrastructure).</div>
+          </div>
+          <div class="comp-row">
+            <div class="comp-row-label">Customers</div>
+            <div class="comp-row-value">AI engineers and ML researchers at startups, individual developers building inference pipelines, teams running batch fine-tuning, video processing, or document pipelines. Developer-first, bottoms-up growth into company-wide adoption.</div>
+          </div>
+          <div class="comp-row">
+            <div class="comp-row-label">Moat</div>
+            <div class="comp-row-value">Developer experience compounds over time: once pipelines are built on Modal primitives, migration cost is high. Multi-cloud arbitrage enables pricing flexibility unavailable to single-DC operators. Serverless model aligns GPU cost with actual usage, reducing waste for burst workloads.</div>
+          </div>
+          <div class="comp-row">
+            <div class="comp-row-label">Recent Moves</div>
+            <div class="comp-row-value" style="color:var(--text)">
+              <strong>2024:</strong> Series B closed (~$100M+). Expanded from pure GPU compute into <em>Modal Volumes</em> (persistent object storage tightly integrated with compute) and <em>Modal Sandboxes</em> (code execution environments).<br>
+              <strong>2024–25:</strong> Launched <em>Modal Web Endpoints</em> — persistent inference endpoints with automatic cold-start optimisation, directly competing with Replicate and Baseten for the model-hosting segment.<br>
+              <strong>2025:</strong> Added H100 SXM5 access with spot pricing as low as $1.80/hr — using multi-cloud arbitrage to undercut single-vendor providers by 30–40%.<br>
+              <strong>Watch:</strong> Whether enterprise production workloads migrate to Modal, or whether they remain developer/experimental-only.
+            </div>
+          </div>
+          <div class="comp-verdict">
+            <div class="verdict-label">Strategic Analysis</div>
+            <span class="verdict-text">Modal is building the Heroku/Vercel of GPU compute — and if that analogy holds, the outcome is either a high-multiple acquisition by AWS/GCP (who want the developer platform) or a dominant independent middleware. The risk is the ceiling: the same abstraction that makes Modal delightful for a solo ML engineer is insufficient for a production LLM serving workload needing sub-20ms P99 latency, custom CUDA kernels, or multi-GPU tensor parallelism. The enterprise inference tier remains underserved by the orchestration-first model. Modal's addition of Volumes (object storage) is the right move — see the object storage section below for why this matters structurally.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fireworks AI / Together AI - Inference Specialist -->
+      <div class="comp-card">
+        <div class="comp-card-accent" style="background: linear-gradient(90deg, #ff7878, #cc3060)"></div>
+        <div class="comp-card-head">
+          <div class="comp-name">Fireworks AI</div>
+          <div class="comp-tagline">Inference Specialist · Stack Layer 3 Pure-Play · Series B 2024</div>
+        </div>
+        <div class="comp-card-body">
+          <div class="comp-row">
+            <div class="comp-row-label">Stack Position</div>
+            <div class="comp-stack-indicator">
+              <span class="stack-badge" style="background:rgba(255,120,120,0.15);color:var(--accent3);border:1px solid rgba(255,120,120,0.3)">Layer 3 · Inference Engine</span>
+              <span class="stack-badge" style="background:rgba(255,120,120,0.10);color:var(--text-muted);border:1px solid var(--border)">Layer 5 · Model API</span>
+            </div>
+          </div>
+          <div class="comp-row">
+            <div class="comp-row-label">Thesis</div>
+            <div class="comp-row-value">Own the inference layer as a pure-play API. Do not own hardware. Do not build a developer platform. Run the most optimised inference stack possible on third-party GPU infrastructure, and sell performance-per-dollar as the product. Deeply optimised kernels for specific model architectures (Llama, Mixtral, Gemma families), not generic serving.</div>
+          </div>
+          <div class="comp-row">
+            <div class="comp-row-label">Customers</div>
+            <div class="comp-row-value">Product teams at AI-native companies needing low-latency, high-throughput open-model inference at production scale. Customers who have outgrown Replicate or HuggingFace Inference API but don't want to operate their own GPU cluster. Competitor set: Together AI, Anyscale, Baseten.</div>
+          </div>
+          <div class="comp-row">
+            <div class="comp-row-label">Moat</div>
+            <div class="comp-row-value">Inference kernel engineering depth — custom CUDA kernels tuned per-model rather than generic frameworks. First-class speculative decoding, continuous batching, and prefix caching implementations. Claims sub-50ms TTFT (time-to-first-token) on Llama 3 70B at production load — benchmarks consistently top public leaderboards.</div>
+          </div>
+          <div class="comp-row">
+            <div class="comp-row-label">Recent Moves</div>
+            <div class="comp-row-value" style="color:var(--text)">
+              <strong>2024:</strong> Launched <em>FireFunction</em> — fine-tuned function-calling models optimised for agentic tool use. First inference provider to specifically optimise for structured output + tool-call workflows.<br>
+              <strong>2024:</strong> Series B ($52M). Announced intent to build proprietary inference ASICs — long-term signal that they want to control Layer 0 eventually.<br>
+              <strong>2025:</strong> Compound AI System support — multi-model routing across Fireworks-hosted models in a single API call. Direct shot at the agentic infrastructure gap.<br>
+              <strong>Compare with Together AI</strong> — similar inference-API positioning but with stronger research/training heritage and RedPajama dataset community.
+            </div>
+          </div>
+          <div class="comp-verdict">
+            <div class="verdict-label">Strategic Analysis</div>
+            <span class="verdict-text">Fireworks represents the most technically interesting competitive bet: own the inference engine layer without owning any hardware. This is the purest software-margin play in the market. The risk is that the inference API becomes commoditised as open-source frameworks (vLLM, SGLang) mature and providers increasingly self-host. Fireworks' defense is kernel-engineering depth that takes years to replicate — but that advantage narrows as Triton and other compiler abstractions lower the barrier to custom kernels. The FireFunction and agentic tooling bet is astute: structured output + tool-call inference is genuinely harder than standard generation and commands premium pricing.</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="prose">
+      <p>Reading across these four archetypes illuminates the structural logic of the market. <strong>CoreWeave</strong> is a capital-intensive infrastructure bet that requires hardware scarcity to persist long enough to generate returns before contracts renew. <strong>Nebius</strong> is a geographic/regulatory arbitrage play with a time-bounded window before hyperscalers close the compliance gap. <strong>Modal</strong> is a developer platform play requiring developer experience to compound into enterprise lock-in. <strong>Fireworks AI</strong> is the inference-layer pure-play — highest software margins, most exposed to commoditisation of serving frameworks.</p>
+
+      <p>The most defensible long-term position is one that <strong>owns a meaningful chunk of the inference engine layer while building adjacent data infrastructure</strong> — because that combination sits directly between hardware commoditization (threatening CoreWeave-style plays) and application-layer fragmentation (threatening orchestration plays). The data infrastructure angle is explored in the next section.</p>
+    </div>
+  </section>
+
+  <!-- SECTION: OBJECT STORAGE INTEGRATION -->
+  <section class="section" id="storage">
+    <div class="section-header">
+      <div class="section-num">07</div>
+      <div class="section-header-text">
+        <h2 class="section-title">Object Storage:<br>The Invisible Infrastructure Layer</h2>
+        <div class="section-lead">Where our existing storage offering integrates with the GPU compute stack — and why it is a structural complement, not a commodity add-on</div>
+      </div>
+    </div>
+
+    <div class="prose">
+      <p>Object storage is typically treated as a utility — an S3-compatible endpoint bolted onto a GPU cloud offering as a checkbox feature. This framing misses the actual technical and commercial role that object storage plays in AI workloads. <strong>Storage is not peripheral to the GPU stack; it is the data substrate on which every layer above it depends.</strong> A GPU sitting idle waiting for data from slow object storage is a GPU generating zero revenue. The latency and throughput characteristics of the storage layer directly set the ceiling on training efficiency and inference serving quality.</p>
+    </div>
+
+    <div class="heatmap" style="grid-template-columns: repeat(3, 1fr); margin: 32px 0;">
+      <div class="heatmap-cell heat-high">
+        <div class="heatmap-cell-title">Training Data Ingestion</div>
+        <div class="heatmap-cell-desc">Multi-TB datasets streamed to GPU workers during training. Bottleneck: sustained read throughput. Object storage must sustain >10 GB/s per H100 node or GPUs stall waiting on data.</div>
+      </div>
+      <div class="heatmap-cell heat-high">
+        <div class="heatmap-cell-title">Model Checkpointing</div>
+        <div class="heatmap-cell-desc">Training runs checkpoint every N steps. A 70B model checkpoint = ~140GB (BF16). At 8 GPUs/node, checkpointing to slow object storage stalls training for minutes per save. Fast object storage = faster recovery, more frequent safe-points.</div>
+      </div>
+      <div class="heatmap-cell heat-high">
+        <div class="heatmap-cell-title">Model Weight Serving</div>
+        <div class="heatmap-cell-desc">Inference servers cold-load model weights from object storage. A 70B model = 140GB; initial load from S3-equivalent: 2–8 min. From local NVMe: 20–40s. Storage proximity to GPU is a direct latency-to-revenue factor.</div>
+      </div>
+      <div class="heatmap-cell heat-med">
+        <div class="heatmap-cell-title">RAG Vector + Document Store</div>
+        <div class="heatmap-cell-desc">Retrieval-Augmented Generation pipelines store document chunks and metadata in object storage, retrieved per-query. Low-latency object read is critical for sub-100ms RAG response. Tiered storage (hot/warm/cold) maps naturally here.</div>
+      </div>
+      <div class="heatmap-cell heat-med">
+        <div class="heatmap-cell-title">Synthetic Data Pipelines</div>
+        <div class="heatmap-cell-desc">Post-training synthetic data generation produces massive output volumes (100B+ tokens). These must be written to object storage, deduplicated, filtered, and re-ingested. High-throughput write + metadata management are the key requirements.</div>
+      </div>
+      <div class="heatmap-cell heat-low">
+        <div class="heatmap-cell-title">Inference Result Caching</div>
+        <div class="heatmap-cell-desc">Semantic caching stores prior LLM outputs keyed by embedding similarity. Object storage + vector index enables cache hits that bypass GPU compute entirely. At scale, 20–40% of queries can be served from cache.</div>
+      </div>
+    </div>
+
+    <div class="callout teal">
+      <div class="callout-label">Integration Opportunity: Where We Play</div>
+      <p>Our existing object storage offering has a natural insertion point at <strong>four critical junctures</strong> in the GPU compute workflow: (1) <strong>Training dataset hosting</strong> — co-located storage eliminates egress fees and maximises read throughput to GPU workers; (2) <strong>Checkpoint storage</strong> — high-throughput write path with versioning and lifecycle policies for automatic tier-down; (3) <strong>Model weight registry</strong> — a content-addressed model store where weights are versioned, deduped across fine-tune variants, and served via a low-latency presigned URL mechanism; and (4) <strong>Inference artifact storage</strong> — output logs, evaluation results, and generated data from production inference pipelines. The competitive advantage is not the S3 API (that is table stakes) — it is <strong>storage co-location with our GPU infrastructure</strong>, which eliminates cross-provider network hops and their associated latency and cost.</p>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <div class="callout">
+          <div class="callout-label">The Co-location Moat</div>
+          <p>When compute and storage live in the same datacenter and are connected by high-speed internal fabric (rather than crossing the public internet), three things change: latency drops from ~50ms to <1ms for metadata operations; throughput rises from ~500 MB/s to >10 GB/s for large sequential reads; egress cost drops to zero (no cross-provider bandwidth charges). For a training cluster reading 10TB of data per training step, this is not a minor optimisation — it is the difference between a GPU utilisation rate of 40% and 85%.</p>
+        </div>
+      </div>
+      <div>
+        <div class="callout yellow">
+          <div class="callout-label">Pricing Lever: Egress-Free Storage</div>
+          <p>The dominant hyperscaler model charges $0.08–$0.09/GB for data egress — a cost that compounds rapidly for AI workloads that read datasets repeatedly during training. A 10TB dataset read 50 times (one epoch per day for 50 days) generates $40,000–$45,000 in egress fees on AWS S3 alone. Positioning our object storage as <strong>egress-free when paired with our GPU compute</strong> is a commercially differentiated offer that directly attacks the hyperscaler lock-in mechanism and aligns with how customers experience cost.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="prose">
+      <p>The competitive landscape on storage-compute integration is instructive. CoreWeave recently launched <em>CoreWeave Object Storage</em> powered by VAST Data — specifically to address the training data bottleneck for their large-cluster customers. Nebius has <em>Object Storage</em> as a first-class product integrated with their AI platform. Modal added <em>Volumes</em> (persistent, distributed storage) as a foundational feature because they found that GPU compute without integrated storage was insufficient for real workloads. The pattern is consistent: every serious GPU cloud is building tighter storage integration, because the customers demand it.</p>
+      <p><strong>The strategic question is not whether to offer object storage — it is how deeply to integrate it into the inference and training workflow</strong>, and whether to position it as a standalone SKU or as a bundled compute+storage unit that competes on total cost rather than per-service price.</p>
+    </div>
+  </section>
+
+  <!-- SECTION 8: STRATEGIC THESIS -->
+  <section class="section" id="thesis">
+    <div class="section-header">
+      <div class="section-num">08</div>
+      <div class="section-header-text">
+        <h2 class="section-title">Strategic Thesis:<br>The Compounding Stack</h2>
+        <div class="section-lead">Where the white space is, what the durable moats look like, and what a well-positioned startup should be building</div>
+      </div>
+    </div>
+
+    <div class="thesis-box">
+      <div class="thesis-text">"The GPU cloud market is not a hardware rental market. It is a software-defined performance arbitrage market, and the companies that understand this first will capture margins that are structurally unavailable to those who don't."</div>
+      <div class="thesis-attribution">— Editorial Thesis · The Compute Stack Brief, Vol. III</div>
+    </div>
+
+    <div class="prose">
+      <p>The convergence of trends analyzed in this brief points to a clear strategic map for the next 36 months. Five forces are reshaping value capture across the stack:</p>
+
+      <p><strong>1. Hardware will partially commoditize, but software won't.</strong> The H100/H200/B200 supply situation will gradually normalize through 2026, driven by AMD MI300X adoption, Nvidia Blackwell ramp, and reduced frontier lab dominance over total demand. As unit economics of raw GPU hours compress, the margin migrates upward — to inference engines, orchestration, and specialized model hosting.</p>
+
+      <p><strong>2. Agentic workloads will force a re-architecture of inference infrastructure.</strong> The current generation of inference servers (vLLM, TGI) was built for stateless, single-turn requests. Agentic pipelines require stateful, multi-turn, tool-calling, long-context, low-latency sessions. This is a genuinely different engineering problem — one that creates white space for new tooling. The KV cache management problem alone (maintaining state across 50+ tool calls in a single session) is not well-solved by any existing production system.</p>
+
+      <p><strong>3. Quantization will make on-device/edge viable for 80% of use cases.</strong> By 2026, a sub-$2,000 consumer device will be able to run a Q4-quantized 30B model at conversational speed. This is not a threat to the cloud — frontier model training and complex multi-step reasoning will remain cloud-bound. But it fundamentally changes the competitive surface for commodity API tasks (summarization, classification, simple Q&A), which currently represent the majority of inference API revenue for mid-tier cloud providers.</p>
+
+      <p><strong>4. Sovereign AI is a durable structural force, not a temporary phenomenon.</strong> The EU AI Act, US export controls, India's data localization push, and Gulf state national AI strategies are all creating demand for compute that is jurisdictionally constrained. This is not going away — it's accelerating. The first well-capitalized cloud provider in each major jurisdiction will lock in long-term government and enterprise contracts that are difficult to displace.</p>
+
+      <p><strong>5. The inference engine is the new operating system.</strong> Just as in the 1990s, the OS became the platform on which all applications ran and extracted rent accordingly, the inference engine — the software layer that translates a model weight file into production API calls — is becoming the platform on which AI applications are built. vLLM is open-source but companies like Anyscale (its primary commercial backer) are building managed services atop it. TensorRT-LLM is NVIDIA's attempt to own this layer. The company that owns the default production inference engine wins the same way Microsoft Windows won.</p>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-cell">
+        <div class="stat-num">Layer 3</div>
+        <div class="stat-label">Highest white-space opportunity<br>Inference Engine + Serving</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num teal">2026</div>
+        <div class="stat-label">Inflection year for<br>agentic infrastructure demand</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num yellow">$300B+</div>
+        <div class="stat-label">Projected AI infrastructure<br>market by 2028 (Goldman est.)</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num red">~14x</div>
+        <div class="stat-label">Software-driven throughput gain<br>on identical hardware (max observed)</div>
+      </div>
+    </div>
+
+    <div class="callout teal">
+      <div class="callout-label">Startup Opportunity</div>
+      <p>The clearest unmet need in 2025 is <strong>production-grade agentic inference infrastructure</strong>: a serving system purpose-built for stateful, multi-turn, tool-calling, long-context sessions — with intelligent KV cache persistence, speculative multi-token generation, dynamic batching across sessions, and a per-task pricing model. This is not a CRUD problem or a DevOps problem. It requires deep GPU systems programming, inference engine architecture, and distributed systems expertise. The team that solves it will either be acquired by one of the major inference players (Anyscale, Fireworks, Together AI) or become the platform that all agentic applications run on. The market is real, the problem is hard, and it is not yet solved.</p>
+    </div>
+  </section>
+
+</div><!-- /content-wrap -->
+
+<!-- FOOTNOTES -->
+<div class="footnote-band">
+  <div class="footnote-inner">
+    <div>
+      <div class="footnote-col-title">Hardware References</div>
+      <div class="footnote-item"><span class="footnote-item-num">H01</span>NVIDIA H100 SXM5: 80GB HBM3, 3.35 PFLOPS BF16, 700W TDP, NVLink 4.0</div>
+      <div class="footnote-item"><span class="footnote-item-num">H02</span>NVIDIA H200: 141GB HBM3e, 4.8 TB/s memory BW — primary driver for long-context / MoE inference</div>
+      <div class="footnote-item"><span class="footnote-item-num">H03</span>NVIDIA B200: Blackwell architecture, FP4 precision, NVLink 5.0 (1.8 TB/s bidirectional)</div>
+      <div class="footnote-item"><span class="footnote-item-num">H04</span>AMD MI300X: 192GB HBM3, 5.3 TB/s BW — memory capacity advantage over H100 significant for MoE</div>
+      <div class="footnote-item"><span class="footnote-item-num">H05</span>Apple M4 Ultra: ~800 GB/s unified memory BW, 192GB max — viable for local 70B inference</div>
+    </div>
+    <div>
+      <div class="footnote-col-title">Software References</div>
+      <div class="footnote-item"><span class="footnote-item-num">S01</span>vLLM: PagedAttention paper (Kwon et al., 2023) — arXiv:2309.06180</div>
+      <div class="footnote-item"><span class="footnote-item-num">S02</span>FlashAttention-3: Tri Dao, Jay Shah et al. (2024) — H100 Tensor Core optimized</div>
+      <div class="footnote-item"><span class="footnote-item-num">S03</span>SGLang: RadixAttention for structured generation (Zheng et al., 2024)</div>
+      <div class="footnote-item"><span class="footnote-item-num">S04</span>DeepSeek V3 Technical Report (2024): MLA + MoE + FP8 training at $5.5M cost</div>
+      <div class="footnote-item"><span class="footnote-item-num">S05</span>EAGLE-2 speculative decoding: context-aware dynamic draft trees, 3–4x speedup</div>
+    </div>
+    <div>
+      <div class="footnote-col-title">Market Context</div>
+      <div class="footnote-item"><span class="footnote-item-num">M01</span>CoreWeave IPO: March 2025, ~$23B market cap at IPO — first pure-play GPU cloud public listing</div>
+      <div class="footnote-item"><span class="footnote-item-num">M02</span>Nebius (NBIS): Listed on Nasdaq post-Yandex separation, EU-domiciled GPU infrastructure</div>
+      <div class="footnote-item"><span class="footnote-item-num">M03</span>Modal Labs: Series B, developer-platform GPU abstraction, multi-cloud backend routing</div>
+      <div class="footnote-item"><span class="footnote-item-num">M04</span>SemiAnalysis ClusterMAX 2.0: 84 providers rated, 209 tracked — the definitive GPU cloud benchmark</div>
+      <div class="footnote-item"><span class="footnote-item-num">M05</span>Goldman Sachs AI Infrastructure Report (2024): $200–300B projected datacenter spend by 2027</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Restore saved preference on load
+  (function() {
+    const saved = localStorage.getItem('theme');
+    if (saved === 'light') {
+      document.documentElement.classList.add('light');
+      const lbl = document.getElementById('toggle-label');
+      if (lbl) lbl.textContent = 'Dark';
+    }
+  })();
+
+  function toggleTheme() {
+    const html = document.documentElement;
+    const isLight = html.classList.toggle('light');
+    const label = document.getElementById('toggle-label');
+    label.textContent = isLight ? 'Dark' : 'Light';
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+  }
+</script>
+
+</body>
+</html>
