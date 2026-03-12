@@ -448,46 +448,6 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
   <div style="margin-bottom:24px;">
     <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:var(--amber);text-transform:uppercase;letter-spacing:.12em;margin-bottom:14px;">The Transformer Structure &mdash; How Llama 70B Is Organised</div>
 
-    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:12px 14px;margin-bottom:12px;">
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Concrete input path before entering transformer layers</div>
-
-      <div style="display:flex;align-items:flex-start;gap:8px;overflow-x:auto;padding-bottom:2px;">
-        <div style="min-width:220px;background:var(--bg);border:1px solid rgba(48,200,112,.26);border-radius:7px;padding:9px 10px;">
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--green);margin-bottom:4px;">1) User text</div>
-          <div style="font-size:12px;color:var(--ink);line-height:1.5;">&ldquo;The capital of France is&rdquo;</div>
-        </div>
-
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);padding-top:22px;">&rarr;</div>
-
-        <div style="min-width:360px;background:var(--bg);border:1px solid rgba(232,160,32,.26);border-radius:7px;padding:9px 10px;">
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--amber);margin-bottom:4px;">2) Token split + token IDs</div>
-          <div style="display:flex;flex-wrap:wrap;gap:4px;">
-            <span class="tok-chip"><span class="tok-word">&ldquo;The&rdquo;</span><span class="tok-id">ID 464</span></span>
-            <span class="tok-chip"><span class="tok-word">&ldquo; capital&rdquo;</span><span class="tok-id">ID 3361</span></span>
-            <span class="tok-chip"><span class="tok-word">&ldquo; of&rdquo;</span><span class="tok-id">ID 286</span></span>
-            <span class="tok-chip"><span class="tok-word">&ldquo; France&rdquo;</span><span class="tok-id">ID 4881</span></span>
-            <span class="tok-chip"><span class="tok-word">&ldquo; is&rdquo;</span><span class="tok-id">ID 318</span></span>
-          </div>
-        </div>
-
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);padding-top:22px;">&rarr;</div>
-
-        <div style="min-width:220px;background:var(--bg);border:1px solid rgba(26,191,208,.26);border-radius:7px;padding:9px 10px;">
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--cyan);margin-bottom:4px;">3) Flat ID array sent to embedding table</div>
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink);line-height:1.7;">[464, 3361, 286, 4881, 318]</div>
-        </div>
-
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);padding-top:22px;">&rarr;</div>
-
-        <div style="min-width:270px;background:var(--bg);border:1px solid rgba(138,110,232,.26);border-radius:7px;padding:9px 10px;">
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--purple);margin-bottom:4px;">4) Embedding lookup (GPU HBM)</div>
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--ink);line-height:1.7;">ID 4881 &rarr; embedding row 4881<br/>h<sub>0</sub>(France) in R<sup>8192</sup></div>
-        </div>
-      </div>
-
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);margin-top:7px;line-height:1.6;">All prompt tokens get the same treatment, producing one initial 8,192-D vector per token position before entering the 80 transformer layers.</div>
-    </div>
-
     <!-- MAIN TRANSFORMER STRUCTURE FIGURE -->
     <div style="background:var(--bg);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px 16px;margin-bottom:14px;overflow-x:auto;">
       <svg viewBox="0 0 1160 360" style="display:block;width:100%;max-width:1160px;height:auto;shape-rendering:geometricPrecision;text-rendering:geometricPrecision;">
@@ -513,14 +473,34 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
           </marker>
         </defs>
 
+        <!-- PREPROCESS STRIP: text -> token split -> IDs -->
+        <rect x="28" y="14" width="180" height="28" rx="6" fill="rgba(48,200,112,.08)" stroke="rgba(48,200,112,.35)"/>
+        <text x="118" y="26" fill="var(--green)" font-family="IBM Plex Mono, monospace" font-size="8" text-anchor="middle">USER TEXT</text>
+        <text x="118" y="36" fill="var(--ink)" font-family="IBM Plex Mono, monospace" font-size="8" text-anchor="middle">&ldquo;The capital of France is&rdquo;</text>
+
+        <rect x="218" y="14" width="180" height="28" rx="6" fill="rgba(232,160,32,.08)" stroke="rgba(232,160,32,.35)"/>
+        <text x="308" y="26" fill="var(--amber)" font-family="IBM Plex Mono, monospace" font-size="8" text-anchor="middle">TOKEN SPLIT</text>
+        <text x="308" y="36" fill="var(--muted)" font-family="IBM Plex Mono, monospace" font-size="8" text-anchor="middle">&ldquo;The&rdquo; &middot; &ldquo; capital&rdquo; &middot; &ldquo; of&rdquo; &middot; &ldquo; France&rdquo; &middot; &ldquo; is&rdquo;</text>
+
+        <rect x="408" y="14" width="128" height="28" rx="6" fill="rgba(26,191,208,.08)" stroke="rgba(26,191,208,.35)"/>
+        <text x="472" y="26" fill="var(--cyan)" font-family="IBM Plex Mono, monospace" font-size="8" text-anchor="middle">TOKEN IDs</text>
+        <text x="472" y="36" fill="var(--ink)" font-family="IBM Plex Mono, monospace" font-size="8" text-anchor="middle">[464, 3361, 286, 4881, 318]</text>
+
+        <line x1="208" y1="28" x2="218" y2="28" stroke="rgba(232,234,240,.6)" stroke-width="1.2" marker-end="url(#arr)"/>
+        <line x1="398" y1="28" x2="408" y2="28" stroke="rgba(232,234,240,.6)" stroke-width="1.2" marker-end="url(#arr)"/>
+        <line x1="472" y1="42" x2="472" y2="54" stroke="rgba(232,234,240,.5)" stroke-width="1.2" marker-end="url(#arr)"/>
+
         <rect x="28" y="54" width="150" height="248" rx="10" fill="url(#gInput)" stroke="rgba(48,200,112,.45)"/>
-        <text x="103" y="80" fill="var(--green)" font-family="IBM Plex Mono, monospace" font-size="11" text-anchor="middle">INPUT TOKENS</text>
-        <text x="103" y="98" fill="var(--muted)" font-family="IBM Plex Mono, monospace" font-size="9" text-anchor="middle">5 token IDs</text>
-        <text x="45" y="130" fill="var(--ink)" font-family="IBM Plex Mono, monospace" font-size="10">"The"</text>
-        <text x="45" y="154" fill="var(--ink)" font-family="IBM Plex Mono, monospace" font-size="10">"capital"</text>
-        <text x="45" y="178" fill="var(--ink)" font-family="IBM Plex Mono, monospace" font-size="10">"of"</text>
-        <text x="45" y="202" fill="var(--green)" font-family="IBM Plex Mono, monospace" font-size="10">"France"</text>
-        <text x="45" y="226" fill="var(--ink)" font-family="IBM Plex Mono, monospace" font-size="10">"is"</text>
+        <text x="103" y="80" fill="var(--green)" font-family="IBM Plex Mono, monospace" font-size="11" text-anchor="middle">INPUT TOKEN IDs</text>
+        <text x="103" y="98" fill="var(--muted)" font-family="IBM Plex Mono, monospace" font-size="9" text-anchor="middle">Tokenizer output (5 positions)</text>
+        <text x="38" y="130" fill="var(--ink)" font-family="IBM Plex Mono, monospace" font-size="9">&ldquo;The&rdquo; -&gt; 464</text>
+        <text x="38" y="154" fill="var(--ink)" font-family="IBM Plex Mono, monospace" font-size="9">&ldquo; capital&rdquo; -&gt; 3361</text>
+        <text x="38" y="178" fill="var(--ink)" font-family="IBM Plex Mono, monospace" font-size="9">&ldquo; of&rdquo; -&gt; 286</text>
+        <text x="38" y="202" fill="var(--green)" font-family="IBM Plex Mono, monospace" font-size="9">&ldquo; France&rdquo; -&gt; 4881</text>
+        <text x="38" y="226" fill="var(--ink)" font-family="IBM Plex Mono, monospace" font-size="9">&ldquo; is&rdquo; -&gt; 318</text>
+
+        <rect x="186" y="112" width="52" height="132" rx="8" fill="rgba(26,191,208,.12)" stroke="rgba(26,191,208,.45)"/>
+        <text x="212" y="130" fill="var(--cyan)
 
         <rect x="246" y="54" width="290" height="248" rx="10" fill="url(#gAttn)" stroke="rgba(138,110,232,.45)"/>
         <text x="391" y="80" fill="var(--purple)" font-family="IBM Plex Mono, monospace" font-size="11" text-anchor="middle">80 TRANSFORMER LAYERS</text>
@@ -1163,15 +1143,13 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
           <span style="color:var(--green);">64.4B + 1.05B + biases ≈</span>
           <span style="color:var(--green); font-weight:700; font-size:13px;">~70B ✓</span>
         </div>
-      </div>
 
-      <div style="margin-top:10px;background:rgba(74,144,232,.08);border:1px solid rgba(74,144,232,.25);border-radius:6px;padding:10px 12px;">
+        <div style="height:1px;background:rgba(255,255,255,.1);margin:8px 0;"></div>
         <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--blue);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em;">From parameter count to GPU memory</div>
         <div style="font-size:11px;color:var(--muted);line-height:1.65;margin-bottom:7px;">One parameter is one number in memory. Precision decides bytes per parameter.</div>
         <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--ink);background:rgba(255,255,255,.03);border-radius:5px;padding:7px 10px;line-height:1.9;">
           70,000,000,000 params &times; 2 bytes (BF16) &divide; 1,000,000,000 = <strong style="color:var(--green);">~140 GB VRAM</strong>
         </div>
-        <div style="font-size:10px;color:var(--muted);margin-top:6px;line-height:1.55;">A single RTX 4090 has 24 GB, so a 70B BF16 model needs multiple GPUs just to load weights.</div>
       </div>
 
       <div id="ms-formula-blocks" style="display:flex;flex-direction:column;gap:8px;margin-top:10px;">
