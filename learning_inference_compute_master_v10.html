@@ -4402,8 +4402,9 @@ function econxFmtResponseTime(ms){
 }
 
 function econxFmtTimeFor1M(seconds){
+  if(!isFinite(seconds) || seconds <= 0) return 'N/A';
   if(seconds < 3600) return econxFmtNum(seconds / 60, 1) + ' min';
-  return econxFmtNum(seconds / 3600, 1) + ' hr';
+  return econxFmtNum(seconds / 3600, 2) + ' hr';
 }
 
 function econxModelMemGB(paramsB, prec){
@@ -4640,7 +4641,7 @@ function econxDrawCostChart(results){
   });
   var timeData = results.map(function(entry){
     var r = entry.result;
-    return r ? (r.time_for_1m_s / 3600) : null;
+    return (r && isFinite(r.tps_effective) && r.tps_effective > 0) ? ((1000000 / r.tps_effective) / 3600) : null;
   });
 
   if(econxCostChart) econxCostChart.destroy();
@@ -4853,7 +4854,7 @@ function econxUpdate(){
         + '<div class="econx-header-sub">Interconnect: ' + gpu.interconnect + ' · ' + econxFmtNum(gpu.bandwidth, 0) + ' GB/s HBM</div>'
         + body
         + '<div class="econx-metric econx-metric-bottom"><span>Bottom line: $ / 1M out tokens</span><span>' + econxFmtMoney(r.cost_per_1m_out, 1) + '</span></div>'
-        + '<div class="econx-metric"><span>Bottom line: time / 1M out tokens</span><span>' + econxFmtTimeFor1M(r.time_for_1m_s) + '</span></div>'
+        + '<div class="econx-metric"><span>Bottom line: time / 1M out tokens</span><span>' + econxFmtTimeFor1M(1000000 / r.tps_effective) + '</span></div>'
         + '</div></div>';
     }).join('');
   }
@@ -4863,8 +4864,8 @@ function econxUpdate(){
     summary.innerHTML = '<table class="econx-table"><thead><tr><th>Config</th><th>$ / 1M out tok</th><th>Time for 1M out tok</th><th>Output tok / $1</th></tr></thead><tbody>'
       + results.map(function(entry){
         var r = entry.result;
-        if(!r) return '<tr><td>' + entry.key + '</td><td>N/A</td><td>N/A</td><td>N/A</td></tr>';
-        var timeFmt = econxFmtTimeFor1M(r.time_for_1m_s);
+        if(!r || !isFinite(r.tps_effective) || r.tps_effective <= 0) return '<tr><td>' + entry.key + '</td><td>N/A</td><td>N/A</td><td>N/A</td></tr>';
+        var timeFmt = econxFmtTimeFor1M(1000000 / r.tps_effective);
         var tokPerDollar = 1000000 / r.cost_per_1m_out;
         return '<tr><td style="color:' + entry.gpu.color + ';">' + entry.key + '</td><td>' + econxFmtMoney(r.cost_per_1m_out, 1) + '</td><td>' + timeFmt + '</td><td>' + econxFmtNum(tokPerDollar, 1) + '</td></tr>';
       }).join('')
@@ -4888,7 +4889,7 @@ function econxUpdate(){
       + 'electricity cost = ' + econxFmtMoney(rr.energy_cost, 6) + ' (' + econxFmtNum(rr.total_power_kw, 2) + ' kW effective)<br>'
       + 'rack cost = ' + econxFmtMoney(rr.rack_cost, 6) + ' using ' + econxFmtNum(rr.rack_u, 1) + 'U x ' + econxFmtMoney(rack, 0) + '/U/month<br>'
       + 'total cost = (' + econxFmtMoney(rr.compute_cost, 5) + ' + ' + econxFmtMoney(rr.energy_cost, 5) + ' + ' + econxFmtMoney(rr.rack_cost, 5) + ') x ' + rr.reliability_mult + ' = ' + econxFmtMoney(rr.total_cost, 6) + '<br>'
-      + 'time for 1M output tokens = 1,000,000 / ' + econxFmtNum(rr.tps_effective, 1) + ' tok/s = ' + econxFmtNum(rr.time_for_1m_s / 3600, 1) + ' hr';
+      + 'time for 1M output tokens = 1,000,000 / ' + econxFmtNum(rr.tps_effective, 1) + ' tok/s = ' + econxFmtNum((1000000 / rr.tps_effective) / 3600, 2) + ' hr';
   }
 }
 
