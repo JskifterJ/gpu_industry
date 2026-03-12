@@ -1597,6 +1597,79 @@ function providerStackValues(provider){
   return (provider.stack || []).map(v=>SPACE_SCORE_COLORS[v] || 1);
 }
 
+function spaceAxisStep(axisKey){
+  if(['security','lifecycle','orchestration','storage','networking','reliability','monitoring','pricing','partnerships','availability'].includes(axisKey)) return 1;
+  if(['avg','stackBreadth','stackPath'].includes(axisKey)) return 0.5;
+  if(axisKey==='total') return 2;
+  return 1;
+}
+
+function spaceAxisBaseValue(provider, axisKey){
+  // In 2D block view, stack path is represented by stack breadth to avoid over-plotting.
+  if(axisKey==='stackPath') return axisValueForProvider(provider,'stackBreadth');
+  return axisValueForProvider(provider,axisKey);
+}
+
+function build2DBlockPoints(xAxis, yAxis){
+  const xStep = spaceAxisStep(xAxis);
+  const yStep = spaceAxisStep(yAxis);
+  const blockMap = {};
+
+  PROVIDERS.forEach(provider=>{
+    const xRaw = spaceAxisBaseValue(provider, xAxis);
+    const yRaw = spaceAxisBaseValue(provider, yAxis);
+    const xBlock = Math.round(xRaw / xStep) * xStep;
+    const yBlock = Math.round(yRaw / yStep) * yStep;
+    const key = `${xBlock}|${yBlock}`;
+    if(!blockMap[key]) blockMap[key] = [];
+    blockMap[key].push({provider, xRaw, yRaw, xBlock, yBlock});
+  });
+
+  const points = [];
+  const shapes = [];
+
+  Object.keys(blockMap).forEach(key=>{
+    const members = blockMap[key].sort((a,b)=>a.provider.name.localeCompare(b.provider.name));
+    const count = members.length;
+    const cols = Math.ceil(Math.sqrt(count));
+    const rows = Math.ceil(count / cols);
+
+    members.forEach((m, idx)=>{
+      const col = idx % cols;
+      const row = Math.floor(idx / cols);
+      const dx = ((col + 0.5) / cols - 0.5) * xStep * 0.72;
+      const dy = ((row + 0.5) / rows - 0.5) * yStep * 0.72;
+
+      points.push({
+        provider: m.provider,
+        xRaw: m.xRaw,
+        yRaw: m.yRaw,
+        xBlock: m.xBlock,
+        yBlock: m.yBlock,
+        xPlot: m.xBlock + dx,
+        yPlot: m.yBlock + dy,
+        occupancy: count
+      });
+    });
+
+    const first = members[0];
+    shapes.push({
+      type:'rect',
+      xref:'x',
+      yref:'y',
+      x0:first.xBlock - xStep/2,
+      x1:first.xBlock + xStep/2,
+      y0:first.yBlock - yStep/2,
+      y1:first.yBlock + yStep/2,
+      line:{color:'rgba(148,163,184,0.32)',width:1},
+      fillcolor:'rgba(148,163,184,0.06)',
+      layer:'below'
+    });
+  });
+
+  return {points, shapes};
+}
+
 function setSpaceMode(mode){
   spaceMode = mode;
   document.getElementById('space-mode-2d').classList.toggle('active', mode==='2d');
@@ -1635,56 +1708,67 @@ function renderSpacePlot(){
   const axesInUse = spaceMode==='2d' ? [xAxis,yAxis] : [xAxis,yAxis,zAxis];
   const hasStackPath = axesInUse.includes('stackPath');
   if(hintEl){
-    hintEl.innerHTML = hasStackPath
-      ? 'Stack path enabled: each provider is rendered as a line from L1 to L7 on the selected stack axis (coverage score 1-5).'
-      : 'Point mode: each provider is rendered as a single marker based on selected metrics.';
+    hintEl.innerHTML = spaceMode==='2d'
+      ? 'Block mode: each competitor is placed inside a coordinate block with non-overlapping offsets. If Stack Coverage Path is selected, it is represented as stack breadth for readability.'
+      : (hasStackPath
+        ? 'Stack path enabled: each provider is rendered as a line from L1 to L7 on the selected stack axis (coverage score 1-5).'
+        : 'Point mode: each provider is rendered as a single marker based on selected metrics.');
   }
 
   const traces = [];
-  PROVIDERS.forEach(provider=>{
-    const total = axisValueForProvider(provider,'total');
-    const size = 10 + (total/50)*14;
-    const color = SPACE_TIER_COLOR[provider.tier] || '#38bdf8';
+  if(spaceMode==='2d'){
+    const block = build2DBlockPoints(xAxis, yAxis);
+    const tiers = ['platinum','gold','silver'];
+    tiers.forEach(tier=>{
+      const pts = block.points.filter(p=>p.provider.tier===tier);
+      if(pts.length===0) return;
+      traces.push({
+        type:'scatter',
+        mode:'markers+text',
+        name:tier.charAt(0).toUpperCase()+tier.slice(1),
+        x:pts.map(p=>p.xPlot),
+        y:pts.map(p=>p.yPlot),
+        text:pts.map(p=>p.provider.name),
+        textposition:'middle center',
+        textfont:{size:9,color:'#0f172a'},
+        marker:{
+          color:SPACE_TIER_COLOR[tier],
+          size:pts.map(p=>8 + (axisValueForProvider(p.provider,'total')/50)*9),
+          line:{color:'rgba(15,23,42,0.6)',width:1},
+          opacity:0.95
+        },
+        customdata:pts.map(p=>[
+          p.provider.name,
+          p.provider.tier.toUpperCase(),
+          axisValueForProvider(p.provider,'total'),
+          p.xRaw,
+          p.yRaw,
+          p.xBlock,
+          p.yBlock,
+          p.occupancy
+        ]),
+        hovertemplate:
+          `<b>%{customdata[0]}</b> · %{customdata[1]}<br>Total: %{customdata[2]}/50` +
+          `<br>${spaceAxisLabel(xAxis)} (raw): %{customdata[3]}` +
+          `<br>${spaceAxisLabel(yAxis)} (raw): %{customdata[4]}` +
+          `<br>Block: (%{customdata[5]}, %{customdata[6]}) · Occupancy: %{customdata[7]}<extra></extra>`
+      });
+    });
+  } else {
+    PROVIDERS.forEach(provider=>{
+      const total = axisValueForProvider(provider,'total');
+      const size = 10 + (total/50)*14;
+      const color = SPACE_TIER_COLOR[provider.tier] || '#38bdf8';
 
-    const stackVals = providerStackValues(provider);
-    const stackLayerIdx = stackVals.map((_,i)=>i+1);
-    const hoverSuffix = `<br>${provider.name} · ${provider.tier.toUpperCase()}<br>Total: ${total}/50`;
+      const stackVals = providerStackValues(provider);
+      const stackLayerIdx = stackVals.map((_,i)=>i+1);
+      const hoverSuffix = `<br>${provider.name} · ${provider.tier.toUpperCase()}<br>Total: ${total}/50`;
 
-    function dimValues(axisKey){
-      if(axisKey==='stackPath') return stackVals;
-      return stackVals.map(()=>axisValueForProvider(provider,axisKey));
-    }
-
-    if(spaceMode==='2d'){
-      if(hasStackPath){
-        traces.push({
-          type:'scatter',
-          mode:'lines+markers+text',
-          name:provider.name,
-          x: dimValues(xAxis),
-          y: dimValues(yAxis),
-          text: stackLayerIdx.map(i=>'L'+i),
-          textposition:'top center',
-          line:{color:color,width:2},
-          marker:{color:color,size:stackLayerIdx.map((_,i)=>Math.max(6,size-3+i*0.7)),opacity:0.9},
-          hovertemplate:
-            `${spaceAxisLabel(xAxis)}: %{x}<br>${spaceAxisLabel(yAxis)}: %{y}<br>Layer: %{text}${hoverSuffix}<extra></extra>`
-        });
-      } else {
-        traces.push({
-          type:'scatter',
-          mode:'markers+text',
-          name:provider.name,
-          x:[axisValueForProvider(provider,xAxis)],
-          y:[axisValueForProvider(provider,yAxis)],
-          text:[provider.name],
-          textposition:'top center',
-          marker:{color:color,size:size,opacity:0.9,line:{width:1,color:'#111827'}},
-          hovertemplate:
-            `${spaceAxisLabel(xAxis)}: %{x}<br>${spaceAxisLabel(yAxis)}: %{y}${hoverSuffix}<extra></extra>`
-        });
+      function dimValues(axisKey){
+        if(axisKey==='stackPath') return stackVals;
+        return stackVals.map(()=>axisValueForProvider(provider,axisKey));
       }
-    } else {
+
       if(hasStackPath){
         traces.push({
           type:'scatter3d',
@@ -1715,13 +1799,13 @@ function renderSpacePlot(){
             `${spaceAxisLabel(xAxis)}: %{x}<br>${spaceAxisLabel(yAxis)}: %{y}<br>${spaceAxisLabel(zAxis)}: %{z}${hoverSuffix}<extra></extra>`
         });
       }
-    }
-  });
+    });
+  }
 
   if(titleEl){
     titleEl.textContent =
       spaceMode==='2d'
-      ? `2D Space · X: ${spaceAxisLabel(xAxis)} · Y: ${spaceAxisLabel(yAxis)}`
+      ? `2D Block Space · X: ${spaceAxisLabel(xAxis)} · Y: ${spaceAxisLabel(yAxis)}`
       : `3D Space · X: ${spaceAxisLabel(xAxis)} · Y: ${spaceAxisLabel(yAxis)} · Z: ${spaceAxisLabel(zAxis)}`;
   }
 
@@ -1740,8 +1824,22 @@ function renderSpacePlot(){
   };
 
   if(spaceMode==='2d'){
-    layout.xaxis = {title:spaceAxisLabel(xAxis),gridcolor:gridColor,zeroline:false};
-    layout.yaxis = {title:spaceAxisLabel(yAxis),gridcolor:gridColor,zeroline:false};
+    const block = build2DBlockPoints(xAxis, yAxis);
+    layout.shapes = block.shapes;
+    layout.xaxis = {
+      title:spaceAxisLabel(xAxis),
+      gridcolor:gridColor,
+      zeroline:false,
+      dtick:spaceAxisStep(xAxis),
+      tickformat:'.2~f'
+    };
+    layout.yaxis = {
+      title:spaceAxisLabel(yAxis),
+      gridcolor:gridColor,
+      zeroline:false,
+      dtick:spaceAxisStep(yAxis),
+      tickformat:'.2~f'
+    };
   } else {
     layout.scene = {
       bgcolor:plotBg,
