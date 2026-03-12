@@ -2014,61 +2014,105 @@ function emb3dUpdateMeta(){
   html += '<div class="emb3d-flow-col-intro">' + ctxMsg + 'Each dimension of the 8,192-element hidden vector is multiplied by the output weight matrix (one row per token in vocabulary), creating dot-product votes. These votes sum to logits, which become probabilities via softmax.</div>';
   html += '<div class="emb3d-flow-columns">';
   
-  // Column 0: Dimension labels (separate)
-  html += '<div class="emb3d-flow-col" style="max-width:52px;">';
-  html += '<div class="emb3d-flow-header" style="background:rgba(255,255,255,.05);">Dim</div>';
+  var prev = emb3dVectorAt(Math.max(1, EMB3D.layer - 1));
+  var base = EMB3D.baseVec;
+  
+  // Column 0: Dimension labels (narrow)
+  html += '<div class="emb3d-flow-col" style="max-width:38px;">';
+  html += '<div class="emb3d-flow-header" style="background:rgba(255,255,255,.05);font-size:7px;">Dim</div>';
   for(var i=0; i<cur.length; i++){
-    html += '<div class="emb3d-flow-cell dim-label" style="min-width:52px;">h[' + i + ']</div>';
+    html += '<div class="emb3d-flow-cell dim-label" style="min-width:38px;max-width:38px;font-size:7.5px;">h[' + i + ']</div>';
   }
-  html += '<div class="emb3d-flow-cell truncate" style="min-width:52px;">more</div>';
-  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);border-top:2px solid rgba(232,160,32,.4);margin-top:4px;padding-top:4px;color:var(--muted);font-size:7px;min-width:52px;"></div>';
+  html += '<div class="emb3d-flow-cell truncate" style="min-width:38px;max-width:38px;font-size:7px;">more</div>';
+  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);border-top:2px solid rgba(232,160,32,.4);margin-top:4px;padding-top:4px;color:var(--muted);font-size:6px;min-width:38px;max-width:38px;"></div>';
+  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);margin-top:1px;color:var(--muted);font-size:6px;min-width:38px;max-width:38px;"></div>';
+  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);margin-top:1px;color:var(--muted);font-size:6px;min-width:38px;max-width:38px;"></div>';
+  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);margin-top:1px;color:var(--muted);font-size:6px;min-width:38px;max-width:38px;"></div>';
   html += '</div>';
   
-  // Column 1: Hidden Vector values (8 visible dims)
-  html += '<div class="emb3d-flow-col">';
-  html += '<div class="emb3d-flow-header">Hidden<br>Vector</div>';
+  // Column 1: Hidden Vector values
+  html += '<div class="emb3d-flow-col" title="Initial hidden vector values at this layer">';
+  html += '<div class="emb3d-flow-header" title="h[i] = hidden dimension i">H-Vec</div>';
   for(var i=0; i<cur.length; i++){
-    var val = cur[i];
-    html += '<div class="emb3d-flow-cell">' + val.toFixed(3) + '</div>';
+    html += '<div class="emb3d-flow-cell">' + cur[i].toFixed(3) + '</div>';
   }
-  html += '<div class="emb3d-flow-cell truncate">...+8k</div>';
-  var cumulativeLogit = base.reduce(function(s,v){ return s+v; },0) * 0.1 + winner.voteSum + winner.bias;
-  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);border-top:2px solid rgba(232,160,32,.4);margin-top:4px;padding-top:4px;color:var(--amber);font-weight:600;font-size:8px;">∑: ' + cumulativeLogit.toFixed(2) + '</div>';
+  html += '<div class="emb3d-flow-cell truncate">...8k</div>';
+  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);border-top:2px solid rgba(232,160,32,.4);"></div>';
+  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);"></div>';
+  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);"></div>';
+  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);"></div>';
   html += '</div>';
+  
+  // Column 1b: Per-layer delta
+  html += '<div class="emb3d-flow-col" title="Change from previous layer">';
+  html += '<div class="emb3d-flow-header" title="Δ = h[i](layer N) - h[i](layer N-1)">Δ Layer</div>';
+  for(var i=0; i<cur.length; i++){
+    var d = cur[i] - prev[i];
+    var cls = d >= 0 ? 'delta-pos' : 'delta-neg';
+    var sign = d >= 0 ? '+' : '';
+    html += '<div class="emb3d-flow-cell ' + cls + '">' + sign + d.toFixed(3) + '</div>';
+  }
+  html += '<div class="emb3d-flow-cell truncate">avg</div>';
+  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);border-top:2px solid rgba(232,160,32,.4);"></div>';
+  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);"></div>';
+  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);"></div>';
+  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);"></div>';
+  html += '</div>';
+  
+  // Column 1c: Cumulative delta from layer 1
+  html += '<div class="emb3d-flow-col" title="Total change from layer 1 to current">';
+  html += '<div class="emb3d-flow-header" title="Σ(Δ) = cumulative change since layer 1">Σ Δ L1</div>';
+  for(var i=0; i<cur.length; i++){
+    var cumDelta = cur[i] - base[i];
+    var cls = cumDelta >= 0 ? 'delta-pos' : 'delta-neg';
+    var sign = cumDelta >= 0 ? '+' : '';
+    html += '<div class="emb3d-flow-cell ' + cls + '">' + sign + cumDelta.toFixed(3) + '</div>';
+  }
+  html += '<div class="emb3d-flow-cell truncate">total</div>';
+  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);border-top:2px solid rgba(232,160,32,.4);"></div>';
+  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);"></div>';
+  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);"></div>';
+  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);"></div>';
+  html += '</div>';
+  
+  // --- Separator ---
+  html += '<div class="emb3d-flow-col" style="max-width:8px;background:rgba(255,255,255,.1);border-left:2px solid rgba(232,160,32,.3);"></div>';
   
   // Columns 2+: Token rows with contributions and result (extended all the way down)
   p.rows.forEach(function(row, rowIdx){
     var winClass = row.isWinner ? ' style="border-color:rgba(232,160,32,.5);background:rgba(232,160,32,.1);"' : '';
     html += '<div class="emb3d-flow-col"' + winClass + '>';
-    html += '<div class="emb3d-flow-header" style="color:' + (row.isWinner ? 'var(--amber)' : 'var(--green)') + ';border-color:' + (row.isWinner ? 'rgba(232,160,32,.5)' : 'rgba(48,200,112,.3)') + ';">' + row.label + '<br><span style="font-size:7px;color:var(--muted);">#' + row.id + '</span></div>';
+    html += '<div class="emb3d-flow-header" style="color:' + (row.isWinner ? 'var(--amber)' : 'var(--green)') + ';border-color:' + (row.isWinner ? 'rgba(232,160,32,.5)' : 'rgba(48,200,112,.3)') + ';" title="Token: ' + row.label + ', ID: ' + row.id + '">' + row.label + '<br><span style="font-size:7px;color:var(--muted);">#' + row.id + '</span></div>';
     
     // Show contribution for each dimension
     for(var i=0; i<cur.length; i++){
       var contrib = row.contribs[i];
       var sign = contrib >= 0 ? '+' : '';
-      html += '<div class="emb3d-flow-cell">' + sign + contrib.toFixed(3) + '</div>';
+      html += '<div class="emb3d-flow-cell" title="h[' + i + '] × w[' + row.label + ',' + i + ']">' + sign + contrib.toFixed(3) + '</div>';
     }
     
     // Truncation label
-    html += '<div class="emb3d-flow-cell truncate">...+8k<br>dims</div>';
+    html += '<div class="emb3d-flow-cell truncate" title="Sum across remaining 8,184 dimensions">...8k</div>';
     
     // Sum of contributions
-    html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.06);border-top:1px solid rgba(255,255,255,.1);color:var(--blue);font-size:8px;">' + row.voteSum.toFixed(2) + '</div>';
+    html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.06);border-top:1px solid rgba(255,255,255,.1);color:var(--blue);font-size:8px;" title="Σ(h[i] × w[i])">Σ: ' + row.voteSum.toFixed(2) + '</div>';
     
     // Bias row
-    html += '<div class="emb3d-flow-cell" style="background:rgba(0,0,0,.2);color:var(--muted);font-size:7px;">+' + row.bias.toFixed(2) + '</div>';
+    html += '<div class="emb3d-flow-cell" style="background:rgba(0,0,0,.2);color:var(--muted);font-size:7px;" title="Learned bias term for ' + row.label + '">b: ' + row.bias.toFixed(2) + '</div>';
     
     // Final logit
-    html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);border-top:2px solid ' + (row.isWinner ? 'rgba(232,160,32,.5)' : 'rgba(48,200,112,.3)') + ';color:' + (row.isWinner ? 'var(--amber)' : 'var(--green)') + ';">' + row.logit.toFixed(2) + '</div>';
+    html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);border-top:2px solid ' + (row.isWinner ? 'rgba(232,160,32,.5)' : 'rgba(48,200,112,.3)') + ';color:' + (row.isWinner ? 'var(--amber)' : 'var(--green)') + ';" title="logit = Σ(h[i]×w[i]) + bias">logit</div>';
+    html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);color:' + (row.isWinner ? 'var(--amber)' : 'var(--green)') + ';font-weight:600;" title="Logit value: ' + row.logit.toFixed(2) + '">' + row.logit.toFixed(2) + '</div>';
     
     // Final probability
-    html += '<div class="emb3d-flow-result">' + (row.prob*100).toFixed(0) + '%</div>';
+    html += '<div class="emb3d-flow-result" title="softmax(logit) = exp(logit) / Σexp(all_logits)">prob</div>';
+    html += '<div class="emb3d-flow-result" style="font-weight:600;" title="' + row.label + ': ' + (row.prob*100).toFixed(1) + '%">' + (row.prob*100).toFixed(0) + '%</div>';
     html += '</div>';
   });
   
   // Column: Remaining vocabulary indicator (extended)
   html += '<div class="emb3d-flow-col">';
-  html += '<div class="emb3d-flow-header" style="color:var(--muted);font-size:7px;">...128k+<br>other</div>';
+  html += '<div class="emb3d-flow-header" style="color:var(--muted);font-size:7px;" title="128,256 tokens total">128k+</div>';
   html += '<div class="emb3d-flow-cell truncate">dims</div>';
   for(var i=1; i<cur.length; i++){
     html += '<div class="emb3d-flow-cell truncate">·</div>';
@@ -2076,12 +2120,14 @@ function emb3dUpdateMeta(){
   html += '<div class="emb3d-flow-cell truncate">more</div>';
   html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.06);">tiny</div>';
   html += '<div class="emb3d-flow-cell" style="background:rgba(0,0,0,.2);">~0</div>';
+  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);">logit</div>';
   html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);">~0</div>';
   html += '<div class="emb3d-flow-cell truncate">~0%</div>';
   html += '</div>';
   
   html += '</div>'; // Close flow-columns
   var layerNote = EMB3D.layer === 80 ? 'The prompt token vector is now fully context-infused and fact-grounded. This dot-product with the vocabulary matrix produces probability scores for all 128,256 tokens.' : 'The vector is still evolving through layers; at layer 80 it will be ready for the final output projection.';
+  html += '<div class="emb3d-choice" style="margin-top:8px;">At layer ' + EMB3D.layer + ': <strong style="color:var(--amber);">' + winner.label + '</strong> leads with ' + (winner.prob*100).toFixed(0) + '% probability. ' + layerNote + '</div>';
   html += '<div class="emb3d-choice" style="margin-top:8px;">At layer ' + EMB3D.layer + ': <strong style="color:var(--amber);">' + winner.label + '</strong> leads with ' + (winner.prob*100).toFixed(0) + '% probability. ' + layerNote + '</div>';
   
   var processEl = document.getElementById('emb3d-process');
