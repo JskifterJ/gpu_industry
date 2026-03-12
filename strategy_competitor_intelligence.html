@@ -65,6 +65,22 @@ body.light .theme-toggle-thumb{transform:translateX(16px);}
 .main{padding:28px;max-width:1760px;margin:0 auto;}
 .panel{display:none;}
 .panel.active{display:block;}
+.arch-intro{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:14px;}
+.arch-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;margin-bottom:8px;}
+.arch-sub{font-size:13px;color:var(--sub);line-height:1.6;}
+.arch-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:10px;}
+.arch-table{width:100%;border-collapse:collapse;min-width:1220px;background:var(--card);}
+.arch-table thead tr{background:var(--surf);}
+.arch-table th{padding:11px 10px;border-bottom:1px solid var(--border);text-align:left;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;white-space:nowrap;}
+.arch-table td{padding:10px;border-bottom:1px solid var(--border);vertical-align:top;font-size:12px;color:var(--sub);line-height:1.5;}
+.arch-table tbody tr:last-child td{border-bottom:none;}
+.arch-code{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;margin-right:6px;color:#fff;}
+.arch-name{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--text);}
+.arch-stack{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--sub);line-height:1.5;}
+.arch-ex{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);line-height:1.5;}
+.arch-layer-tags{display:flex;flex-wrap:wrap;gap:5px;}
+.arch-tag{font-family:'JetBrains Mono',monospace;font-size:9px;padding:3px 7px;border-radius:4px;border:1px solid var(--border);background:var(--card2);color:var(--muted);}
+.arch-tag.hit{background:rgba(56,189,248,.10);border-color:rgba(56,189,248,.28);color:var(--accent);}
 .embed-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
 .embed-head{padding:12px 14px;border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);}
 .embed-frame{display:block;width:100%;height:calc(100vh - 240px);min-height:900px;border:0;background:var(--bg-s);}
@@ -377,7 +393,8 @@ table.stk td.grp-border-l{border-left:2px solid var(--border-ll)!important;}
 </header>
 
 <nav class="tabs">
-  <button class="tab active" onclick="switchTab('overview',this)">Tier Overview</button>
+  <button class="tab active" onclick="switchTab('archetypes',this)">Business Model Archetypes</button>
+  <button class="tab" onclick="switchTab('overview',this)">Tier Overview</button>
   <button class="tab" onclick="switchTab('matrix',this)">Criteria Matrix</button>
   <button class="tab" onclick="switchTab('stack',this)">Stack Coverage</button>
   <button class="tab" onclick="switchTab('h2h',this)">Head-to-Head</button>
@@ -386,8 +403,17 @@ table.stk td.grp-border-l{border-left:2px solid var(--border-ll)!important;}
 
 <div class="main">
 
+<!-- BUSINESS MODEL ARCHETYPES -->
+<div id="tab-archetypes" class="panel active">
+  <div class="arch-intro">
+    <div class="arch-title">Business Model Archetypes</div>
+    <div class="arch-sub">This table maps the 7 archetypes from `value_chain_master` to stack ownership (L0-L7) and to the four abstraction layers: BMaaS, GPUaaS, MLaaS, and WaaS. Use it as a quick strategy decoder before diving into provider-level comparisons.</div>
+  </div>
+  <div class="arch-wrap"><table class="arch-table" id="arch-table"></table></div>
+</div>
+
 <!-- OVERVIEW -->
-<div id="tab-overview" class="panel active"></div>
+<div id="tab-overview" class="panel"></div>
 
 <!-- MATRIX -->
 <div id="tab-matrix" class="panel">
@@ -1069,6 +1095,90 @@ const H2H = {
 let displayMode='qual';
 let activeFilters={platinum:true,gold:true,silver:true};
 
+const ARCHETYPES = [
+  {
+    code:'H', name:'Hyperscaler', color:'#2563EB',
+    model:'Vertically integrated full-stack cloud with global compliance and managed services.',
+    stack:'L0-L7 full-stack ownership',
+    abstraction:['BMaaS','GPUaaS','MLaaS','WaaS'],
+    examples:'AWS, GCP, Azure, Oracle'
+  },
+  {
+    code:'N', name:'Neocloud', color:'#059669',
+    model:'GPU-first infrastructure operator focused on cluster quality and cost-performance.',
+    stack:'L0 (procurement), L1, L2, L3, partial L5',
+    abstraction:['BMaaS','GPUaaS'],
+    examples:'CoreWeave, Nebius, Lambda, Crusoe, FluidStack'
+  },
+  {
+    code:'A', name:'Aggregator', color:'#D97706',
+    model:'Asset-light marketplace/unified API that routes demand to third-party supply.',
+    stack:'L3 federation, L6 marketplace/billing, L7 unified API',
+    abstraction:['GPUaaS','MLaaS'],
+    examples:'Vast.ai, TensorDock, Lepton'
+  },
+  {
+    code:'O', name:'Orchestrator / ML Platform', color:'#7C3AED',
+    model:'Software-first control plane and workflow layer above provider infrastructure.',
+    stack:'L3 scheduling, L4 execution, L5 MLOps, L6 observability, L7 developer API',
+    abstraction:['MLaaS','GPUaaS'],
+    examples:'Run:ai, Modal, Together AI, SambaNova, W&B'
+  },
+  {
+    code:'D', name:'DePIN', color:'#DC2626',
+    model:'Decentralized peer-supplied compute coordinated via blockchain incentives.',
+    stack:'L1 peer nodes, L3 blockchain orchestration, L4 inference/FT only',
+    abstraction:['GPUaaS'],
+    examples:'io.net, Akash, Nosana'
+  },
+  {
+    code:'B', name:'Hybrid Enterprise', color:'#475569',
+    model:'On-prem primary cluster with cloud burst for overflow and elasticity.',
+    stack:'L0 procurement, L1 on-prem DC, L2-L7 self-managed/outsourced mix',
+    abstraction:['BMaaS','GPUaaS','MLaaS'],
+    examples:'Banks, healthcare, government labs, regulated enterprises'
+  },
+  {
+    code:'I', name:'Inference API / Model Provider', color:'#0891B2',
+    model:'Model-owning provider monetizing token APIs and end-user AI products.',
+    stack:'L1-L3 leased/partnered, L4-L7 owned (training, inference, app)',
+    abstraction:['WaaS','MLaaS'],
+    examples:'OpenAI, Anthropic, Google DeepMind, Mistral'
+  }
+];
+
+const ABSTRACTION_COLS = ['BMaaS','GPUaaS','MLaaS','WaaS'];
+
+function renderArchetypes(){
+  const tbl = document.getElementById('arch-table');
+  if(!tbl) return;
+  let html = '<thead><tr>'
+    + '<th>Archetype</th>'
+    + '<th>What This Model Sells</th>'
+    + '<th>Stack Mapping (L0-L7)</th>'
+    + '<th>Abstraction Layer Mapping</th>'
+    + '<th>Representative Examples</th>'
+    + '</tr></thead><tbody>';
+
+  ARCHETYPES.forEach(function(a){
+    const tags = ABSTRACTION_COLS.map(function(col){
+      const hit = a.abstraction.indexOf(col) !== -1;
+      return '<span class="arch-tag' + (hit ? ' hit' : '') + '">' + col + '</span>';
+    }).join('');
+
+    html += '<tr>'
+      + '<td><span class="arch-code" style="background:' + a.color + ';">' + a.code + '</span><span class="arch-name">' + a.name + '</span></td>'
+      + '<td>' + a.model + '</td>'
+      + '<td class="arch-stack">' + a.stack + '</td>'
+      + '<td><div class="arch-layer-tags">' + tags + '</div></td>'
+      + '<td class="arch-ex">' + a.examples + '</td>'
+      + '</tr>';
+  });
+
+  html += '</tbody>';
+  tbl.innerHTML = html;
+}
+
 // ═══════════════════════════════════════════════════════
 //  OVERVIEW
 // ═══════════════════════════════════════════════════════
@@ -1379,6 +1489,7 @@ function applyStoredTheme(){
 // ═══════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded',()=>{
   applyStoredTheme();
+  renderArchetypes();
   renderOverview();
   buildMatrix();
   buildStack();
