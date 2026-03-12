@@ -403,11 +403,13 @@ details>summary::-webkit-details-marker{display:none;}
 .emb3d-speed{font-family:'IBM Plex Mono',monospace;font-size:8.5px;padding:4px 8px;border-radius:4px;border:1px solid var(--border2);background:var(--panel2);color:var(--ink);}
 .emb3d-ctrl-label{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;}
 .emb3d-layer{width:100%;accent-color:var(--cyan);}
-.emb3d-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
+.emb3d-meta{display:grid;grid-template-columns:1fr;gap:8px;margin-top:10px;}
 .emb3d-meta2{display:grid;grid-template-columns:1fr;gap:8px;margin-top:8px;}
 .emb3d-card{background:rgba(255,255,255,.03);border:1px solid var(--border2);border-radius:7px;padding:8px 10px;}
 .emb3d-card h4{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;}
 .emb3d-card p{font-size:11px;color:var(--muted);line-height:1.5;}
+.emb3d-stage-bar{background:rgba(255,255,255,.025);border:1px solid var(--border2);border-radius:6px;padding:6px 8px;margin-bottom:8px;font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--ink);line-height:1.5;}
+.emb3d-stage-bar .mut{color:var(--muted);}
 .emb3d-stage-name{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--ink);margin-bottom:4px;}
 .emb3d-array{font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--ink);line-height:1.6;display:flex;flex-direction:column;gap:2px;margin-bottom:10px;}
 .emb3d-array .dim{color:var(--cyan);}
@@ -420,17 +422,22 @@ details>summary::-webkit-details-marker{display:none;}
 .emb3d-mini .bad{color:var(--red);}
 .emb3d-process{display:flex;flex-direction:column;gap:8px;}
 .emb3d-flow-intro{font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);line-height:1.65;padding:6px 8px;background:rgba(255,255,255,.025);border:1px solid var(--border2);border-radius:6px;}
-.emb3d-proj-head{display:grid;grid-template-columns:88px 1fr;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--ink);padding:2px 0;}
-.emb3d-proj-head .mut{color:var(--muted);}
-.emb3d-proj-list{display:flex;flex-direction:column;gap:4px;}
-.emb3d-proj-row{display:grid;grid-template-columns:84px 1fr;gap:10px;align-items:start;font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--ink);line-height:1.5;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04);}
-.emb3d-proj-row:last-child{border-bottom:none;}
-.emb3d-proj-left{color:var(--cyan);white-space:nowrap;}
-.emb3d-proj-right{color:var(--ink);}
-.emb3d-token-vote{display:inline-block;margin-right:12px;white-space:nowrap;}
-.emb3d-token-vote .tok{color:var(--muted);}
-.emb3d-token-vote .pos{color:var(--green);}
-.emb3d-token-vote .neg{color:var(--red);}
+.emb3d-heatmap-wrap{margin:8px 0;font-family:'IBM Plex Mono',monospace;font-size:8.5px;}
+.emb3d-heatmap-row{display:flex;align-items:center;gap:6px;margin-bottom:3px;}
+.emb3d-heatmap-label{width:36px;text-align:right;color:var(--cyan);flex-shrink:0;}
+.emb3d-heatmap-cells{display:flex;gap:3px;flex:1;}
+.emb3d-heat-cell{width:36px;height:22px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:7.5px;font-weight:600;border:1px solid rgba(255,255,255,.1);}
+.emb3d-heat-pos{background:rgba(48,200,112,.3);color:var(--green);border-color:rgba(48,200,112,.4);}
+.emb3d-heat-neg{background:rgba(224,72,72,.3);color:var(--red);border-color:rgba(224,72,72,.4);}
+.emb3d-heat-neutral{background:rgba(255,255,255,.05);color:var(--muted);border-color:rgba(255,255,255,.1);}
+.emb3d-logit-bars{margin:8px 0;font-family:'IBM Plex Mono',monospace;font-size:8.5px;}
+.emb3d-logit-row{display:grid;grid-template-columns:48px 1fr 50px;gap:10px;align-items:center;margin-bottom:5px;}
+.emb3d-logit-label{color:var(--ink);font-weight:600;}
+.emb3d-logit-label.win{color:var(--amber);}
+.emb3d-logit-track{height:16px;background:#1a2030;border-radius:3px;overflow:hidden;position:relative;border:1px solid rgba(255,255,255,.1);}
+.emb3d-logit-fill{height:100%;border-radius:3px;transition:width .3s ease;}
+.emb3d-logit-val{text-align:right;color:var(--muted);}
+.emb3d-logit-val.win{color:var(--amber);font-weight:600;}
 .emb3d-summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
 .emb3d-summary-card{background:rgba(255,255,255,.025);border:1px solid var(--border2);border-radius:6px;padding:7px 8px;font-family:'IBM Plex Mono',monospace;font-size:8.5px;line-height:1.55;}
 .emb3d-summary-card.win{border-color:rgba(232,160,32,.35);background:rgba(232,160,32,.07);}
@@ -457,8 +464,9 @@ details>summary::-webkit-details-marker{display:none;}
   .emb3d-controls{grid-template-columns:1fr;}
   .emb3d-meta{grid-template-columns:1fr;}
   .emb3d-meta2{grid-template-columns:1fr;}
-  .emb3d-proj-head,.emb3d-proj-row{grid-template-columns:1fr;gap:4px;}
-  .emb3d-summary-grid{grid-template-columns:1fr 1fr;}
+  .emb3d-heatmap-cells{flex-wrap:wrap;}
+  .emb3d-heat-cell{flex:0 0 calc(25% - 2px);}
+  .emb3d-logit-row{grid-template-columns:50px 1fr 48px;}
 }
 
 /* MISC */
@@ -570,14 +578,10 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
         <option value="fast">Fast</option>
       </select>
     </div>
+    <div class="emb3d-stage-bar"><span class="mut">Layer effect:</span> <span id="emb3d-stage-name">Layer 1-16: grammar and word placement scaffolding</span> — <span id="emb3d-stage-desc" style="color:var(--muted);">Attention builds sentence structure and local dependencies; FFN starts shaping short-range language patterns.</span></div>
     <div class="emb3d-meta">
       <div class="emb3d-card">
-        <h4>Layer Effect</h4>
-        <div id="emb3d-stage-name" class="emb3d-stage-name">Layer 1-16: grammar and word placement scaffolding</div>
-        <p id="emb3d-stage-desc">Attention builds sentence structure and local dependencies; FFN starts shaping short-range language patterns.</p>
-      </div>
-      <div class="emb3d-card">
-        <h4>Tracked Hidden Array -> Token Rows -> Softmax</h4>
+        <h4>Hidden Vector (First 8 dims) → Output Votes → Softmax</h4>
         <div id="emb3d-array" class="emb3d-array"></div>
         <div id="emb3d-process" class="emb3d-process"></div>
       </div>
@@ -2037,31 +2041,44 @@ function emb3dUpdateMeta(){
   var processEl = document.getElementById('emb3d-process');
   if(processEl){
     var p = emb3dToyProbs(EMB3D.layer, cur);
-    var lines = cur.map(function(v, idx){
-      var votes = p.rows.map(function(row){
-        var cls = row.contribs[idx] >= 0 ? 'pos' : 'neg';
-        var sign = row.contribs[idx] >= 0 ? '+' : '';
-        return '<span class="emb3d-token-vote"><span class="tok">' + row.label + '</span> <span class="' + cls + '">' + sign + row.contribs[idx].toFixed(2) + '</span></span>';
-      }).join('');
-      return '<div class="emb3d-proj-row"><div class="emb3d-proj-left">h[' + idx + '] = ' + v.toFixed(3) + '</div><div class="emb3d-proj-right">weighted votes -> ' + votes + '</div></div>';
-    }).join('');
-    var cards = p.rows.map(function(row){
-      return '<div class="emb3d-summary-card' + (row.isWinner ? ' win' : '') + '">'
-        + '<div class="tok">' + row.label + '</div>'
-        + '<div class="id">token id ' + row.id + '</div>'
-        + '<div class="mut">logit ' + row.logit.toFixed(2) + '</div>'
-        + '<div class="mut">softmax ' + (row.prob*100).toFixed(1) + '%</div>'
-        + '<div class="mut">bias ' + row.bias.toFixed(2) + ' + votes ' + row.voteSum.toFixed(2) + '</div>'
-        + '</div>';
-    }).join('');
     var winner = p.rows.find(function(row){ return row.isWinner; }) || p.rows[0];
+    
+    // Heatmap: 8 dimensions × 4 token columns
+    var heatmapHTML = '<div class="emb3d-heatmap-wrap"><div style="color:var(--muted);font-size:8px;margin-bottom:6px;">Contribution Matrix: h[i] × W<sub>out</sub>[token, i]</div>';
+    for(var i=0; i<cur.length; i++){
+      var cells = p.rows.map(function(row){
+        var contrib = row.contribs[i];
+        var absVal = Math.abs(contrib);
+        var isPos = contrib >= 0;
+        var cellClass = 'emb3d-heat-cell ' + (Math.abs(contrib) > 0.1 ? (isPos ? 'emb3d-heat-pos' : 'emb3d-heat-neg') : 'emb3d-heat-neutral');
+        var sign = isPos && contrib > 0 ? '+' : '';
+        return '<div class="' + cellClass + '" title="' + row.label + ': ' + contrib.toFixed(3) + '">' + sign + contrib.toFixed(2) + '</div>';
+      }).join('');
+      heatmapHTML += '<div class="emb3d-heatmap-row"><div class="emb3d-heatmap-label">h[' + i + ']</div><div class="emb3d-heatmap-cells">' + cells + '</div></div>';
+    }
+    heatmapHTML += '</div>';
+    
+    // Aggregated logit bars
+    var maxLogit = Math.max.apply(null, p.rows.map(function(r){ return r.logit; }));
+    var minLogit = Math.min.apply(null, p.rows.map(function(r){ return r.logit; }));
+    var logitRange = maxLogit - minLogit || 1;
+    var logitsHTML = '<div class="emb3d-logit-bars"><div style="color:var(--muted);font-size:8px;margin-bottom:6px;">Logits (normalized) → Softmax Probabilities</div>';
+    p.rows.forEach(function(row){
+      var normalized = (row.logit - minLogit) / logitRange * 100;
+      var winClass = row.isWinner ? ' win' : '';
+      logitsHTML += '<div class="emb3d-logit-row">'
+        + '<div class="emb3d-logit-label' + winClass + '">' + row.label + '</div>'
+        + '<div class="emb3d-logit-track"><div class="emb3d-logit-fill' + winClass + '" style="width:' + normalized.toFixed(1) + '%;background:' + (row.isWinner ? 'var(--amber)' : 'rgba(48,200,112,.5)') + ';"></div></div>'
+        + '<div class="emb3d-logit-val' + winClass + '">' + (row.prob*100).toFixed(1) + '%</div>'
+        + '</div>';
+    });
+    logitsHTML += '</div>';
+    
     processEl.innerHTML = ''
-      + '<div class="emb3d-flow-intro">The first 8 hidden dimensions are feature coordinates, not tokens themselves. Each dimension sends a weighted vote into each token row of a toy output matrix. Adding those votes gives a logit for each token row; softmax then converts those logits into probabilities.</div>'
-      + '<div class="emb3d-proj-head"><div class="mut">Output rule</div><div>logit(token) = Σ h[i] × W<sub>out</sub>[token,i] + bias(token)</div></div>'
-      + '<div class="emb3d-proj-list">' + lines + '</div>'
-      + '<div class="emb3d-proj-head"><div class="mut">Aggregate rows</div><div>Summed votes from the 8 dimensions produce token-row logits; softmax normalizes them into a probability distribution.</div></div>'
-      + '<div class="emb3d-summary-grid">' + cards + '</div>'
-      + '<div class="emb3d-choice">Winner after softmax: <strong>' + winner.label + '</strong> -> token id <strong>' + winner.id + '</strong> -> decoded text piece "<strong>' + winner.label + '</strong>". At layer ' + EMB3D.layer + ', this row has the strongest alignment with the current hidden vector.</div>';
+      + '<div class="emb3d-flow-intro">8 hidden dimensions are feature coordinates. Each row h[i] of the vector is multiplied by the output weights W_out to generate votes for each token row. Summed votes become logits; softmax converts these into probabilities.</div>'
+      + heatmapHTML
+      + logitsHTML
+      + '<div class="emb3d-choice">At layer ' + EMB3D.layer + ': <strong style="color:var(--amber);">' + winner.label + '</strong> emerges with ' + (winner.prob*100).toFixed(0) + '% probability (token id ' + winner.id + '). This vector alignment reflects learned patterns flowing through the transformer.</div>';
   }
 }
 
