@@ -2223,31 +2223,67 @@ function drawEmb3d(ts){
     ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke();
   }
 
-  var c = { x:w*0.52, y:h*0.56, rx:Math.max(92,w*0.32), ry:h*0.22 };
+  var c = { x:w*0.5, y:h*0.56, rx:Math.max(108,w*0.37), ry:h*0.25 };
   var clusters = [
-    { n:'CAPITAL CITIES', x: 0.76, y:-0.24, z:0.62, col: isLight ? '#0f766e' : '#34d399' },
-    { n:'COUNTRIES',      x: 0.52, y:-0.05, z:0.34, col: isLight ? '#0369a1' : '#38bdf8' },
-    { n:'FOODS',          x:-0.58, y: 0.24, z:-0.22, col: isLight ? '#b45309' : '#f59e0b' },
-    { n:'ANIMALS',        x:-0.72, y:-0.14, z: 0.12, col: isLight ? '#6d28d9' : '#a78bfa' },
-    { n:'PROGRAMMING',    x: 0.15, y: 0.46, z:-0.36, col: isLight ? '#be123c' : '#fb7185' }
+    {
+      n:'CAPITAL CITIES', x: 0.92, y:-0.34, z:0.70,
+      col: isLight ? '#0f766e' : '#34d399', halo: isLight ? 'rgba(15,118,110,.12)' : 'rgba(52,211,153,.12)',
+      spread:[[0,0],[11,-4],[-12,2],[7,10],[-8,-10],[15,7]]
+    },
+    {
+      n:'COUNTRIES', x: 0.46, y:-0.02, z:0.28,
+      col: isLight ? '#0369a1' : '#38bdf8', halo: isLight ? 'rgba(3,105,161,.12)' : 'rgba(56,189,248,.11)',
+      spread:[[0,0],[10,3],[-10,-2],[4,11],[-6,-10],[14,-8]]
+    },
+    {
+      n:'LANDMARKS', x: 0.74, y:0.16, z:0.08,
+      col: isLight ? '#059669' : '#2dd4bf', halo: isLight ? 'rgba(5,150,105,.10)' : 'rgba(45,212,191,.10)',
+      spread:[[0,0],[9,-5],[-8,4],[6,9],[-12,-7]]
+    },
+    {
+      n:'FOODS', x:-0.76, y:0.30, z:-0.26,
+      col: isLight ? '#b45309' : '#f59e0b', halo: isLight ? 'rgba(180,83,9,.12)' : 'rgba(245,158,11,.12)',
+      spread:[[0,0],[12,1],[-10,-4],[6,11],[-7,-11],[15,-8]]
+    },
+    {
+      n:'ANIMALS', x:-0.98, y:-0.26, z:0.18,
+      col: isLight ? '#6d28d9' : '#a78bfa', halo: isLight ? 'rgba(109,40,217,.11)' : 'rgba(167,139,250,.11)',
+      spread:[[0,0],[10,-3],[-12,3],[8,10],[-6,-10]]
+    },
+    {
+      n:'PROGRAMMING', x: 0.04, y:0.58, z:-0.44,
+      col: isLight ? '#be123c' : '#fb7185', halo: isLight ? 'rgba(190,18,60,.11)' : 'rgba(251,113,133,.11)',
+      spread:[[0,0],[11,-2],[-11,2],[5,12],[-8,-11],[15,8]]
+    },
+    {
+      n:'SCIENCE', x:-0.22, y:-0.52, z:0.50,
+      col: isLight ? '#7c3aed' : '#c084fc', halo: isLight ? 'rgba(124,58,237,.10)' : 'rgba(192,132,252,.10)',
+      spread:[[0,0],[10,2],[-9,-4],[6,10],[-7,-9]]
+    }
   ];
   clusters.forEach(function(cl){
     var p = emb3dProject(cl.x, cl.y, cl.z, c);
-    var dotCount = 5;
-    for(var d=0; d<dotCount; d++){
-      var angle = (d / dotCount) * Math.PI * 2;
-      var offset = 4.5;
-      var dx = p.x + Math.cos(angle) * offset;
-      var dy = p.y + Math.sin(angle) * offset;
+    var halo = ctx.createRadialGradient(p.x, p.y, 6, p.x, p.y, 34);
+    halo.addColorStop(0, cl.halo.replace(/0\.1[0-2]?\)$/, '0.22)'));
+    halo.addColorStop(0.55, cl.halo);
+    halo.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = halo;
+    ctx.beginPath();
+    ctx.ellipse(p.x, p.y, 34, 24, 0, 0, Math.PI*2);
+    ctx.fill();
+
+    cl.spread.forEach(function(offset, idx){
       ctx.fillStyle = cl.col;
-      ctx.globalAlpha = 0.6 + (d % 2) * 0.25;
-      ctx.beginPath(); ctx.arc(dx, dy, 3.5, 0, Math.PI*2); ctx.fill();
-    }
+      ctx.globalAlpha = idx === 0 ? 0.95 : (0.58 + ((idx % 3) * 0.1));
+      ctx.beginPath();
+      ctx.arc(p.x + offset[0], p.y + offset[1], idx === 0 ? 4.2 : 3.5, 0, Math.PI*2);
+      ctx.fill();
+    });
     ctx.globalAlpha = 1;
     ctx.fillStyle = isLight ? '#1f2937' : '#cbd5e1';
     ctx.font = '9px IBM Plex Mono';
     ctx.textAlign = 'center';
-    ctx.fillText(cl.n, p.x, p.y - 18);
+    ctx.fillText(cl.n, p.x, p.y - 22);
     ctx.textAlign = 'left';
   });
 
