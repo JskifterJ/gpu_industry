@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GPU Cloud Competitor Landscape — Business Model & Stack Comparison</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+:root{
+  --bg-s:#0f1419;
+  --surf:#1a2233;
+  --card:#232f47;
+  --card2:#1f2b42;
+  --text:#e8f4f8;
+  --sub:#b8c5d6;
+  --muted:#8895a8;
+  --border:#3d4f66;
+  --border-l:#556580;
+  --accent:#38bdf8;
+  --plat:#f5d78b;
+  --gold:#f59e0b;
+  --silv:#94a3b8;
+  --s5:#22c55e;
+  --s4:#84cc16;
+  --s3:#eab308;
+  --s2:#f97316;
+  --s1:#ef4444;
+  --pop-bg:rgba(0,0,0,0.85);
+}
+
+body.light{
+  --bg-s:#f8fafc;
+  --surf:#ffffff;
+  --card:#f1f5f9;
+  --card2:#e2e8f0;
+  --text:#1e293b;
+  --sub:#475569;
+  --muted:#64748b;
+  --border:#d4dce8;
+  --border-l:#cbd5e1;
+  --pop-bg:rgba(255,255,255,0.95);
+}
+
+body,body *{transition:background-color .22s ease,border-color .22s ease,color .18s ease,box-shadow .22s ease;}
+
+body{font-family:'Outfit',sans-serif;background:var(--bg-s);color:var(--text);min-height:100vh;font-size:14px;}
+
+.hdr{background:var(--surf);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;}
+.hdr-l{display:flex;align-items:baseline;gap:12px;}
+.hdr-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;letter-spacing:-0.03em;}
+.hdr-title em{color:var(--accent);font-style:normal;}
+.hdr-meta{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);}
+.hdr-badge{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 10px;background:rgba(56,189,248,.07);border:1px solid rgba(56,189,248,.2);border-radius:4px;color:var(--accent);}
+
+.theme-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;padding:6px 12px;background:var(--card);border:1px solid var(--border);border-radius:20px;transition:all .15s;}
+.theme-toggle:hover{border-color:var(--border-l);}
+.theme-toggle-track{width:34px;height:18px;border-radius:9px;background:var(--border-l);position:relative;flex-shrink:0;transition:background .2s;}
+body.light .theme-toggle-track{background:var(--accent);}
+.theme-toggle-thumb{width:14px;height:14px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:transform .2s;}
+body.light .theme-toggle-thumb{transform:translateX(16px);}
+.theme-toggle-icon{font-size:13px;line-height:1;}
+
+.main{padding:28px;max-width:1900px;margin:0 auto;}
+.intro{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:24px;}
+.intro-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;margin-bottom:8px;}
+.intro-text{font-size:13px;color:var(--sub);line-height:1.6;}
+
+.tabs{display:flex;gap:1px;margin-bottom:20px;border-bottom:1px solid var(--border);background:transparent;flex-wrap:wrap;}
+.tab{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;padding:13px 18px;cursor:pointer;color:var(--muted);background:transparent;border:none;border-bottom:2px solid transparent;transition:all .15s;position:relative;top:1px;letter-spacing:.01em;}
+.tab:hover{color:var(--text);}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+
+.panel{display:none;}
+.panel.active{display:block;}
+
+.table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:10px;margin-bottom:24px;}
+table{width:100%;border-collapse:collapse;background:var(--card);font-size:13px;}
+thead{background:var(--surf);}
+th{padding:12px 10px;border-bottom:1px solid var(--border);text-align:left;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:600;white-space:nowrap;}
+td{padding:12px 10px;border-bottom:1px solid var(--border);vertical-align:top;}
+tbody tr:hover{background:rgba(255,255,255,.02);}
+tbody tr:last-child td{border-bottom:none;}
+
+.company-name{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;display:flex;align-items:center;gap:6px;}
+.tier-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;padding:3px 7px;border-radius:3px;text-transform:uppercase;letter-spacing:.06em;}
+.tier-platinum{background:rgba(245,215,139,.15);color:var(--plat);border:1px solid rgba(245,215,139,.3);}
+.tier-gold{background:rgba(245,158,11,.15);color:var(--gold);border:1px solid rgba(245,158,11,.3);}
+.tier-silver{background:rgba(148,163,184,.08);color:var(--silv);border:1px solid rgba(148,163,184,.2);}
+
+.biz-model{font-family:'JetBrains Mono',monospace;font-size:11px;display:inline-block;padding:2px 6px;border-radius:3px;background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.25);color:var(--accent);}
+
+.usp{font-size:12px;line-height:1.5;color:var(--sub);}
+.usp em{font-style:italic;color:var(--accent);}
+
+.stack-badges{display:flex;flex-wrap:wrap;gap:4px;}
+.stack-badge{font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 5px;border-radius:3px;border:1px solid var(--border);background:rgba(255,255,255,.03);color:var(--muted);}
+.stack-badge.full{background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.25);color:var(--s5);}
+.stack-badge.partial{background:rgba(234,179,8,.12);border-color:rgba(234,179,8,.25);color:var(--s3);}
+.stack-badge.partner{background:rgba(56,189,248,.12);border-color:rgba(56,189,248,.25);color:var(--accent);}
+
+.pricing-cell{font-family:'JetBrains Mono',monospace;font-size:11px;}
+.pricing-primary{color:var(--text);font-weight:600;}
+.pricing-secondary{color:var(--muted);font-size:10px;}
+
+.geog-badges{display:flex;flex-wrap:wrap;gap:3px;}
+.geog-badge{font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 5px;border-radius:3px;border:1px solid var(--border);background:rgba(255,255,255,.02);color:var(--muted);}
+
+.buyers{font-size:12px;line-height:1.5;color:var(--sub);}
+
+.scoring{display:flex;gap:2px;align-items:center;}
+.score-pip{width:16px;height:16px;border-radius:3px;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;color:#fff;font-family:'JetBrains Mono',monospace;}
+.score-5{background:var(--s5);}
+.score-4{background:var(--s4);}
+.score-3{background:var(--s3);}
+.score-2{background:var(--s2);}
+.score-1{background:var(--s1);}
+
+.tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 6px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:3px;color:var(--muted);margin:2px 2px 2px 0;}
+
+.summary{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-top:24px;}
+.summary-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:8px;}
+.summary-text{font-size:12px;line-height:1.6;color:var(--sub);}
+
+body.light .intro,body.light .summary,body.light table,body.light .table-wrap{box-shadow:0 1px 3px rgba(0,0,0,.08);}
+body.light .scoring .score-pip{filter:brightness(0.85);}
+
+@media(max-width:1200px){
+  th,td{padding:8px 6px;font-size:12px;}
+  .company-name{font-size:12px;}
+  .usp{font-size:11px;}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-l">
+    <h1 class="hdr-title">GPU Compute <em>Business Models</em> Comparison</h1>
+    <span class="hdr-badge">14 competitors analyzed</span>
+  </div>
+  <div class="theme-toggle" onclick="toggleTheme()">
+    <div class="theme-toggle-track"><div class="theme-toggle-thumb"></div></div>
+    <span class="theme-toggle-icon" id="theme-icon">🌙</span>
+  </div>
+</div>
+
+<div class="main">
+
+<div class="intro">
+  <div class="intro-title">About This Analysis</div>
+  <div class="intro-text">
+    This table compares the top GPU cloud providers by business model, positioning, stack coverage, and target buyers. Data synthesized from ClusterMAX 2.0 intelligence reports, public pricing (Feb 2026), and market research. <strong>Dimensions include:</strong> Unique Selling Proposition (USP), Business Model, Stack Layer Coverage (L1–L7 across silicon → apps), H100 pricing drivers, Orchestration support (K8s/Slurm), Geographic footprint, Egress fees, and typical buyer personas. Tier ratings reflect overall operational maturity and market positioning rather than pricing alone.
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchPanel('all')">All Competitors</button>
+  <button class="tab" onclick="switchPanel('neoclouds')">Asset-Heavy Neoclouds</button>
+  <button class="tab" onclick="switchPanel('hyperscalers')">Hyperscalers</button>
+  <button class="tab" onclick="switchPanel('aggregators')">Aggregators & Orchestrators</button>
+  <button class="tab" onclick="switchPanel('depins')">DePIN & Decentralized</button>
+</div>
+
+<!-- PANEL: All Competitors -->
+<div id="all" class="panel active">
+
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th style="min-width:220px;">Provider & Tier</th>
+<th style="min-width:280px;">USP & Market Position</th>
+<th style="min-width:120px;">Business Model</th>
+<th style="min-width:150px;">Stack Layers (L1–L7)</th>
+<th style="min-width:130px;">H100 Pricing / Billing</th>
+<th style="min-width:140px;">Orchestration</th>
+<th style="min-width:140px;">Geography & Sovereign</th>
+<th style="min-width:120px;">Egress Fees</th>
+<th style="min-width:150px;">Typical Buyers</th>
+</tr>
+</thead>
+<tbody>
+
+<!-- PLATINUM -->
+<tr>
+<td><span class="company-name">CoreWeave <span class="tier-badge tier-platinum">Platinum</span></span></td>
+<td><span class="usp"><em>Industry benchmark</em> for production-grade training. Sole provider with SUNK (Slurm-on-Kubernetes) at scale + BlueField DPU isolation + LOTA NVMe cache (7 GB/s). Premium pricing reflects bare-metal SXM5 + InfiniBand infrastructure for large clusters.</span></td>
+<td><span class="biz-model">Asset-Heavy</span></td>
+<td><span class="stack-badges"><span class="stack-badge full">L2 Provisioning</span><span class="stack-badge full">L3 Orchestration</span><span class="stack-badge full">L4 Aggregation</span></span></td>
+<td><span class="pricing-cell"><span class="pricing-primary">$6.16/hr (SXM)</span><br/><span class="pricing-secondary">10–15% premium over Gold tier. Reservation/contract only.</span></span></td>
+<td><span class="stack-badges"><span class="stack-badge full">SUNK</span><span class="stack-badge full">Kubernetes</span></span></td>
+<td><span class="geog-badges"><span class="geog-badge">US (32 DCs)</span><span class="geog-badge">UK</span><span class="geog-badge">Spain</span><span class="geog-badge">Sweden</span></span></td>
+<td><strong>Free</strong></td>
+<td><span class="buyers">Frontier AI labs (OpenAI, Anthropic equivalent), hyperscale enterprises, teams training 70B+ models requiring SUNK + InfiniBand.</span></td>
+</tr>
+
+<!-- GOLD -->
+<tr>
+<td><span class="company-name">Nebius <span class="tier-badge tier-gold">Gold</span></span></td>
+<td><span class="usp">CoreWeave's closest <em>rival with spot market</em>. KubeVirt-based bare-metal equivalence (MLPerf v5.1 validated). Only Gold-tier neocloud with preemptible instances. Soperator (open-source SonK) roadmap transparent. Lowest cost of capital among neoclouds (zero debt, billions on balance sheet).</span></td>
+<td><span class="biz-model">Asset-Heavy</span></td>
+<td><span class="stack-badges"><span class="stack-badge full">L2 Provisioning</span><span class="stack-badge full">L3 Orchestration</span><span class="stack-badge partial">L4 Aggregation</span></span></td>
+<td><span class="pricing-cell"><span class="pricing-primary">$2.95/hr (on-demand)</span><br/><span class="pricing-secondary">~$2.00/hr (1-yr reserved). Self-service pricing transparency.</span></span></td>
+<td><span class="stack-badges"><span class="stack-badge full">Soperator</span><span class="stack-badge full">Kubernetes</span></span></td>
+<td><span class="geog-badges"><span class="geog-badge">EU (Finland, France)</span><span class="geog-badge">US</span><span class="geog-badge">Iceland</span></span></td>
+<td><strong>Free (compute)</strong><br/><span style="font-size:10px; color:var(--muted);">S3 egress: $0.015/GB std</span></td>
+<td><span class="buyers">European AI startups, public enterprise buyers (Shopify via SkyPilot), researchers valuing spot flexibility + compliance.</span></td>
+</tr>
+
+<tr>
+<td><span class="company-name">Oracle <span class="tier-badge tier-gold">Gold</span></span></td>
+<td><span class="usp"><em>AGI-neutral</em> hyperscaler with Stargate dominance (60%+ of US Stargate capacity). Pivoted to bare-metal-first before peers. Fastest DC deployment cadence. No in-house AGI program = no customer conflicts (can sign OpenAI, Meta, ByteDance simultaneously).</span></td>
+<td><span class="biz-model">Hyperscaler</span></td>
+<td><span class="stack-badges"><span class="stack-badge full">L2–L7</span><span class="stack-badge partner">Partner (3rd-party MaaS)</span></span></td>
+<td><span class="pricing-cell"><span class="pricing-primary">Contact for H100</span><br/><span class="pricing-secondary">$38B OpenAI deal validates pricing power. Wholesale rates likely undercut AWS.</span></span></td>
+<td><span class="stack-badges"><span class="stack-badge full">OKE (Kubernetes)</span><span class="stack-badge partner">Bare-metal first</span></span></td>
+<td><span class="geog-badges"><span class="geog-badge">45 global regions</span><span class="geog-badge">US</span><span class="geog-badge">EU</span><span class="geog-badge">APAC</span></span></td>
+<td><strong>Free</strong></td>
+<td><span class="buyers">Frontier labs (OpenAI contract holder), enterprise data centers, teams valuing geographic arbitrage + multi-cloud neutrality.</span></td>
+</tr>
+
+<tr>
+<td><span class="company-name">Azure <span class="tier-badge tier-gold">Gold</span></span></td>
+<td><span class="usp"><em>Only hyperscaler with InfiniBand + SHARP</em> (Scalable Hierarchical Aggregation &amp; Reduction Protocol) at scale. Enterprise-grade security: FedRAMP High / DoD IL5 compliance (classified US gov workloads only). Structurally integrated with OpenAI (~27% stake + model IP through 2032).</span></td>
+<td><span class="biz-model">Hyperscaler</span></td>
+<td><span class="stack-badges"><span class="stack-badge full">L2–L7</span></span></td>
+<td><span class="pricing-cell"><span class="pricing-primary">$12.29/hr (ND96isr H100 v5)</span><br/><span class="pricing-secondary">Most expensive hyperscaler. Quota approval required.</span></span></td>
+<td><span class="stack-badges"><span class="stack-badge full">AKS (Kubernetes)</span><span class="stack-badge full">CycleCloud (Slurm)</span></span></td>
+<td><span class="geog-badges"><span class="geog-badge">Global (US, EU emphasis)</span></span></td>
+<td><strong>Standard egress</strong><br/><span style="font-size:10px; color:var(--muted);">$0.08–0.12/GB out</span></td>
+<td><span class="buyers">Large enterprises mandating FedRAMP/DoD, OpenAI-adjacent teams, financial services requiring US defense-grade security.</span></td>
+</tr>
+
+<tr>
+<td><span class="company-name">FluidStack <span class="tier-badge tier-gold">Gold</span></span></td>
+<td><span class="usp"><em>"Operator-as-a-Service"</em>: Zero hardware ownership but Gold-tier outcomes. Forward-deployed engineering (bugs fixed in hours). Google-backstopped Terawulf/Cipher capacity (potential TPU optionality). 62% wholesale (Meta, Anthropic), 38% marketplace. Shared ArgoCD IaC repos for transparency.</span></td>
+<td><span class="biz-model">Aggregator (Asset-Light)</span></td>
+<td><span class="stack-badges"><span class="stack-badge full">L3–L4 via partner DCs</span><span class="stack-badge partner">L2 provisioning (via Atlas OS)</span></span></td>
+<td><span class="pricing-cell"><span class="pricing-primary">$2.10–2.30/hr</span><br/><span class="pricing-secondary">Opaque for large enterprise; market rates for standard H100.</span></span></td>
+<td><span class="stack-badges"><span class="stack-badge full">Kubernetes</span><span class="stack-badge partner">Custom Atlas OS</span></span></td>
+<td><span class="geog-badges"><span class="geog-badge">US / Tier 2–3 DCs</span><span class="geog-badge">Multi-region</span></span></td>
+<td><strong>Free</strong></td>
+<td><span class="buyers">Frontier labs (via bespoke wholesale), teams tolerating supply-chain abstraction for engineering responsiveness, growth-stage startups.</span></td>
+</tr>
+
+<tr>
+<td><span class="company-name">Crusoe <span class="tier-badge tier-gold">Gold</span></span></td>
+<td><span class="usp"><em>Digital Flare Mitigation</em>: Unique sustainable computing via stranded oil-field gas. Oracle Abilene JV (1.2GW+, $15B) positions as DC infrastructure provider. Genuine AMD + Nvidia neutrality ($600M Series D with Nvidia, yet deploying AMD MI355X). 3.4GW claimed footprint across diverse energy sources.</span></td>
+<td><span class="biz-model">Asset-Heavy (Vertical)</span></td>
+<td><span class="stack-badges"><span class="stack-badge full">L2 Provisioning</span><span class="stack-badge partial">L3 Orchestration (early)</span></span></td>
+<td><span class="pricing-cell"><span class="pricing-primary">$3.90–4.29/hr</span><br/><span class="pricing-secondary">Premium for green energy positioning.</span></span></td>
+<td><span class="stack-badges"><span class="stack-badge partial">SonK (not GA)</span><span class="stack-badge full">Kubernetes</span></span></td>
+<td><span class="geog-badges"><span class="geog-badge">US (TX, VA, WY)</span><span class="geog-badge">Iceland</span><span class="geog-badge">Norway (planned)</span></span></td>
+<td><strong>Free</strong></td>
+<td><span class="buyers">Climate-conscious enterprises, ESG-mandated AI teams, large training workloads seeking carbon-neutral credentials.</span></td>
+</tr>
+
+<!-- SILVER -->
+<tr>
+<td><span class="company-name">Google Cloud <span class="tier-badge tier-silver">Silver</span></span></td>
+<td><span class="usp"><em>Best Kubernetes in market</em>: GKE + Kueue + JobSet out-of-box (industry-standard ML batch scheduling). CoMMA (eBPF straggler detection) is unique. TPU v5/v6 native access. Full vertical integration (Vertex AI, Gemini). Nominated for Gold tier upgrade.</span></td>
+<td><span class="biz-model">Hyperscaler</span></td>
+<td><span class="stack-badges"><span class="stack-badge full">L2–L7 complete</span></span></td>
+<td><span class="pricing-cell"><span class="pricing-primary">$11.06/hr (a3-highgpu-8g)</span><br/><span class="pricing-secondary">Quota approval required. Premium for 400Gb IB.</span></span></td>
+<td><span class="stack-badges"><span class="stack-badge full">GKE (best-in-class)</span><span class="stack-badge partner">Cluster Director (Slurm, preview)</span></span></td>
+<td><span class="geog-badges"><span class="geog-badge">Global (US, EU, APAC)</span></span></td>
+<td><strong>Standard egress</strong><br/><span style="font-size:10px; color:var(--muted);">$0.12/GB out</span></td>
+<td><span class="buyers">ML teams already in GCP, JAX researchers, enterprises valuing managed K8s + native batch scheduling.</span></td>
+</tr>
+
+<tr>
+<td><span class="company-name">AWS <span class="tier-badge tier-silver">Silver</span></span></td>
+<td><span class="usp"><em>Largest ecosystem</em> moat: 200+ services, deepest enterprise lock-in. Custom silicon (Trainium2, Inferentia2) for training/inference cost-optimization. JBOK (Just a Bunch of NICs) for GB200 redundancy. $38B OpenAI contract proof-of-scale. S3/FSx ecosystem where most enterprise data lives (multi-year migration penalty).</span></td>
+<td><span class="biz-model">Hyperscaler</span></td>
+<td><span class="stack-badges"><span class="stack-badge full">L2–L7 (widest)</span></span></td>
+<td><span class="pricing-cell"><span class="pricing-primary">$6.88/hr (p5.48xlarge)</span><br/><span class="pricing-secondary">Expensive vs neoclouds. Opaque provisioning race conditions (long waitlists).</span></span></td>
+<td><span class="stack-badges"><span class="stack-badge full">SageMaker HyperPod</span><span class="stack-badge partial">EFA (opaque debugging)</span></span></td>
+<td><span class="geog-badges"><span class="geog-badge">30 global regions</span></span></td>
+<td><strong>$0.09/GB out</strong><br/><span style="font-size:10px; color:var(--muted);">Enforces vendor lock-in</span></td>
+<td><span class="buyers">Enterprises already married to AWS, VC-backed startups with credits, teams requiring 200+ service ecosystem.</span></td>
+</tr>
+
+<tr>
+<td><span class="company-name">Together.ai <span class="tier-badge tier-silver">Silver</span></span></td>
+<td><span class="usp"><em>Kernel team differentiator</em>: TKC (Together Kernel Collection) + FlashAttention authored here (industry-wide standard). Dual revenue hedges underutilization (serverless inference absorbs idle cluster compute). Instant Clusters with on-demand Slurm via KubeVirt + Slinky. Only provider with usable SU login pod OOB.</span></td>
+<td><span class="biz-model">Hybrid (Cluster + Inference)</span></td>
+<td><span class="stack-badges"><span class="stack-badge partner">L2–L3 via partners</span><span class="stack-badge full">L5 (Serverless MaaS)</span></span></td>
+<td><span class="pricing-cell"><span class="pricing-primary">$2.95/hr (Instant)</span><br/><span class="pricing-secondary">Token billing for inference (alternative revenue stream).</span></span></td>
+<td><span class="stack-badges"><span class="stack-badge full">KubeVirt+Slinky</span><span class="stack-badge full">Kubernetes</span></span></td>
+<td><span class="geog-badges"><span class="geog-badge">US / EU</span><span class="geog-badge">Multi-DC</span></span></td>
+<td><strong>Free</strong></td>
+<td><span class="buyers">ML platforms requiring custom kernels, teams optimizing inference throughput, hybrid training+serving workloads.</span></td>
+</tr>
+
+<tr>
+<td><span class="company-name">Lambda <span class="tier-badge tier-silver">Silver</span></span></td>
+<td><span class="usp">Largest <em>on-demand H100/H200 fleet</em> (when not sold out). HPC hardware expertise (rare among neoclouds). Microsoft $1.5B+ contract validates capacity execution. Exiting inference API to focus 100% on clusters. Deep understanding of rack configuration, IB cables, firmware tuning.</span></td>
+<td><span class="biz-model">Asset-Heavy</span></td>
+<td><span class="stack-badges"><span class="stack-badge full">L2 Provisioning</span><span class="stack-badge partial">L3 Orchestration (basic)</span></span></td>
+<td><span class="pricing-cell"><span class="pricing-primary">$2.49–2.99/hr</span><br/><span class="pricing-secondary">Most on-demand capacity when available; frequent sellouts.</span></span></td>
+<td><span class="stack-badges"><span class="stack-badge full">1-Click Clusters</span><span class="stack-badge partial">Slurm + K8s</span></span></td>
+<td><span class="geog-badges"><span class="geog-badge">US (SF, TX)</span></span></td>
+<td><strong>Free</strong></td>
+<td><span class="buyers">Researchers valuing largest OD fleet, teams requiring HPC-grade hardware setup, organizations needing fast provisioning.</span></td>
+</tr>
+
+<tr>
+<td><span class="company-name">FluidStack (alternate) / Voltage Park <span class="tier-badge tier-silver">Silver</span></span></td>
+<td><span class="usp"><em>Lowest prices in market</em> ($1.99/h H100). H100-only today; SonK foundation improving rapidly. Manual failure remediation (no auto-drain). Recovering from reputational issues; strong technical foundation. 24-hr turnaround on customer feedback.</span></td>
+<td><span class="biz-model">Asset-Heavy (Colo)</span></td>
+<td><span class="stack-badges"><span class="stack-badge full">L2 Provisioning</span><span class="stack-badge partial">L3 Orchestration</span></span></td>
+<td><span class="pricing-cell"><span class="pricing-primary">$1.99/hr (cheapest)</span><br/><span class="pricing-secondary">H100 SXM only; no Blackwell yet.</span></span></td>
+<td><span class="stack-badges"><span class="stack-badge full">Soperator SonK</span><span class="stack-badge full">Kubernetes (OIDC)</span></span></td>
+<td><span class="geog-badges"><span class="geog-badge">US (TX, VA, WA)</span></span></td>
+<td><strong>Free</strong></td>
+<td><span class="buyers">Price-sensitive startups, academic research teams, projects where cost dominates over features.</span></td>
+</tr>
+
+<tr>
+<td><span class="company-name">Vast.ai <span class="tier-badge tier-silver">Silver</span></span></td>
+<td><span class="usp"><em>Lowest marketplace prices</em> (~$0.75–1.50/hr H100). Web2 marketplace with 10K+ GPUs from individuals to datacenters. Supply ranges from "Tier 4 DCs" to "basement rigs." "Vast.ai Roulette": reliability only guaranteed for high-reputation datacenter providers.</span></td>
+<td><span class="biz-model">Marketplace (Asset-Light)</span></td>
+<td><span class="stack-badges"><span class="stack-badge partner">L2–L3 via hosts</span></span></td>
+<td><span class="pricing-cell"><span class="pricing-primary">$1.49–1.87/hr</span><br/><span class="pricing-secondary">Market floor; extreme variance by host.</span></span></td>
+<td><span class="stack-badges"><span class="stack-badge partner">Container / K8s (host-dependent)</span></span></td>
+<td><span class="geog-badges"><span class="geog-badge">Global P2P</span><span class="geog-badge">Unverified</span></span></td>
+<td><strong>Varies by host</strong><br/><span style="font-size:10px; color:var(--muted);">Can exceed $20/TB</span></td>
+<td><span class="buyers">Batch rendering, one-off experiments on shoestring, research acceptable of random downtime, cost-first projects.</span></td>
+</tr>
+
+<!-- DePIN / EMERGING -->
+<tr>
+<td><span class="company-name">Gensyn <span class="tier-badge" style="background:rgba(142,68,173,.15); border:1px solid rgba(142,68,173,.3); color:var(--muted);">Protocol</span></span></td>
+<td><span class="usp"><em>Solves "lazy worker" problem</em>: Probabilistic proofs for verifiable compute (cryptographically proves GPU performed work). Pre-mainnet (early 2026 launch). Unlocks enterprise-grade DePIN by eliminating spoofing risks (io.net fake GPU crisis aftermath).</span></td>
+<td><span class="biz-model">DePIN Protocol</span></td>
+<td><span class="stack-badges"><span class="stack-badge partner">L1–L3 (future P2P)</span></span></td>
+<td><span class="pricing-cell"><span class="pricing-primary">TBD (pre-launch)</span><br/><span class="pricing-secondary">Token-incentivized model TBA.</span></span></td>
+<td><span class="stack-badges"><span class="stack-badge partner">Verifiable compute</span></span></td>
+<td><span class="geog-badges"><span class="geog-badge">London, UK (team)</span><span class="geog-badge">Future decentralized</span></span></td>
+<td><strong>TBD</strong></td>
+<td><span class="buyers">Enterprise buyers post-verification, research orgs needing cryptographic proofs, risk-averse DePIN participants.</span></td>
+</tr>
+
+<tr>
+<td><span class="company-name">Akash Network <span class="tier-badge" style="background:rgba(220,38,38,.15); border:1px solid rgba(220,38,38,.3); color:var(--muted);">DePIN</span></span></td>
+<td><span class="usp"><em>Reverse-auction model</em>: Tenants post manifests; providers bid. Kubernetes-based (bare-metal deploys not viable). Highly dynamic pricing, often cheapest on market. Community-sourced supply (ex-mining rigs + Tier 3 DCs). No compliance offerings.</span></td>
+<td><span class="biz-model">DePIN Marketplace</span></td>
+<td><span class="stack-badges"><span class="stack-badge partner">L2–L3 (K8s only)</span></span></td>
+<td><span class="pricing-cell"><span class="pricing-primary">Auction-driven</span><br/><span class="pricing-secondary">Often ~$1.00/hr for A100; H100 rare.</span></span></td>
+<td><span class="stack-badges"><span class="stack-badge full">Kubernetes</span></span></td>
+<td><span class="geog-badges"><span class="geog-badge">Global P2P</span></span></td>
+<td><strong>Free</strong></td>
+<td><span class="buyers">Individual developers, academic researchers, experimental workloads accepting DePIN risks, batch inference on budget.</span></td>
+</tr>
+
+</tbody>
+</table>
+</div>
+
+</div>
+
+<!-- PANEL: Neoclouds -->
+<div id="neoclouds" class="panel">
+<p style="margin-bottom:16px; font-size:12px; color:var(--sub);">Asset-heavy providers (CoreWeave, Nebius, Lambda, Crusoe, Voltage Park, etc.) differentiate via owned infrastructure, SLAs, and enterprise compliance. Trade capital intensity for guaranteed supply &amp; performance.</p>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th style="min-width:180px;">Neocloud</th>
+<th style="min-width:280px;">Core Differentiator</th>
+<th style="min-width:140px;">H100/H200 Pricing</th>
+<th style="min-width:140px;">Orchestration Strength</th>
+<th style="min-width:150px;">Primary Weakness</th>
+<th style="min-width:120px;">Reference Customers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>CoreWeave</strong> <span class="tier-badge tier-platinum">Platinum</span></td>
+<td>SUNK (Slurm-on-K8s production-ready at 32K+ GPUs). BlueField DPU isolation. LOTA accelerates NVMe cache to 7 GB/s. Most sophisticated monitoring in industry.</td>
+<td>$6.16/h SXM; $4.25/h PCIe. Premium justified.</td>
+<td>SUNK + Kubernetes w/ SHARP IB at scale.</td>
+<td>No spot/preemptible; reservation-only; sales-gated; premium pricing 10–15% above peers.</td>
+<td>Frontier AI labs.</td>
+</tr>
+<tr>
+<td><strong>Nebius</strong> <span class="tier-badge tier-gold">Gold</span></td>
+<td>MLPerf-validated bare-metal K8s (KubeVirt). Only Gold-tier neocloud with on-demand + preemptible spot market. Soperator open-source SonK (public roadmap). Publicly traded (NBIS).</td>
+<td>$2.95/h on-demand; $2.00/h 1-yr reserved.</td>
+<td>Soperator SonK hybrid; robust K8s integration.</td>
+<td>Monitoring still behind CoreWeave; Russian roots perception despite non-Russian ops; DC acquisition challenges.</td>
+<td>Shopify (via SkyPilot), Recraft, Mirage.</td>
+</tr>
+<tr>
+<td><strong>Lambda</strong> <span class="tier-badge tier-silver">Silver</span></td>
+<td>Largest on-demand H100/H200 fleet when available. Exceptional HPC expertise (rack-level, IB, firmware). VAST storage integrated. Microsoft $1.5B validation.</td>
+<td>$2.49–2.99/h on-demand.</td>
+<td>1-Click Clusters; bare-metal + managed K8s/Slurm hybrid.</td>
+<td>Frequent sellouts; disorganized support; console outages; no MetalLB for inference deployments; SOC 2 per-site only.</td>
+<td>Researchers, scale-ups.</td>
+</tr>
+<tr>
+<td><strong>Crusoe</strong> <span class="tier-badge tier-gold">Gold</span></td>
+<td>Digital Flare Mitigation (stranded gas compute). Vertical integration (DC manufacturing via Easter-Owens). Oracle Abilene JV (1.2GW). AMD + Nvidia hardware neutrality.</td>
+<td>$3.90–4.29/h; premium for green positioning.</td>
+<td>SonK early-stage (not GA); Kubernetes support.</td>
+<td>SonK missing RBAC, SSO, partitions; key engineer attrition; cloud-hypervisor VM NVML issues; Iceland volcanic ash/fiber risk; pivoting away from cloud product focus.</td>
+<td>Climate-conscious enterprises, ESG-mandated AI.</td>
+</tr>
+<tr>
+<td><strong>Voltage Park</strong> <span class="tier-badge tier-silver">Silver</span></td>
+<td>Cheapest market pricing ($1.99/h H100). Soperator SonK with correct topology.conf. OIDC for K8s SSO. 24-hr customer feedback turnaround.</td>
+<td>$1.99/h H100 (lowest in market).</td>
+<td>Soperator SonK (better defaults than many Gold providers); OIDC K8s access.</td>
+<td>H100-only (no Blackwell roadmap); CVEs present; manual node failure handling; no monitoring dashboard; confusing "Shutdown" billing model.</td>
+<td>Price-sensitive startups, academic research.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<!-- PANEL: Hyperscalers -->
+<div id="hyperscalers" class="panel">
+<p style="margin-bottom:16px; font-size:12px; color:var(--sub);">Hyperscalers (AWS, Azure, GCP, Oracle) dominate with ecosystem lock-in and global footprint but suffer from quota approval friction, premium pricing, and data egress lock-in (except Oracle).</p>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th style="min-width:180px;">Hyperscaler</th>
+<th style="min-width:280px;">Strategic Moat</th>
+<th style="min-width:140px;">H100/H200 Pricing</th>
+<th style="min-width:140px;">Orchestration Model</th>
+<th style="min-width:150px;">Primary Lock-In</th>
+<th style="min-width:120px;">Egress Fees</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Azure</strong> <span class="tier-badge tier-gold">Gold</span></td>
+<td>Only hyperscaler with InfiniBand + SHARP at scale. FedRAMP High / DoD IL5 (defense AI only). Structurally integrated OpenAI (27% stake, IP rights 2032).</td>
+<td>$12.29/h ND96isr (most expensive).</td>
+<td>AKS (strong); CycleCloud Slurm (weak, no health checks).</td>
+<td>OpenAI relationship; enterprise compliance; $0.08–0.12/GB egress lock-in.</td>
+<td>$0.08–0.12/GB out</td>
+</tr>
+<tr>
+<td><strong>AWS</strong> <span class="tier-badge tier-silver">Silver</span></td>
+<td>200+ service ecosystem; custom silicon (Trainium2, Inferentia2); $38B OpenAI deal (proof of scale); S3/FSx ecosystem (multi-year migration penalty).</td>
+<td>$6.88/h p5.48xlarge (expensive vs neoclouds).</td>
+<td>SageMaker HyperPod; EFA for multi-node (opaque debugging); provisioning race conditions known 1+ year.</td>
+<td>S3 ecosystem (petabyte datasets lock-in); $0.09/GB egress; complex quota approvals.</td>
+<td>$0.09/GB out</td>
+</tr>
+<tr>
+<td><strong>Google Cloud</strong> <span class="tier-badge tier-silver">Silver</span></td>
+<td>Best K8s in market (GKE + Kueue + JobSet OOB); CoMMA straggler detection (unique); TPU v5/v6 native; full vertical integration (Vertex AI, Gemini).</td>
+<td>$11.06/h a3-highgpu-8g (premium).</td>
+<td>GKE (excellent); Cluster Director Slurm (preview, not GA).</td>
+<td>Vertex AI ecosystem; K8s learning curve; gIB plugin friction (poor NCCL perf if not aware).</td>
+<td>$0.12/GB out</td>
+</tr>
+<tr>
+<td><strong>Oracle</strong> <span class="tier-badge tier-gold">Gold</span></td>
+<td>Stargate 60%+ (US). AGI-neutral (can sign OpenAI, Meta, ByteDance simultaneously). Fastest DC deployment cadence. Bare-metal-first pivot before peers.</td>
+<td>Contact (wholesale rates likely undercut AWS).</td>
+<td>OKE Kubernetes; bare-metal focus; opaque SLA routing.</td>
+<td>Oracle Linux default friction; no native InfiniBand (RoCE-only at hyperscale); 45 global regions moat.</td>
+<td>Free</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<!-- PANEL: Aggregators & Orchestrators -->
+<div id="aggregators" class="panel">
+<p style="margin-bottom:16px; font-size:12px; color:var(--sub);">Asset-light platforms (FluidStack, Shadeform, SF Compute, Together.ai) abstract heterogeneous supply via software. Lower CapEx, faster scaling, but supply chain risk and opaque partner networks.</p>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th style="min-width:180px;">Provider</th>
+<th style="min-width:280px;">Aggregation Model</th>
+<th style="min-width:140px;">H100 Pricing</th>
+<th style="min-width:140px;">Value Add Beyond Access</th>
+<th style="min-width:150px;">Supply Chain Risk</th>
+<th style="min-width:120px;">Best For</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>FluidStack</strong> <span class="tier-badge tier-gold">Gold</span></td>
+<td>Zero owned infrastructure; Operator-as-a-Service model converts Bronze-tier DCs to Gold-tier UX via Atlas OS. 62% wholesale (Meta, Anthropic), 38% marketplace. Google-backstopped Terawulf/Cipher.</td>
+<td>$2.10–2.30/h (enterprise opaque).</td>
+<td>Forward-deployed engineering (24h bug fix SLA); ArgoCD shared IaC transparency; multi-DC resilience.</td>
+<td>Reliability varies by underlying DC partner quality; no permanent owned infrastructure = structural dependency; security reactive (NVIDIAscape found during testing).</td>
+<td>Frontier labs needing quality + speed; growth-stage startups.</td>
+</tr>
+<tr>
+<td><strong>Shadeform</strong> <span class="tier-badge tier-silver">Silver</span></td>
+<td>Pure orchestrator: wraps 15+ underlying providers (Lambda, Vultr, etc.) via unified API. Real-time arbitrage + convenience. Praised on Reddit for cost comparison visibility.</td>
+<td>Aggregated ($1.50–3.00/h typical).</td>
+<td>Multi-cloud arbitrage; spot price comparison; convenience layer; no lock-in.</td>
+<td>Billing opaque (delegates to underlying providers); no control over network fabric / hardware; provider outages propagate directly to end-user.</td>
+<td>Teams comfortable with multi-cloud abstraction; cost-focused developers.</td>
+</tr>
+<tr>
+<td><strong>SF Compute</strong> <span class="tier-badge tier-silver">Silver</span></td>
+<td>Spot market/broker for compute time. Two-sided marketplace connecting buyers + aggregated supply. Market-driven pricing (H100 ~$1.45–1.50/h).</td>
+<td>$1.45–1.50/h (spot market floor).</td>
+<td>Flexible time-based reservations (e.g., 7 days next Tuesday); guaranteed pricing without long-term contracts; eliminates spot interruption risk.</td>
+<td>Purely marketplace model = buyer bears supply reliability risk; sourcing from Tier 3 providers increases downtime likelihood; no SLA guarantees.</td>
+<td>Cost-sensitive teams, time-bound research, fault-tolerant workloads.</td>
+</tr>
+<tr>
+<td><strong>Together.ai</strong> <span class="tier-badge tier-silver">Silver</span></td>
+<td>Hybrid: Frontier AI Factories (owned H200/B200 clusters) + serverless inference API layer. Dual revenue hedges cluster underutilization. Kernel team (TKC, FlashAttention).</td>
+<td>$2.95/h (clusters); tokens (inference API).</td>
+<td>TKC kernel optimizations; LLM-specific inference engines; hybrid training+serving; forward-deployed kernel team.</td>
+<td>#1 in customer reliability complaints; multi-DC partner variance; no automated node remediation; K8s onboarding requires SSH not kubeconfig; no horizontal autoscaling in standard K8s clusters.</td>
+<td>ML platforms optimizing inference; teams needing kernel customization; hybrid train+serve workloads.</td>
+</tr>
+<tr>
+<td><strong>RunPod</strong> <span class="tier-badge tier-silver">Silver</span></td>
+<td>Hybrid: Secure Cloud (vetted Tier 3/4 partners, SOC 2 certified) + Community Cloud (P2P marketplace). Container/Pod focus; sub-second cold starts.</td>
+<td>$1.99–2.99/h (varies by tier).</td>
+<td>Auto-scaling; sub-second cold starts; FlashBoot instant deployment; serverless DX; SOC 2 Secure tier.</td>
+<td>Community Cloud unreliable (user complaints); distinction between Secure vs Community creates operational headache; container limitations vs bare-metal.</td>
+<td>Serverless inference at lowest cost; growth-stage startups; teams tolerating reliability variance.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<!-- PANEL: DePIN -->
+<div id="depins" class="panel">
+<p style="margin-bottom:16px; font-size:12px; color:var(--sub);">DePIN &amp; decentralized marketplaces (Vast.ai, Akash, Salad, Gensyn) offer radical cost reduction via consumer hardware or verifiable protocols, but sacrifice SLAs, compliance, and supply reliability. Best for non-mission-critical, experimental workloads.</p>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th style="min-width:180px;">DePIN Provider</th>
+<th style="min-width:280px;">Model & Innovation</th>
+<th style="min-width:140px;">Hardware & Pricing</th>
+<th style="min-width:140px;">Compliance & SLA</th>
+<th style="min-width:150px;">Supply Reliability</th>
+<th style="min-width:120px;">Ideal Workloads</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Gensyn</strong> <span style="font-size:10px; background:rgba(142,68,173,.15); border:1px solid rgba(142,68,173,.3); color:#a78bfa; padding:2px 6px; border-radius:3px;">Protocol</span></td>
+<td>Probabilistic proofs for verifiable compute (solves "lazy worker" problem). Pre-mainnet (early 2026). Cryptographic verification of GPU execution (no re-running). Unlocks enterprise DePIN by eliminating spoofing risks (io.net fake GPU crisis aftermath).</td>
+<td>TBD (token-incentivized, pre-launch).</td>
+<td>Future certification potential; cryptographic proofs enable regulatory confidence.</td>
+<td>Network effects depend on verifier adoption; incentive design TBA.</td>
+<td>Enterprise DePIN adoption post-launch; risk-averse research; regulatory-compliant P2P compute.</td>
+</tr>
+<tr>
+<td><strong>Vast.ai</strong> <span class="tier-badge tier-silver">Silver</span></td>
+<td>Web2 marketplace with 10K+ GPUs from individuals to datacenters. Supply ranges from Tier 4 DCs to basement rigs. "Vast.ai Roulette": reliability only for high-reputation providers (manual selection required).</td>
+<td>$1.49–1.87/h H100; market floor. Varies wildly by host.</td>
+<td>None; low compliance; no SLA.</td>
+<td>Extremely variable; instances frequently vanish mid-job (especially low-rep hosts). High-rep datacenters more reliable but not guaranteed.</td>
+<td>Batch rendering, one-off experiments, research tolerating downtime, cost-first projects ($0 budget).</td>
+</tr>
+<tr>
+<td><strong>Akash Network</strong> <span style="font-size:10px; background:rgba(220,38,38,.15); border:1px solid rgba(220,38,38,.3); color:#fca5a5; padding:2px 6px; border-radius:3px;">DePIN</span></td>
+<td>Reverse-auction model: tenants post manifests, providers bid. Kubernetes-based only (bare-metal deploys not viable). Highly dynamic pricing; often cheapest on market. Community-sourced supply (ex-mining rigs + Tier 3 DCs).</td>
+<td>~$1.00/h for A100; H100 rare. Auction-driven.</td>
+<td>None; open-source protocol, no central authority SLA.</td>
+<td>Community hosts vary widely; no verification; instances can vanish if host goes offline; no automated recovery.</td>
+<td>Individual developers; academic researchers; experimental inference; batch processing; fault-tolerant applications.</td>
+</tr>
+<tr>
+<td><strong>Salad</strong> <span style="font-size:10px; background:rgba(220,38,38,.15); border:1px solid rgba(220,38,38,.3); color:#fca5a5; padding:2px 6px; border-radius:3px;">DePIN</span></td>
+<td>Legal distributed botnet: incentivizes millions of gamers to share GPU cycles via background software. Container isolated (SOC 2 certified despite consumer hardware). 400K+ active nodes. Focus on batch inference &amp; non-interactive workloads.</td>
+<td>~$0.02/h (cost floor); RTX 30/40 series consumer cards.</td>
+<td>Surprisingly: SOC 2 Type II (rare for consumer aggregator). No HIPAA/FedRAMP.</td>
+<td>Consumer hardware = unstable (upgrades, gaming load, power loss). Massive decentralization reduces single-point failure but increases variance.</td>
+<td>Batch Stable Diffusion, molecular dynamics, non-interactive rendering, research budgets $0.</td>
+</tr>
+<tr>
+<td><strong>Io.net</strong> <span style="font-size:10px; background:rgba(220,38,38,.15); border:1px solid rgba(220,38,38,.3); color:#fca5a5; padding:2px 6px; border-radius:3px;">DePIN</span></td>
+<td>Aggregates GPUs from independent DCs, crypto miners, P2P nodes. 2024–2025 plagued by "fake GPU crisis" (users spoofed H100 device IDs for reward claims). Metadata easily forged without cryptographic verification. High reputational risk.</td>
+<td>Token-incentivized (IO token); often artificial discount vs fiat clouds. Claims massive H100/A100 inventory.</td>
+<td>Low; no enterprise certifications; token volatility compounds pricing risk.</td>
+<td><strong>HIGH RISK</strong>: Fake GPU frauds unresolved. Metadata-only verification insufficient. Enterprise workloads should approach with extreme caution until Gensyn-style verification deployed.</td>
+<td>Crypto-native projects tolerating protocol risk; experimental workloads; teams aware of spoofing risks.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+<div class="summary">
+<div class="summary-title">Key Takeaways: How Buyers Source Compute Across the Stack</div>
+<div class="summary-text">
+<p><strong>Layer 5 (Model-as-a-Service / Inference APIs):</strong> "No-Ops" consumers (ChatGPT users, non-technical business users) source via REST APIs. Providers: OpenAI, Anthropic, Together.ai (serverless), Google Gemini. <strong>Pricing driver:</strong> Token generation, not GPU-hours.</p>
+
+<p><strong>Layer 3–4 (Managed Inference / IaaS):</strong> ML engineers + MLOps teams buying dedicated GPU capacity. Providers: CoreWeave, Nebius, Lambda, Crusoe, AWS, Azure, GCP (managed K8s). <strong>Pricing driver:</strong> Reservation length (on-demand vs 1-yr reserved = 40–60% discount), network topology (InfiniBand premium), orchestration sophistication (SUNK vs standard Slurm).</p>
+
+<p><strong>Layer 1–2 (Bare-Metal / HPC Training):</strong> Large research labs + foundation model companies source raw hardware. Differentiation: guaranteed supply (CoreWeave via NVIDIA partnership), software optimization (FluidStack's Atlas OS, Together.ai's TKC kernels), or geographic arbitrage (Nebius EU sovereign, DataCrunch renewable energy premium, Crusoe stranded gas).</p>
+
+<p><strong>Buyer Personas:</strong> <em>Researcher</em> (on-demand, spot pricing: Lambda, Vast.ai); <em>Startup AI team</em> (self-service neocloud: Nebius, Voltage Park, RunPod); <em>Enterprise</em> (compliance: Azure FedRAMP, Nebius GDPR, CoreWeave SOC 2); <em>Frontier lab</em> (wholesale bespoke: CoreWeave, FluidStack, Oracle).</p>
+
+<p><strong>Competitive Moats:</strong> Commodity pricing losers will be Vast.ai / Akash clones ($0–1/hr). Winners: (1) <em>Verification</em> (Gensyn's proofs), (2) <em>Sovereign compliance</em> (Nebius EU, Azure DoD), (3) <em>Software specialization</em> (Together.ai kernels, CoreWeave SUNK), (4) <em>Energy arbitrage</em> (Crusoe, Genesis Cloud renewable).</p>
+</div>
+</div>
+
+<script>
+function switchPanel(panel) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(panel).classList.add('active');
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+function toggleTheme() {
+  const isDark = document.body.classList.contains('light') === false;
+  if (isDark) {
+    document.body.classList.add('light');
+    localStorage.setItem('theme', 'light');
+    document.getElementById('theme-icon').innerText = '☀️';
+  } else {
+    document.body.classList.remove('light');
+    localStorage.setItem('theme', 'dark');
+    document.getElementById('theme-icon').innerText = '🌙';
+  }
+}
+
+// Restore theme preference
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme === 'light') {
+  document.body.classList.add('light');
+  document.getElementById('theme-icon').innerText = '☀️';
+}
+</script>
+
+</body>
+</html>
