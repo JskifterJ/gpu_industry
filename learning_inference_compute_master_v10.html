@@ -2014,17 +2014,26 @@ function emb3dUpdateMeta(){
   html += '<div class="emb3d-flow-col-intro">' + ctxMsg + 'Each dimension of the 8,192-element hidden vector is multiplied by the output weight matrix (one row per token in vocabulary), creating dot-product votes. These votes sum to logits, which become probabilities via softmax.</div>';
   html += '<div class="emb3d-flow-columns">';
   
-  // Column 1: Hidden Vector (8 visible dims)
+  // Column 0: Dimension labels (separate)
+  html += '<div class="emb3d-flow-col" style="max-width:52px;">';
+  html += '<div class="emb3d-flow-header" style="background:rgba(255,255,255,.05);">Dim</div>';
+  for(var i=0; i<cur.length; i++){
+    html += '<div class="emb3d-flow-cell dim-label" style="min-width:52px;">h[' + i + ']</div>';
+  }
+  html += '<div class="emb3d-flow-cell truncate" style="min-width:52px;">more</div>';
+  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);border-top:2px solid rgba(232,160,32,.4);margin-top:4px;padding-top:4px;color:var(--muted);font-size:7px;min-width:52px;"></div>';
+  html += '</div>';
+  
+  // Column 1: Hidden Vector values (8 visible dims)
   html += '<div class="emb3d-flow-col">';
   html += '<div class="emb3d-flow-header">Hidden<br>Vector</div>';
   for(var i=0; i<cur.length; i++){
     var val = cur[i];
-    html += '<div class="emb3d-flow-cell dim-label">h[' + i + ']</div>';
     html += '<div class="emb3d-flow-cell">' + val.toFixed(3) + '</div>';
   }
-  html += '<div class="emb3d-flow-cell truncate">...+8,184<br>more</div>';
+  html += '<div class="emb3d-flow-cell truncate">...+8k</div>';
   var cumulativeLogit = base.reduce(function(s,v){ return s+v; },0) * 0.1 + winner.voteSum + winner.bias;
-  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);border-top:2px solid rgba(232,160,32,.4);margin-top:4px;padding-top:4px;color:var(--amber);font-weight:600;font-size:8px;">cum:\n' + cumulativeLogit.toFixed(2) + '</div>';
+  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);border-top:2px solid rgba(232,160,32,.4);margin-top:4px;padding-top:4px;color:var(--amber);font-weight:600;font-size:8px;">∑: ' + cumulativeLogit.toFixed(2) + '</div>';
   html += '</div>';
   
   // Columns 2+: Token rows with contributions and result (extended all the way down)
