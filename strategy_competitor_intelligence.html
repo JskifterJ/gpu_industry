@@ -65,6 +65,9 @@ body.light .theme-toggle-thumb{transform:translateX(16px);}
 .main{padding:28px;max-width:1760px;margin:0 auto;}
 .panel{display:none;}
 .panel.active{display:block;}
+.embed-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.embed-head{padding:12px 14px;border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);}
+.embed-frame{display:block;width:100%;height:calc(100vh - 240px);min-height:900px;border:0;background:var(--bg-s);}
 
 /* ── TIER SECTION ── */
 .tier-sect{margin-bottom:40px;}
@@ -378,6 +381,7 @@ table.stk td.grp-border-l{border-left:2px solid var(--border-ll)!important;}
   <button class="tab" onclick="switchTab('matrix',this)">Criteria Matrix</button>
   <button class="tab" onclick="switchTab('stack',this)">Stack Coverage</button>
   <button class="tab" onclick="switchTab('h2h',this)">Head-to-Head</button>
+  <button class="tab" onclick="switchTab('taxonomy',this)">Abstraction Taxonomy</button>
 </nav>
 
 <div class="main">
@@ -435,6 +439,20 @@ table.stk td.grp-border-l{border-left:2px solid var(--border-ll)!important;}
     <button class="h2h-btn" onclick="renderH2H()">Compare →</button>
   </div>
   <div class="h2h-body" id="h2h-body"></div>
+</div>
+
+<!-- TAXONOMY -->
+<div id="tab-taxonomy" class="panel">
+  <div class="embed-card">
+    <div class="embed-head">Embedded view: `strategy_abstraction_taxonomy.html`</div>
+    <iframe
+      class="embed-frame"
+      src="strategy_abstraction_taxonomy.html"
+      title="GPU Abstraction Taxonomy"
+      loading="lazy"
+      referrerpolicy="no-referrer"
+    ></iframe>
+  </div>
 </div>
 
 </div><!-- /main -->
