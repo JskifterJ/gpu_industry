@@ -409,7 +409,7 @@ details>summary::-webkit-details-marker{display:none;}
 .emb3d-card h4{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;}
 .emb3d-card p{font-size:11px;color:var(--muted);line-height:1.5;}
 .emb3d-stage-name{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--ink);margin-bottom:4px;}
-.emb3d-array{font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--ink);line-height:1.6;display:flex;flex-direction:column;gap:2px;}
+.emb3d-array{font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--ink);line-height:1.6;display:flex;flex-direction:column;gap:2px;margin-bottom:10px;}
 .emb3d-array .dim{color:var(--cyan);}
 .emb3d-array .delta-pos{color:var(--green);}
 .emb3d-array .delta-neg{color:var(--red);}
@@ -418,11 +418,26 @@ details>summary::-webkit-details-marker{display:none;}
 .emb3d-mini .good{color:var(--green);}
 .emb3d-mini .warn{color:var(--amber);}
 .emb3d-mini .bad{color:var(--red);}
-.emb3d-events{display:flex;flex-direction:column;gap:4px;min-height:86px;}
-.emb3d-event{font-family:'IBM Plex Mono',monospace;font-size:8.5px;line-height:1.45;transition:opacity .18s linear, transform .18s linear;}
-.emb3d-process{display:grid;grid-template-columns:1fr 24px 1fr 24px 1fr 24px 1fr;gap:0;align-items:start;}
-.emb3d-proc-col{padding:4px 6px;}
-.emb3d-proc-arrow{display:flex;align-items:center;justify-content:center;color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:12px;padding-top:16px;}
+.emb3d-process{display:flex;flex-direction:column;gap:8px;}
+.emb3d-flow-intro{font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);line-height:1.65;padding:6px 8px;background:rgba(255,255,255,.025);border:1px solid var(--border2);border-radius:6px;}
+.emb3d-proj-head{display:grid;grid-template-columns:88px 1fr;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--ink);padding:2px 0;}
+.emb3d-proj-head .mut{color:var(--muted);}
+.emb3d-proj-list{display:flex;flex-direction:column;gap:4px;}
+.emb3d-proj-row{display:grid;grid-template-columns:84px 1fr;gap:10px;align-items:start;font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--ink);line-height:1.5;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.emb3d-proj-row:last-child{border-bottom:none;}
+.emb3d-proj-left{color:var(--cyan);white-space:nowrap;}
+.emb3d-proj-right{color:var(--ink);}
+.emb3d-token-vote{display:inline-block;margin-right:12px;white-space:nowrap;}
+.emb3d-token-vote .tok{color:var(--muted);}
+.emb3d-token-vote .pos{color:var(--green);}
+.emb3d-token-vote .neg{color:var(--red);}
+.emb3d-summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.emb3d-summary-card{background:rgba(255,255,255,.025);border:1px solid var(--border2);border-radius:6px;padding:7px 8px;font-family:'IBM Plex Mono',monospace;font-size:8.5px;line-height:1.55;}
+.emb3d-summary-card.win{border-color:rgba(232,160,32,.35);background:rgba(232,160,32,.07);}
+.emb3d-summary-card .tok{font-size:9px;color:var(--ink);font-weight:600;margin-bottom:2px;}
+.emb3d-summary-card .id{color:var(--amber);}
+.emb3d-summary-card .mut{color:var(--muted);}
+.emb3d-choice{font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--ink);line-height:1.7;padding:6px 8px;background:rgba(255,255,255,.025);border:1px solid var(--border2);border-radius:6px;}
 .emb3d-note{margin-top:9px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);line-height:1.6;}
 
 /* QUANTIZATION + MODEL SIZE VISUAL SIMPLIFICATION */
@@ -442,8 +457,8 @@ details>summary::-webkit-details-marker{display:none;}
   .emb3d-controls{grid-template-columns:1fr;}
   .emb3d-meta{grid-template-columns:1fr;}
   .emb3d-meta2{grid-template-columns:1fr;}
-  .emb3d-process{grid-template-columns:1fr;}
-  .emb3d-proc-arrow{display:none;}
+  .emb3d-proj-head,.emb3d-proj-row{grid-template-columns:1fr;gap:4px;}
+  .emb3d-summary-grid{grid-template-columns:1fr 1fr;}
 }
 
 /* MISC */
@@ -562,17 +577,8 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
         <p id="emb3d-stage-desc">Attention builds sentence structure and local dependencies; FFN starts shaping short-range language patterns.</p>
       </div>
       <div class="emb3d-card">
-        <h4>Tracked Hidden Array (First 8 dims)</h4>
+        <h4>Tracked Hidden Array -> Token Rows -> Softmax</h4>
         <div id="emb3d-array" class="emb3d-array"></div>
-      </div>
-    </div>
-    <div class="emb3d-meta2">
-      <div class="emb3d-card">
-        <h4>Learning Trace (Current Layer, Fades Out)</h4>
-        <div id="emb3d-events" class="emb3d-events"></div>
-      </div>
-      <div class="emb3d-card">
-        <h4>Vector -> Token ID -> Logits -> Softmax</h4>
         <div id="emb3d-process" class="emb3d-process"></div>
       </div>
     </div>
@@ -1906,101 +1912,16 @@ var EMB3D = {
   playing: false,
   lastTs: 0,
   speedMs: 650,
-  events: [],
   baseVec: [0.18,-0.44,0.07,0.31,-0.12,0.22,-0.05,0.11],
   targetDecode: [0.84,-0.16,0.70,0.76,0.58,0.51,0.73,0.66],
-  targetPrefill: [0.56,-0.20,0.33,0.47,0.24,0.29,0.37,0.30]
+  targetPrefill: [0.56,-0.20,0.33,0.47,0.24,0.29,0.37,0.30],
+  outputRows: [
+    { key:'paris', label:'Paris', id:14357, bias:0.82, weights:[0.72,-0.18,0.64,0.59,0.52,0.31,0.68,0.47] },
+    { key:'lyon', label:'Lyon', id:9182, bias:0.58, weights:[0.41,-0.10,0.36,0.43,0.28,0.25,0.34,0.29] },
+    { key:'pizza', label:'Pizza', id:28191, bias:0.66, weights:[-0.22,0.51,-0.19,0.08,-0.12,0.11,-0.16,-0.07] },
+    { key:'other', label:'Other', id:999, bias:0.34, weights:[0.12,0.05,0.04,0.02,0.09,0.06,0.03,0.02] }
+  ]
 };
-
-function emb3dEventForLayer(layer){
-  if(layer <= 8) return {
-    c:'var(--cyan)',
-    lines:[
-      'L' + layer + ': parses article->noun grammar links',
-      'attention adds short-range syntax signal',
-      'ffn adds punctuation/case priors',
-      'hidden state moves toward grammatical continuation',
-      'logit gap remains small at this stage'
-    ]
-  };
-  if(layer <= 16) return {
-    c:'var(--cyan)',
-    lines:[
-      'L' + layer + ': token placement becomes clearer',
-      'attention sharpens local word order constraints',
-      'ffn reinforces phrase-slot templates',
-      'vector drifts away from unrelated clusters',
-      'candidate token set narrows'
-    ]
-  };
-  if(layer <= 36) return {
-    c:'var(--green)',
-    lines:[
-      'L' + layer + ': local features accumulate',
-      'attention links "capital" with nearby context',
-      'ffn amplifies city-name morphology patterns',
-      'vector begins moving toward geo-entity region',
-      'Paris/Lyon logits start separating from noise'
-    ]
-  };
-  if(layer <= 56) return {
-    c:'var(--amber)',
-    lines:[
-      'L' + layer + ': relation routing dominates',
-      'attention pulls from "France" and capital relation tokens',
-      'ffn adds country->capital feature interactions',
-      'vector trajectory bends toward capital-city cluster',
-      'incorrect semantic branches are suppressed'
-    ]
-  };
-  if(layer <= 72) return {
-    c:'var(--amber)',
-    lines:[
-      'L' + layer + ': factual retrieval pressure rises',
-      'attention reads deeper cached facts from prior tokens',
-      'ffn boosts fact-consistent coordinates',
-      'vector stabilizes near capital-city manifold',
-      'top logits become strongly concentrated'
-    ]
-  };
-  return {
-    c:'var(--green)',
-    lines:[
-      'L' + layer + ': final output alignment',
-      'attention + ffn perform final calibration',
-      'hidden vector aligns with output vocab directions',
-      'softmax sharpens winner probability',
-      'next token ID is sampled and decoded to text'
-    ]
-  };
-}
-
-function emb3dPushEvent(layer){
-  var ev = emb3dEventForLayer(layer);
-  ev.lines.forEach(function(line, idx){
-    EMB3D.events.push({
-      txt: line,
-      life: 1.0 - idx*0.03,
-      y: 0,
-      color: ev.c
-    });
-  });
-  if(EMB3D.events.length > 30) EMB3D.events = EMB3D.events.slice(EMB3D.events.length - 30);
-}
-
-function emb3dRenderEvents(){
-  var wrap = document.getElementById('emb3d-events');
-  if(!wrap) return;
-  EMB3D.events.forEach(function(ev){
-    ev.life = Math.max(0, ev.life - 0.012);
-    ev.y += 0.35;
-  });
-  EMB3D.events = EMB3D.events.filter(function(ev){ return ev.life > 0; });
-  var latest = EMB3D.events.slice(-5);
-  wrap.innerHTML = latest.map(function(ev){
-    return '<div class="emb3d-event" style="opacity:' + ev.life.toFixed(3) + ';transform:translateY(' + ev.y.toFixed(1) + 'px);color:' + ev.color + ';">' + ev.txt + '</div>';
-  }).join('');
-}
 
 function setEmb3dSpeed(v){
   EMB3D.speedMs = v === 'slow' ? 950 : (v === 'fast' ? 280 : 650);
@@ -2020,7 +1941,6 @@ function setEmb3dPhase(phase){
   EMB3D.phase = phase;
   EMB3D.layer = 1;
   EMB3D.playing = false;
-  EMB3D.events = [];
   var pre = document.getElementById('emb3d-prefill');
   var dec = document.getElementById('emb3d-decode');
   if(pre) pre.classList.toggle('on', phase === 'prefill');
@@ -2037,7 +1957,6 @@ function setEmb3dPhase(phase){
 }
 
 function setEmb3dLayer(layer, fromSlider){
-  var prevLayer = EMB3D.layer;
   EMB3D.layer = Math.max(1, Math.min(80, layer || 1));
   if(fromSlider){
     EMB3D.playing = false;
@@ -2048,7 +1967,6 @@ function setEmb3dLayer(layer, fromSlider){
   if(sl && !fromSlider) sl.value = EMB3D.layer;
   var lbl = document.getElementById('emb3d-layer-label');
   if(lbl) lbl.textContent = 'Layer ' + EMB3D.layer + ' / 80';
-  if(EMB3D.layer > prevLayer) emb3dPushEvent(EMB3D.layer);
   emb3dUpdateMeta();
 }
 
@@ -2118,66 +2036,60 @@ function emb3dUpdateMeta(){
 
   var processEl = document.getElementById('emb3d-process');
   if(processEl){
-    var tok = EMB3D.phase === 'decode' ? 'candidate(next)' : 'tracked_prompt_token';
-    var tokId = EMB3D.phase === 'decode' ? 14357 : 318;
-    var p = emb3dToyProbs(EMB3D.layer);
+    var p = emb3dToyProbs(EMB3D.layer, cur);
+    var lines = cur.map(function(v, idx){
+      var votes = p.rows.map(function(row){
+        var cls = row.contribs[idx] >= 0 ? 'pos' : 'neg';
+        var sign = row.contribs[idx] >= 0 ? '+' : '';
+        return '<span class="emb3d-token-vote"><span class="tok">' + row.label + '</span> <span class="' + cls + '">' + sign + row.contribs[idx].toFixed(2) + '</span></span>';
+      }).join('');
+      return '<div class="emb3d-proj-row"><div class="emb3d-proj-left">h[' + idx + '] = ' + v.toFixed(3) + '</div><div class="emb3d-proj-right">weighted votes -> ' + votes + '</div></div>';
+    }).join('');
+    var cards = p.rows.map(function(row){
+      return '<div class="emb3d-summary-card' + (row.isWinner ? ' win' : '') + '">'
+        + '<div class="tok">' + row.label + '</div>'
+        + '<div class="id">token id ' + row.id + '</div>'
+        + '<div class="mut">logit ' + row.logit.toFixed(2) + '</div>'
+        + '<div class="mut">softmax ' + (row.prob*100).toFixed(1) + '%</div>'
+        + '<div class="mut">bias ' + row.bias.toFixed(2) + ' + votes ' + row.voteSum.toFixed(2) + '</div>'
+        + '</div>';
+    }).join('');
+    var winner = p.rows.find(function(row){ return row.isWinner; }) || p.rows[0];
     processEl.innerHTML = ''
-      + '<div class="emb3d-proc-col emb3d-mini">'
-      + '<div class="mut">Hidden vector (slice)</div>'
-      + '<div>[' + cur.map(function(v){ return v.toFixed(2); }).join(', ') + ']</div>'
-      + '<div class="mut">Layer rule:</div>'
-      + '<div>h<sub>' + EMB3D.layer + '</sub>=h<sub>' + (EMB3D.layer-1) + '</sub>+Δ<sub>attn</sub>+Δ<sub>ffn</sub></div>'
-      + '</div>'
-      + '<div class="emb3d-proc-arrow">→</div>'
-      + '<div class="emb3d-proc-col emb3d-mini">'
-      + '<div class="mut">Token focus</div>'
-      + '<div><strong>' + tok + '</strong></div>'
-      + '<div class="mut">Token ID</div>'
-      + '<div>' + tokId + '</div>'
-      + '</div>'
-      + '<div class="emb3d-proc-arrow">→</div>'
-      + '<div class="emb3d-proc-col emb3d-mini">'
-      + '<div class="mut">Logits (toy subset)</div>'
-      + '<div>Paris: ' + p.logits.paris.toFixed(2) + '</div>'
-      + '<div>Lyon: ' + p.logits.lyon.toFixed(2) + '</div>'
-      + '<div>Pizza: ' + p.logits.pizza.toFixed(2) + '</div>'
-      + '<div>Other: ' + p.logits.other.toFixed(2) + '</div>'
-      + '</div>'
-      + '<div class="emb3d-proc-arrow">→</div>'
-      + '<div class="emb3d-proc-col emb3d-mini">'
-      + '<div class="mut">Softmax probs</div>'
-      + '<div class="good">Paris: ' + (p.probs.paris*100).toFixed(1) + '%</div>'
-      + '<div class="warn">Lyon: ' + (p.probs.lyon*100).toFixed(1) + '%</div>'
-      + '<div class="bad">Pizza: ' + (p.probs.pizza*100).toFixed(1) + '%</div>'
-      + '<div class="mut">Other: ' + (p.probs.other*100).toFixed(1) + '%</div>'
-      + '<div class="mut">Then sampled across full 128,256 vocab</div>'
-      + '</div>';
+      + '<div class="emb3d-flow-intro">The first 8 hidden dimensions are feature coordinates, not tokens themselves. Each dimension sends a weighted vote into each token row of a toy output matrix. Adding those votes gives a logit for each token row; softmax then converts those logits into probabilities.</div>'
+      + '<div class="emb3d-proj-head"><div class="mut">Output rule</div><div>logit(token) = Σ h[i] × W<sub>out</sub>[token,i] + bias(token)</div></div>'
+      + '<div class="emb3d-proj-list">' + lines + '</div>'
+      + '<div class="emb3d-proj-head"><div class="mut">Aggregate rows</div><div>Summed votes from the 8 dimensions produce token-row logits; softmax normalizes them into a probability distribution.</div></div>'
+      + '<div class="emb3d-summary-grid">' + cards + '</div>'
+      + '<div class="emb3d-choice">Winner after softmax: <strong>' + winner.label + '</strong> -> token id <strong>' + winner.id + '</strong> -> decoded text piece "<strong>' + winner.label + '</strong>". At layer ' + EMB3D.layer + ', this row has the strongest alignment with the current hidden vector.</div>';
   }
 }
 
-function emb3dToyProbs(layer){
-  var t = emb3dEase((layer - 1) / 79);
-  var logits = {
-    paris: 0.6 + 4.2*t,
-    lyon: 0.4 + 1.6*t,
-    pizza: 1.2 - 1.6*t,
-    other: 0.8 - 0.5*t
-  };
-  var maxL = Math.max(logits.paris, logits.lyon, logits.pizza, logits.other);
-  var eParis = Math.exp(logits.paris - maxL);
-  var eLyon = Math.exp(logits.lyon - maxL);
-  var ePizza = Math.exp(logits.pizza - maxL);
-  var eOther = Math.exp(logits.other - maxL);
-  var s = eParis + eLyon + ePizza + eOther;
-  return {
-    logits: logits,
-    probs: {
-      paris: eParis/s,
-      lyon: eLyon/s,
-      pizza: ePizza/s,
-      other: eOther/s
-    }
-  };
+function emb3dToyProbs(layer, vector){
+  var cur = vector || emb3dVectorAt(layer);
+  var rows = EMB3D.outputRows.map(function(row){
+    var contribs = cur.map(function(v, idx){ return v * row.weights[idx]; });
+    var voteSum = contribs.reduce(function(sum, v){ return sum + v; }, 0);
+    return {
+      key: row.key,
+      label: row.label,
+      id: row.id,
+      bias: row.bias,
+      contribs: contribs,
+      voteSum: voteSum,
+      logit: row.bias + voteSum
+    };
+  });
+  var maxL = Math.max.apply(null, rows.map(function(row){ return row.logit; }));
+  var exps = rows.map(function(row){ return Math.exp(row.logit - maxL); });
+  var s = exps.reduce(function(sum, v){ return sum + v; }, 0);
+  var winnerIdx = 0;
+  rows.forEach(function(row, idx){
+    row.prob = exps[idx] / s;
+    if(row.logit > rows[winnerIdx].logit) winnerIdx = idx;
+  });
+  rows.forEach(function(row, idx){ row.isWinner = idx === winnerIdx; });
+  return { rows: rows };
 }
 
 function initEmb3dCanvas(){
@@ -2302,8 +2214,6 @@ function drawEmb3d(ts){
       }
     }
   }
-
-  emb3dRenderEvents();
 
   window.requestAnimationFrame(drawEmb3d);
 }
