@@ -418,17 +418,19 @@ details>summary::-webkit-details-marker{display:none;}
 
 /* HORIZONTAL COLUMN FLOW VISUALIZATION */
 .emb3d-flow-columns{display:flex;gap:6px;overflow-x:auto;padding:8px 0;align-items:flex-start;}
-.emb3d-flow-columns{--emb3d-flow-col-width:82px;--emb3d-flow-head-height:50px;--emb3d-flow-row-height:24px;}
+.emb3d-flow-columns{--emb3d-flow-col-width:82px;--emb3d-flow-head-height:50px;--emb3d-flow-row-height:24px;--emb3d-flow-gap:1px;}
 .emb3d-flow-col{display:flex;flex-direction:column;gap:1px;flex:0 0 var(--emb3d-flow-col-width);width:var(--emb3d-flow-col-width);}
-.emb3d-flow-col.sep{flex:0 0 10px;width:10px;}
-.emb3d-flow-col.sep .emb3d-flow-header{background:rgba(255,255,255,.02);border-color:rgba(255,255,255,.04);color:transparent;padding:0;}
-.emb3d-flow-col.sep .emb3d-flow-cell{background:rgba(255,255,255,.04);border-left:2px solid rgba(232,160,32,.3);border-right:1px solid rgba(255,255,255,.06);border-top-color:rgba(255,255,255,.04);border-bottom-color:rgba(255,255,255,.04);border-radius:0;padding:0;color:transparent;}
+.emb3d-flow-col.arrow{flex:0 0 18px;width:18px;}
+.emb3d-flow-col.arrow .emb3d-flow-header{background:transparent;border-color:transparent;color:transparent;padding:0;}
+.emb3d-flow-col.arrow .emb3d-flow-cell{background:transparent;border-color:transparent;color:rgba(232,160,32,.65);padding:0;font-size:10px;}
 .emb3d-flow-header{background:rgba(26,191,208,.12);border:1px solid rgba(26,191,208,.3);border-radius:4px 4px 0 0;padding:6px 8px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--cyan);font-weight:600;text-align:center;line-height:1.25;height:var(--emb3d-flow-head-height);display:flex;align-items:center;justify-content:center;flex-direction:column;width:100%;}
 .emb3d-flow-cell{background:rgba(255,255,255,.03);border:1px solid var(--border2);border-radius:3px;padding:5px 7px;font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--ink);text-align:center;height:var(--emb3d-flow-row-height);display:flex;align-items:center;justify-content:center;width:100%;}
 .emb3d-flow-cell.dim-label{color:var(--cyan);font-size:8px;}
 .emb3d-flow-cell.delta-pos{color:var(--green);}
 .emb3d-flow-cell.delta-neg{color:var(--red);}
 .emb3d-flow-cell.truncate{color:var(--muted);opacity:0.6;font-size:7.5px;font-style:italic;}
+.emb3d-flow-cell.row-label{background:rgba(255,255,255,.06);color:var(--muted);font-size:7.5px;text-transform:uppercase;letter-spacing:.04em;}
+.emb3d-flow-cell.merge{height:calc((var(--emb3d-flow-row-height) * 6) + (var(--emb3d-flow-gap) * 5));background:rgba(255,255,255,.04);color:var(--muted);font-size:7px;line-height:1.45;border-top:2px solid rgba(232,160,32,.22);}
 .emb3d-flow-result{background:rgba(232,160,32,.12);border:1px solid rgba(232,160,32,.3);border-radius:3px;padding:5px 7px;font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--amber);font-weight:600;text-align:center;height:var(--emb3d-flow-row-height);display:flex;align-items:center;justify-content:center;width:100%;}
 .emb3d-flow-col-intro{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);padding:8px;background:rgba(255,255,255,.02);border-radius:6px;margin-bottom:8px;line-height:1.5;}
 
@@ -2028,12 +2030,12 @@ function emb3dUpdateMeta(){
     html += '<div class="emb3d-flow-cell dim-label" style="font-size:7.5px;">h[' + i + ']</div>';
   }
   html += '<div class="emb3d-flow-cell truncate" style="font-size:7px;">more</div>';
-  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);border-top:2px solid rgba(232,160,32,.4);"></div>';
-  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);"></div>';
-  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);"></div>';
-  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);"></div>';
-  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);"></div>';
-  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);"></div>';
+  html += '<div class="emb3d-flow-cell row-label">sum</div>';
+  html += '<div class="emb3d-flow-cell row-label">bias</div>';
+  html += '<div class="emb3d-flow-cell row-label">logit</div>';
+  html += '<div class="emb3d-flow-cell row-label">value</div>';
+  html += '<div class="emb3d-flow-cell row-label">prob</div>';
+  html += '<div class="emb3d-flow-cell row-label">value</div>';
   html += '</div>';
   
   // Column 1: Hidden Vector values
@@ -2043,12 +2045,7 @@ function emb3dUpdateMeta(){
     html += '<div class="emb3d-flow-cell">' + cur[i].toFixed(3) + '</div>';
   }
   html += '<div class="emb3d-flow-cell truncate">...8k</div>';
-  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);border-top:2px solid rgba(232,160,32,.4);"></div>';
-  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);"></div>';
-  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);"></div>';
-  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);"></div>';
-  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);"></div>';
-  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);"></div>';
+  html += '<div class="emb3d-flow-cell merge" title="This hidden state is projected into token scores below.">projected into token scores</div>';
   html += '</div>';
   
   // Column 1b: Per-layer delta
@@ -2061,12 +2058,7 @@ function emb3dUpdateMeta(){
     html += '<div class="emb3d-flow-cell ' + cls + '">' + sign + d.toFixed(3) + '</div>';
   }
   html += '<div class="emb3d-flow-cell truncate">avg</div>';
-  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);border-top:2px solid rgba(232,160,32,.4);"></div>';
-  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);"></div>';
-  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);"></div>';
-  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);"></div>';
-  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);"></div>';
-  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);"></div>';
+  html += '<div class="emb3d-flow-cell merge" title="Per-layer updates are already baked into the current hidden vector before scoring.">layer update applied</div>';
   html += '</div>';
   
   // Column 1c: Cumulative delta from layer 1
@@ -2079,19 +2071,14 @@ function emb3dUpdateMeta(){
     html += '<div class="emb3d-flow-cell ' + cls + '">' + sign + cumDelta.toFixed(3) + '</div>';
   }
   html += '<div class="emb3d-flow-cell truncate">total</div>';
-  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);border-top:2px solid rgba(232,160,32,.4);"></div>';
-  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);"></div>';
-  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);"></div>';
-  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);"></div>';
-  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);"></div>';
-  html += '<div class="emb3d-flow-cell" style="background:rgba(255,255,255,.08);"></div>';
+  html += '<div class="emb3d-flow-cell merge" title="The cumulative hidden state is what the output head reads to score each token.">cumulative state feeds output head</div>';
   html += '</div>';
   
   // --- Separator ---
-  html += '<div class="emb3d-flow-col sep" aria-hidden="true">';
+  html += '<div class="emb3d-flow-col arrow" aria-hidden="true">';
   html += '<div class="emb3d-flow-header"></div>';
   for(var sepIdx=0; sepIdx<15; sepIdx++){
-    html += '<div class="emb3d-flow-cell"></div>';
+    html += '<div class="emb3d-flow-cell">→</div>';
   }
   html += '</div>';
   
