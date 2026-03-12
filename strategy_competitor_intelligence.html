@@ -531,7 +531,7 @@ table.stk td.grp-border-l{border-left:2px solid var(--border-ll)!important;}
     <div class="space-main">
       <div class="space-head">
         <div class="space-title" id="space-title">Provider Positioning</div>
-        <div class="space-meta">Color = Tier · Marker size = Total Score · Stack path = line from L0 to L7</div>
+        <div class="space-meta">Color = Tier · Badge = provider monogram · Stack blocks = -1..3</div>
       </div>
       <div id="space-plot" class="space-plot"></div>
     </div>
@@ -1188,6 +1188,7 @@ const SPACE_AXIS_DEFS = [
 ];
 
 const SPACE_SCORE_COLORS = {full:5, partial:4, partner:3, limited:2, none:1};
+const SPACE_STACK_BLOCK_SCORE = {none:-1, limited:0, partner:1, partial:2, full:3};
 const SPACE_TIER_COLOR = {
   platinum:'#f5d78b',
   gold:'#f59e0b',
@@ -1601,6 +1602,24 @@ function providerStackValues(provider){
   return (provider.stack || []).map(v=>SPACE_SCORE_COLORS[v] || 1);
 }
 
+function providerStackBlockValues(provider){
+  return (provider.stack || []).map(v=>SPACE_STACK_BLOCK_SCORE[v] ?? -1);
+}
+
+function providerStackBlockLabel(provider){
+  return providerStackBlockValues(provider).join(' ');
+}
+
+function providerLogoBadge(provider){
+  const hardcoded = {
+    coreweave:'CW', nebius:'NB', oracle:'OR', azure:'AZ', fluidstack:'FS', crusoe:'CR',
+    gcp:'GCP', aws:'AWS', together:'TG', lambda:'LM', scaleway:'SC', gcore:'GC',
+    vultr:'VU', voltagep:'VP', tensorwave:'TW'
+  };
+  if(hardcoded[provider.id]) return hardcoded[provider.id];
+  return provider.name.split(/\s+/).map(w=>w[0]||'').join('').slice(0,3).toUpperCase();
+}
+
 function spaceAxisStep(axisKey){
   if(['security','lifecycle','orchestration','storage','networking','reliability','monitoring','pricing','partnerships','availability'].includes(axisKey)) return 1;
   if(['avg','stackBreadth','stackPath'].includes(axisKey)) return 0.5;
@@ -1618,6 +1637,7 @@ function build2DBlockPoints(xAxis, yAxis){
   const xStep = spaceAxisStep(xAxis);
   const yStep = spaceAxisStep(yAxis);
   const blockMap = {};
+  const coordMap = {};
 
   PROVIDERS.forEach(provider=>{
     const xRaw = spaceAxisBaseValue(provider, xAxis);
@@ -1625,8 +1645,12 @@ function build2DBlockPoints(xAxis, yAxis){
     const xBlock = Math.round(xRaw / xStep) * xStep;
     const yBlock = Math.round(yRaw / yStep) * yStep;
     const key = `${xBlock}|${yBlock}`;
+    const coordKey = `${xRaw.toFixed(4)}|${yRaw.toFixed(4)}`;
     if(!blockMap[key]) blockMap[key] = [];
-    blockMap[key].push({provider, xRaw, yRaw, xBlock, yBlock});
+    if(!coordMap[coordKey]) coordMap[coordKey] = [];
+    const rec = {provider, xRaw, yRaw, xBlock, yBlock, coordKey};
+    blockMap[key].push(rec);
+    coordMap[coordKey].push(rec);
   });
 
   const points = [];
@@ -1635,14 +1659,16 @@ function build2DBlockPoints(xAxis, yAxis){
   Object.keys(blockMap).forEach(key=>{
     const members = blockMap[key].sort((a,b)=>a.provider.name.localeCompare(b.provider.name));
     const count = members.length;
-    const cols = Math.ceil(Math.sqrt(count));
-    const rows = Math.ceil(count / cols);
-
     members.forEach((m, idx)=>{
-      const col = idx % cols;
-      const row = Math.floor(idx / cols);
-      const dx = ((col + 0.5) / cols - 0.5) * xStep * 0.72;
-      const dy = ((row + 0.5) / rows - 0.5) * yStep * 0.72;
+      const ringCap = 8;
+      const ring = Math.floor(idx / ringCap);
+      const ringIdx = idx % ringCap;
+      const ringCount = Math.min(ringCap, count - ring * ringCap);
+      const angle = count === 1 ? 0 : (2 * Math.PI * ringIdx) / ringCount;
+      const radiusBase = Math.min(xStep, yStep) * 0.23;
+      const radius = count === 1 ? 0 : radiusBase + ring * (Math.min(xStep, yStep) * 0.16);
+      const dx = Math.cos(angle) * radius;
+      const dy = Math.sin(angle) * radius;
 
       points.push({
         provider: m.provider,
@@ -1652,7 +1678,8 @@ function build2DBlockPoints(xAxis, yAxis){
         yBlock: m.yBlock,
         xPlot: m.xBlock + dx,
         yPlot: m.yBlock + dy,
-        occupancy: count
+        occupancy: count,
+        coordKey: m.coordKey
       });
     });
 
@@ -1671,7 +1698,20 @@ function build2DBlockPoints(xAxis, yAxis){
     });
   });
 
-  return {points, shapes};
+  const clusters = Object.keys(coordMap)
+    .map(k=>{
+      const g = coordMap[k];
+      return {
+        key:k,
+        count:g.length,
+        x:g[0].xRaw,
+        y:g[0].yRaw,
+        names:g.map(v=>v.provider.name).sort((a,b)=>a.localeCompare(b))
+      };
+    })
+    .filter(c=>c.count > 1);
+
+  return {points, shapes, clusters};
 }
 
 function setSpaceMode(mode){
@@ -1713,7 +1753,7 @@ function renderSpacePlot(){
   const hasStackPath = axesInUse.includes('stackPath');
   if(hintEl){
     hintEl.innerHTML = spaceMode==='2d'
-      ? 'Block mode: each competitor is placed inside a coordinate block with non-overlapping offsets. If Stack Coverage Path is selected, it is represented as stack breadth for readability.'
+      ? 'Block mode with anti-overlap blowout: each competitor is placed inside a coordinate block. Under each marker, stack blocks are shown as L0-L7 scores in -1..3 scale (none=-1, limited=0, partner=1, partial=2, full=3). Hover hollow cluster dots to see who shares the exact same coordinate.'
       : (hasStackPath
         ? 'Stack path enabled: each provider is rendered as a line from L0 to L7 on the selected stack axis (coverage score 1-5).'
         : 'Point mode: each provider is rendered as a single marker based on selected metrics.');
@@ -1722,6 +1762,7 @@ function renderSpacePlot(){
   const traces = [];
   if(spaceMode==='2d'){
     const block = build2DBlockPoints(xAxis, yAxis);
+    const yStep = spaceAxisStep(yAxis);
     const tiers = ['platinum','gold','silver'];
     tiers.forEach(tier=>{
       const pts = block.points.filter(p=>p.provider.tier===tier);
@@ -1732,8 +1773,8 @@ function renderSpacePlot(){
         name:tier.charAt(0).toUpperCase()+tier.slice(1),
         x:pts.map(p=>p.xPlot),
         y:pts.map(p=>p.yPlot),
-        text:pts.map(p=>p.provider.name),
-        textposition:'middle center',
+        text:pts.map(p=>p.occupancy>1 ? providerLogoBadge(p.provider) : p.provider.name),
+        textposition:'top center',
         textfont:{size:9,color:'#0f172a'},
         marker:{
           color:SPACE_TIER_COLOR[tier],
@@ -1749,15 +1790,51 @@ function renderSpacePlot(){
           p.yRaw,
           p.xBlock,
           p.yBlock,
-          p.occupancy
+          p.occupancy,
+          providerStackBlockLabel(p.provider)
         ]),
         hovertemplate:
           `<b>%{customdata[0]}</b> · %{customdata[1]}<br>Total: %{customdata[2]}/50` +
           `<br>${spaceAxisLabel(xAxis)} (raw): %{customdata[3]}` +
           `<br>${spaceAxisLabel(yAxis)} (raw): %{customdata[4]}` +
-          `<br>Block: (%{customdata[5]}, %{customdata[6]}) · Occupancy: %{customdata[7]}<extra></extra>`
+          `<br>Block: (%{customdata[5]}, %{customdata[6]}) · Occupancy: %{customdata[7]}` +
+          `<br>Stack blocks L0-L7: %{customdata[8]}<extra></extra>`
+      });
+
+      traces.push({
+        type:'scatter',
+        mode:'text',
+        showlegend:false,
+        hoverinfo:'skip',
+        x:pts.map(p=>p.xPlot),
+        y:pts.map(p=>p.yPlot - yStep * 0.22),
+        text:pts.map(p=>providerStackBlockLabel(p.provider)),
+        textposition:'middle center',
+        textfont:{size:8,color:'#64748b'}
       });
     });
+
+    if(block.clusters.length){
+      traces.push({
+        type:'scatter',
+        mode:'markers',
+        name:'Shared coordinate',
+        x:block.clusters.map(c=>c.x),
+        y:block.clusters.map(c=>c.y),
+        marker:{
+          color:'rgba(15,23,42,0)',
+          line:{color:'rgba(15,23,42,0.85)',width:1.4},
+          symbol:'circle-open',
+          size:block.clusters.map(c=>10 + Math.min(8,c.count*1.4))
+        },
+        customdata:block.clusters.map(c=>[
+          c.count,
+          c.names.map(n=>`- ${n}`).join('<br>')
+        ]),
+        hovertemplate:
+          `<b>Shared coordinate cluster</b><br>Competitors: %{customdata[0]}<br>%{customdata[1]}<extra></extra>`
+      });
+    }
   } else {
     PROVIDERS.forEach(provider=>{
       const total = axisValueForProvider(provider,'total');
