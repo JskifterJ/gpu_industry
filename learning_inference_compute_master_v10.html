@@ -6,6 +6,7 @@
 <title>GPU Inference Pipeline v7</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <style>
 :root{
   --bg:#060A10;--panel:#0B1018;--panel2:#111820;--panel3:#161E2A;
@@ -340,6 +341,20 @@ details>summary::-webkit-details-marker{display:none;}
 .econx-table th,.econx-table td{padding:7px 8px;border-bottom:1px solid var(--border);text-align:left;}
 .econx-table th{color:var(--muted);font-weight:400;}
 .econx-tag{display:inline-flex;align-items:center;padding:2px 7px;border-radius:999px;font-family:'IBM Plex Mono',monospace;font-size:8px;border:1px solid var(--border2);}
+.econx-header-sub{font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);margin-top:4px;line-height:1.45;}
+.econx-cost-label{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:1px 0 6px;}
+.econx-cost-breakdown{display:flex;height:9px;border-radius:999px;overflow:hidden;background:#1a2030;border:1px solid rgba(255,255,255,.08);margin-bottom:6px;}
+.econx-cost-segment{height:100%;}
+.econx-cost-legend{display:flex;flex-wrap:wrap;gap:8px 10px;margin-bottom:5px;}
+.econx-cost-legend-item{display:inline-flex;align-items:center;gap:5px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);}
+.econx-cost-dot{width:6px;height:6px;border-radius:50%;display:inline-block;}
+.econx-metric-bottom{margin-top:3px;padding-top:6px;border-top:1px solid var(--border);font-weight:600;}
+.econx-chart-wrap{height:230px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:8px 10px;}
+.econx-batch-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
+.econx-batch-row span{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);}
+.econx-batch-btn{border:1px solid var(--border2);background:var(--bg);color:var(--muted);border-radius:999px;padding:3px 9px;font-family:'IBM Plex Mono',monospace;font-size:8.5px;cursor:pointer;}
+.econx-batch-btn.sel{border-color:var(--amber);background:rgba(232,160,32,.12);color:var(--amber);}
+.econx-fold>summary{color:var(--amber);}
 .optional-fold{margin-top:12px;border-color:rgba(138,110,232,.18);}
 .optional-fold>details>summary{background:rgba(138,110,232,.07);color:var(--purple);}
 .optional-fold>details>div{padding:0;background:transparent;}
@@ -3426,9 +3441,33 @@ function initMsCalculator(){
       </div>
 
       <div class="econx-stack">
+        <div id="econxCompareGrid" class="econx-compare"></div>
+
         <div class="econx-card">
-          <div class="econx-title">Interconnect Penalty</div>
-          <div style="font-size:11.5px;color:var(--muted);line-height:1.65;margin-bottom:10px;">When a model is split across GPUs, each token requires repeated all-reduce synchronization. Fast NVLink fabrics keep that overhead small. PCIe-only systems often waste whole milliseconds per token just waiting for GPUs to agree.</div>
+          <div class="econx-title">Cost Per 1 Million Output Tokens + Time To Produce Them</div>
+          <div class="econx-chart-wrap" style="margin-bottom:10px;"><canvas id="econxCostChart"></canvas></div>
+          <div id="econxCostSpeedSummary" style="overflow-x:auto;"></div>
+          <details style="margin-top:10px;">
+            <summary style="color:var(--amber);">Show economics math</summary>
+            <div id="econxMath" style="padding-top:10px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);line-height:1.9;"></div>
+          </details>
+        </div>
+
+        <div class="econx-card">
+          <div class="econx-title">Tokens/sec vs GPU Count — Does Adding More GPUs Help?</div>
+          <div class="econx-batch-row" id="econxBatchBtns">
+            <span>Batch for this chart:</span>
+            <button type="button" class="econx-batch-btn" data-batch="10" onclick="econxSetScaleBatch(10)">10</button>
+            <button type="button" class="econx-batch-btn" data-batch="20" onclick="econxSetScaleBatch(20)">20</button>
+            <button type="button" class="econx-batch-btn" data-batch="50" onclick="econxSetScaleBatch(50)">50</button>
+            <button type="button" class="econx-batch-btn" data-batch="100" onclick="econxSetScaleBatch(100)">100</button>
+          </div>
+          <div class="econx-chart-wrap"><canvas id="econxScaleChart"></canvas></div>
+        </div>
+
+        <details class="econx-card econx-fold">
+          <summary>Interconnect Penalty</summary>
+          <div style="font-size:11.5px;color:var(--muted);line-height:1.65;margin:10px 0;">When a model is split across GPUs, each token requires repeated all-reduce synchronization. Fast NVLink fabrics keep that overhead small. PCIe-only systems often waste whole milliseconds per token just waiting for GPUs to agree.</div>
           <div id="econxInterconnectBars" class="econx-bars" style="margin-bottom:10px;"></div>
           <div id="econxNetworkExample" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:10px 12px;"></div>
           <details style="margin-top:10px;">
@@ -3441,23 +3480,7 @@ function initMsCalculator(){
               latency term = num all-reduces &times; interconnect latency
             </div>
           </details>
-        </div>
-
-        <div id="econxCompareGrid" class="econx-compare"></div>
-
-        <div class="econx-card">
-          <div class="econx-title">Utilization &amp; Throughput Comparison</div>
-          <div id="econxUtilBars" class="econx-bars"></div>
-        </div>
-
-        <div class="econx-card">
-          <div class="econx-title">Cost Per 1 Million Output Tokens + Time To Produce Them</div>
-          <div id="econxCostSpeedSummary" style="overflow-x:auto;"></div>
-          <details style="margin-top:10px;">
-            <summary style="color:var(--amber);">Show economics math</summary>
-            <div id="econxMath" style="padding-top:10px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);line-height:1.9;"></div>
-          </details>
-        </div>
+        </details>
 
         <div class="econx-card">
           <div class="econx-title">Integrated Takeaways</div>
@@ -4336,11 +4359,49 @@ var ECONX_MODELS = {
 };
 
 var ECONX_BPP = { FP32:4, BF16:2, INT8:1, INT4:0.5 };
+var ECONX_GPU_COUNTS = [1, 2, 4, 8, 16];
+var ECONX_SCALE_BATCH = 20;
+var econxCostChart = null;
+var econxScaleChart = null;
 
 function econxKeys(){
   return Object.keys(ECONX_GPUS).sort(function(a,b){
     return ECONX_GPUS[b].bandwidth - ECONX_GPUS[a].bandwidth;
   });
+}
+
+function econxFmtNum(value, digits){
+  var d = typeof digits === 'number' ? digits : 0;
+  return Number(value).toLocaleString('en-US', {
+    minimumFractionDigits: d,
+    maximumFractionDigits: d
+  });
+}
+
+function econxFmtMoney(value, digits){
+  return '$' + econxFmtNum(value, digits);
+}
+
+function econxFmtMs(ms, digits){
+  return econxFmtNum(ms, typeof digits === 'number' ? digits : 1) + ' ms';
+}
+
+function econxFmtKw(kw, digits){
+  return econxFmtNum(kw, typeof digits === 'number' ? digits : 1) + ' kW';
+}
+
+function econxTimeFor1MSeconds(r){
+  return 1000000 / r.tps_effective;
+}
+
+function econxFmtResponseTime(ms){
+  if(ms < 1000) return econxFmtNum(ms, 1) + ' ms';
+  return econxFmtNum(ms / 1000, 1) + ' s';
+}
+
+function econxFmtTimeFor1M(seconds){
+  if(seconds < 3600) return econxFmtNum(seconds / 60, 1) + ' min';
+  return econxFmtNum(seconds / 3600, 1) + ' hr';
 }
 
 function econxModelMemGB(paramsB, prec){
@@ -4398,15 +4459,12 @@ function econxTTFTMs(model, inputTok, n, gpu){
   return (computeMs + bwMs + latMs) / gpu.sustained;
 }
 
-function econxFull(gpuKey, modelKey, prec, inputTok, outputTok, batch, elec, rack, pue){
-  var gpu = ECONX_GPUS[gpuKey];
-  var model = ECONX_MODELS[modelKey];
+function econxBuildResult(gpu, model, modelMem, inputTok, outputTok, batch, elec, rack, pue, n){
   if(!gpu || !model) return null;
-  var modelMem = econxModelMemGB(model.params, prec);
   var kvMem = econxKvCacheGB(model, inputTok + outputTok, batch);
   var totalMem = modelMem + kvMem + modelMem * 0.10;
-  var n = econxGpusNeeded(totalMem, gpu.vram);
-  if(n > 32) return null;
+  if((gpu.vram * n) < totalMem || n > 32) return null;
+
   var decode = econxDecodeMetrics(modelMem, model, n, gpu);
   var ttft = econxTTFTMs(model, inputTok, n, gpu);
   var decodeTotalMs = outputTok * decode.total_ms / batch;
@@ -4414,6 +4472,7 @@ function econxFull(gpuKey, modelKey, prec, inputTok, outputTok, batch, elec, rac
   var gpuHours = (totalMs / 3600000) * n;
   var computeCost = gpuHours * gpu.price;
   var rawPowerKw = n * gpu.tdp / 1000;
+  var powerPerGpuKw = gpu.tdp / 1000;
   var totalPowerKw = rawPowerKw * pue;
   var energyKwh = (totalMs / 3600000) * totalPowerKw;
   var energyCost = energyKwh * elec;
@@ -4421,16 +4480,54 @@ function econxFull(gpuKey, modelKey, prec, inputTok, outputTok, batch, elec, rac
   var rackCostHr = rackU * rack / (30 * 24);
   var rackCost = rackCostHr * (totalMs / 3600000);
   var reliability = gpu.ecc ? 1.02 : 1.15;
-  var totalCost = (computeCost + energyCost + rackCost) * reliability;
+  var subtotal = computeCost + energyCost + rackCost;
+  var totalCost = subtotal * reliability;
+  var reliabilityOverhead = totalCost - subtotal;
   var tpsEffective = (outputTok * batch) / (totalMs / 1000);
+
   return {
-    gpu: gpu, model: model, n: n, model_mem: modelMem, kv_mem: kvMem, total_mem: totalMem,
-    decode: decode, ttft_ms: ttft, total_ms: totalMs, compute_cost: computeCost,
-    energy_cost: energyCost, rack_cost: rackCost, raw_power_kw: rawPowerKw,
-    total_power_kw: totalPowerKw, reliability_mult: reliability, rack_u: rackU,
-    total_cost: totalCost, tps_effective: tpsEffective,
+    gpu: gpu,
+    model: model,
+    n: n,
+    model_mem: modelMem,
+    kv_mem: kvMem,
+    total_mem: totalMem,
+    decode: decode,
+    ttft_ms: ttft,
+    total_ms: totalMs,
+    compute_cost: computeCost,
+    energy_cost: energyCost,
+    rack_cost: rackCost,
+    reliability_overhead: reliabilityOverhead,
+    raw_power_kw: rawPowerKw,
+    power_per_gpu_kw: powerPerGpuKw,
+    total_power_kw: totalPowerKw,
+    reliability_mult: reliability,
+    rack_u: rackU,
+    rack_cost_hr: rackCostHr,
+    total_cost: totalCost,
+    tps_effective: tpsEffective,
+    time_for_1m_s: 1000000 / tpsEffective,
     cost_per_1m_out: (totalCost / outputTok) * 1e6
   };
+}
+
+function econxFull(gpuKey, modelKey, prec, inputTok, outputTok, batch, elec, rack, pue){
+  var gpu = ECONX_GPUS[gpuKey];
+  var model = ECONX_MODELS[modelKey];
+  if(!gpu || !model) return null;
+  var modelMem = econxModelMemGB(model.params, prec);
+  var totalMem = modelMem + econxKvCacheGB(model, inputTok + outputTok, batch) + modelMem * 0.10;
+  var n = econxGpusNeeded(totalMem, gpu.vram);
+  return econxBuildResult(gpu, model, modelMem, inputTok, outputTok, batch, elec, rack, pue, n);
+}
+
+function econxFullForN(gpuKey, modelKey, prec, inputTok, outputTok, batch, elec, rack, pue, n){
+  var gpu = ECONX_GPUS[gpuKey];
+  var model = ECONX_MODELS[modelKey];
+  if(!gpu || !model) return null;
+  var modelMem = econxModelMemGB(model.params, prec);
+  return econxBuildResult(gpu, model, modelMem, inputTok, outputTok, batch, elec, rack, pue, n);
 }
 
 function econxPopulateGpuSelects(){
@@ -4460,9 +4557,18 @@ function econxBuildInterconnectBars(){
     return '<div class="econx-bar-row">'
       + '<div class="econx-bar-lbl">' + d.name + ' <span style="color:var(--muted)">(' + d.lat + 'us)</span></div>'
       + '<div class="econx-bar-track"><div class="econx-bar-fill" style="width:' + ((d.bw / max) * 100).toFixed(1) + '%;background:' + d.color + ';"></div></div>'
-      + '<div class="econx-bar-val">' + d.bw + ' GB/s</div>'
+      + '<div class="econx-bar-val">' + econxFmtNum(d.bw, 0) + ' GB/s</div>'
       + '</div>';
   }).join('');
+}
+
+function econxSetScaleBatch(batch){
+  ECONX_SCALE_BATCH = batch;
+  var btns = document.querySelectorAll('#econxBatchBtns .econx-batch-btn');
+  btns.forEach(function(btn){
+    btn.classList.toggle('sel', parseInt(btn.getAttribute('data-batch'), 10) === batch);
+  });
+  econxUpdate();
 }
 
 function econxUpdateNetworkExample(outputTok){
@@ -4476,33 +4582,177 @@ function econxUpdateNetworkExample(outputTok){
   var pcTotal = outputTok * pc.comms_ms;
   var diff = pcTotal - nvTotal;
   wrap.innerHTML = ''
-    + '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:9px;color:var(--muted);margin-bottom:8px;">Example: 70B BF16 across 4 GPUs for your current output length (' + outputTok + ' tokens)</div>'
+    + '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:9px;color:var(--muted);margin-bottom:8px;">Example: 70B BF16 across 4 GPUs for your current output length (' + econxFmtNum(outputTok, 0) + ' tokens)</div>'
     + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">'
     + '<div style="background:rgba(48,200,112,.08);border:1px solid rgba(48,200,112,.25);border-radius:8px;padding:10px 12px;">'
     + '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:9px;color:var(--green);margin-bottom:4px;">4x A100 SXM4 (NVLink)</div>'
-    + '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:16px;color:var(--ink);">' + nvTotal.toFixed(0) + ' ms</div>'
+    + '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:16px;color:var(--ink);">' + econxFmtNum(nvTotal, 1) + ' ms</div>'
     + '<div class="econx-note">Pure communication overhead across the full response</div>'
     + '</div>'
     + '<div style="background:rgba(224,72,72,.08);border:1px solid rgba(224,72,72,.25);border-radius:8px;padding:10px 12px;">'
     + '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:9px;color:var(--red);margin-bottom:4px;">4x RTX 4090 (PCIe)</div>'
-    + '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:16px;color:var(--ink);">' + pcTotal.toFixed(0) + ' ms</div>'
+    + '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:16px;color:var(--ink);">' + econxFmtNum(pcTotal, 1) + ' ms</div>'
     + '<div class="econx-note">Shared PCIe bus and higher latency dominate</div>'
     + '</div>'
     + '</div>'
-    + '<div class="econx-note">The PCIe setup adds <strong style="color:var(--red);">' + (diff / 1000).toFixed(2) + ' seconds</strong> of waiting just from GPU-to-GPU synchronization. That time is invisible on spec sheets but very visible in user experience.</div>';
+    + '<div class="econx-note">The PCIe setup adds <strong style="color:var(--red);">' + econxFmtNum(diff / 1000, 1) + ' seconds</strong> of waiting just from GPU-to-GPU synchronization. That time is invisible on spec sheets but very visible in user experience.</div>';
 }
 
 function econxMetricValue(metric, r){
   if(!r) return null;
   if(metric === 'gpus') return r.n;
+  if(metric === 'rack') return r.rack_u;
   if(metric === 'ttft') return r.ttft_ms;
   if(metric === 'decode') return r.decode.total_ms;
   if(metric === 'tps') return r.tps_effective;
-  if(metric === 'time1m') return 1000000 / r.tps_effective;
+  if(metric === 'time1m') return r.time_for_1m_s;
+  if(metric === 'total') return r.total_ms;
+  if(metric === 'sys_power') return r.total_power_kw;
+  if(metric === 'gpu_power') return r.power_per_gpu_kw;
   if(metric === 'cost1m') return r.cost_per_1m_out;
-  if(metric === 'rack') return r.rack_u;
-  if(metric === 'power') return r.total_power_kw;
   return null;
+}
+
+function econxDrawCostChart(results){
+  if(!window.Chart || !el('econxCostChart')) return;
+  var labels = results.map(function(entry){ return entry.key; });
+  var computeData = results.map(function(entry){
+    var r = entry.result;
+    return r ? (r.cost_per_1m_out * (r.compute_cost / r.total_cost)) : 0;
+  });
+  var energyData = results.map(function(entry){
+    var r = entry.result;
+    return r ? (r.cost_per_1m_out * (r.energy_cost / r.total_cost)) : 0;
+  });
+  var rackData = results.map(function(entry){
+    var r = entry.result;
+    return r ? (r.cost_per_1m_out * (r.rack_cost / r.total_cost)) : 0;
+  });
+  var relData = results.map(function(entry){
+    var r = entry.result;
+    return r ? (r.cost_per_1m_out * (r.reliability_overhead / r.total_cost)) : 0;
+  });
+  var timeData = results.map(function(entry){
+    var r = entry.result;
+    return r ? (r.time_for_1m_s / 3600) : null;
+  });
+
+  if(econxCostChart) econxCostChart.destroy();
+  econxCostChart = new Chart(el('econxCostChart').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        { label:'Compute', data:computeData, backgroundColor:'#f59e0b88', borderColor:'#f59e0b', borderWidth:1.2, stack:'cost' },
+        { label:'Electricity', data:energyData, backgroundColor:'#22d3ee88', borderColor:'#22d3ee', borderWidth:1.2, stack:'cost' },
+        { label:'Rack space', data:rackData, backgroundColor:'#a78bfa88', borderColor:'#a78bfa', borderWidth:1.2, stack:'cost' },
+        { label:'Reliability overhead', data:relData, backgroundColor:'#f8717188', borderColor:'#f87171', borderWidth:1.2, stack:'cost' },
+        { label:'Time for 1M out tokens (hr)', data:timeData, type:'line', yAxisID:'y1', borderColor:'#9ca3af', backgroundColor:'#9ca3af22', pointRadius:3, pointHoverRadius:4, tension:0.3 }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          labels: { color:'#94a3b8', font:{ family:'IBM Plex Mono', size:10 }, boxWidth:12 }
+        },
+        tooltip: {
+          callbacks: {
+            label: function(ctx){
+              if(ctx.dataset.yAxisID === 'y1') return ctx.dataset.label + ': ' + econxFmtNum(ctx.raw, 1) + ' hr';
+              return ctx.dataset.label + ': ' + econxFmtMoney(ctx.raw, 1);
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          stacked: true,
+          ticks: { color:'#94a3b8', font:{ family:'IBM Plex Mono', size:10 } },
+          grid: { color:'#1c2535' }
+        },
+        y: {
+          stacked: true,
+          ticks: {
+            color:'#94a3b8',
+            font:{ family:'IBM Plex Mono', size:10 },
+            callback: function(v){ return '$' + econxFmtNum(v, 0); }
+          },
+          grid: { color:'#1c2535' },
+          title: { display:true, text:'$ per 1M output tokens', color:'#94a3b8', font:{ family:'IBM Plex Mono', size:10 } }
+        },
+        y1: {
+          position: 'right',
+          ticks: {
+            color:'#94a3b8',
+            font:{ family:'IBM Plex Mono', size:10 },
+            callback: function(v){ return econxFmtNum(v, 1) + 'h'; }
+          },
+          grid: { drawOnChartArea:false },
+          title: { display:true, text:'Time', color:'#94a3b8', font:{ family:'IBM Plex Mono', size:10 } }
+        }
+      }
+    }
+  });
+}
+
+function econxDrawScaleChart(results, modelKey, prec, inputTok, outputTok, elec, rack, pue){
+  if(!window.Chart || !el('econxScaleChart')) return;
+  var labels = ECONX_GPU_COUNTS.map(function(n){ return n + ' GPU' + (n > 1 ? 's' : ''); });
+  var datasets = [];
+
+  results.forEach(function(entry){
+    datasets.push({
+      label: entry.key,
+      data: ECONX_GPU_COUNTS.map(function(n){
+        var rr = econxFullForN(entry.key, modelKey, prec, inputTok, outputTok, ECONX_SCALE_BATCH, elec, rack, pue, n);
+        return rr ? Number(rr.tps_effective.toFixed(1)) : null;
+      }),
+      borderColor: entry.gpu.color,
+      backgroundColor: entry.gpu.color + '22',
+      fill: false,
+      tension: 0.3,
+      pointRadius: 3,
+      borderWidth: 2
+    });
+  });
+
+  if(econxScaleChart) econxScaleChart.destroy();
+  econxScaleChart = new Chart(el('econxScaleChart').getContext('2d'), {
+    type: 'line',
+    data: { labels: labels, datasets: datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { labels: { color:'#94a3b8', font:{ family:'IBM Plex Mono', size:10 }, boxWidth:18 } },
+        tooltip: {
+          callbacks: {
+            label: function(ctx){
+              if(ctx.raw === null) return ctx.dataset.label + ': model does not fit';
+              return ctx.dataset.label + ': ' + econxFmtNum(ctx.raw, 1) + ' tok/s';
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color:'#94a3b8', font:{ family:'IBM Plex Mono', size:10 } },
+          grid: { color:'#1c2535' }
+        },
+        y: {
+          ticks: {
+            color:'#94a3b8',
+            font:{ family:'IBM Plex Mono', size:10 },
+            callback: function(v){ return econxFmtNum(v, 0); }
+          },
+          grid: { color:'#1c2535' },
+          title: { display:true, text:'Tokens / second', color:'#94a3b8', font:{ family:'IBM Plex Mono', size:10 } }
+        }
+      }
+    }
+  });
 }
 
 function econxUpdate(){
@@ -4518,10 +4768,10 @@ function econxUpdate(){
 
   el('econxInputLabel').textContent = inputTok.toLocaleString();
   el('econxOutputLabel').textContent = outputTok.toLocaleString();
-  el('econxBatchLabel').textContent = batch;
+  el('econxBatchLabel').textContent = econxFmtNum(batch, 0);
   el('econxElecLabel').textContent = '$' + elec.toFixed(2);
   el('econxPueLabel').textContent = pue.toFixed(2) + '×';
-  el('econxRackLabel').textContent = '$' + rack.toFixed(0);
+  el('econxRackLabel').textContent = '$' + econxFmtNum(rack, 0);
 
   var cols = ['A','B','C'];
   var results = cols.map(function(col){
@@ -4532,15 +4782,15 @@ function econxUpdate(){
   econxUpdateNetworkExample(outputTok);
 
   var metrics = [
-    { key:'gpus',  label:'GPUs needed', best:'min', fmt:function(r){ return r ? r.n + '×' : 'N/A'; } },
-    { key:'ttft',  label:'TTFT', best:'min', fmt:function(r){ return r ? r.ttft_ms.toFixed(0) + ' ms' : 'N/A'; } },
-    { key:'decode',label:'Decode / token', best:'min', fmt:function(r){ return r ? r.decode.total_ms.toFixed(1) + ' ms' : 'N/A'; } },
-    { key:'tps',   label:'Output tok/s', best:'max', fmt:function(r){ return r ? r.tps_effective.toFixed(1) : 'N/A'; } },
-    { key:'time1m',label:'Time for 1M out tok', best:'min', fmt:function(r){ if(!r) return 'N/A'; var s = 1000000 / r.tps_effective; return s < 3600 ? (s / 60).toFixed(1) + ' min' : (s / 3600).toFixed(2) + ' hr'; } },
-    { key:'cost1m',label:'$ / 1M out tok', best:'min', fmt:function(r){ return r ? '$' + r.cost_per_1m_out.toFixed(1) : 'N/A'; } },
-    { key:'rack',  label:'Rack space', best:'min', fmt:function(r){ return r ? r.rack_u.toFixed(1) + 'U' : 'N/A'; } },
-    { key:'power', label:'Power w/ PUE', best:'min', fmt:function(r){ return r ? r.total_power_kw.toFixed(2) + ' kW' : 'N/A'; } },
-    { key:'ecc',   label:'ECC', best:'none', fmt:function(r, gpu){ return gpu ? (gpu.ecc ? 'Yes' : 'No') : 'N/A'; } }
+    { key:'gpus', label:'GPUs needed', best:'min', fmt:function(r){ return r ? econxFmtNum(r.n, 0) + 'x' : 'N/A'; } },
+    { key:'interconnect', label:'Interconnect type', best:'none', fmt:function(r, gpu){ return r ? gpu.interconnect : 'N/A'; } },
+    { key:'rack', label:'Rack size required', best:'min', fmt:function(r){ return r ? econxFmtNum(r.rack_u, 1) + 'U' : 'N/A'; } },
+    { key:'ttft', label:'TTFT (prefill)', best:'min', fmt:function(r){ return r ? econxFmtMs(r.ttft_ms, 1) : 'N/A'; } },
+    { key:'decode', label:'Decode / token', best:'min', fmt:function(r){ return r ? econxFmtMs(r.decode.total_ms, 2) : 'N/A'; } },
+    { key:'tps', label:'Tokens/sec', best:'max', fmt:function(r){ return r ? econxFmtNum(r.tps_effective, 1) : 'N/A'; } },
+    { key:'total', label:'Total response time', best:'min', fmt:function(r){ return r ? econxFmtResponseTime(r.total_ms) : 'N/A'; } },
+    { key:'gpu_power', label:'Power draw / card', best:'min', fmt:function(r){ return r ? econxFmtKw(r.power_per_gpu_kw, 2) : 'N/A'; } },
+    { key:'sys_power', label:'Power draw / system (with PUE)', best:'min', fmt:function(r){ return r ? econxFmtKw(r.total_power_kw, 2) : 'N/A'; } }
   ];
 
   var compare = el('econxCompareGrid');
@@ -4548,6 +4798,19 @@ function econxUpdate(){
     compare.innerHTML = results.map(function(entry, idx){
       var gpu = entry.gpu;
       var r = entry.result;
+      if(!gpu || !r){
+        return '<div class="econx-col" style="border-color:var(--red);">'
+          + '<div class="econx-col-h" style="background:rgba(224,72,72,.12);color:var(--red);">Config ' + cols[idx] + ': ' + entry.key + '</div>'
+          + '<div class="econx-col-b"><div class="econx-note">Model does not fit this configuration with the current workload settings.</div></div>'
+          + '</div>';
+      }
+
+      var subtotal = r.compute_cost + r.energy_cost + r.rack_cost + r.reliability_overhead;
+      var compPct = subtotal > 0 ? (r.compute_cost / subtotal) * 100 : 0;
+      var enerPct = subtotal > 0 ? (r.energy_cost / subtotal) * 100 : 0;
+      var rackPct = subtotal > 0 ? (r.rack_cost / subtotal) * 100 : 0;
+      var relPct = subtotal > 0 ? (r.reliability_overhead / subtotal) * 100 : 0;
+
       var body = metrics.map(function(m){
         var vals = results.map(function(other){ return econxMetricValue(m.key, other.result); }).filter(function(v){ return v !== null && isFinite(v); });
         var cls = '';
@@ -4561,34 +4824,31 @@ function econxUpdate(){
         return '<div class="econx-metric"><span>' + m.label + '</span><span class="' + cls + '">' + m.fmt(r, gpu) + '</span></div>';
       }).join('');
 
-      var hidden = (!gpu.ecc)
-        ? '<div style="margin-top:8px;padding:8px 10px;background:rgba(224,72,72,.08);border:1px solid rgba(224,72,72,.25);border-radius:7px;font-size:10.5px;color:var(--muted);line-height:1.55;">Consumer trade-off: no ECC, weaker sustained throughput, and more PCIe communication waste under multi-GPU load.</div>'
-        : '<div style="margin-top:8px;padding:8px 10px;background:rgba(48,200,112,.08);border:1px solid rgba(48,200,112,.22);border-radius:7px;font-size:10.5px;color:var(--muted);line-height:1.55;">Enterprise fit: ECC memory, stronger sustained throughput, and interconnect behavior that is predictable at scale.</div>';
-
       return '<div class="econx-col" style="border-color:' + (gpu.color || 'var(--border2)') + ';">'
         + '<div class="econx-col-h" style="background:' + gpu.color + '12;color:' + (gpu.color || 'var(--ink)') + ';">Config ' + cols[idx] + ': ' + entry.key + '</div>'
         + '<div class="econx-col-b">'
-        + '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:9px;color:var(--muted);margin-bottom:4px;">' + gpu.interconnect + ' · ' + gpu.vram + ' GB VRAM · ' + gpu.bandwidth + ' GB/s HBM</div>'
+        + '<div class="econx-header-sub">'
+        + econxFmtNum(r.n, 0) + 'x GPUs · ' + econxFmtMoney(gpu.price, 2) + '/GPU/hr · '
+        + econxFmtNum(r.rack_u, 1) + 'U rack required'
+        + '</div>'
+        + '<div class="econx-cost-label">Cost breakdown (per response)</div>'
+        + '<div class="econx-cost-breakdown">'
+        + '<div class="econx-cost-segment" style="width:' + compPct.toFixed(2) + '%;background:#f59e0b;"></div>'
+        + '<div class="econx-cost-segment" style="width:' + enerPct.toFixed(2) + '%;background:#22d3ee;"></div>'
+        + '<div class="econx-cost-segment" style="width:' + rackPct.toFixed(2) + '%;background:#a78bfa;"></div>'
+        + '<div class="econx-cost-segment" style="width:' + relPct.toFixed(2) + '%;background:#f87171;"></div>'
+        + '</div>'
+        + '<div class="econx-cost-legend">'
+        + '<span class="econx-cost-legend-item"><i class="econx-cost-dot" style="background:#f59e0b;"></i>Compute ' + econxFmtNum(compPct, 1) + '%</span>'
+        + '<span class="econx-cost-legend-item"><i class="econx-cost-dot" style="background:#22d3ee;"></i>Power ' + econxFmtNum(enerPct, 1) + '%</span>'
+        + '<span class="econx-cost-legend-item"><i class="econx-cost-dot" style="background:#a78bfa;"></i>Rack ' + econxFmtNum(rackPct, 1) + '%</span>'
+        + '<span class="econx-cost-legend-item"><i class="econx-cost-dot" style="background:#f87171;"></i>Reliability ' + econxFmtNum(relPct, 1) + '%</span>'
+        + '</div>'
+        + '<div class="econx-header-sub">Interconnect: ' + gpu.interconnect + ' · ' + econxFmtNum(gpu.bandwidth, 0) + ' GB/s HBM</div>'
         + body
-        + hidden
+        + '<div class="econx-metric econx-metric-bottom"><span>Bottom line: $ / 1M out tokens</span><span>' + econxFmtMoney(r.cost_per_1m_out, 1) + '</span></div>'
+        + '<div class="econx-metric"><span>Bottom line: time / 1M out tokens</span><span>' + econxFmtTimeFor1M(r.time_for_1m_s) + '</span></div>'
         + '</div></div>';
-    }).join('');
-  }
-
-  var util = el('econxUtilBars');
-  if(util){
-    util.innerHTML = results.map(function(entry){
-      var r = entry.result;
-      var gpu = entry.gpu;
-      if(!r) return '<div class="econx-bar-row"><div class="econx-bar-lbl">' + entry.key + '</div><div class="econx-note">Model does not fit</div><div class="econx-bar-val">N/A</div></div>';
-      var baseline = gpu.bandwidth / 80;
-      var pct = Math.min(100, (r.tps_effective / baseline) * 100);
-      var color = pct > 60 ? 'var(--green)' : pct > 30 ? 'var(--amber)' : 'var(--red)';
-      return '<div class="econx-bar-row">'
-        + '<div class="econx-bar-lbl">' + entry.key + '</div>'
-        + '<div class="econx-bar-track"><div class="econx-bar-fill" style="width:' + pct.toFixed(1) + '%;background:' + color + ';"></div></div>'
-        + '<div class="econx-bar-val">' + r.tps_effective.toFixed(1) + '</div>'
-        + '</div>';
     }).join('');
   }
 
@@ -4598,29 +4858,31 @@ function econxUpdate(){
       + results.map(function(entry){
         var r = entry.result;
         if(!r) return '<tr><td>' + entry.key + '</td><td>N/A</td><td>N/A</td><td>N/A</td></tr>';
-        var secs = 1000000 / r.tps_effective;
-        var timeFmt = secs < 3600 ? (secs / 60).toFixed(1) + ' min' : (secs / 3600).toFixed(2) + ' hr';
-        var tokPerDollar = (1000000 / r.cost_per_1m_out).toFixed(0);
-        return '<tr><td style="color:' + entry.gpu.color + ';">' + entry.key + '</td><td>$' + r.cost_per_1m_out.toFixed(1) + '</td><td>' + timeFmt + '</td><td>' + tokPerDollar + '</td></tr>';
+        var timeFmt = econxFmtTimeFor1M(r.time_for_1m_s);
+        var tokPerDollar = 1000000 / r.cost_per_1m_out;
+        return '<tr><td style="color:' + entry.gpu.color + ';">' + entry.key + '</td><td>' + econxFmtMoney(r.cost_per_1m_out, 1) + '</td><td>' + timeFmt + '</td><td>' + econxFmtNum(tokPerDollar, 1) + '</td></tr>';
       }).join('')
       + '</tbody></table>';
   }
+
+  econxDrawCostChart(results);
+  econxDrawScaleChart(results, modelKey, prec, inputTok, outputTok, elec, rack, pue);
 
   var math = el('econxMath');
   if(math && results[0] && results[0].result){
     var ra = results[0];
     var rr = ra.result;
     math.innerHTML = ''
-      + 'model memory = ' + ECONX_MODELS[modelKey].params + 'B x ' + ECONX_BPP[prec] + ' bytes = ' + rr.model_mem.toFixed(1) + ' GB<br>'
-      + 'kv cache = 2 x layers x kv_heads x 128 x seq_len x batch x 2 bytes = ' + rr.kv_mem.toFixed(1) + ' GB<br>'
-      + 'gpus needed = rounded power-of-2 fit = ' + rr.n + '×<br>'
-      + 'decode time/token = ' + rr.decode.read_ms.toFixed(2) + ' ms memory read + ' + rr.decode.comms_ms.toFixed(2) + ' ms comms = ' + rr.decode.total_ms.toFixed(2) + ' ms<br>'
-      + 'ttft = ' + rr.ttft_ms.toFixed(0) + ' ms for ' + inputTok + ' input tokens<br>'
-      + 'compute cost = $' + rr.compute_cost.toFixed(6) + '<br>'
-      + 'electricity cost = $' + rr.energy_cost.toFixed(6) + ' (' + rr.total_power_kw.toFixed(2) + ' kW effective)<br>'
-      + 'rack cost = $' + rr.rack_cost.toFixed(6) + '<br>'
-      + 'total cost = ($' + rr.compute_cost.toFixed(5) + ' + $' + rr.energy_cost.toFixed(5) + ' + $' + rr.rack_cost.toFixed(5) + ') x ' + rr.reliability_mult + ' = $' + rr.total_cost.toFixed(6) + '<br>'
-      + 'time for 1M output tokens = 1,000,000 / ' + rr.tps_effective.toFixed(1) + ' tok/s = ' + ((1000000 / rr.tps_effective) / 3600).toFixed(2) + ' hr';
+      + 'model memory = ' + ECONX_MODELS[modelKey].params + 'B x ' + ECONX_BPP[prec] + ' bytes = ' + econxFmtNum(rr.model_mem, 1) + ' GB<br>'
+      + 'kv cache = 2 x layers x kv_heads x 128 x seq_len x batch x 2 bytes = ' + econxFmtNum(rr.kv_mem, 1) + ' GB<br>'
+      + 'gpus needed = rounded power-of-2 fit = ' + econxFmtNum(rr.n, 0) + 'x<br>'
+      + 'decode time/token = ' + econxFmtNum(rr.decode.read_ms, 2) + ' ms memory read + ' + econxFmtNum(rr.decode.comms_ms, 2) + ' ms comms = ' + econxFmtNum(rr.decode.total_ms, 2) + ' ms<br>'
+      + 'ttft = ' + econxFmtNum(rr.ttft_ms, 1) + ' ms for ' + econxFmtNum(inputTok, 0) + ' input tokens<br>'
+      + 'compute cost = ' + econxFmtMoney(rr.compute_cost, 6) + '<br>'
+      + 'electricity cost = ' + econxFmtMoney(rr.energy_cost, 6) + ' (' + econxFmtNum(rr.total_power_kw, 2) + ' kW effective)<br>'
+      + 'rack cost = ' + econxFmtMoney(rr.rack_cost, 6) + ' using ' + econxFmtNum(rr.rack_u, 1) + 'U x ' + econxFmtMoney(rack, 0) + '/U/month<br>'
+      + 'total cost = (' + econxFmtMoney(rr.compute_cost, 5) + ' + ' + econxFmtMoney(rr.energy_cost, 5) + ' + ' + econxFmtMoney(rr.rack_cost, 5) + ') x ' + rr.reliability_mult + ' = ' + econxFmtMoney(rr.total_cost, 6) + '<br>'
+      + 'time for 1M output tokens = 1,000,000 / ' + econxFmtNum(rr.tps_effective, 1) + ' tok/s = ' + econxFmtNum(rr.time_for_1m_s / 3600, 1) + ' hr';
   }
 }
 
@@ -4633,7 +4895,7 @@ document.addEventListener('DOMContentLoaded', function(){
   setStorageScenario('heavy');
   econxPopulateGpuSelects();
   econxBuildInterconnectBars();
-  econxUpdate();
+  econxSetScaleBatch(20);
   tlReset();
   // speed slider label
   var sp = document.getElementById('tl-speed');
