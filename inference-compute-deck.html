@@ -1,0 +1,1851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Inference Compute Stack — Strategy Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;1,300&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ── DARK THEME (default) ── */
+:root {
+  --bg:      #060810;
+  --bg2:     #0d1117;
+  --bg3:     #141a24;
+  --bg4:     #1c2333;
+  --border:  rgba(255,255,255,0.10);
+  --text:    #edf4fc;
+  --muted:   #b4c4d8;
+  --dim:     #8898b0;
+  --dim2:    #627080;
+
+  --hw:      #c084fc;
+  --hw-dim:  rgba(192,132,252,0.12);
+  --hw-mid:  rgba(192,132,252,0.28);
+  --sw:      #2dd4bf;
+  --sw-dim:  rgba(45,212,191,0.10);
+  --sw-mid:  rgba(45,212,191,0.25);
+  --llm:     #fbbf24;
+  --llm-dim: rgba(251,191,36,0.10);
+  --llm-mid: rgba(251,191,36,0.25);
+  --red:     #f87171;
+  --green:   #34d399;
+  --blue:    #93c5fd;
+
+  --chrome-bg: rgba(6,8,16,0.94);
+  --chrome-border: rgba(255,255,255,0.09);
+  --nav-bg: rgba(6,8,16,0.92);
+
+  --display: 'Bebas Neue', sans-serif;
+  --sans:    'Barlow', sans-serif;
+  --mono:    'JetBrains Mono', monospace;
+  --slide-dur: 0.55s;
+}
+
+/* ── LIGHT THEME ── */
+html.light {
+  --bg:      #f5f2ee;
+  --bg2:     #ede9e2;
+  --bg3:     #e4dfd5;
+  --bg4:     #d9d2c6;
+  --border:  rgba(0,0,0,0.10);
+  --text:    #18161f;
+  --muted:   #44525e;
+  --dim:     #647580;
+  --dim2:    #8c9eaa;
+
+  --hw:      #7c3aed;
+  --hw-dim:  rgba(124,58,237,0.10);
+  --hw-mid:  rgba(124,58,237,0.25);
+  --sw:      #0d9488;
+  --sw-dim:  rgba(13,148,136,0.10);
+  --sw-mid:  rgba(13,148,136,0.23);
+  --llm:     #b45309;
+  --llm-dim: rgba(180,83,9,0.10);
+  --llm-mid: rgba(180,83,9,0.23);
+  --red:     #dc2626;
+  --green:   #059669;
+  --blue:    #2563eb;
+
+  --chrome-bg: rgba(245,242,238,0.95);
+  --chrome-border: rgba(0,0,0,0.09);
+  --nav-bg: rgba(245,242,238,0.93);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg); color: var(--text); }
+
+/* ─────────────── DECK SYSTEM ─────────────── */
+.deck { position: fixed; inset: 0; font-family: var(--sans); }
+
+.slide {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  padding: 0;
+  transform: translateX(100%);
+  transition: transform var(--slide-dur) cubic-bezier(0.76, 0, 0.24, 1), opacity 0.4s ease;
+  opacity: 0; overflow: hidden;
+  background: var(--bg);
+}
+.slide.active { transform: translateX(0); opacity: 1; }
+.slide.prev   { transform: translateX(-100%); opacity: 0; }
+
+/* Entry animations */
+@keyframes fadeUp  { from { opacity:0; transform:translateY(20px); }  to { opacity:1; transform:translateY(0); } }
+@keyframes fadeIn  { from { opacity:0; }                               to { opacity:1; } }
+@keyframes growBarW { from { width: 0; }                               to { width: var(--bw); } }
+@keyframes popIn   { from { transform:translate(-50%,-50%) scale(0); } to { transform:translate(-50%,-50%) scale(1); } }
+
+.slide.active .anim      { animation: fadeUp 0.5s ease both; }
+.slide.active .anim-1    { animation-delay: 0.05s; }
+.slide.active .anim-2    { animation-delay: 0.15s; }
+.slide.active .anim-3    { animation-delay: 0.25s; }
+.slide.active .anim-4    { animation-delay: 0.35s; }
+.slide.active .anim-5    { animation-delay: 0.45s; }
+.slide.active .anim-6    { animation-delay: 0.55s; }
+.slide.active .anim-7    { animation-delay: 0.65s; }
+.slide.active .anim-fade { animation: fadeIn 0.6s ease both; }
+
+/* ─────────────── SLIDE CHROME (header) ─────────────── */
+.slide-chrome {
+  position: absolute; top: 0; left: 0; right: 0;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 48px;
+  z-index: 10;
+  background: var(--chrome-bg);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--chrome-border);
+  transition: background 0.3s, border-color 0.3s;
+}
+.chrome-left  { display: flex; align-items: center; gap: 12px; }
+.chrome-logo  {
+  font-family: var(--mono); font-size: 9px; font-weight: 500;
+  color: var(--muted); letter-spacing: 0.2em; text-transform: uppercase;
+  border: 1px solid var(--border); padding: 3px 8px; border-radius: 2px;
+  transition: color 0.3s, border-color 0.3s;
+}
+.chrome-sep   { width: 1px; height: 14px; background: var(--dim2); }
+.chrome-title { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+.chrome-right { font-family: var(--mono); font-size: 10px; color: var(--dim); letter-spacing: 0.08em; display: flex; align-items: center; gap: 14px; }
+
+/* Theme toggle */
+.theme-toggle {
+  display: flex; align-items: center; gap: 6px;
+  cursor: pointer; background: transparent; border: none;
+  font-family: var(--mono); font-size: 9px; color: var(--dim);
+  letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 4px 8px; border-radius: 12px;
+  border: 1px solid var(--border);
+  transition: all 0.2s;
+}
+.theme-toggle:hover { color: var(--muted); border-color: var(--dim); }
+.toggle-track {
+  width: 26px; height: 14px; border-radius: 7px;
+  background: var(--dim2); position: relative;
+  transition: background 0.3s;
+  flex-shrink: 0;
+}
+html.light .toggle-track { background: var(--hw); }
+.toggle-thumb {
+  position: absolute; top: 2px; left: 2px;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--bg); transition: transform 0.3s;
+}
+html.light .toggle-thumb { transform: translateX(12px); }
+
+/* ─────────────── NAVIGATION (footer) ─────────────── */
+.nav {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  display: flex; align-items: center; justify-content: center;
+  gap: 16px; z-index: 200;
+  padding: 14px 48px 18px;
+  background: var(--nav-bg);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--chrome-border);
+  transition: background 0.3s;
+}
+.nav-dots { display: flex; gap: 6px; align-items: center; }
+.dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--dim2); cursor: pointer; transition: all 0.25s;
+}
+.dot.active { background: var(--text); width: 18px; border-radius: 3px; }
+.dot:hover:not(.active) { background: var(--muted); }
+.nav-btn {
+  width: 30px; height: 30px; border-radius: 50%;
+  border: 1px solid var(--border); background: transparent;
+  color: var(--muted); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; transition: all 0.2s;
+}
+.nav-btn:hover { border-color: var(--dim); color: var(--text); }
+.nav-btn:disabled { opacity: 0.2; cursor: default; }
+
+/* ─────────────── PROGRESS BAR ─────────────── */
+.progress { position: fixed; top: 0; left: 0; height: 2px; background: var(--hw); transition: width 0.4s ease; z-index: 300; }
+
+/* ─────────────── SLIDE COUNTER ─────────────── */
+.slide-counter {
+  position: fixed; bottom: 16px; left: 48px;
+  font-family: var(--mono); font-size: 10px; color: var(--dim);
+  letter-spacing: 0.1em; z-index: 201;
+}
+.counter-cur { color: var(--muted); }
+
+/* ─────────────── KEYBOARD HINT ─────────────── */
+.key-hint {
+  position: fixed; bottom: 16px; right: 48px;
+  font-family: var(--mono); font-size: 9px; color: var(--dim);
+  letter-spacing: 0.1em; display: flex; align-items: center; gap: 6px;
+  z-index: 201;
+}
+.key-badge { border: 1px solid var(--dim2); border-radius: 3px; padding: 1px 5px; font-size: 8px; color: var(--dim); }
+
+/* ─────────────── SLIDE BODY LAYOUT ─────────────── */
+.slide-body  { flex: 1; display: flex; padding-top: 58px; padding-bottom: 58px; overflow: hidden; }
+.pad         { padding: 0 48px; }
+
+/* Keep content clear of fixed slide header/footer on every section. */
+.slide .slide-body {
+  padding-top: 78px !important;
+  padding-bottom: 84px !important;
+}
+
+/* Scrollable slide bodies need explicit bottom clearance */
+.slide-body.scroll { padding-bottom: 0; overflow: auto; }
+.scroll-inner { padding-bottom: 64px; }
+
+/* ─────────────── SECTION LABEL ─────────────── */
+.sec-label {
+  font-family: var(--mono); font-size: 9px; color: var(--muted);
+  letter-spacing: 0.25em; text-transform: uppercase;
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 12px;
+}
+.sec-label::before { content: ''; width: 24px; height: 1px; }
+.sec-label.hw::before      { background: var(--hw); }
+.sec-label.sw::before      { background: var(--sw); }
+.sec-label.llm::before     { background: var(--llm); }
+.sec-label.neutral::before { background: var(--muted); }
+
+/* ─────────────── DOMAIN PILLS ─────────────── */
+.domain-pill {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.15em;
+  text-transform: uppercase; padding: 4px 10px;
+  border-radius: 2px; border: 1px solid;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.pill-hw      { color: var(--hw); border-color: var(--hw-mid); background: var(--hw-dim); }
+.pill-sw      { color: var(--sw); border-color: var(--sw-mid); background: var(--sw-dim); }
+.pill-llm     { color: var(--llm); border-color: var(--llm-mid); background: var(--llm-dim); }
+.pill-neutral { color: var(--muted); border-color: var(--border); background: rgba(128,128,128,0.05); }
+.pill-dot { width: 5px; height: 5px; border-radius: 50%; }
+.pill-hw .pill-dot  { background: var(--hw); }
+.pill-sw .pill-dot  { background: var(--sw); }
+.pill-llm .pill-dot { background: var(--llm); }
+
+/* ─────────────── VENN ─────────────── */
+.venn-circle { fill-opacity: 0.12; transition: fill-opacity 0.3s; }
+.venn-circle:hover { fill-opacity: 0.22; }
+.venn-label     { font-family: var(--display); font-size: 24px; letter-spacing: 0.05em; }
+.venn-sub       { font-family: var(--mono); font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; fill: var(--muted); }
+.venn-intersect { font-family: var(--mono); font-size: 9px; letter-spacing: 0.06em; fill: rgba(200,200,200,0.7); text-anchor: middle; }
+.venn-center    { font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; fill: var(--text); text-anchor: middle; }
+
+/* ─────────────── FORCE CARD ─────────────── */
+#s2 .force-cards { display: flex; gap: 14px; padding: 0 48px; }
+#s2 .force-card  { flex: 1; border: 1px solid var(--border); border-radius: 4px; padding: 14px 16px; background: var(--bg2); }
+#s2 .force-card-title { font-family: var(--display); font-size: 15px; letter-spacing: 0.08em; margin-bottom: 8px; }
+#s2 .force-card-items { display: flex; flex-wrap: wrap; gap: 5px; }
+#s2 .force-item { font-family: var(--mono); font-size: 9px; padding: 2px 7px; border-radius: 2px; letter-spacing: 0.06em; }
+.fi-hw  { color: var(--hw);  background: var(--hw-dim); }
+.fi-sw  { color: var(--sw);  background: var(--sw-dim); }
+.fi-llm { color: var(--llm); background: var(--llm-dim); }
+.fi-sub { color: var(--dim); background: transparent; font-family: var(--mono); font-size: 8.5px; letter-spacing: 0.04em; padding-left: 2px; }
+
+/* ─────────────── HW TIMELINE ─────────────── */
+.hw-timeline { display: flex; gap: 0; position: relative; margin-top: 4px; }
+.hw-timeline::before {
+  content: ''; position: absolute;
+  top: 26px; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, var(--hw), rgba(192,132,252,0.2));
+}
+.hw-node { flex: 1; display: flex; flex-direction: column; align-items: flex-start; padding-right: 14px; }
+.hw-node-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  border: 2px solid var(--hw); background: var(--bg);
+  margin-bottom: 12px; position: relative; z-index: 1; flex-shrink: 0;
+}
+.hw-node.future .hw-node-dot { background: transparent; border-style: dashed; border-color: rgba(192,132,252,0.4); }
+.hw-node-name { font-family: var(--display); font-size: 20px; color: var(--text); letter-spacing: 0.04em; margin-bottom: 2px; }
+.hw-node.future .hw-node-name { color: var(--muted); }
+.hw-node-year { font-family: var(--mono); font-size: 9px; color: var(--hw); letter-spacing: 0.15em; margin-bottom: 8px; }
+.hw-node.future .hw-node-year { color: var(--dim); }
+.hw-node-spec { font-family: var(--mono); font-size: 10px; color: var(--muted); line-height: 1.65; letter-spacing: 0.03em; }
+.hw-node-spec span { display: block; }
+.spec-accent { color: var(--hw); }
+
+/* HBM chart */
+.hbm-chart { background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; padding: 18px 20px; }
+.hbm-chart-title { font-family: var(--mono); font-size: 9px; color: var(--muted); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 14px; }
+.hbm-row { display: flex; align-items: center; gap: 10px; margin-bottom: 9px; }
+.hbm-label { font-family: var(--mono); font-size: 10px; color: var(--muted); width: 56px; letter-spacing: 0.04em; }
+.hbm-bar-track { flex: 1; height: 11px; background: var(--bg3); border-radius: 2px; overflow: hidden; }
+.hbm-bar-fill { height: 100%; border-radius: 2px; width: 0; }
+.slide.active .hbm-bar-fill { animation: growBarW 0.8s ease both; }
+.hbm-val { font-family: var(--mono); font-size: 10px; color: var(--text); width: 50px; text-align: right; }
+
+/* Model capacity grid */
+.model-cap-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+}
+.model-cap-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 4px; padding: 12px 14px;
+  border-top: 2px solid var(--hw);
+}
+.mc-chip { font-family: var(--display); font-size: 18px; color: var(--hw); letter-spacing: 0.04em; line-height: 1; margin-bottom: 4px; }
+.mc-sub { font-family: var(--mono); font-size: 8px; color: var(--muted); letter-spacing: 0.08em; margin-bottom: 10px; }
+.mc-row { font-family: var(--mono); font-size: 9px; color: var(--muted); line-height: 1.6; margin-bottom: 3px; }
+.mc-row span { color: var(--sw); }
+.mc-row .highlight { color: var(--llm); }
+
+/* Context size table */
+.ctx-table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 10px; }
+.ctx-table th { 
+  font-size: 8px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase;
+  padding: 6px 10px; text-align: left; border-bottom: 1px solid var(--border);
+  background: var(--bg3);
+}
+.ctx-table td { padding: 7px 10px; border-bottom: 1px solid var(--border); color: var(--muted); }
+.ctx-table tr:hover td { background: var(--bg2); }
+.ctx-table .val { color: var(--text); }
+.ctx-table .warn { color: var(--red); }
+.ctx-table .ok { color: var(--sw); }
+
+/* Value cascade */
+.cascade-row {
+  display: flex; gap: 3px; height: 56px; border-radius: 4px; overflow: hidden; margin-bottom: 10px;
+}
+.cascade-seg {
+  display: flex; align-items: center; justify-content: center; flex-direction: column;
+  gap: 3px; position: relative; transition: flex 0.3s;
+  cursor: default; padding: 6px;
+}
+.cascade-seg:hover { flex: 2; }
+.cascade-seg-label { font-family: var(--display); font-size: 12px; letter-spacing: 0.04em; color: rgba(0,0,0,0.8); text-align: center; line-height: 1.1; white-space: nowrap; }
+.cascade-seg-sub   { font-family: var(--mono); font-size: 7px; color: rgba(0,0,0,0.55); text-align: center; }
+
+/* ─────────────── SW WATERFALL ─────────────── */
+.sw-waterfall { display: flex; flex-direction: column; gap: 9px; }
+.wf-row { display: flex; align-items: center; gap: 12px; }
+.wf-label { font-family: var(--mono); font-size: 10px; color: var(--muted); width: 190px; letter-spacing: 0.03em; text-align: right; flex-shrink: 0; }
+.wf-bar-track { flex: 1; height: 26px; background: var(--bg3); border-radius: 3px; overflow: hidden; position: relative; }
+.wf-bar-fill  { height: 100%; border-radius: 3px; display: flex; align-items: center; padding: 0 10px; width: 0; }
+.slide.active .wf-bar-fill { animation: growBarW 0.7s ease both; }
+.wf-bar-text { font-family: var(--display); font-size: 15px; letter-spacing: 0.04em; color: rgba(0,0,0,0.75); white-space: nowrap; }
+.wf-val  { font-family: var(--mono); font-size: 11px; color: var(--sw); width: 85px; letter-spacing: 0.04em; flex-shrink: 0; }
+.wf-mult { font-family: var(--mono); font-size: 9px; color: var(--dim); width: 38px; letter-spacing: 0.06em; flex-shrink: 0; }
+
+.sw-innovations { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.sw-innov-card  { background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; padding: 13px 14px; border-left: 3px solid var(--sw); }
+.sw-innov-name  { font-family: var(--mono); font-size: 10px; font-weight: 500; color: var(--sw); letter-spacing: 0.06em; margin-bottom: 6px; }
+.sw-innov-desc  { font-size: 11.5px; color: var(--muted); line-height: 1.55; font-weight: 300; }
+.sw-gain-box    { background: linear-gradient(135deg, rgba(45,212,191,0.08), rgba(45,212,191,0.03)); border: 1px solid var(--sw-mid); border-radius: 4px; padding: 14px 18px; display: flex; align-items: center; gap: 20px; }
+.sw-gain-num    { font-family: var(--display); font-size: 56px; color: var(--sw); line-height: 1; letter-spacing: 0.02em; flex-shrink: 0; }
+.sw-gain-text   { font-size: 13px; color: var(--muted); line-height: 1.6; font-weight: 300; }
+.sw-gain-text strong { color: var(--text); font-weight: 500; }
+
+/* ─────────────── MODEL BUBBLES ─────────────── */
+.bubble-chart { flex: 1; position: relative; background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; min-height: 240px; }
+.bc-axis-x    { position: absolute; bottom: 24px; left: 40px; right: 16px; height: 1px; background: var(--border); }
+.bc-axis-y    { position: absolute; left: 40px; top: 16px; bottom: 24px; width: 1px; background: var(--border); }
+.bc-label-x   { position: absolute; bottom: 6px; right: 12px; font-family: var(--mono); font-size: 8px; color: var(--dim); letter-spacing: 0.12em; text-transform: uppercase; }
+.bc-label-y   { position: absolute; left: 4px; top: 12px; font-family: var(--mono); font-size: 8px; color: var(--dim); letter-spacing: 0.12em; text-transform: uppercase; writing-mode: vertical-rl; transform: rotate(180deg); }
+.bubble       { position: absolute; border-radius: 50%; transform: translate(-50%, -50%) scale(0); display: flex; align-items: center; justify-content: center; cursor: default; transition: transform 0.3s; }
+.slide.active .bubble { animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both; }
+.bubble-inner { border-radius: 50%; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.12); }
+.bubble-name  { font-family: var(--mono); font-size: 8px; font-weight: 500; letter-spacing: 0.04em; text-align: center; color: rgba(0,0,0,0.8); line-height: 1.3; padding: 0 4px; }
+.bubble-size  { font-family: var(--mono); font-size: 7px; color: rgba(0,0,0,0.6); margin-top: 2px; }
+
+/* ─────────────── WORKLOAD CARDS ─────────────── */
+.workload-cards { display: grid; grid-template-columns: repeat(6, 1fr); gap: 9px; }
+.wl-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; padding: 13px 12px; border-top: 3px solid transparent; }
+.wl-card-title  { font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: 0.06em; margin-bottom: 9px; }
+.wl-metric-label { font-family: var(--mono); font-size: 8px; color: var(--dim); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 3px; }
+.wl-metric-bar  { height: 3px; background: var(--bg3); border-radius: 2px; overflow: hidden; }
+.wl-metric-fill { height: 100%; border-radius: 2px; transition: width 0.5s ease; }
+.slide.active .wl-metric-fill { animation: growBarW 0.8s ease both; }
+.wl-card-note   { font-size: 10.5px; color: var(--muted); line-height: 1.5; margin-top: 8px; font-weight: 300; }
+.wl-card-metric { margin-bottom: 6px; }
+
+/* ─────────────── SCENARIO COLS ─────────────── */
+.scenario-col { flex: 1; border-right: 1px solid var(--border); padding: 16px 24px 24px; display: flex; flex-direction: column; gap: 14px; position: relative; overflow: hidden; }
+.scenario-col:last-child { border-right: none; }
+.scenario-num   { font-family: var(--display); font-size: 72px; color: rgba(128,128,128,0.06); position: absolute; top: 8px; right: 14px; line-height: 1; pointer-events: none; }
+.scenario-tag   { font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; padding: 3px 8px; border-radius: 2px; border: 1px solid; display: inline-flex; width: fit-content; margin-bottom: 4px; }
+.scenario-title { font-family: var(--display); font-size: 26px; letter-spacing: 0.04em; line-height: 1.05; color: var(--text); }
+.scenario-subtitle { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 0.04em; line-height: 1.5; }
+.scenario-diagram { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 160px; }
+.scenario-bullets { display: flex; flex-direction: column; gap: 7px; }
+.scenario-bullet  { display: flex; align-items: flex-start; gap: 8px; font-size: 12.5px; color: var(--muted); line-height: 1.5; font-weight: 300; }
+.bullet-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; margin-top: 7px; }
+.scenario-prob    { border-radius: 3px; padding: 9px 12px; border: 1px solid var(--border); }
+.prob-label       { font-family: var(--mono); font-size: 8px; color: var(--dim); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 5px; }
+.prob-bar-track   { height: 4px; background: var(--bg3); border-radius: 2px; overflow: hidden; margin-bottom: 4px; }
+.prob-bar-fill    { height: 100%; border-radius: 2px; width: 0; }
+.slide.active .prob-bar-fill { animation: growBarW 0.9s ease both; }
+.prob-val         { font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; }
+.scenario-winner  { background: var(--bg2); border: 1px solid var(--border); border-radius: 3px; padding: 9px 12px; }
+.sw-label         { font-family: var(--mono); font-size: 8px; color: var(--dim); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 5px; }
+.sw-val           { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 0.04em; line-height: 1.5; }
+
+/* ─────────────── COMPANY ARCHETYPE CARDS ─────────────── */
+.company-matrix {
+  flex: 1; display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 12px;
+}
+.comp-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 4px; padding: 16px 18px;
+  display: flex; flex-direction: column; gap: 9px;
+  transition: border-color 0.25s, transform 0.25s;
+  position: relative; overflow: hidden;
+}
+.comp-card:hover { border-color: rgba(200,200,200,0.18); transform: scale(1.005); }
+.comp-card-bg { position: absolute; top: 0; right: 0; font-family: var(--display); font-size: 64px; opacity: 0.04; line-height: 0.9; padding: 8px; pointer-events: none; }
+.comp-top     { display: flex; align-items: flex-start; justify-content: space-between; }
+.comp-archetype { font-family: var(--mono); font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; padding: 2px 7px; border-radius: 2px; border: 1px solid; }
+.comp-name    { font-family: var(--display); font-size: 22px; letter-spacing: 0.04em; color: var(--text); line-height: 1; }
+.comp-tagline { font-family: var(--mono); font-size: 9px; color: var(--muted); letter-spacing: 0.04em; }
+
+/* Stack strip — value chain layer coverage */
+.stack-strip-wrap { }
+.stack-strip-label { font-family: var(--mono); font-size: 8px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 5px; }
+.stack-strip { display: flex; gap: 2px; height: 18px; border-radius: 2px; overflow: hidden; }
+.ss-seg { flex: 1; display: flex; align-items: center; justify-content: center; }
+.ss-seg-label { font-family: var(--mono); font-size: 7px; letter-spacing: 0.03em; color: rgba(0,0,0,0.65); text-align: center; line-height: 1.1; }
+.ss-seg.inactive { background: var(--bg3); }
+.ss-seg.inactive .ss-seg-label { color: var(--dim); }
+
+/* usage sub-items under model force card — merged into .fi-sub above */
+html.light .fi-sub { color: var(--dim); }
+
+/* ─────────────── TIMELINE 2030 ─────────────── */
+.tl-band {
+  display: flex; gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 4px; overflow: hidden;
+}
+.tl-col {
+  flex: 1; border-right: 1px solid var(--border); 
+  display: flex; flex-direction: column; min-width: 0;
+}
+.tl-col:last-child { border-right: none; }
+.tl-year {
+  padding: 8px 12px;
+  font-family: var(--display); font-size: 20px;
+  letter-spacing: 0.04em; border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.tl-events {
+  flex: 1; padding: 10px 12px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.tl-event {
+  font-size: 10.5px; line-height: 1.45; font-weight: 300;
+  padding: 6px 8px; border-radius: 3px;
+  border-left: 2px solid transparent;
+}
+.tl-event.hw { border-left-color: var(--hw); background: var(--hw-dim); color: var(--muted); }
+.tl-event.sw { border-left-color: var(--sw); background: var(--sw-dim); color: var(--muted); }
+.tl-event.llm { border-left-color: var(--llm); background: var(--llm-dim); color: var(--muted); }
+.tl-event.neutral { border-left-color: var(--dim); background: rgba(128,128,128,0.05); color: var(--muted); }
+.tl-event strong { color: var(--text); font-weight: 500; }
+.tl-force-row {
+  display: grid; grid-template-columns: 110px 1fr;
+  gap: 10px; align-items: center;
+  padding: 7px 12px; border-bottom: 1px solid var(--border);
+  font-size: 11px;
+}
+.tl-force-row:last-child { border-bottom: none; }
+.tl-force-label {
+  font-family: var(--mono); font-size: 8.5px; color: var(--dim);
+  letter-spacing: 0.12em; text-transform: uppercase; line-height: 1.4;
+}
+.tl-force-track {
+  display: flex; gap: 2px; height: 22px;
+}
+.tl-force-seg {
+  flex: 1; border-radius: 2px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 7px; letter-spacing: 0.04em;
+  text-align: center; line-height: 1.2;
+}
+
+.comp-detail { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.comp-metric { display: flex; flex-direction: column; gap: 2px; }
+.cm-label { font-family: var(--mono); font-size: 8px; color: var(--dim); letter-spacing: 0.12em; text-transform: uppercase; }
+.cm-val   { font-family: var(--mono); font-size: 10px; letter-spacing: 0.03em; color: var(--muted); }
+.cm-val.ok  { color: var(--sw); }
+.cm-val.warn{ color: var(--red); }
+
+.comp-thesis { font-size: 11.5px; color: var(--muted); line-height: 1.55; font-weight: 300; border-top: 1px solid var(--border); padding-top: 9px; }
+
+/* Recent moves inline */
+.recent-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-family: var(--mono); font-size: 8px; color: var(--muted);
+  background: var(--bg3); border-radius: 2px; padding: 2px 7px;
+  margin: 2px 2px; letter-spacing: 0.04em; border: 1px solid var(--border);
+}
+.recent-pill .rp-year { color: var(--dim); }
+.recent-pill .rp-item { color: var(--text); }
+
+/* ─────────────── THESIS / FORCE POINTS ─────────────── */
+.force-point { background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; padding: 12px 14px; display: flex; align-items: flex-start; gap: 12px; transition: border-color 0.2s; }
+.force-point:hover { border-color: rgba(255,255,255,0.12); }
+.fp-num   { font-family: var(--display); font-size: 28px; color: var(--dim); line-height: 1; flex-shrink: 0; letter-spacing: 0.04em; margin-top: -2px; }
+.fp-title { font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
+.fp-body  { font-size: 12px; color: var(--muted); line-height: 1.5; font-weight: 300; }
+
+.opp-box  { background: linear-gradient(135deg, var(--sw-dim), var(--hw-dim)); border: 1px solid var(--sw-mid); border-radius: 4px; padding: 14px 16px; }
+.opp-label{ font-family: var(--mono); font-size: 9px; color: var(--sw); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; }
+.opp-text { font-size: 13px; color: var(--text); line-height: 1.6; font-weight: 300; }
+
+/* ─────────────── COMMODITIZATION SECTION ─────────────── */
+.ornn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.ornn-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; padding: 14px 16px; border-left: 3px solid var(--llm); }
+.ornn-card.sw  { border-left-color: var(--sw); }
+.ornn-card.hw  { border-left-color: var(--hw); }
+.ornn-card-title { font-family: var(--mono); font-size: 10px; color: var(--llm); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; font-weight: 500; }
+.ornn-card.sw .ornn-card-title { color: var(--sw); }
+.ornn-card.hw .ornn-card-title { color: var(--hw); }
+.ornn-card-body { font-size: 12px; color: var(--muted); line-height: 1.6; font-weight: 300; }
+.ornn-card-body strong { color: var(--text); }
+
+/* ─────────────── COVER ─────────────── */
+#s1 { justify-content: center; align-items: flex-start; padding: 0 48px; }
+#s1 .bg-grid {
+  position: absolute; inset: 0;
+  background-image: linear-gradient(rgba(128,128,128,0.025) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(128,128,128,0.025) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black, transparent);
+}
+#s1 .glow-hw { position: absolute; top: -20%; right: -10%; width: 600px; height: 600px; border-radius: 50%; background: radial-gradient(circle, rgba(192,132,252,0.08) 0%, transparent 60%); pointer-events: none; }
+#s1 .glow-sw { position: absolute; bottom: -10%; left: -5%;  width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(45,212,191,0.06) 0%, transparent 60%); pointer-events: none; }
+#s1 .cover-content { position: relative; z-index: 2; max-width: 900px; }
+#s1 .cover-eyebrow { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 26px; }
+#s1 h1 { font-family: var(--display); font-size: clamp(60px, 8vw, 100px); line-height: 0.92; color: var(--text); margin-bottom: 8px; }
+#s1 h1 .accent-hw  { color: var(--hw); }
+#s1 h1 .accent-sw  { color: var(--sw); }
+#s1 h1 .accent-llm { color: var(--llm); }
+#s1 .cover-sub     { font-size: 16px; font-weight: 300; color: var(--muted); margin: 22px 0 34px; max-width: 560px; line-height: 1.6; }
+#s1 .pill-row      { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 44px; }
+#s1 .cover-meta    { display: flex; gap: 36px; }
+#s1 .meta-item     { display: flex; flex-direction: column; gap: 3px; }
+#s1 .meta-label    { font-family: var(--mono); font-size: 9px; color: var(--dim); letter-spacing: 0.15em; text-transform: uppercase; }
+#s1 .meta-val      { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+
+/* Light mode grid overlay */
+html.light #s1 .bg-grid {
+  background-image: linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+}
+
+/* ─────────────── TRANSITIONS for theme swap ─────────────── */
+.slide, .slide-chrome, .nav, body { transition: background 0.35s, color 0.35s, border-color 0.35s; }
+
+/* ─────────────── RESPONSIVE ─────────────── */
+@media (max-width: 900px) {
+  .slide-chrome { padding: 12px 24px; }
+  .nav { padding: 12px 24px 16px; }
+  .workload-cards { grid-template-columns: repeat(3, 1fr); }
+  .company-matrix { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- PROGRESS BAR -->
+<div class="progress" id="progress" style="width:8.33%"></div>
+
+<!-- SLIDE COUNTER -->
+<div class="slide-counter"><span class="counter-cur" id="counter-cur">01</span> / 13</div>
+
+<!-- KEYBOARD HINT -->
+<div class="key-hint">
+  <span class="key-badge">←</span><span class="key-badge">→</span> navigate
+</div>
+
+<!-- NAVIGATION -->
+<nav class="nav">
+  <button class="nav-btn" id="btn-prev" onclick="goSlide(currentSlide-1)" disabled>&#8592;</button>
+  <div class="nav-dots" id="dots"></div>
+  <button class="nav-btn" id="btn-next" onclick="goSlide(currentSlide+1)">&#8594;</button>
+</nav>
+
+<!-- ═══════════════════════ SLIDE 1 — COVER ═══════════════════════ -->
+<div class="slide active" id="s1" data-slide="0">
+  <div class="bg-grid"></div>
+  <div class="glow-hw"></div>
+  <div class="glow-sw"></div>
+
+  <!-- Theme toggle on cover -->
+  <div style="position:absolute;top:20px;right:48px;z-index:20;">
+    <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">
+      <div class="toggle-track"><div class="toggle-thumb"></div></div>
+      <span id="theme-label">Light</span>
+    </button>
+  </div>
+
+  <div class="cover-content">
+    <p class="cover-eyebrow anim anim-1">ClusterMAX Intelligence Series · Strategy Supplement</p>
+    <h1 class="anim anim-2">THE<br><span class="accent-hw">INFERENCE</span><br><span class="accent-sw">COMPUTE</span><br><span class="accent-llm">STACK</span></h1>
+    <p class="cover-sub anim anim-3">Three forces. Multiple futures. A first-principles breakdown of where GPU compute is headed — and who captures the value.</p>
+    <div class="pill-row anim anim-4">
+      <span class="domain-pill pill-hw"><span class="pill-dot"></span>Hardware</span>
+      <span class="domain-pill pill-sw"><span class="pill-dot"></span>Software</span>
+      <span class="domain-pill pill-llm"><span class="pill-dot"></span>LLM Industry</span>
+      <span class="domain-pill pill-neutral">Inference Trajectories</span>
+      <span class="domain-pill pill-neutral">Competitive Positioning</span>
+    </div>
+    <div class="cover-meta anim anim-5">
+      <div class="meta-item"><span class="meta-label">Slides</span><span class="meta-val">12 sections</span></div>
+      <div class="meta-item"><span class="meta-label">Horizon</span><span class="meta-val">2025 – 2028</span></div>
+      <div class="meta-item"><span class="meta-label">Companies</span><span class="meta-val">4 archetypes profiled</span></div>
+      <div class="meta-item"><span class="meta-label">Date</span><span class="meta-val">March 2026</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ SLIDE 2 — THREE DOMAINS ═══════════════════════ -->
+<div class="slide" id="s2" data-slide="1">
+  <div class="slide-chrome">
+    <div class="chrome-left">
+      <div class="chrome-logo">ClusterMAX™</div>
+      <div class="chrome-sep"></div>
+      <div class="chrome-title">The Three Domains</div>
+    </div>
+    <div class="chrome-right">
+      <button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span id="tl2">Light</span></button>
+      02 / 12
+    </div>
+  </div>
+
+  <div class="slide-body" style="flex-direction:column;padding:0 48px 64px;gap:14px;overflow:auto;">
+    <div class="anim anim-1" style="padding-top:8px;">
+      <div class="sec-label neutral">Framework</div>
+      <div style="font-family:var(--display);font-size:clamp(26px,3.5vw,42px);letter-spacing:0.04em;line-height:1;color:var(--text);">Three Domains. One Outcome.</div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:8px;letter-spacing:0.04em;max-width:560px;">GPU compute performance emerges from the intersection of all three. Optimizing any domain in isolation misses the compounding effect at their boundaries.</div>
+    </div>
+
+    <div class="anim anim-2" style="flex:1;display:flex;align-items:center;justify-content:center;">
+      <svg viewBox="0 0 700 290" style="max-width:680px;width:100%;max-height:250px;" overflow="visible">
+        <circle cx="240" cy="145" r="115" fill="#c084fc" class="venn-circle"/>
+        <circle cx="460" cy="145" r="115" fill="#2dd4bf" class="venn-circle"/>
+        <circle cx="350"  cy="20" r="115" fill="#fbbf24" class="venn-circle" transform="translate(0,18)"/>
+        <text x="138" y="172" class="venn-label" fill="#c084fc" text-anchor="middle">HARDWARE</text>
+        <text x="138" y="187" class="venn-sub" text-anchor="middle">Silicon · Memory · Interconnect</text>
+        <text x="562" y="172" class="venn-label" fill="#2dd4bf" text-anchor="middle">SOFTWARE</text>
+        <text x="562" y="187" class="venn-sub" text-anchor="middle">CUDA · Triton · Inference Engines</text>
+        <text x="350" y="36" class="venn-label" fill="#fbbf24" text-anchor="middle">MODELS</text>
+        <text x="350" y="52" class="venn-sub" text-anchor="middle">Architecture · Scale · Usage Patterns</text>
+        <text x="297" y="188" class="venn-intersect" font-size="9">Kernel</text>
+        <text x="297" y="200" class="venn-intersect" font-size="9">Optimization</text>
+        <text x="414" y="124" class="venn-intersect" font-size="9">Inference</text>
+        <text x="414" y="136" class="venn-intersect" font-size="9">Serving</text>
+        <text x="284" y="118" class="venn-intersect" font-size="9">Precision &amp;</text>
+        <text x="284" y="130" class="venn-intersect" font-size="9">Quantization</text>
+        <circle cx="350" cy="152" r="28" fill="rgba(200,200,200,0.07)" stroke="rgba(200,200,200,0.18)" stroke-width="0.5"/>
+        <text x="350" y="148" class="venn-center" font-size="8">INFERENCE</text>
+        <text x="350" y="160" class="venn-center" font-size="8">ECONOMICS</text>
+      </svg>
+    </div>
+
+    <div class="force-cards anim anim-3">
+      <div class="force-card" style="border-left:3px solid var(--hw)">
+        <div class="force-card-title" style="color:var(--hw)">Hardware</div>
+        <div class="force-card-items">
+          <span class="force-item fi-hw">H100 / H200 / B200</span>
+          <span class="force-item fi-hw">HBM3e · 4.8–8 TB/s</span>
+          <span class="force-item fi-hw">NVLink 4.0 / 5.0</span>
+          <span class="force-item fi-hw">AMD MI300X</span>
+          <span class="force-item fi-hw">InfiniBand NDR400</span>
+        </div>
+      </div>
+      <div class="force-card" style="border-left:3px solid var(--sw)">
+        <div class="force-card-title" style="color:var(--sw)">Software</div>
+        <div class="force-card-items">
+          <span class="force-item fi-sw">FlashAttention-3</span>
+          <span class="force-item fi-sw">PagedAttention (vLLM)</span>
+          <span class="force-item fi-sw">Speculative Decoding</span>
+          <span class="force-item fi-sw">RadixCache (SGLang)</span>
+          <span class="force-item fi-sw">TensorRT-LLM</span>
+        </div>
+      </div>
+      <div class="force-card" style="border-left:3px solid var(--llm)">
+        <div class="force-card-title" style="color:var(--llm)">Models &amp; Usage</div>
+        <div class="force-card-items">
+          <span class="force-item fi-llm">Dense → MoE scaling</span>
+          <span class="force-item fi-llm">FP8 / INT4 precision</span>
+          <span class="force-item fi-llm">LLaMA 3 · DeepSeek V3</span>
+          <span class="force-item fi-llm">Long Context (1M+)</span>
+          <span class="force-item fi-sub">↳ Usage: Agentic loops</span>
+          <span class="force-item fi-sub">↳ Usage: Batch inference</span>
+          <span class="force-item fi-sub">↳ Usage: RAG pipelines</span>
+          <span class="force-item fi-sub">↳ Usage: On-device 1–30B</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ SLIDE 3 — SILICON RACE ═══════════════════════ -->
+<div class="slide" id="s3" data-slide="2">
+  <div class="slide-chrome">
+    <div class="chrome-left">
+      <div class="chrome-logo">ClusterMAX™</div>
+      <div class="chrome-sep"></div>
+      <div class="chrome-title">The Silicon Race</div>
+    </div>
+    <div class="chrome-right">
+      <button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span id="tl3">Light</span></button>
+      03 / 12
+    </div>
+  </div>
+
+  <div class="slide-body" style="flex-direction:column;padding:0 48px 64px;gap:16px;overflow:auto;">
+    <div class="anim anim-1" style="padding-top:8px;">
+      <div class="sec-label hw">Hardware</div>
+      <div style="font-family:var(--display);font-size:clamp(24px,3vw,38px);letter-spacing:0.04em;line-height:1;color:var(--text);">The Silicon Race.<br><span style="color:var(--hw)">Memory bandwidth is the new compute.</span></div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="hw-timeline anim anim-2">
+      <div class="hw-node">
+        <div class="hw-node-dot" style="box-shadow:0 0 10px rgba(192,132,252,0.3)"></div>
+        <div class="hw-node-name">A100</div>
+        <div class="hw-node-year">2020</div>
+        <div class="hw-node-spec">
+          <span class="spec-accent">80 GB HBM2e</span>
+          <span>2.0 TB/s BW</span>
+          <span>312 TFLOPS BF16</span>
+          <span>NVLink 3.0</span>
+        </div>
+      </div>
+      <div class="hw-node">
+        <div class="hw-node-dot" style="box-shadow:0 0 10px rgba(192,132,252,0.35)"></div>
+        <div class="hw-node-name">H100</div>
+        <div class="hw-node-year">2022</div>
+        <div class="hw-node-spec">
+          <span class="spec-accent">80 GB HBM3</span>
+          <span>3.35 TB/s BW</span>
+          <span>3.35 PFLOPS BF16</span>
+          <span>NVLink 4.0 · FP8</span>
+        </div>
+      </div>
+      <div class="hw-node">
+        <div class="hw-node-dot" style="box-shadow:0 0 12px rgba(192,132,252,0.4)"></div>
+        <div class="hw-node-name">H200</div>
+        <div class="hw-node-year">2024</div>
+        <div class="hw-node-spec">
+          <span class="spec-accent">141 GB HBM3e</span>
+          <span>4.8 TB/s BW</span>
+          <span>3.35 PFLOPS BF16</span>
+          <span>Same die, +76% HBM</span>
+        </div>
+      </div>
+      <div class="hw-node">
+        <div class="hw-node-dot" style="box-shadow:0 0 14px rgba(192,132,252,0.5)"></div>
+        <div class="hw-node-name">B200</div>
+        <div class="hw-node-year">2025</div>
+        <div class="hw-node-spec">
+          <span class="spec-accent">192 GB HBM3e</span>
+          <span>8.0 TB/s BW</span>
+          <span>9+ PFLOPS BF16</span>
+          <span>NVLink 5.0 · FP4</span>
+        </div>
+      </div>
+      <div class="hw-node future">
+        <div class="hw-node-dot"></div>
+        <div class="hw-node-name">Rubin</div>
+        <div class="hw-node-year">2026+</div>
+        <div class="hw-node-spec">
+          <span>HBM4 · 288 GB+ est.</span>
+          <span>12+ TB/s BW est.</span>
+          <span>NVLink 6.0</span>
+          <span>FP4 / FP6 native</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- HBM chart + model capacity -->
+    <div style="display:grid;grid-template-columns:1fr 1.5fr;gap:14px;" class="anim anim-3">
+      <div class="hbm-chart">
+        <div class="hbm-chart-title">HBM Capacity (GB per GPU)</div>
+        <div class="hbm-row"><div class="hbm-label">A100</div><div class="hbm-bar-track"><div class="hbm-bar-fill" style="--bw:42%;background:rgba(192,132,252,0.35);animation-delay:0.3s"></div></div><div class="hbm-val">80 GB</div></div>
+        <div class="hbm-row"><div class="hbm-label">H100</div><div class="hbm-bar-track"><div class="hbm-bar-fill" style="--bw:42%;background:rgba(192,132,252,0.55);animation-delay:0.4s"></div></div><div class="hbm-val">80 GB</div></div>
+        <div class="hbm-row"><div class="hbm-label">H200</div><div class="hbm-bar-track"><div class="hbm-bar-fill" style="--bw:73%;background:rgba(192,132,252,0.72);animation-delay:0.5s"></div></div><div class="hbm-val">141 GB</div></div>
+        <div class="hbm-row"><div class="hbm-label">B200</div><div class="hbm-bar-track"><div class="hbm-bar-fill" style="--bw:100%;background:var(--hw);animation-delay:0.6s"></div></div><div class="hbm-val">192 GB</div></div>
+        <div class="hbm-row"><div class="hbm-label">Rubin</div><div class="hbm-bar-track"><div class="hbm-bar-fill" style="--bw:100%;background:rgba(192,132,252,0.3);border:1px dashed rgba(192,132,252,0.4);animation-delay:0.7s"></div></div><div class="hbm-val">288+ est.</div></div>
+      </div>
+
+      <div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:8px;">What Models Can Each GPU Run? (BF16 weights)</div>
+        <div class="model-cap-grid">
+          <div class="model-cap-card">
+            <div class="mc-chip">H100</div>
+            <div class="mc-sub">80 GB · 3.35 TB/s</div>
+            <div class="mc-row">7B: <span>1× (14GB)</span></div>
+            <div class="mc-row">70B: <span>2× needed (140GB)</span></div>
+            <div class="mc-row">70B INT8: <span>1× (70GB)</span></div>
+            <div class="mc-row">405B: <span class="highlight">8× needed</span></div>
+            <div class="mc-row">MoE 671B: <span class="highlight">16× (weights only)</span></div>
+          </div>
+          <div class="model-cap-card">
+            <div class="mc-chip">H200</div>
+            <div class="mc-sub">141 GB · 4.8 TB/s</div>
+            <div class="mc-row">7B: <span>1× (14GB)</span></div>
+            <div class="mc-row">70B BF16: <span>1× (140GB) ✓</span></div>
+            <div class="mc-row">70B INT8: <span>1× comfortable</span></div>
+            <div class="mc-row">405B: <span class="highlight">3× needed</span></div>
+            <div class="mc-row">MoE 671B: <span class="highlight">8× (weights only)</span></div>
+          </div>
+          <div class="model-cap-card">
+            <div class="mc-chip">B200</div>
+            <div class="mc-sub">192 GB · 8.0 TB/s</div>
+            <div class="mc-row">7B: <span>1× with margin</span></div>
+            <div class="mc-row">70B BF16: <span>1× + KV cache</span></div>
+            <div class="mc-row">405B BF16: <span>2× needed</span></div>
+            <div class="mc-row">405B INT4: <span>1× (~200GB)</span></div>
+            <div class="mc-row">MoE 671B: <span class="highlight">4× (weights only)</span></div>
+          </div>
+          <div class="model-cap-card" style="border-top-color:var(--sw)">
+            <div class="mc-chip" style="color:var(--sw)">8× H100</div>
+            <div class="mc-sub">640 GB · DGX node</div>
+            <div class="mc-row">70B BF16: <span>1 node, fast</span></div>
+            <div class="mc-row">405B BF16: <span>1 node (810GB) ✓</span></div>
+            <div class="mc-row">671B MoE: <span>1 node (1.3TB) ✓</span></div>
+            <div class="mc-row">1T+ MoE: <span class="highlight">Multi-node req.</span></div>
+            <div class="mc-row">TP/PP: <span>NVLink handles</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ SLIDE 4 — CONTEXT SIZE & USER CAPACITY ═══════════════════════ -->
+<div class="slide" id="s4" data-slide="3">
+  <div class="slide-chrome">
+    <div class="chrome-left">
+      <div class="chrome-logo">ClusterMAX™</div>
+      <div class="chrome-sep"></div>
+      <div class="chrome-title">Context Size &amp; User Capacity</div>
+    </div>
+    <div class="chrome-right">
+      <button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span id="tl4">Light</span></button>
+      04 / 12
+    </div>
+  </div>
+
+  <div class="slide-body" style="flex-direction:column;padding:0 48px 64px;gap:16px;overflow:auto;">
+    <div class="anim anim-1" style="padding-top:8px;">
+      <div class="sec-label hw">Memory Arithmetic</div>
+      <div style="font-family:var(--display);font-size:clamp(22px,2.8vw,36px);letter-spacing:0.04em;line-height:1;color:var(--text);">Context Window Grows → <span style="color:var(--hw)">Concurrent Users Collapse.</span></div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:8px;letter-spacing:0.04em;">KV cache grows linearly with context length. On a fixed-memory GPU, every 10× increase in context = 10× fewer concurrent requests.</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:18px;flex:1;" class="anim anim-2">
+      <div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:8px;">LLaMA 3 70B — Concurrent Users on 8× H100 (640 GB) @ Continuous Batching</div>
+        <table class="ctx-table">
+          <thead>
+            <tr>
+              <th>Context Window</th>
+              <th>KV Cache / User</th>
+              <th>Concurrent Users</th>
+              <th>Throughput est.</th>
+              <th>Use Case</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>2k tokens</td><td class="val">~5 MB</td><td class="ok val">~400–600</td><td class="val">~60k tok/s</td><td style="color:var(--muted)">Chatbot, simple Q&amp;A</td></tr>
+            <tr><td>8k tokens</td><td class="val">~20 MB</td><td class="ok val">~120–180</td><td class="val">~30k tok/s</td><td style="color:var(--muted)">RAG, document Q&amp;A</td></tr>
+            <tr><td>32k tokens</td><td class="val">~80 MB</td><td class="val">~30–50</td><td class="val">~15k tok/s</td><td style="color:var(--muted)">Long document, code</td></tr>
+            <tr><td>128k tokens</td><td class="warn val">~320 MB</td><td class="warn val">~8–15</td><td class="warn val">~5k tok/s</td><td style="color:var(--muted)">Book-length, full repo</td></tr>
+            <tr><td>1M tokens</td><td class="warn val">~2.5 GB</td><td class="warn val">~1–2</td><td class="warn val">&lt;1k tok/s</td><td style="color:var(--muted)">Frontier research tasks</td></tr>
+          </tbody>
+        </table>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--dim);margin-top:8px;line-height:1.6;">
+          * KV cache = 2 × layers × heads × head_dim × 2 bytes × tokens. LLaMA 3 70B: 80 layers, 64 heads, 128 dim = ~2.5MB / 1k tokens at BF16. Model weights consume ~140GB, leaving ~500GB for KV cache on DGX node.
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:4px;">Why Context Size is the Hardest Hardware Problem</div>
+
+        <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--hw);border-radius:4px;padding:14px 16px;">
+          <div style="font-family:var(--mono);font-size:9px;color:var(--hw);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:8px;">Memory Capacity Ceiling</div>
+          <div style="font-size:12.5px;color:var(--muted);line-height:1.6;font-weight:300;">A 128k context session on LLaMA 70B occupies ~320MB of HBM — more than 4× the memory of a 2k session. This is why the H200 upgrade from H100 was so impactful: 141GB vs 80GB nearly doubles the number of concurrent long-context requests.</div>
+        </div>
+
+        <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--sw);border-radius:4px;padding:14px 16px;">
+          <div style="font-family:var(--mono);font-size:9px;color:var(--sw);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:8px;">Bandwidth Ceiling</div>
+          <div style="font-size:12.5px;color:var(--muted);line-height:1.6;font-weight:300;">For long-context autoregressive decode, the GPU must stream the entire KV cache from HBM on every generated token. At 128k context, this is 320MB moved per token per user. The H200's 4.8 TB/s bandwidth allows ~15k tokens/s vs ~10k on H100 for the same context size.</div>
+        </div>
+
+        <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--llm);border-radius:4px;padding:14px 16px;">
+          <div style="font-family:var(--mono);font-size:9px;color:var(--llm);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:8px;">Commercial Implication</div>
+          <div style="font-size:12.5px;color:var(--muted);line-height:1.6;font-weight:300;">Long-context pricing is non-linear. OpenAI charges 5× more per token at 128k context vs 8k. This reflects real hardware costs: you are paying for reserved KV cache slots, not just compute. Providers must price by context × concurrency, not just tokens.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ SLIDE 5 — VALUE CASCADE (GPU DEPRECIATION) ═══════════════════════ -->
+<div class="slide" id="s5" data-slide="4">
+  <div class="slide-chrome">
+    <div class="chrome-left">
+      <div class="chrome-logo">ClusterMAX™</div>
+      <div class="chrome-sep"></div>
+      <div class="chrome-title">GPU Value Cascade</div>
+    </div>
+    <div class="chrome-right">
+      <button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span id="tl5">Light</span></button>
+      05 / 12
+    </div>
+  </div>
+
+  <div class="slide-body" style="flex-direction:column;padding:0 48px 64px;gap:16px;overflow:auto;">
+    <div class="anim anim-1" style="padding-top:8px;">
+      <div class="sec-label hw">Depreciation Framework</div>
+      <div style="font-family:var(--display);font-size:clamp(22px,2.8vw,36px);letter-spacing:0.04em;line-height:1;color:var(--text);">The Three-Stage <span style="color:var(--hw)">GPU Value Cascade.</span></div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:8px;letter-spacing:0.04em;">Every GPU generation progresses through three economic phases. The workloads, pricing, and customer profiles shift at each stage.</div>
+    </div>
+
+    <!-- Cascade bar -->
+    <div class="cascade-row anim anim-2">
+      <div class="cascade-seg" style="flex:2;background:linear-gradient(135deg,rgba(192,132,252,0.8),rgba(192,132,252,0.6))">
+        <div class="cascade-seg-label">Stage I · Premium</div>
+        <div class="cascade-seg-sub">0–18 months</div>
+      </div>
+      <div class="cascade-seg" style="flex:2;background:linear-gradient(135deg,rgba(45,212,191,0.75),rgba(45,212,191,0.55))">
+        <div class="cascade-seg-label">Stage II · Competitive</div>
+        <div class="cascade-seg-sub">18–36 months</div>
+      </div>
+      <div class="cascade-seg" style="flex:2;background:linear-gradient(135deg,rgba(251,191,36,0.7),rgba(251,191,36,0.5))">
+        <div class="cascade-seg-label">Stage III · Commodity</div>
+        <div class="cascade-seg-sub">36+ months</div>
+      </div>
+    </div>
+
+    <!-- Three stage cards -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;" class="anim anim-3">
+      <div style="background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--hw);border-radius:4px;padding:16px;">
+        <div style="font-family:var(--display);font-size:18px;color:var(--hw);letter-spacing:0.04em;margin-bottom:6px;">Stage I · Scarcity</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--hw);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:10px;">0–18 months post-launch</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6;font-weight:300;margin-bottom:10px;">Supply constrained. Frontier labs pay premium spot and reserved rates. Training dominates. H100 launched at $2–3/hr; peaked at $8–10/hr during scarcity window of 2023.</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:0.06em;">
+          <div style="color:var(--hw);margin-bottom:3px;">↑ Workloads</div>
+          <div>· Frontier model training</div>
+          <div>· RLHF / DPO post-training</div>
+          <div>· Flagship model inference</div>
+          <div>· Early adopter API serving</div>
+        </div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--sw);border-radius:4px;padding:16px;">
+        <div style="font-family:var(--display);font-size:18px;color:var(--sw);letter-spacing:0.04em;margin-bottom:6px;">Stage II · Scale</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--sw);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:10px;">18–36 months post-launch</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6;font-weight:300;margin-bottom:10px;">Supply normalizes. Inference volumes explode. Prices compress to $1.80–3.50/hr spot. Enterprise adopters arrive. Software optimization closes the utilization gap. H100 is here now (2025).</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:0.06em;">
+          <div style="color:var(--sw);margin-bottom:3px;">↑ Workloads</div>
+          <div>· Production LLM inference</div>
+          <div>· Agentic pipeline serving</div>
+          <div>· Batch synthetic data gen</div>
+          <div>· Enterprise fine-tuning</div>
+        </div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--llm);border-radius:4px;padding:16px;">
+        <div style="font-family:var(--display);font-size:18px;color:var(--llm);letter-spacing:0.04em;margin-bottom:6px;">Stage III · Commodity</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--llm);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:10px;">36+ months post-launch</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6;font-weight:300;margin-bottom:10px;">Next-gen GPU available. Older silicon moves to secondary market, smaller providers, dev/test environments. Prices drop to $0.50–1.20/hr. A100s are here. A10G approaching. Margins thin for hardware-only plays.</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:0.06em;">
+          <div style="color:var(--llm);margin-bottom:3px;">↑ Workloads</div>
+          <div>· Fine-tuning SME models</div>
+          <div>· Dev / test environments</div>
+          <div>· Smaller batch inference</div>
+          <div>· Research / academia</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:14px 20px;display:flex;gap:20px;align-items:center;" class="anim anim-4">
+      <div style="font-family:var(--display);font-size:42px;color:var(--hw);line-height:1;flex-shrink:0;">H100</div>
+      <div style="font-size:12.5px;color:var(--muted);line-height:1.65;font-weight:300;">
+        <strong style="color:var(--text)">Current position: deep Stage II.</strong> H100 spot rates have compressed from $8–10/hr peak to $1.80–2.50/hr on leading providers. The arrival of B200 in 2025 has begun the Stage III migration for H100 in training workloads — but H100 remains Stage II for inference due to software optimization gains (vLLM, SGLang) that continue to extract more value per GPU-hour. <strong style="color:var(--text)">H200 is in Stage I/II transition.</strong> B200 entered Stage I in Q1 2025.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ SLIDE 6 — COMMODITIZATION & FINANCIALIZATION ═══════════════════════ -->
+<div class="slide" id="s6" data-slide="5">
+  <div class="slide-chrome">
+    <div class="chrome-left">
+      <div class="chrome-logo">ClusterMAX™</div>
+      <div class="chrome-sep"></div>
+      <div class="chrome-title">Commoditization &amp; Financialization</div>
+    </div>
+    <div class="chrome-right">
+      <button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span id="tl6">Light</span></button>
+      06 / 12
+    </div>
+  </div>
+
+  <div class="slide-body" style="flex-direction:column;padding:0 48px 64px;gap:14px;overflow:auto;">
+    <div class="anim anim-1" style="padding-top:8px;">
+      <div class="sec-label neutral">Market Structure</div>
+      <div style="font-family:var(--display);font-size:clamp(22px,2.8vw,36px);letter-spacing:0.04em;line-height:1;color:var(--text);">Compute is Becoming a <span style="color:var(--llm)">Financial Asset.</span></div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:8px;letter-spacing:0.04em;max-width:680px;">Companies like Ornn Compute are building the financial infrastructure for GPU markets — standardizing the compute unit, enabling futures contracts, and securitizing hardware purchases. The question is whether barriers to true commoditization can ever be overcome.</div>
+    </div>
+
+    <div class="ornn-grid anim anim-2">
+      <div class="ornn-card">
+        <div class="ornn-card-title">The Standardization Drive</div>
+        <div class="ornn-card-body">Ornn Compute and peers are attempting to define a <strong>standard compute unit</strong> (akin to a barrel of oil or MWh of electricity) that can be quoted, traded, and settled. The target: a GPU-hour equivalent that abstracts across A100/H100/H200 via a performance normalization index. The commercial goal is price discovery and forward market liquidity — matching buyers and sellers across time horizons rather than only spot.</div>
+      </div>
+      <div class="ornn-card sw">
+        <div class="ornn-card-title">Futures Contracts &amp; Securitization</div>
+        <div class="ornn-card-body">Hardware developers (GPU cloud operators) can <strong>securitize purchases via forward contracts</strong>: an operator buying $50M of H100s can enter a contract with an offtaker — committing to deliver X compute units at a minimum price at the end of a defined period. Offtakers (typically private credit funds) provide capital surety, backed by the contracted revenue stream. This de-risks the hardware investment cycle and enables smaller operators to access balance sheet financing that was previously only available to hyperscalers.</div>
+      </div>
+      <div class="ornn-card hw">
+        <div class="ornn-card-title">Price Transparency: Promise vs. Reality</div>
+        <div class="ornn-card-body">Despite standardization efforts, <strong>true compute commoditization faces structural barriers</strong> that are unlikely to fully resolve. Physical configuration differences (liquid vs air cooling, rack density, power PUE) create real performance heterogeneity. Electricity cost varies 3–5× across geographies. Uptime SLAs differ dramatically. Most importantly: the software stack atop the hardware — inference engine tuning, networking optimization, support quality — contributes at least as much to real-world performance as the GPU spec sheet. A provider running SGLang with FlashAttention-3 at 85% GPU utilization offers fundamentally different value than naive hardware rental at 40% utilization — even with identical underlying silicon.</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;" class="anim anim-3">
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:14px 18px;">
+        <div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:10px;">Barriers to Full Commoditization</div>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--muted);font-weight:300;line-height:1.55;">
+          <div style="display:flex;gap:8px;align-items:baseline;"><span style="color:var(--hw);font-family:var(--mono)">01</span><div><strong style="color:var(--text)">Physical heterogeneity</strong> — cooling type, rack density, networking topology, power source vary enormously and translate to real performance differences</div></div>
+          <div style="display:flex;gap:8px;align-items:baseline;"><span style="color:var(--hw);font-family:var(--mono)">02</span><div><strong style="color:var(--text)">Software stack depth</strong> — a provider running vLLM + FlashAttention-3 at 85% utilization is not the same product as a bare metal rental; standardizing the compute unit requires abstracting this away, which is commercially and technically hard</div></div>
+          <div style="display:flex;gap:8px;align-items:baseline;"><span style="color:var(--hw);font-family:var(--mono)">03</span><div><strong style="color:var(--text)">Credit and counterparty risk</strong> — GPU cloud operators range from B-sheet datacenters to venture-backed startups; offtakers require credit underwriting that varies widely</div></div>
+          <div style="display:flex;gap:8px;align-items:baseline;"><span style="color:var(--hw);font-family:var(--mono)">04</span><div><strong style="color:var(--text)">Regulatory fragmentation</strong> — US export controls, EU data residency, and national security reviews mean that compute is increasingly jurisdiction-specific</div></div>
+        </div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--sw);border-radius:4px;padding:14px 18px;">
+        <div style="font-family:var(--mono);font-size:9px;color:var(--sw);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:10px;">Strategic Implications</div>
+        <div style="font-size:12.5px;color:var(--muted);line-height:1.65;font-weight:300;">
+          <p style="margin-bottom:10px;">If futures markets develop for compute, the economic logic of GPU cloud changes fundamentally: <strong style="color:var(--text)">hardware operators become risk managers</strong>, not just operators. Forward sales lock in revenue; spot markets remain for opportunistic overflow. This is the electricity market model applied to silicon.</p>
+          <p style="margin-bottom:10px;">The software moat becomes <em>more</em> valuable in a commoditized hardware market, not less. When raw GPU-hour prices compress toward marginal cost, the only defensible margin is in the software layer sitting above it — inference optimization, model serving quality, developer tooling, and data infrastructure integration.</p>
+          <p>For a provider with both <strong style="color:var(--text)">object storage and compute</strong>, the integrated offering — with zero-egress, co-located storage — becomes a genuine differentiator that a pure-play compute market cannot replicate.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ SLIDE 7 — SOFTWARE MULTIPLIER ═══════════════════════ -->
+<div class="slide" id="s7" data-slide="6">
+  <div class="slide-chrome">
+    <div class="chrome-left">
+      <div class="chrome-logo">ClusterMAX™</div>
+      <div class="chrome-sep"></div>
+      <div class="chrome-title">Software: The Multiplier</div>
+    </div>
+    <div class="chrome-right">
+      <button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span id="tl7">Light</span></button>
+      07 / 12
+    </div>
+  </div>
+
+  <div class="slide-body" style="flex:1;padding:0 48px 64px;display:flex;flex-direction:column;gap:18px;overflow:auto;">
+    <div class="anim anim-1" style="padding-top:8px;">
+      <div class="sec-label sw">Software</div>
+      <div style="font-family:var(--display);font-size:clamp(26px,3.5vw,42px);letter-spacing:0.04em;line-height:1;color:var(--text);">Same GPU. <span style="color:var(--sw)">16× the Output.</span></div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:8px;letter-spacing:0.04em;">All gains measured at constant INT8 quantization. FP8/INT4 weight precision is a model preparation choice, not a serving optimization — it changes the model, not the engine.</div>
+    </div>
+
+    <div class="sw-waterfall anim anim-2">
+      <div class="wf-row"><div class="wf-label">Baseline (PyTorch HF, eager)</div><div class="wf-bar-track"><div class="wf-bar-fill" style="--bw:6%;background:rgba(255,255,255,0.15);animation-delay:0.2s"><div class="wf-bar-text">600</div></div></div><div class="wf-val">600 tok/s</div><div class="wf-mult">—</div></div>
+      <div class="wf-row"><div class="wf-label">+ torch.compile()</div><div class="wf-bar-track"><div class="wf-bar-fill" style="--bw:9%;background:rgba(45,212,191,0.25);animation-delay:0.3s"><div class="wf-bar-text">900</div></div></div><div class="wf-val" style="color:var(--sw)">900</div><div class="wf-mult" style="color:var(--sw)">×1.5</div></div>
+      <div class="wf-row"><div class="wf-label">+ Continuous Batching</div><div class="wf-bar-track"><div class="wf-bar-fill" style="--bw:33%;background:rgba(45,212,191,0.42);animation-delay:0.4s"><div class="wf-bar-text">3,200</div></div></div><div class="wf-val" style="color:var(--sw)">3,200</div><div class="wf-mult" style="color:var(--sw)">×3.5</div></div>
+      <div class="wf-row"><div class="wf-label">+ PagedAttention</div><div class="wf-bar-track"><div class="wf-bar-fill" style="--bw:50%;background:rgba(45,212,191,0.58);animation-delay:0.5s"><div class="wf-bar-text">4,800</div></div></div><div class="wf-val" style="color:var(--sw)">4,800</div><div class="wf-mult" style="color:var(--sw)">×1.5</div></div>
+      <div class="wf-row"><div class="wf-label">+ Speculative Decoding</div><div class="wf-bar-track"><div class="wf-bar-fill" style="--bw:75%;background:rgba(45,212,191,0.75);animation-delay:0.6s"><div class="wf-bar-text">7,200</div></div></div><div class="wf-val" style="color:var(--sw)">7,200</div><div class="wf-mult" style="color:var(--sw)">×1.5</div></div>
+      <div class="wf-row"><div class="wf-label">+ RadixCache (SGLang)</div><div class="wf-bar-track"><div class="wf-bar-fill" style="--bw:100%;background:var(--sw);animation-delay:0.7s"><div class="wf-bar-text">9,600</div></div></div><div class="wf-val" style="color:var(--sw)">9,600</div><div class="wf-mult" style="color:var(--sw)">×1.35</div></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:stretch;" class="anim anim-3">
+      <div class="sw-gain-box" style="width:200px;">
+        <div>
+          <div class="sw-gain-num">16×</div>
+          <div style="font-family:var(--mono);font-size:8px;color:var(--sw);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;">Total Software Gain</div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--muted);line-height:1.65;">
+            <strong style="color:var(--text)">$0.32 → $0.02</strong><br>per 1M tokens<br>Identical hardware
+          </div>
+        </div>
+      </div>
+      <div class="sw-innovations">
+        <div class="sw-innov-card">
+          <div class="sw-innov-name">PagedAttention</div>
+          <div class="sw-innov-desc">OS virtual memory paging applied to KV cache. Eliminates fragmentation. Near-100% VRAM utilization vs ~60% naive. Foundation of vLLM.</div>
+        </div>
+        <div class="sw-innov-card">
+          <div class="sw-innov-name">FlashAttention-3</div>
+          <div class="sw-innov-desc">SRAM-tiled attention for H100 Tensor Cores. 75% peak FLOPS vs 30% naive. Enables 128k+ context at viable cost by cutting O(N²) HBM reads.</div>
+        </div>
+        <div class="sw-innov-card">
+          <div class="sw-innov-name">Speculative Decoding</div>
+          <div class="sw-innov-desc">Small draft model proposes K tokens; large model verifies all K in one parallel pass. EAGLE-2 achieves 3–4× speedup at &gt;90% acceptance rate.</div>
+        </div>
+        <div class="sw-innov-card">
+          <div class="sw-innov-name">RadixAttention</div>
+          <div class="sw-innov-desc">KV cache as radix tree: shared system prompts/RAG context computed once, reused across requests. 4–6× gain for agentic pipelines with shared context.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ SLIDE 8 — LLM LANDSCAPE ═══════════════════════ -->
+<div class="slide" id="s8" data-slide="7">
+  <div class="slide-chrome">
+    <div class="chrome-left">
+      <div class="chrome-logo">ClusterMAX™</div>
+      <div class="chrome-sep"></div>
+      <div class="chrome-title">Model Stratification</div>
+    </div>
+    <div class="chrome-right">
+      <button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span id="tl8">Light</span></button>
+      08 / 12
+    </div>
+  </div>
+
+  <div class="slide-body" style="flex-direction:row;gap:0;padding:0;">
+    <div style="width:55%;padding:0 28px 0 48px;display:flex;flex-direction:column;gap:16px;overflow:auto;">
+      <div class="anim anim-1" style="padding-top:8px;">
+        <div class="sec-label llm">Models</div>
+        <div style="font-family:var(--display);font-size:clamp(22px,3vw,36px);letter-spacing:0.04em;line-height:1;color:var(--text);">The Model <span style="color:var(--llm)">Stratification.</span></div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:8px;letter-spacing:0.04em;line-height:1.6;">Not "big vs small" — a deliberate capability tiering by deployment context. MoE changed the frontier economics. Quantization changed the edge economics.</div>
+      </div>
+
+      <div class="bubble-chart anim anim-2" style="flex:1;min-height:220px;">
+        <div class="bc-axis-x"></div><div class="bc-axis-y"></div>
+        <div class="bc-label-x">Parameter Scale →</div>
+        <div class="bc-label-y">Capability</div>
+        <div class="bubble" style="left:82%;bottom:82%;width:70px;height:70px;animation-delay:0.2s"><div class="bubble-inner" style="background:#fbbf24;"><div class="bubble-name">GPT-4o</div><div class="bubble-size">~1T MoE</div></div></div>
+        <div class="bubble" style="left:74%;bottom:72%;width:62px;height:62px;animation-delay:0.28s"><div class="bubble-inner" style="background:#f59e0b;"><div class="bubble-name">Claude 3.7</div><div class="bubble-size">~200B</div></div></div>
+        <div class="bubble" style="left:78%;bottom:60%;width:68px;height:68px;animation-delay:0.35s"><div class="bubble-inner" style="background:#2dd4bf;"><div class="bubble-name">DeepSeek V3</div><div class="bubble-size">671B MoE</div></div></div>
+        <div class="bubble" style="left:54%;bottom:54%;width:50px;height:50px;animation-delay:0.4s"><div class="bubble-inner" style="background:#34d399;"><div class="bubble-name">LLaMA 3.3 70B</div><div class="bubble-size">70B</div></div></div>
+        <div class="bubble" style="left:62%;bottom:68%;width:46px;height:46px;animation-delay:0.45s"><div class="bubble-inner" style="background:#fcd34d;"><div class="bubble-name">Gemini Flash</div><div class="bubble-size">~20B</div></div></div>
+        <div class="bubble" style="left:38%;bottom:44%;width:42px;height:42px;animation-delay:0.5s"><div class="bubble-inner" style="background:#86efac;"><div class="bubble-name">Llama 3.2 8B</div><div class="bubble-size">8B</div></div></div>
+        <div class="bubble" style="left:20%;bottom:30%;width:36px;height:36px;animation-delay:0.55s"><div class="bubble-inner" style="background:#d9f99d;"><div class="bubble-name">Llama 3.2 3B</div><div class="bubble-size">3B</div></div></div>
+        <div class="bubble" style="left:10%;bottom:20%;width:28px;height:28px;animation-delay:0.6s"><div class="bubble-inner" style="background:#ecfccb;"><div class="bubble-name">Phi-3 mini</div><div class="bubble-size">3.8B</div></div></div>
+      </div>
+    </div>
+
+    <div style="width:45%;padding:0 48px 58px 28px;display:flex;flex-direction:column;gap:10px;border-left:1px solid var(--border);overflow:auto;padding-top:8px;">
+      <!-- Use-case tiering -->
+      <div class="anim anim-3">
+        <div style="font-family:var(--mono);font-size:8.5px;color:var(--muted);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:7px;">What Each Tier Is Used For</div>
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          <div style="display:grid;grid-template-columns:90px 1fr;gap:8px;align-items:baseline;padding:6px 10px;background:var(--hw-dim);border-left:2px solid var(--hw);border-radius:2px;">
+            <div style="font-family:var(--display);font-size:13px;color:var(--hw);letter-spacing:0.04em;">Frontier 200B+</div>
+            <div style="font-family:var(--mono);font-size:9px;color:var(--muted);line-height:1.55;">Complex reasoning, multi-step agents, research, code review, legal analysis, frontier API products (ChatGPT, Claude, Gemini). Cloud-only. H200/B200 required.</div>
+          </div>
+          <div style="display:grid;grid-template-columns:90px 1fr;gap:8px;align-items:baseline;padding:6px 10px;background:rgba(45,212,191,0.07);border-left:2px solid var(--sw);border-radius:2px;">
+            <div style="font-family:var(--display);font-size:13px;color:var(--sw);letter-spacing:0.04em;">Mid-tier 30–70B</div>
+            <div style="font-family:var(--mono);font-size:9px;color:var(--muted);line-height:1.55;">Enterprise RAG, customer service, code gen, domain-specific task automation. H100-class. Dominant enterprise deployment tier. 70B = 1× H200 comfortably.</div>
+          </div>
+          <div style="display:grid;grid-template-columns:90px 1fr;gap:8px;align-items:baseline;padding:6px 10px;background:var(--llm-dim);border-left:2px solid var(--llm);border-radius:2px;">
+            <div style="font-family:var(--display);font-size:13px;color:var(--llm);letter-spacing:0.04em;">Mid-small 7–13B</div>
+            <div style="font-family:var(--mono);font-size:9px;color:var(--muted);line-height:1.55;">Classification, extraction, summarization, form filling, copilots. Fits on A100 or H100 single GPU. High-throughput batch — most cost-efficient cloud tier for commodity tasks.</div>
+          </div>
+          <div style="display:grid;grid-template-columns:90px 1fr;gap:8px;align-items:baseline;padding:6px 10px;background:rgba(52,211,153,0.07);border-left:2px solid var(--green);border-radius:2px;">
+            <div style="font-family:var(--display);font-size:13px;color:var(--green);letter-spacing:0.04em;">Edge 1–7B</div>
+            <div style="font-family:var(--mono);font-size:9px;color:var(--muted);line-height:1.55;">On-device: autocomplete, offline assistant, local OCR, privacy-sensitive enterprise. Apple NPU, Snapdragon X, Jetson. Q4_K_M quantized. 4GB VRAM.</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;" class="anim anim-4">
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:10px 12px;text-align:center;">
+          <div style="font-family:var(--display);font-size:26px;color:var(--hw)">~671B</div>
+          <div style="font-family:var(--mono);font-size:8.5px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;line-height:1.4;">DeepSeek V3 params<br>37B active/token (MoE)</div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:10px 12px;text-align:center;">
+          <div style="font-family:var(--display);font-size:26px;color:var(--sw)">~$6M</div>
+          <div style="font-family:var(--mono);font-size:8.5px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;line-height:1.4;">DeepSeek V3 training<br>vs ~$100M GPT-4 est.</div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:10px 12px;text-align:center;">
+          <div style="font-family:var(--display);font-size:26px;color:var(--llm)">INT4</div>
+          <div style="font-family:var(--mono);font-size:8.5px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;line-height:1.4;">On-device precision<br>4-bit quantization</div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:10px 12px;text-align:center;">
+          <div style="font-family:var(--display);font-size:26px;color:var(--red)">~4 GB</div>
+          <div style="font-family:var(--mono);font-size:8.5px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;line-height:1.4;">VRAM for 7B Q4<br>llama.cpp GGUF format</div>
+        </div>
+      </div>
+
+      <div style="background:var(--llm-dim);border:1px solid var(--llm-mid);border-radius:4px;padding:11px 14px;" class="anim anim-5">
+        <div style="font-family:var(--mono);font-size:8.5px;color:var(--llm);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:6px;">MoE: Why It Changes Everything</div>
+        <div style="font-size:11.5px;color:var(--muted);line-height:1.6;font-weight:300;">MoE activates 10–15% of parameters per forward pass — but all weights must reside in HBM. Result: MoE inference is <strong style="color:var(--text)">even more memory-capacity-bound</strong> than dense. DeepSeek R1 671B requires 16× H100s (weights only) — but at frontier capability for $6M in training vs ~$100M+. This is the economic discontinuity that resets the market.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ SLIDE 9 — WORKLOADS ═══════════════════════ -->
+<div class="slide" id="s9" data-slide="8">
+  <div class="slide-chrome">
+    <div class="chrome-left">
+      <div class="chrome-logo">ClusterMAX™</div>
+      <div class="chrome-sep"></div>
+      <div class="chrome-title">Workload Taxonomy</div>
+    </div>
+    <div class="chrome-right">
+      <button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span id="tl9">Light</span></button>
+      09 / 13
+    </div>
+  </div>
+
+  <div class="slide-body" style="flex-direction:column;padding:0 48px 64px;gap:16px;overflow:auto;">
+    <div class="anim anim-1" style="padding-top:8px;">
+      <div class="sec-label llm">Workloads</div>
+      <div style="font-family:var(--display);font-size:clamp(22px,2.8vw,36px);letter-spacing:0.04em;line-height:1;color:var(--text);">Training is <span style="color:var(--llm)">~15% of the Story.</span> Inference is the Economy.</div>
+      <div style="font-family:var(--mono);font-size:9.5px;color:var(--muted);margin-top:7px;letter-spacing:0.04em;max-width:1000px;line-height:1.7;">
+        <span style="color:var(--hw)">①</span> <strong style="color:var(--text)">NVIDIA CFO Q3 FY2025:</strong> "inference has overtaken training as the primary driver of datacenter GPU deployment; inference represents the majority of our hyperscaler shipments."&emsp;
+        <span style="color:var(--sw)">②</span> <strong style="color:var(--text)">a16z 2024 AI Report:</strong> ~80% of enterprise AI compute spend is inference.&emsp;
+        <span style="color:var(--llm)">③</span> <strong style="color:var(--text)">Goldman Sachs AI Infra 2024:</strong> inference = 65–80% of GPU-hours by 2025.&emsp;
+        <span style="color:var(--blue)">④</span> <strong style="color:var(--text)">ClusterMAX 2.0 survey (84 providers):</strong> largest capacity reservations dominated by inference-optimised configs.&emsp;
+        <span style="color:var(--green)">⑤</span> <strong style="color:var(--text)">Economic logic:</strong> a model trained for 4–8 weeks, serving 10M DAU, accrues more GPU-hours in inference within 2–4 months of launch than its entire training run.
+      </div>
+    </div>
+
+    <div class="workload-cards anim anim-2">
+      <div class="wl-card" style="border-top-color:#6366f1">
+        <div class="wl-card-title" style="color:#818cf8">Frontier Training</div>
+        <div class="wl-card-metric"><div class="wl-metric-label">Compute</div><div class="wl-metric-bar"><div class="wl-metric-fill" style="--bw:100%;background:#6366f1;animation-delay:0.2s"></div></div></div>
+        <div class="wl-card-metric"><div class="wl-metric-label">Memory BW</div><div class="wl-metric-bar"><div class="wl-metric-fill" style="--bw:60%;background:#818cf8;animation-delay:0.25s"></div></div></div>
+        <div class="wl-card-metric"><div class="wl-metric-label">Latency Sens.</div><div class="wl-metric-bar"><div class="wl-metric-fill" style="--bw:5%;background:var(--muted);animation-delay:0.3s"></div></div></div>
+        <div class="wl-card-note"><strong style="color:var(--text)">~12–18%</strong> of 2025 GPU demand. Compute-bound; requires NVLink/IB fabric DGX clusters. Declining share as inference proliferates. Training once but serving billions of times — the ratio is structural.</div>
+      </div>
+      <div class="wl-card" style="border-top-color:#93c5fd">
+        <div class="wl-card-title" style="color:#93c5fd">Synthetic Data</div>
+        <div class="wl-card-metric"><div class="wl-metric-label">Throughput req.</div><div class="wl-metric-bar"><div class="wl-metric-fill" style="--bw:90%;background:#93c5fd;animation-delay:0.3s"></div></div></div>
+        <div class="wl-card-metric"><div class="wl-metric-label">Memory BW</div><div class="wl-metric-bar"><div class="wl-metric-fill" style="--bw:70%;background:#93c5fd;animation-delay:0.35s"></div></div></div>
+        <div class="wl-card-metric"><div class="wl-metric-label">Latency Sens.</div><div class="wl-metric-bar"><div class="wl-metric-fill" style="--bw:5%;background:var(--muted);animation-delay:0.4s"></div></div></div>
+        <div class="wl-card-note"><strong style="color:var(--text)">~10%</strong> and rising. Post-training's fuel: RLHF/DPO/GRPO requires billions of synthetic samples. Latency-insensitive; max throughput mode. Competes directly with training for GPU allocation.</div>
+      </div>
+      <div class="wl-card" style="border-top-color:var(--sw)">
+        <div class="wl-card-title" style="color:var(--sw)">Batch Inference</div>
+        <div class="wl-card-metric"><div class="wl-metric-label">Compute intensity</div><div class="wl-metric-bar"><div class="wl-metric-fill" style="--bw:35%;background:var(--sw);animation-delay:0.3s"></div></div></div>
+        <div class="wl-card-metric"><div class="wl-metric-label">Memory BW</div><div class="wl-metric-bar"><div class="wl-metric-fill" style="--bw:95%;background:var(--sw);animation-delay:0.35s"></div></div></div>
+        <div class="wl-card-metric"><div class="wl-metric-label">Latency Sens.</div><div class="wl-metric-bar"><div class="wl-metric-fill" style="--bw:45%;background:var(--sw);animation-delay:0.4s"></div></div></div>
+        <div class="wl-card-note"><strong style="color:var(--text)">~50–55%</strong> — dominant category. Memory-BW-bound: GPU streams entire weight matrix per token. Inference volumes doubling every 6 months per hyperscaler disclosures. vLLM/SGLang stack critical.</div>
+      </div>
+      <div class="wl-card" style="border-top-color:var(--llm)">
+        <div class="wl-card-title" style="color:var(--llm)">Agentic / Multi-step</div>
+        <div class="wl-card-metric"><div class="wl-metric-label">Compute intensity</div><div class="wl-metric-bar"><div class="wl-metric-fill" style="--bw:55%;background:var(--llm);animation-delay:0.3s"></div></div></div>
+        <div class="wl-card-metric"><div class="wl-metric-label">KV cache pressure</div><div class="wl-metric-bar"><div class="wl-metric-fill" style="--bw:97%;background:var(--llm);animation-delay:0.35s"></div></div></div>
+        <div class="wl-card-metric"><div class="wl-metric-label">Latency Sens.</div><div class="wl-metric-bar"><div class="wl-metric-fill" style="--bw:88%;background:var(--llm);animation-delay:0.4s"></div></div></div>
+        <div class="wl-card-note"><strong style="color:var(--text)">~12–15%</strong> and fastest-growing YoY. 8–40 model calls per task; stateful context expands per turn. KV-capacity-bound. Anthropic, OpenAI, Google all report >3× agentic API volume growth YoY.</div>
+      </div>
+      <div class="wl-card" style="border-top-color:var(--red)">
+        <div class="wl-card-title" style="color:var(--red)">Fine-tuning / PEFT</div>
+        <div class="wl-card-metric"><div class="wl-metric-label">Compute intensity</div><div class="wl-metric-bar"><div class="wl-metric-fill" style="--bw:75%;background:var(--red);animation-delay:0.3s"></div></div></div>
+        <div class="wl-card-metric"><div class="wl-metric-label">Memory BW</div><div class="wl-metric-bar"><div class="wl-metric-fill" style="--bw:65%;background:var(--red);animation-delay:0.35s"></div></div></div>
+        <div class="wl-card-metric"><div class="wl-metric-label">Latency Sens.</div><div class="wl-metric-bar"><div class="wl-metric-fill" style="--bw:10%;background:var(--muted);animation-delay:0.4s"></div></div></div>
+        <div class="wl-card-note"><strong style="color:var(--text)">~8–10%</strong>. LoRA/QLoRA runs on A100-class or consumer GPU. Highly cost-elastic. Growing rapidly as LLaMA 3, Mistral, and Qwen mature for enterprise domain specialization.</div>
+      </div>
+      <div class="wl-card" style="border-top-color:#34d399">
+        <div class="wl-card-title" style="color:#34d399">On-Device</div>
+        <div class="wl-card-metric"><div class="wl-metric-label">NPU compute</div><div class="wl-metric-bar"><div class="wl-metric-fill" style="--bw:20%;background:#34d399;animation-delay:0.3s"></div></div></div>
+        <div class="wl-card-metric"><div class="wl-metric-label">DRAM bandwidth</div><div class="wl-metric-bar"><div class="wl-metric-fill" style="--bw:60%;background:#34d399;animation-delay:0.35s"></div></div></div>
+        <div class="wl-card-metric"><div class="wl-metric-label">Latency Sens.</div><div class="wl-metric-bar"><div class="wl-metric-fill" style="--bw:95%;background:#34d399;animation-delay:0.4s"></div></div></div>
+        <div class="wl-card-note"><strong style="color:var(--text)">~5–8%</strong> GPU-hours but >40% of inference endpoints by device count. Apple M4/Snapdragon X. 7B Q4_K_M = 4GB, 50–80 tok/s. Privacy-first; permanently removes commodity tasks from cloud.</div>
+      </div>
+    </div>
+
+    <!-- Demand breakdown bar -->
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:12px 18px;display:flex;flex-direction:column;gap:8px;" class="anim anim-3">
+      <div style="font-family:var(--mono);font-size:8.5px;color:var(--muted);letter-spacing:0.18em;text-transform:uppercase;">Estimated GPU Demand by Workload · 2025</div>
+      <div style="display:flex;gap:2px;height:18px;border-radius:3px;overflow:hidden;">
+        <div style="flex:15;background:#6366f1;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:7.5px;color:rgba(255,255,255,0.9)">Train ~15%</div>
+        <div style="flex:10;background:#93c5fd;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:7.5px;color:rgba(0,0,0,0.6)">Synth ~10%</div>
+        <div style="flex:52;background:var(--sw);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:8.5px;color:rgba(0,0,0,0.75)">Batch Inference ~52%</div>
+        <div style="flex:13;background:var(--llm);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:7.5px;color:rgba(0,0,0,0.75)">Agentic ~13%</div>
+        <div style="flex:10;background:var(--red);opacity:0.8;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:7.5px;color:rgba(255,255,255,0.85)">FT ~10%</div>
+      </div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;">
+        <span style="font-family:var(--mono);font-size:9px;color:var(--muted)"><span style="color:#818cf8">●</span> Training ~15% · declining</span>
+        <span style="font-family:var(--mono);font-size:9px;color:var(--muted)"><span style="color:#93c5fd">●</span> Synthetic ~10% · rising</span>
+        <span style="font-family:var(--mono);font-size:9px;color:var(--muted)"><span style="color:var(--sw)">●</span> Batch Inference ~52% · dominant</span>
+        <span style="font-family:var(--mono);font-size:9px;color:var(--muted)"><span style="color:var(--llm)">●</span> Agentic ~13% · fastest ↑</span>
+        <span style="font-family:var(--mono);font-size:9px;color:var(--muted)"><span style="color:var(--red)">●</span> Fine-tuning ~10%</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ SLIDE 10 — THREE FUTURES ═══════════════════════ -->
+<div class="slide" id="s10" data-slide="9">
+  <div class="slide-chrome">
+    <div class="chrome-left">
+      <div class="chrome-logo">ClusterMAX™</div>
+      <div class="chrome-sep"></div>
+      <div class="chrome-title">Three Futures for Inference Compute</div>
+    </div>
+    <div class="chrome-right">
+      <button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span id="tl10">Light</span></button>
+      10 / 12
+    </div>
+  </div>
+
+  <div style="padding:8px 48px 12px;display:flex;flex-direction:column;gap:4px;" class="anim anim-1">
+    <div class="sec-label neutral">Scenarios · 2025–2028</div>
+    <div style="font-family:var(--display);font-size:clamp(20px,3vw,34px);letter-spacing:0.04em;line-height:1;color:var(--text);">These are not mutually exclusive. <span style="color:var(--muted)">They will coexist.</span></div>
+  </div>
+
+  <div class="slide-body" style="padding-top:0;flex:1;overflow:hidden;">
+    <div class="scenario-col anim anim-2">
+      <div class="scenario-num">01</div>
+      <span class="scenario-tag" style="color:var(--hw);border-color:var(--hw-mid);background:var(--hw-dim)">Centralised</span>
+      <div class="scenario-title">Cloud<br>Consolidation</div>
+      <div class="scenario-subtitle">Hyperscalers + frontier neoclouds dominate. Compute concentrates further.</div>
+      <div class="scenario-diagram">
+        <svg viewBox="0 0 180 150" style="max-width:170px;width:100%">
+          <circle cx="90" cy="74" r="20" fill="rgba(192,132,252,0.2)" stroke="#c084fc" stroke-width="1.5"/>
+          <text x="90" y="70" text-anchor="middle" font-family="'Bebas Neue'" font-size="9" fill="#c084fc">MEGA</text>
+          <text x="90" y="81" text-anchor="middle" font-family="'Bebas Neue'" font-size="9" fill="#c084fc">CLUSTER</text>
+          <line x1="90" y1="54" x2="90" y2="22" stroke="rgba(192,132,252,0.3)" stroke-dasharray="3,3"/>
+          <line x1="107" y1="63" x2="145" y2="42" stroke="rgba(192,132,252,0.3)" stroke-dasharray="3,3"/>
+          <line x1="107" y1="85" x2="145" y2="106" stroke="rgba(192,132,252,0.3)" stroke-dasharray="3,3"/>
+          <line x1="73" y1="85" x2="40" y2="106" stroke="rgba(192,132,252,0.3)" stroke-dasharray="3,3"/>
+          <line x1="73" y1="63" x2="40" y2="42" stroke="rgba(192,132,252,0.3)" stroke-dasharray="3,3"/>
+          <circle cx="90" cy="18" r="9" fill="rgba(192,132,252,0.12)" stroke="rgba(192,132,252,0.4)" stroke-width="1"/>
+          <circle cx="148" cy="38" r="9" fill="rgba(192,132,252,0.12)" stroke="rgba(192,132,252,0.4)" stroke-width="1"/>
+          <circle cx="148" cy="110" r="9" fill="rgba(192,132,252,0.12)" stroke="rgba(192,132,252,0.4)" stroke-width="1"/>
+          <circle cx="38" cy="110" r="9" fill="rgba(192,132,252,0.12)" stroke="rgba(192,132,252,0.4)" stroke-width="1"/>
+          <circle cx="38" cy="38" r="9" fill="rgba(192,132,252,0.12)" stroke="rgba(192,132,252,0.4)" stroke-width="1"/>
+        </svg>
+      </div>
+      <div class="scenario-bullets">
+        <div class="scenario-bullet"><div class="bullet-dot" style="background:var(--hw)"></div>Top 5 providers capture >60% of inference revenue</div>
+        <div class="scenario-bullet"><div class="bullet-dot" style="background:var(--hw)"></div>Microsoft/Google/Amazon anchor with $10B+ GPU contracts</div>
+        <div class="scenario-bullet"><div class="bullet-dot" style="background:var(--muted)"></div>Risk: antitrust scrutiny, supplier dependence on NVIDIA</div>
+      </div>
+      <div class="scenario-prob">
+        <div class="prob-label">Likelihood · 2025–2027</div>
+        <div class="prob-bar-track"><div class="prob-bar-fill" style="--bw:80%;background:var(--hw);animation-delay:0.5s"></div></div>
+        <div class="prob-val" style="color:var(--hw)">HIGH · Already underway</div>
+      </div>
+      <div class="scenario-winner"><div class="sw-label">Value Capture</div><div class="sw-val">Hyperscalers, CoreWeave-class neoclouds, NVIDIA</div></div>
+    </div>
+
+    <div class="scenario-col anim anim-3">
+      <div class="scenario-num">02</div>
+      <span class="scenario-tag" style="color:var(--sw);border-color:var(--sw-mid);background:var(--sw-dim)">Sovereign</span>
+      <div class="scenario-title">Geographic<br>Fragmentation</div>
+      <div class="scenario-subtitle">EU AI Act + US export controls create jurisdiction-locked compute demand.</div>
+      <div class="scenario-diagram">
+        <svg viewBox="0 0 180 150" style="max-width:170px;width:100%">
+          <circle cx="90" cy="74" r="18" fill="rgba(45,212,191,0.15)" stroke="#2dd4bf" stroke-width="1.5"/>
+          <text x="90" y="71" text-anchor="middle" font-family="'Bebas Neue'" font-size="8" fill="#2dd4bf">ROUTING</text>
+          <text x="90" y="81" text-anchor="middle" font-family="'Bebas Neue'" font-size="8" fill="#2dd4bf">LAYER</text>
+          <circle cx="44" cy="38" r="14" fill="rgba(45,212,191,0.12)" stroke="#2dd4bf" stroke-width="1"/>
+          <text x="44" y="35" text-anchor="middle" font-family="'Bebas Neue'" font-size="7" fill="#2dd4bf">EU</text>
+          <text x="44" y="44" text-anchor="middle" font-family="'Bebas Neue'" font-size="7" fill="#2dd4bf">CLOUD</text>
+          <circle cx="136" cy="38" r="14" fill="rgba(45,212,191,0.12)" stroke="#2dd4bf" stroke-width="1"/>
+          <text x="136" y="35" text-anchor="middle" font-family="'Bebas Neue'" font-size="7" fill="#2dd4bf">GULF</text>
+          <text x="136" y="44" text-anchor="middle" font-family="'Bebas Neue'" font-size="7" fill="#2dd4bf">AI</text>
+          <circle cx="44" cy="118" r="14" fill="rgba(45,212,191,0.12)" stroke="#2dd4bf" stroke-width="1"/>
+          <text x="44" y="115" text-anchor="middle" font-family="'Bebas Neue'" font-size="7" fill="#2dd4bf">US</text>
+          <text x="44" y="124" text-anchor="middle" font-family="'Bebas Neue'" font-size="7" fill="#2dd4bf">HYPER</text>
+          <circle cx="136" cy="118" r="14" fill="rgba(45,212,191,0.12)" stroke="#2dd4bf" stroke-width="1"/>
+          <text x="136" y="115" text-anchor="middle" font-family="'Bebas Neue'" font-size="7" fill="#2dd4bf">APAC</text>
+          <text x="136" y="124" text-anchor="middle" font-family="'Bebas Neue'" font-size="7" fill="#2dd4bf">CLOUD</text>
+          <line x1="56" y1="46" x2="77" y2="62" stroke="rgba(45,212,191,0.3)"/>
+          <line x1="124" y1="46" x2="103" y2="62" stroke="rgba(45,212,191,0.3)"/>
+          <line x1="58" y1="110" x2="78" y2="88" stroke="rgba(45,212,191,0.3)"/>
+          <line x1="122" y1="110" x2="102" y2="88" stroke="rgba(45,212,191,0.3)"/>
+        </svg>
+      </div>
+      <div class="scenario-bullets">
+        <div class="scenario-bullet"><div class="bullet-dot" style="background:var(--sw)"></div>EU AI Act data residency creates €5B+ sovereign cloud market</div>
+        <div class="scenario-bullet"><div class="bullet-dot" style="background:var(--sw)"></div>Gulf states: Saudi/UAE investing $100B+ in national AI infra</div>
+        <div class="scenario-bullet"><div class="bullet-dot" style="background:var(--muted)"></div>Risk: latency overhead from jurisdiction-mandated routing</div>
+      </div>
+      <div class="scenario-prob">
+        <div class="prob-label">Likelihood · 2025–2027</div>
+        <div class="prob-bar-track"><div class="prob-bar-fill" style="--bw:65%;background:var(--sw);animation-delay:0.55s"></div></div>
+        <div class="prob-val" style="color:var(--sw)">HIGH · Accelerating via regulation</div>
+      </div>
+      <div class="scenario-winner"><div class="sw-label">Value Capture</div><div class="sw-val">Regional sovereign clouds (Nebius), orchestration layers with smart routing</div></div>
+    </div>
+
+    <div class="scenario-col anim anim-4">
+      <div class="scenario-num">03</div>
+      <span class="scenario-tag" style="color:var(--llm);border-color:var(--llm-mid);background:var(--llm-dim)">On-Device</span>
+      <div class="scenario-title">Model<br>Commoditisation</div>
+      <div class="scenario-subtitle">Quantization makes capable models ubiquitous. Compute migrates to the device.</div>
+      <div class="scenario-diagram">
+        <svg viewBox="0 0 180 150" style="max-width:170px;width:100%">
+          <rect x="20" y="18" width="26" height="17" rx="2" fill="rgba(251,191,36,0.12)" stroke="#fbbf24" stroke-width="1"/>
+          <text x="33" y="30" text-anchor="middle" font-family="'JetBrains Mono'" font-size="6" fill="#fbbf24">7B</text>
+          <rect x="64" y="12" width="26" height="17" rx="2" fill="rgba(251,191,36,0.12)" stroke="#fbbf24" stroke-width="1"/>
+          <text x="77" y="24" text-anchor="middle" font-family="'JetBrains Mono'" font-size="6" fill="#fbbf24">13B</text>
+          <rect x="110" y="18" width="26" height="17" rx="2" fill="rgba(251,191,36,0.12)" stroke="#fbbf24" stroke-width="1"/>
+          <text x="123" y="30" text-anchor="middle" font-family="'JetBrains Mono'" font-size="6" fill="#fbbf24">7B</text>
+          <rect x="12" y="56" width="26" height="17" rx="2" fill="rgba(251,191,36,0.12)" stroke="#fbbf24" stroke-width="1"/>
+          <text x="25" y="68" text-anchor="middle" font-family="'JetBrains Mono'" font-size="6" fill="#fbbf24">3B</text>
+          <rect x="72" y="50" width="30" height="20" rx="2" fill="rgba(251,191,36,0.2)" stroke="#fbbf24" stroke-width="1.5"/>
+          <text x="87" y="60" text-anchor="middle" font-family="'JetBrains Mono'" font-size="6" fill="#fbbf24">30B</text>
+          <text x="87" y="68" text-anchor="middle" font-family="'JetBrains Mono'" font-size="5" fill="rgba(251,191,36,0.55)">workstation</text>
+          <rect x="130" y="56" width="26" height="17" rx="2" fill="rgba(251,191,36,0.12)" stroke="#fbbf24" stroke-width="1"/>
+          <text x="143" y="68" text-anchor="middle" font-family="'JetBrains Mono'" font-size="6" fill="#fbbf24">7B</text>
+          <rect x="28" y="100" width="26" height="17" rx="2" fill="rgba(251,191,36,0.12)" stroke="#fbbf24" stroke-width="1"/>
+          <text x="41" y="112" text-anchor="middle" font-family="'JetBrains Mono'" font-size="6" fill="#fbbf24">7B</text>
+          <rect x="72" y="104" width="26" height="17" rx="2" fill="rgba(251,191,36,0.12)" stroke="#fbbf24" stroke-width="1"/>
+          <text x="85" y="116" text-anchor="middle" font-family="'JetBrains Mono'" font-size="6" fill="#fbbf24">13B</text>
+          <rect x="118" y="100" width="26" height="17" rx="2" fill="rgba(251,191,36,0.12)" stroke="#fbbf24" stroke-width="1"/>
+          <text x="131" y="112" text-anchor="middle" font-family="'JetBrains Mono'" font-size="6" fill="#fbbf24">7B</text>
+          <text x="90" y="138" text-anchor="middle" font-family="'JetBrains Mono'" font-size="7" fill="rgba(251,191,36,0.4)">Q4_K_M · everywhere</text>
+        </svg>
+      </div>
+      <div class="scenario-bullets">
+        <div class="scenario-bullet"><div class="bullet-dot" style="background:var(--llm)"></div>By 2026: Q4-quantized 30B at conversational speed on $1,500 device</div>
+        <div class="scenario-bullet"><div class="bullet-dot" style="background:var(--llm)"></div>80% of commodity tasks (summarize, classify, Q&amp;A) leave cloud</div>
+        <div class="scenario-bullet"><div class="bullet-dot" style="background:var(--muted)"></div>Risk: frontier tasks, long-context, MoE still need cloud</div>
+      </div>
+      <div class="scenario-prob">
+        <div class="prob-label">Likelihood · 2025–2027</div>
+        <div class="prob-bar-track"><div class="prob-bar-fill" style="--bw:50%;background:var(--llm);animation-delay:0.6s"></div></div>
+        <div class="prob-val" style="color:var(--llm)">MEDIUM · 2026+ inflection</div>
+      </div>
+      <div class="scenario-winner"><div class="sw-label">Value Capture</div><div class="sw-val">Apple/Qualcomm, on-device model providers, quantization toolchain</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ SLIDE 11 — FOUR ARCHETYPES ═══════════════════════ -->
+<div class="slide" id="s11" data-slide="10">
+  <div class="slide-chrome">
+    <div class="chrome-left">
+      <div class="chrome-logo">ClusterMAX™</div>
+      <div class="chrome-sep"></div>
+      <div class="chrome-title">Company Archetypes</div>
+    </div>
+    <div class="chrome-right">
+      <button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span id="tl11">Light</span></button>
+      11 / 13
+    </div>
+  </div>
+
+  <div class="slide-body" style="overflow:hidden;">
+    <div style="flex:1;padding:0 48px 0;display:flex;flex-direction:column;gap:10px;overflow:hidden;">
+      <div class="anim anim-1" style="padding-top:8px;">
+        <div class="sec-label neutral">Competitive Landscape</div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;">
+          <div style="font-family:var(--display);font-size:clamp(22px,3vw,36px);letter-spacing:0.04em;line-height:1;color:var(--text);">Four Archetypes. <span style="color:var(--muted)">Distinct value-chain positions.</span></div>
+          <div style="display:flex;gap:20px;">
+            <div style="font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:0.12em;text-transform:uppercase;">← Infrastructure-First</div>
+            <div style="font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:0.12em;text-transform:uppercase;">Software-First →</div>
+          </div>
+        </div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--muted);margin-top:5px;letter-spacing:0.04em;">Value chain: Raw Compute → Network Fabric → Compute Runtime → Inference Engine → Orchestration → Model Serving → Application Layer</div>
+      </div>
+
+      <div class="company-matrix" style="flex:1;min-height:0;">
+
+        <!-- HYPERSCALER -->
+        <div class="comp-card anim anim-2" style="border-top:3px solid #6366f1;overflow:auto;">
+          <div class="comp-card-bg" style="color:#6366f1">AWS</div>
+          <div class="comp-top">
+            <span class="comp-archetype" style="color:#818cf8;border-color:rgba(99,102,241,0.35);background:rgba(99,102,241,0.1)">Hyperscaler</span>
+            <div style="font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;">Full-Stack · Infinite CAPEX</div>
+          </div>
+          <div class="comp-name">AWS / GCP / Azure</div>
+          <div class="comp-tagline">EC2 P5 (H100) · A3 Mega (H100) · ND H200 · Trainium3 / TPU v5e · $100B+ annual AI CAPEX</div>
+          <div class="stack-strip-wrap">
+            <div class="stack-strip-label">Value Chain Coverage (Raw Compute → Application)</div>
+            <div class="stack-strip">
+              <div class="ss-seg" style="background:#6366f1"><div class="ss-seg-label" style="color:rgba(255,255,255,0.85)">Raw</div></div>
+              <div class="ss-seg" style="background:#7c78f0"><div class="ss-seg-label" style="color:rgba(255,255,255,0.85)">Fabric</div></div>
+              <div class="ss-seg" style="background:#9490f0"><div class="ss-seg-label" style="color:rgba(255,255,255,0.85)">Runtime</div></div>
+              <div class="ss-seg" style="background:#a9a4f0"><div class="ss-seg-label" style="color:rgba(0,0,0,0.7)">Inf. Eng</div></div>
+              <div class="ss-seg" style="background:#bfbbf2"><div class="ss-seg-label" style="color:rgba(0,0,0,0.7)">Orch.</div></div>
+              <div class="ss-seg inactive"><div class="ss-seg-label">Serving</div></div>
+              <div class="ss-seg inactive"><div class="ss-seg-label">App</div></div>
+            </div>
+          </div>
+          <div class="comp-detail">
+            <div class="comp-metric"><div class="cm-label">Moat</div><div class="cm-val ok">Ecosystem lock-in + infinite CAPEX + custom silicon</div></div>
+            <div class="comp-metric"><div class="cm-label">Risk</div><div class="cm-val warn">GPU margin compression; NVIDIA dependency ($500B+ exposure)</div></div>
+            <div class="comp-metric"><div class="cm-label">2024–25 Moves</div><div class="cm-val">AWS: Trainium3 (1.4× H100 perf, 40% lower cost est.); GCP: A3 Mega 16× H100 SuperPOD; Azure: ND H200 clusters; all three: $20B+ each in 2025 AI infra CAPEX commitments</div></div>
+            <div class="comp-metric"><div class="cm-label">Strategy</div><div class="cm-val">Vertical integration via custom ASICs (Trainium, TPU, Maia) to hedge against NVIDIA pricing power. Volume wins — custom silicon cost/token curve will beat NVIDIA by 2027 at hyperscaler scale.</div></div>
+          </div>
+          <div class="comp-thesis">Deepest pockets, broadest base. Won't dominate inference software — doesn't need to. Custom ASICs are the long-term cost hedge. <strong style="color:var(--text)">Key watch:</strong> whether Trainium3/TPU v5e software ecosystems reach parity with CUDA for open-model inference by 2026.</div>
+        </div>
+
+        <!-- INFERENCE SPECIALIST -->
+        <div class="comp-card anim anim-3" style="border-top:3px solid var(--sw);overflow:auto;">
+          <div class="comp-card-bg" style="color:var(--sw)">FW</div>
+          <div class="comp-top">
+            <span class="comp-archetype" style="color:var(--sw);border-color:var(--sw-mid);background:var(--sw-dim)">Inference Specialist</span>
+            <div style="font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;">Software-First · Pure-Play API</div>
+          </div>
+          <div class="comp-name">Fireworks AI</div>
+          <div class="comp-tagline">No hardware ownership · Custom CUDA kernels · Series B $52M (2024) · FireFunction V2 · Compound AI routing</div>
+          <div class="stack-strip-wrap">
+            <div class="stack-strip-label">Value Chain Coverage (Raw Compute → Application)</div>
+            <div class="stack-strip">
+              <div class="ss-seg inactive"><div class="ss-seg-label">Raw</div></div>
+              <div class="ss-seg inactive"><div class="ss-seg-label">Fabric</div></div>
+              <div class="ss-seg inactive"><div class="ss-seg-label">Runtime</div></div>
+              <div class="ss-seg" style="background:var(--sw)"><div class="ss-seg-label" style="color:rgba(0,0,0,0.7)">Inf. Eng</div></div>
+              <div class="ss-seg" style="background:rgba(45,212,191,0.55)"><div class="ss-seg-label" style="color:rgba(0,0,0,0.6)">Orch.</div></div>
+              <div class="ss-seg" style="background:rgba(45,212,191,0.35)"><div class="ss-seg-label">Serving</div></div>
+              <div class="ss-seg inactive"><div class="ss-seg-label">App</div></div>
+            </div>
+          </div>
+          <div class="comp-detail">
+            <div class="comp-metric"><div class="cm-label">Moat</div><div class="cm-val ok">Kernel depth: sub-50ms TTFT; per-model CUDA tuning</div></div>
+            <div class="comp-metric"><div class="cm-label">Risk</div><div class="cm-val warn">vLLM/SGLang OSS closing the gap; serving commoditizes</div></div>
+            <div class="comp-metric"><div class="cm-label">2024–25 Moves</div><div class="cm-val">FireFunction V2 (structured output + tool-call inference tuned for agentic use cases); Compound AI routing (multi-model per API call); ASIC R&amp;D signals intent to own Layer 0 eventually; Together AI (peer): RedPajama + stronger research heritage</div></div>
+            <div class="comp-metric"><div class="cm-label">Strategy</div><div class="cm-val">Own the inference engine without owning hardware — highest software margin in the stack. Defensibility via model-specific kernel engineering that takes 2–3 years to replicate. Agentic tool-call market is the moat-building wedge.</div></div>
+          </div>
+          <div class="comp-thesis">Highest software margins. No CAPEX. <strong style="color:var(--text)">FireFunction</strong> targets the fastest-growing segment (agentic tool use). Risk: as Triton matures, custom kernel moat narrows. The ASIC R&amp;D signal is the right defensive move — if successful, Fireworks owns Layers 0 and 3, creating a genuinely unique cost structure.</div>
+        </div>
+
+        <!-- NEOCLOUD -->
+        <div class="comp-card anim anim-4" style="border-top:3px solid var(--hw);overflow:auto;">
+          <div class="comp-card-bg" style="color:var(--hw)">CW</div>
+          <div class="comp-top">
+            <span class="comp-archetype" style="color:var(--hw);border-color:var(--hw-mid);background:var(--hw-dim)">Neocloud</span>
+            <div style="font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;">Infrastructure-First · Specialized DC</div>
+          </div>
+          <div class="comp-name">CoreWeave</div>
+          <div class="comp-tagline">IPO Mar 2025 (~$23B) · Microsoft $11.9B contract · NVIDIA NPN preferred partner · ~50k+ H100 equiv. deployed</div>
+          <div class="stack-strip-wrap">
+            <div class="stack-strip-label">Value Chain Coverage (Raw Compute → Application)</div>
+            <div class="stack-strip">
+              <div class="ss-seg" style="background:var(--hw)"><div class="ss-seg-label" style="color:rgba(0,0,0,0.65)">Raw</div></div>
+              <div class="ss-seg" style="background:rgba(192,132,252,0.75)"><div class="ss-seg-label" style="color:rgba(0,0,0,0.6)">Fabric</div></div>
+              <div class="ss-seg" style="background:rgba(192,132,252,0.5)"><div class="ss-seg-label">Runtime</div></div>
+              <div class="ss-seg" style="background:rgba(192,132,252,0.35)"><div class="ss-seg-label">Inf. Eng</div></div>
+              <div class="ss-seg" style="background:rgba(192,132,252,0.4)"><div class="ss-seg-label">Orch.</div></div>
+              <div class="ss-seg inactive"><div class="ss-seg-label">Serving</div></div>
+              <div class="ss-seg inactive"><div class="ss-seg-label">App</div></div>
+            </div>
+          </div>
+          <div class="comp-detail">
+            <div class="comp-metric"><div class="cm-label">Moat</div><div class="cm-val ok">GPU inventory scale + NVIDIA preferred partner (NPN)</div></div>
+            <div class="comp-metric"><div class="cm-label">Risk</div><div class="cm-val warn">Hardware commodity trap; customer concentration (MSFT ~50%+)</div></div>
+            <div class="comp-metric"><div class="cm-label">2024–25 Moves</div><div class="cm-val">IPO at $40/share (opened below, signaling market skepticism on customer concentration); CoreWeave Inference product launched (vLLM/SGLang-managed endpoints — first up-stack move); B200 early allocation secured ahead of competitors; Object Storage via VAST Data partnership for training data workflows</div></div>
+            <div class="comp-metric"><div class="cm-label">Strategy</div><div class="cm-val">Capital-intensive bet on sustained GPU scarcity + frontier training staying cloud-based. Must migrate up the stack before hardware commoditizes (Stage III circa 2027). Inference product is the right direction — execution speed vs. contract renewals is the race.</div></div>
+          </div>
+          <div class="comp-thesis">CoreWeave Inference (vLLM/SGLang) is the critical strategic move — without it, CKKS Kubernetes is just premium hardware rental that hyperscalers can replicate. <strong style="color:var(--text)">The Microsoft dependency</strong> is simultaneously the moat (revenue certainty) and the risk (single-customer concentration + MSFT building competing Azure Maia capacity).</div>
+        </div>
+
+        <!-- ORCHESTRATOR -->
+        <div class="comp-card anim anim-5" style="border-top:3px solid var(--llm);overflow:auto;">
+          <div class="comp-card-bg" style="color:var(--llm)">MOD</div>
+          <div class="comp-top">
+            <span class="comp-archetype" style="color:var(--llm);border-color:var(--llm-mid);background:var(--llm-dim)">Orchestrator / Dev Platform</span>
+            <div style="font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;">Developer-First · Software-First</div>
+          </div>
+          <div class="comp-name">Modal</div>
+          <div class="comp-tagline">Serverless GPU · @app.function(gpu="H100") · Modal Volumes + Sandboxes + Web Endpoints · Series B $100M+ · Spot H100 at $1.80/hr</div>
+          <div class="stack-strip-wrap">
+            <div class="stack-strip-label">Value Chain Coverage (Raw Compute → Application)</div>
+            <div class="stack-strip">
+              <div class="ss-seg inactive"><div class="ss-seg-label">Raw</div></div>
+              <div class="ss-seg inactive"><div class="ss-seg-label">Fabric</div></div>
+              <div class="ss-seg inactive"><div class="ss-seg-label">Runtime</div></div>
+              <div class="ss-seg" style="background:rgba(251,191,36,0.45)"><div class="ss-seg-label" style="color:rgba(0,0,0,0.6)">Inf. Eng</div></div>
+              <div class="ss-seg" style="background:var(--llm)"><div class="ss-seg-label" style="color:rgba(0,0,0,0.65)">Orch.</div></div>
+              <div class="ss-seg" style="background:rgba(251,191,36,0.35)"><div class="ss-seg-label" style="color:rgba(0,0,0,0.5)">Serving</div></div>
+              <div class="ss-seg" style="background:rgba(251,191,36,0.3)"><div class="ss-seg-label" style="color:rgba(0,0,0,0.5)">App</div></div>
+            </div>
+          </div>
+          <div class="comp-detail">
+            <div class="comp-metric"><div class="cm-label">Moat</div><div class="cm-val ok">Developer experience + pipeline lock-in; multi-cloud arbitrage</div></div>
+            <div class="comp-metric"><div class="cm-label">Risk</div><div class="cm-val warn">Enterprise ceiling: custom CUDA, sub-20ms P99 outgrows abstraction</div></div>
+            <div class="comp-metric"><div class="cm-label">2024–25 Moves</div><div class="cm-val">Modal Volumes (persistent distributed storage — see storage slide); Modal Sandboxes (code execution environments for agentic tool use); Web Endpoints (persistent inference with cold-start optimization); multi-cloud H100 spot at $1.80/hr — 30–40% below single-vendor rates via hardware arbitrage across Lambda, CoreWeave, own infra</div></div>
+            <div class="comp-metric"><div class="cm-label">Strategy</div><div class="cm-val">Heroku/Vercel for GPU compute. Modal Volumes is the correct architectural move — compute without integrated storage is incomplete for real ML workflows. Outcome: acquisition target (AWS/GCP want the DX) or dominant infrastructure middleware for AI-native companies.</div></div>
+          </div>
+          <div class="comp-thesis">Modal's storage expansion (Volumes) validates the compute+storage integration thesis — they recognized that GPU orchestration without data infrastructure is a half-product. <strong style="color:var(--text)">Zero-egress co-located storage</strong> is the next natural step in their platform and represents the clearest adjacency for any provider with existing storage capabilities.</div>
+        </div>
+
+      </div>
+
+      <div style="display:flex;justify-content:space-between;padding:0 4px;" class="anim anim-6">
+        <div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;">↑ General Purpose</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;">Specialized ↓</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ SLIDE 13 — STRATEGIC THESIS ═══════════════════════ -->
+<div class="slide" id="s13" data-slide="12">
+  <div style="position:absolute;inset:0;overflow:hidden;pointer-events:none;">
+    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(192,132,252,0.05) 0%,rgba(45,212,191,0.04) 40%,transparent 70%);"></div>
+  </div>
+
+  <div class="slide-chrome" style="position:relative;z-index:10;">
+    <div class="chrome-left">
+      <div class="chrome-logo">ClusterMAX™</div>
+      <div class="chrome-sep"></div>
+      <div class="chrome-title">Strategic Thesis</div>
+    </div>
+    <div class="chrome-right">
+      <button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span id="tl13">Light</span></button>
+      13 / 13
+    </div>
+  </div>
+
+  <div class="slide-body" style="flex-direction:row;gap:0;padding:0;position:relative;z-index:1;overflow:hidden;">
+    <div style="width:40%;padding:0 36px 58px 48px;display:flex;flex-direction:column;justify-content:center;gap:18px;overflow:auto;">
+      <div class="anim anim-1">
+        <div class="sec-label neutral">Synthesis</div>
+        <div style="font-family:var(--display);font-size:clamp(24px,3vw,38px);letter-spacing:0.04em;line-height:1;color:var(--text);">Five Forces.</div>
+      </div>
+      <div class="anim anim-2" style="font-family:'Barlow',sans-serif;font-size:clamp(15px,1.8vw,19px);font-weight:300;font-style:italic;color:var(--text);line-height:1.5;">"The GPU cloud market is not a hardware rental market. It is a software-defined performance arbitrage market — and the winner owns the layer where silicon meets intelligence."</div>
+      <div class="anim anim-3" style="font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:0.15em;text-transform:uppercase;">— The Compute Stack Brief · Vol. III</div>
+      <div class="opp-box anim anim-4">
+        <div class="opp-label">★ Startup White Space</div>
+        <div class="opp-text">Production-grade <strong style="color:var(--sw)">agentic inference + integrated storage</strong>: stateful, multi-turn, long-context sessions with KV persistence, per-task pricing, and zero-egress co-located object storage. Not yet solved at production scale by any single provider.</div>
+      </div>
+    </div>
+
+    <div style="flex:1;padding:0 48px 0 36px;display:flex;flex-direction:column;justify-content:center;gap:10px;border-left:1px solid var(--border);overflow:auto;padding-bottom:58px;">
+      <div class="force-point anim anim-2" style="border-left:3px solid var(--hw)">
+        <div class="fp-num" style="color:var(--hw)">01</div>
+        <div><div class="fp-title" style="color:var(--hw)">Hardware will partially commoditize</div>
+        <div class="fp-body">AMD MI300X, B200 ramp, and GPU supply normalization will compress raw GPU-hour margins by 40–60% by 2027. Margin migrates up-stack to software. Ornn-style futures markets accelerate this transition by introducing price discovery.</div></div>
+      </div>
+      <div class="force-point anim anim-3" style="border-left:3px solid var(--sw)">
+        <div class="fp-num" style="color:var(--sw)">02</div>
+        <div><div class="fp-title" style="color:var(--sw)">Agentic workloads require new infrastructure</div>
+        <div class="fp-body">Current inference servers were built for stateless single-turn. Agentic = stateful, multi-hop, KV-persistent. 8–40 model calls per task, with shared context across calls. This unsolved engineering problem is the clearest product gap in the market.</div></div>
+      </div>
+      <div class="force-point anim anim-4" style="border-left:3px solid var(--llm)">
+        <div class="fp-num" style="color:var(--llm)">03</div>
+        <div><div class="fp-title" style="color:var(--llm)">80% of tasks migrate on-device by 2027</div>
+        <div class="fp-body">Q4-quantized 30B on a $1,500 machine at conversational speed by 2026. Commodity API workloads (summarize, classify, Q&amp;A) leave cloud at scale. The residual cloud demand is higher-value, higher-margin long-context and agentic work.</div></div>
+      </div>
+      <div class="force-point anim anim-5" style="border-left:3px solid var(--blue)">
+        <div class="fp-num" style="color:var(--blue)">04</div>
+        <div><div class="fp-title" style="color:var(--blue)">Sovereign AI is a durable structural force</div>
+        <div class="fp-body">EU AI Act, US export controls, Gulf state national AI strategies create jurisdiction-locked compute demand worth $50B+ by 2027. First-mover in each region wins decade-long enterprise contracts that hyperscalers cannot easily replicate.</div></div>
+      </div>
+      <div class="force-point anim anim-6" style="border-left:3px solid var(--green)">
+        <div class="fp-num" style="color:var(--green)">05</div>
+        <div><div class="fp-title" style="color:var(--green)">Storage integration becomes the moat multiplier</div>
+        <div class="fp-body">Co-located object storage eliminates the last hardware-layer friction in AI workflows. Zero-egress training data + checkpoint storage + model weight registry is a bundled offering that pure-play compute providers cannot easily replicate. The compute-storage integration is where the next durable margin lives.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ SLIDE 12 — TIMELINE TO 2030 ═══════════════════════ -->
+<div class="slide" id="s12" data-slide="11">
+  <div style="position:absolute;inset:0;pointer-events:none;overflow:hidden;">
+    <div style="position:absolute;top:-10%;right:-10%;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(192,132,252,0.05) 0%,transparent 60%);"></div>
+    <div style="position:absolute;bottom:-10%;left:-5%;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(45,212,191,0.04) 0%,transparent 60%);"></div>
+  </div>
+  <div class="slide-chrome">
+    <div class="chrome-left">
+      <div class="chrome-logo">ClusterMAX™</div>
+      <div class="chrome-sep"></div>
+      <div class="chrome-title">Forces Through 2030</div>
+    </div>
+    <div class="chrome-right">
+      <button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span id="tl12">Light</span></button>
+      12 / 13
+    </div>
+  </div>
+
+  <div class="slide-body" style="flex-direction:column;padding:0 48px 64px;gap:14px;overflow:auto;position:relative;z-index:2;">
+    <div class="anim anim-1" style="padding-top:8px;">
+      <div class="sec-label neutral">Outlook</div>
+      <div style="font-family:var(--display);font-size:clamp(22px,3vw,38px);letter-spacing:0.04em;line-height:1;color:var(--text);">The Forces, <span style="color:var(--hw)">Mapped to Time.</span></div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:6px;letter-spacing:0.04em;">Five structural forces drive the compute stack through 2030. None are reversible. All compound.</div>
+    </div>
+
+    <!-- Timeline grid -->
+    <div class="tl-band anim anim-2" style="flex:1;min-height:0;">
+
+      <!-- Force labels column -->
+      <div style="width:140px;flex-shrink:0;border-right:1px solid var(--border);background:var(--bg3);">
+        <div style="padding:8px 12px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--dim);letter-spacing:0.18em;text-transform:uppercase;height:42px;display:flex;align-items:center;">Force / Year →</div>
+        <div style="padding:9px 12px;border-bottom:1px solid var(--border);min-height:80px;display:flex;align-items:center;"><div><div style="font-family:var(--mono);font-size:9px;font-weight:500;color:var(--hw);letter-spacing:0.06em;margin-bottom:2px;">① Silicon</div><div style="font-family:var(--mono);font-size:8px;color:var(--dim);line-height:1.4">GPU generations &amp; memory</div></div></div>
+        <div style="padding:9px 12px;border-bottom:1px solid var(--border);min-height:80px;display:flex;align-items:center;"><div><div style="font-family:var(--mono);font-size:9px;font-weight:500;color:var(--sw);letter-spacing:0.06em;margin-bottom:2px;">② Software</div><div style="font-family:var(--mono);font-size:8px;color:var(--dim);line-height:1.4">Inference engines &amp; stack</div></div></div>
+        <div style="padding:9px 12px;border-bottom:1px solid var(--border);min-height:80px;display:flex;align-items:center;"><div><div style="font-family:var(--mono);font-size:9px;font-weight:500;color:var(--llm);letter-spacing:0.06em;margin-bottom:2px;">③ Models</div><div style="font-family:var(--mono);font-size:8px;color:var(--dim);line-height:1.4">Scale, architecture, edge</div></div></div>
+        <div style="padding:9px 12px;border-bottom:1px solid var(--border);min-height:80px;display:flex;align-items:center;"><div><div style="font-family:var(--mono);font-size:9px;font-weight:500;color:var(--blue);letter-spacing:0.06em;margin-bottom:2px;">④ Market</div><div style="font-family:var(--mono);font-size:8px;color:var(--dim);line-height:1.4">Commoditization &amp; sovereign</div></div></div>
+        <div style="padding:9px 12px;min-height:70px;display:flex;align-items:center;"><div><div style="font-family:var(--mono);font-size:9px;font-weight:500;color:var(--green);letter-spacing:0.06em;margin-bottom:2px;">⑤ Opportunity</div><div style="font-family:var(--mono);font-size:8px;color:var(--dim);line-height:1.4">Where to build</div></div></div>
+      </div>
+
+      <!-- 2025 -->
+      <div class="tl-col">
+        <div class="tl-year" style="color:var(--hw);background:var(--hw-dim);">2025<div style="font-family:var(--mono);font-size:8px;color:var(--muted);font-weight:normal;letter-spacing:0.06em;margin-top:2px;">Now</div></div>
+        <div class="tl-events">
+          <div class="tl-event hw"><strong>H200</strong> Stage I→II. B200 Stage I. H100 spot $1.80/hr.</div>
+          <div class="tl-event sw"><strong>vLLM 0.6/SGLang 0.4</strong> stable. 16× SW multiplier realized. RadixCache production.</div>
+          <div class="tl-event llm"><strong>DeepSeek R1/V3</strong> resets frontier economics. MoE at $6M training cost.</div>
+          <div class="tl-event neutral"><strong>CoreWeave IPO.</strong> Ornn futures contracts live. Hardware scarcity easing.</div>
+          <div class="tl-event" style="border-left-color:var(--green);background:rgba(52,211,153,0.07);color:var(--muted)"><strong style="color:var(--text)">Inference engine optimization</strong> — 14–16× SW multiplier is the most underpriced lever in the market.</div>
+        </div>
+      </div>
+
+      <!-- 2026 -->
+      <div class="tl-col">
+        <div class="tl-year" style="color:var(--hw);">2026<div style="font-family:var(--mono);font-size:8px;color:var(--dim);font-weight:normal;letter-spacing:0.06em;margin-top:2px;">Near term</div></div>
+        <div class="tl-events">
+          <div class="tl-event hw"><strong>B200 Stage II.</strong> Rubin (HBM4, 288GB+, 12+ TB/s) announced/samples. H100 enters Stage III for training.</div>
+          <div class="tl-event sw"><strong>Triton maturity.</strong> First production workloads on AMD ROCm. CUDA moat narrows at edges.</div>
+          <div class="tl-event llm"><strong>Quantized 30B</strong> at conversational speed on $1,500 consumer device. 80% of commodity tasks off cloud.</div>
+          <div class="tl-event neutral"><strong>EU AI Act</strong> enforcement begins. Gulf state sovereign AI clusters operational. Ornn-style futures markets gain liquidity.</div>
+          <div class="tl-event" style="border-left-color:var(--green);background:rgba(52,211,153,0.07);color:var(--muted)"><strong style="color:var(--text)">Agentic infra gap</strong> — no production-grade stateful multi-hop serving stack exists yet. White space.</div>
+        </div>
+      </div>
+
+      <!-- 2027 -->
+      <div class="tl-col">
+        <div class="tl-year" style="color:var(--sw);">2027<div style="font-family:var(--mono);font-size:8px;color:var(--dim);font-weight:normal;letter-spacing:0.06em;margin-top:2px;">Medium term</div></div>
+        <div class="tl-events">
+          <div class="tl-event hw"><strong>Rubin production.</strong> H100 Stage III complete. GPU-hour spot approaches $0.50/hr for H100-equivalent. Hardware commodity trap closes.</div>
+          <div class="tl-event sw"><strong>Compiler abstraction</strong> (MLIR, XLA) enables hardware-agnostic kernels. Multi-vendor inference clusters viable.</div>
+          <div class="tl-event llm"><strong>1T+ MoE</strong> frontier models standard. Long-context (1M+) production deployments normal. MLA replaces MHA at frontier.</div>
+          <div class="tl-event neutral"><strong>GPU-hour futures</strong> traded on regulated exchanges. $50B+ sovereign cloud market active. Hardware margins compress 40–60%.</div>
+          <div class="tl-event" style="border-left-color:var(--green);background:rgba(52,211,153,0.07);color:var(--muted)"><strong style="color:var(--text)">Compute-storage integration</strong> — co-location moat becomes decisive as hardware margins thin. Storage providers with GPU adjacency win.</div>
+        </div>
+      </div>
+
+      <!-- 2028–29 -->
+      <div class="tl-col">
+        <div class="tl-year" style="color:var(--llm);">2028–29<div style="font-family:var(--mono);font-size:8px;color:var(--dim);font-weight:normal;letter-spacing:0.06em;margin-top:2px;">Long term</div></div>
+        <div class="tl-events">
+          <div class="tl-event hw"><strong>Rubin successors.</strong> HBM5? 500GB+ per GPU. Multi-GPU disaggregation via CXL. Memory pool networking.</div>
+          <div class="tl-event sw"><strong>Software-defined routing</strong> across on-device/edge/cloud tiers automatic. ML workload scheduler as commodity.</div>
+          <div class="tl-event llm"><strong>Models as infrastructure.</strong> Distillation + on-device NPU bring 70B-class quality to smartphones. Cloud handles only frontier reasoning.</div>
+          <div class="tl-event neutral"><strong>Compute as utility.</strong> GPU-hour pricing as transparent as electricity kWh. Physical config + SW stack differentiation remain. National AI grids operational in 10+ countries.</div>
+          <div class="tl-event" style="border-left-color:var(--green);background:rgba(52,211,153,0.07);color:var(--muted)"><strong style="color:var(--text)">Routing intelligence layer</strong> — who controls smart compute routing across the hierarchy captures the platform margin.</div>
+        </div>
+      </div>
+
+      <!-- 2030+ -->
+      <div class="tl-col">
+        <div class="tl-year" style="color:var(--muted);border-left:1px dashed var(--border);">2030+<div style="font-family:var(--mono);font-size:8px;color:var(--dim);font-weight:normal;letter-spacing:0.06em;margin-top:2px;">Beyond horizon</div></div>
+        <div class="tl-events">
+          <div class="tl-event hw" style="opacity:0.7"><strong>Post-FLOPS era?</strong> Attention shifts: FLOPS/watt &gt; raw FLOPS. Energy cost becomes primary opex constraint at scale.</div>
+          <div class="tl-event sw" style="opacity:0.7"><strong>Autonomous optimization.</strong> ML compilers write their own kernels. Human kernel engineering role narrows.</div>
+          <div class="tl-event llm" style="opacity:0.7"><strong>Ubiquitous AI.</strong> Models ambient across all surfaces. Cloud residual = high-stakes, long-horizon reasoning tasks only.</div>
+          <div class="tl-event neutral" style="opacity:0.7"><strong>Compute finance maturity.</strong> GPU assets on balance sheets like real estate. Private credit + compute futures standard institutional asset class.</div>
+          <div class="tl-event" style="border-left-color:var(--green);background:rgba(52,211,153,0.07);color:var(--muted);opacity:0.7"><strong style="color:var(--text)">Uncertain frontier</strong> — the winner controls the intelligence routing layer, not any single hardware generation.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ SLIDE 13 — STRATEGIC THESIS ═══════════════════════ -->
+<script>
+// Theme toggle — matches intelligence brief pattern
+(function() {
+  const saved = localStorage.getItem('deckTheme');
+  if (saved === 'light') {
+    document.documentElement.classList.add('light');
+  }
+})();
+
+function updateToggleLabels() {
+  const isLight = document.documentElement.classList.contains('light');
+  document.querySelectorAll('[id^="tl"], #theme-label').forEach(el => {
+    el.textContent = isLight ? 'Dark' : 'Light';
+  });
+}
+
+function toggleTheme() {
+  const html = document.documentElement;
+  html.classList.toggle('light');
+  localStorage.setItem('deckTheme', html.classList.contains('light') ? 'light' : 'dark');
+  updateToggleLabels();
+}
+
+updateToggleLabels();
+
+// Navigation
+const TOTAL = 13;
+let currentSlide = 0;
+
+const slides = document.querySelectorAll('.slide');
+const dotsEl = document.getElementById('dots');
+const progress = document.getElementById('progress');
+const btnPrev = document.getElementById('btn-prev');
+const btnNext = document.getElementById('btn-next');
+const counterCur = document.getElementById('counter-cur');
+
+// Build dots
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' active' : '');
+  d.onclick = () => goSlide(i);
+  dotsEl.appendChild(d);
+}
+
+const domainColors = ['#c084fc','#c084fc','#c084fc','#c084fc','#c084fc','#fbbf24','#2dd4bf','#fbbf24','#fbbf24','#2dd4bf','#6366f1','#a882ff','#6ee7b7'];
+
+function goSlide(n) {
+  if (n < 0 || n >= TOTAL) return;
+  const old = currentSlide;
+  currentSlide = n;
+
+  slides[old].classList.remove('active');
+  slides[old].classList.add('prev');
+  const oldSlide = slides[old];
+  setTimeout(() => { oldSlide.classList.remove('prev'); }, 700);
+
+  slides[currentSlide].classList.add('active');
+
+  document.querySelectorAll('.dot').forEach((d, i) => {
+    d.classList.toggle('active', i === currentSlide);
+  });
+
+  progress.style.width = ((currentSlide + 1) / TOTAL * 100) + '%';
+  progress.style.background = domainColors[currentSlide] || '#c084fc';
+  counterCur.textContent = String(currentSlide + 1).padStart(2, '0');
+
+  btnPrev.disabled = currentSlide === 0;
+  btnNext.disabled = currentSlide === TOTAL - 1;
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); goSlide(currentSlide + 1); }
+  else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); goSlide(currentSlide - 1); }
+  else if (e.key === 'Home') goSlide(0);
+  else if (e.key === 'End') goSlide(TOTAL - 1);
+});
+
+let touchStartX = 0;
+document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (Math.abs(dx) > 50) goSlide(dx < 0 ? currentSlide + 1 : currentSlide - 1);
+});
+
+btnPrev.disabled = true;
+</script>
+</body>
+</html>
