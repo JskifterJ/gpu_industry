@@ -1039,6 +1039,28 @@ body.theme-light .mkt-filters,body.theme-light .db-filters{background:#fff;}
 #page-intro .sf-bm-name{color:#374151;}
 #page-intro .sf-bm.owner .sf-bm-name{color:#111827;}
 #page-intro .sf-bm.user .sf-bm-name{color:#6B7280;}
+#page-intro .sf-bms{gap:8px 12px;}
+#page-intro .sf-bm{
+  background:transparent!important;
+  border:none!important;
+  padding:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+}
+#page-intro .sf-bm.owner,
+#page-intro .sf-bm.user{
+  background:transparent!important;
+  border:none!important;
+  opacity:1!important;
+}
+#page-intro .sf-tag{
+  background:transparent!important;
+  border:none!important;
+  padding:0!important;
+  margin-left:4px;
+  color:#6B7280!important;
+  font-weight:500!important;
+}
 #page-intro .users-node{background:#F0F2F5!important;border-color:#D1D5DB!important;color:#374151!important;}
 #page-intro .lg-section h3{color:#111827;}
 
@@ -1059,6 +1081,7 @@ body.theme-light .mkt-filters,body.theme-light .db-filters{background:#fff;}
 #page-intro .intro-mlops-layer .sf-name,#page-intro .intro-mlops-layer .sf-desc{display:none;}
 #page-intro .intro-mlops-layer .sf-bms{display:grid;grid-template-columns:1fr;gap:6px;margin-top:2px;}
 #page-intro .intro-mlops-layer .sf-bm{width:100%;justify-content:flex-start;background:rgba(255,255,255,.7);border:1px solid rgba(216,191,245,.65);}
+#page-intro .intro-hidden-col{display:none!important;}
 #page-intro .intro-hide-trainft .intro-ch-train,
 #page-intro .intro-hide-trainft .intro-ch-ft{display:none;}
 #page-intro .intro-hide-trainft .intro-split-three{grid-template-columns:1fr;}
@@ -1919,7 +1942,7 @@ body.theme-light .btn.nav-active{
         <div class="sf-num" style="color:#6B7280">↑</div>
         <div class="sf-content">
           <div class="sf-name" style="color:#111827;">External Inputs</div>
-          <div class="sf-desc" style="color:#374151;">Grid &amp; alt power, real-world data, synthetic data, internet / CDN, enterprise connectivity. Upstream dependencies that flow into the physical layer — no BM controls all of them.</div>
+          <div class="sf-desc" style="color:#374151;">The basic things every AI company needs before anything can run: electricity, internet access, and data. These are shared dependencies and no single business model fully controls them.</div>
           <div class="sf-bms">
             <div class="sf-bm owner"><div class="sf-bm-dot" style="background:#2563EB"></div><span class="sf-bm-name">Hyperscaler</span><span class="sf-tag"style="background:#DBEAFE;color:#111827;border:1px solid #2563EB33">power · data · CDN</span></div>
             <div class="sf-bm owner"><div class="sf-bm-dot" style="background:#059669"></div><span class="sf-bm-name">Neocloud</span><span class="sf-tag"style="background:#D1FAE5;color:#111827;border:1px solid #05966933">power · colo</span></div>
@@ -1939,7 +1962,7 @@ body.theme-light .btn.nav-active{
         <div class="sf-num" style="color:#6B7280;">0</div>
         <div class="sf-content">
           <div class="sf-name" style="color:#92400E;">Silicon &amp; Hardware Supply Chain</div>
-          <div class="sf-desc" style="color:#374151;">GPU vendors (NVIDIA H100/B200, AMD MI300X), custom ASICs (TPU, Trainium), networking silicon, foundries (TSMC), HBM memory, advanced packaging, OEM servers, export-controlled supply chain. 6–18 month lead times.</div>
+          <div class="sf-desc" style="color:#374151;">This is where chips and servers come from. If this layer is slow or constrained, everyone above it waits. Lead times are long (often months), so planning and procurement matter a lot.</div>
           <div class="sf-bms">
             <div class="sf-bm owner"><div class="sf-bm-dot" style="background:#2563EB"></div><span class="sf-bm-name">Hyperscaler</span><span class="sf-tag"style="background:#DBEAFE;color:#111827;border:1px solid #2563EB33">custom ASICs + priority allocation</span></div>
             <div class="sf-bm owner"><div class="sf-bm-dot" style="background:#059669"></div><span class="sf-bm-name">Neocloud</span><span class="sf-tag"style="background:#D1FAE5;color:#111827;border:1px solid #05966933">GPU procurement = existential</span></div>
@@ -1959,7 +1982,7 @@ body.theme-light .btn.nav-active{
         <div class="sf-num" style="color:#6B7280;">1</div>
         <div class="sf-content">
           <div class="sf-name" style="color:#713F12;">Physical Infrastructure</div>
-          <div class="sf-desc" style="color:#374151;">Data centers (owned or colo), power (40–500MW+), liquid cooling (DLC mandatory for H100), GPU nodes (8× H100 SXM5 per server), InfiniBand fabric (400G NDR), Ethernet, external connectivity.</div>
+          <div class="sf-desc" style="color:#374151;">The real-world facilities: buildings, power, cooling, racks, network cables, and GPU servers. This layer determines how much compute you can physically run and how reliably you can run it.</div>
           <div class="sf-bms">
             <div class="sf-bm owner"><div class="sf-bm-dot" style="background:#2563EB"></div><span class="sf-bm-name">Hyperscaler</span><span class="sf-tag"style="background:#DBEAFE;color:#111827;border:1px solid #2563EB33">owns DCs globally</span></div>
             <div class="sf-bm owner"><div class="sf-bm-dot" style="background:#059669"></div><span class="sf-bm-name">Neocloud</span><span class="sf-tag"style="background:#D1FAE5;color:#111827;border:1px solid #05966933">leases colo + owns nodes</span></div>
@@ -1980,7 +2003,7 @@ body.theme-light .btn.nav-active{
         <div class="sf-num" style="color:#6B7280;">2</div>
         <div class="sf-content">
           <div class="sf-name" style="color:#1E40AF;">L2: Hardware Abstraction Layer (HAL)</div>
-          <div class="sf-desc" style="color:#374151;">The software layer that bridges AI code to physical GPU hardware, defining compute capability and performance baseline. <strong>CUDA</strong> is NVIDIA's programming language — the dominant standard (90%+ of ML workloads), like Windows for GPUs. <strong>NCCL</strong> (pronounced 'Nickel') orchestrates multi-GPU communication 100× faster than IP-based alternatives; collective operations (AllReduce, AllGather) run synchronously during every training backward pass. <strong>PyTorch, JAX, TensorFlow</strong> compile to CUDA kernels. Custom kernels (FlashAttention, Triton) exploit GPU-specific architecture for 10–100× speedups on critical operations.</div>
+          <div class="sf-desc" style="color:#374151;">The core software that lets AI code use GPUs. Think of it like the translator between your model code and the chip. Better software here means faster model training and faster response generation.</div>
           <div class="sf-bms">
             <div class="sf-bm owner"><div class="sf-bm-dot" style="background:#2563EB"></div><span class="sf-bm-name">Hyperscaler</span><span class="sf-tag"style="background:#DBEAFE;color:#111827;border:1px solid #2563EB33">custom kernels + XLA</span></div>
             <div class="sf-bm owner"><div class="sf-bm-dot" style="background:#059669"></div><span class="sf-bm-name">Neocloud</span><span class="sf-tag"style="background:#D1FAE5;color:#111827;border:1px solid #05966933">manages CUDA fleet</span></div>
@@ -2001,7 +2024,7 @@ body.theme-light .btn.nav-active{
         <div class="sf-num" style="color:#6B7280;">3</div>
         <div class="sf-content">
           <div class="sf-name" style="color:#14532D;">Virtualization, Orchestration &amp; Aggregation</div>
-          <div class="sf-desc" style="color:#374151;">How GPUs are allocated, isolated, and scheduled for different jobs. Kubernetes is the industry-standard "traffic controller" that decides which AI workload gets which GPU at what time. MIG partitioning lets one physical GPU act as 7 independent smaller GPUs — like splitting a server into virtual computers. Multi-cloud federation (Aggregator speciality) stitches together capacity from multiple providers into one pool.</div>
+          <div class="sf-desc" style="color:#374151;">The control layer that decides which job gets which GPU, when, and for how long. It helps share compute fairly, avoid waste, and combine capacity from multiple clusters or clouds.</div>
           <div class="sf-bms">
             <div class="sf-bm owner"><div class="sf-bm-dot" style="background:#2563EB"></div><span class="sf-bm-name">Hyperscaler</span><span class="sf-tag"style="background:#DBEAFE;color:#111827;border:1px solid #2563EB33">full stack</span></div>
             <div class="sf-bm owner"><div class="sf-bm-dot" style="background:#059669"></div><span class="sf-bm-name">Neocloud</span><span class="sf-tag"style="background:#D1FAE5;color:#111827;border:1px solid #05966933">K8s + bare metal</span></div>
@@ -2024,13 +2047,13 @@ body.theme-light .btn.nav-active{
               <div class="sf-num" style="color:#6B7280;">4</div>
               <div class="sf-content">
                 <div class="sf-name" style="color:#1E3A6E;">Execution &amp; Optimization</div>
-                <div class="sf-desc" style="color:#374151;">Where compute work is executed. Training and fine-tuning run distributed jobs and alignment loops; inference serves requests continuously with latency-sensitive runtimes.</div>
+                <div class="sf-desc" style="color:#374151;">This is where the model actually does work: learning from data, adjusting behavior, and answering user requests quickly.</div>
               </div>
             </div>
             <div class="sf-split intro-split-three">
               <div class="sf-col intro-ch-train" style="background:#EBF2FF;border:1px solid #93BFFF;">
                 <div class="sf-col-h" style="color:#1D4ED8;">⚡ Training</div>
-                <div class="sf-col-d" style="color:#374151;">Distributed training (FSDP/Megatron), mixed precision, checkpointing, compiler stack. Requires tight IB fabric and co-located GPUs.</div>
+                <div class="sf-col-d" style="color:#374151;">Teaching the model from large datasets. This is the heaviest compute workload and usually needs many GPUs working together.</div>
                 <div class="sf-bms" style="margin-top:5px;flex-wrap:wrap;gap:3px;">
                   <div class="sf-bm owner" style="padding:2px 5px;"><div class="sf-bm-dot" style="background:#2563EB"></div><span class="sf-bm-name" style="font-size:7.5px;color:#374151;">H</span></div>
                   <div class="sf-bm owner" style="padding:2px 5px;"><div class="sf-bm-dot" style="background:#059669"></div><span class="sf-bm-name" style="font-size:7.5px;color:#374151;">N (infra)</span></div>
@@ -2040,7 +2063,7 @@ body.theme-light .btn.nav-active{
               </div>
               <div class="sf-col intro-ch-ft" style="background:#F2EEFF;border:1px solid #C4B0FF;">
                 <div class="sf-col-h" style="color:#5B21B6;">🔧 Fine-Tuning</div>
-                <div class="sf-col-d" style="color:#374151;">LoRA/QLoRA, RLHF/DPO, SFT, adapter management and alignment loops. PEFT methods make this viable on smaller clusters.</div>
+                <div class="sf-col-d" style="color:#374151;">Adjusting an existing model for a specific use case, tone, or task. Lighter and cheaper than full training, and often done on smaller clusters.</div>
                 <div class="sf-bms" style="margin-top:5px;flex-wrap:wrap;gap:3px;">
                   <div class="sf-bm owner" style="padding:2px 5px;"><div class="sf-bm-dot" style="background:#2563EB"></div><span class="sf-bm-name" style="font-size:7.5px;color:#374151;">H</span></div>
                   <div class="sf-bm owner" style="padding:2px 5px;"><div class="sf-bm-dot" style="background:#059669"></div><span class="sf-bm-name" style="font-size:7.5px;color:#374151;">N</span></div>
@@ -2051,7 +2074,7 @@ body.theme-light .btn.nav-active{
               </div>
               <div class="sf-col" style="background:#E8FAF0;border:1px solid #86E6B2;">
                 <div class="sf-col-h" style="color:#065F46;">🚀 Inference</div>
-                <div class="sf-col-d" style="color:#374151;">Quantization, KV cache, continuous batching, TensorRT-LLM/vLLM runtimes and high-RPS serving optimization.</div>
+                <div class="sf-col-d" style="color:#374151;">Running the model for real users in production. Focus is speed, stability, and cost per response.</div>
                 <div class="sf-bms" style="margin-top:5px;flex-wrap:wrap;gap:3px;">
                   <div class="sf-bm owner" style="padding:2px 5px;"><div class="sf-bm-dot" style="background:#2563EB"></div><span class="sf-bm-name" style="font-size:7.5px;color:#374151;">H</span></div>
                   <div class="sf-bm owner" style="padding:2px 5px;"><div class="sf-bm-dot" style="background:#059669"></div><span class="sf-bm-name" style="font-size:7.5px;color:#374151;">N</span></div>
@@ -2070,28 +2093,28 @@ body.theme-light .btn.nav-active{
               <div class="sf-num" style="color:#6B7280;">5</div>
               <div class="sf-content">
                 <div class="sf-name" style="color:#0C4A6E;">Data Pipelines &amp; Serving</div>
-                <div class="sf-desc" style="color:#374151;">The data and serving substrate that feeds each workload channel: training corpora, fine-tune datasets, and production inference endpoints.</div>
+                <div class="sf-desc" style="color:#374151;">The systems that move, clean, store, and deliver data and model outputs. In simple terms: getting the right data to the model and the right answers back to users.</div>
               </div>
             </div>
             <div class="sf-split intro-split-three">
               <div class="sf-col intro-ch-train" style="background:#EBF2FF;border:1px solid #93BFFF;">
                 <div class="sf-col-h" style="color:#1D4ED8;">⚡ Training Data</div>
-                <div class="sf-col-d" style="color:#374151;">Dataset storage, high-throughput loaders, preprocessing and catalog/lineage for petabyte-scale training corpora.</div>
+                <div class="sf-col-d" style="color:#374151;">Collecting and preparing large datasets for model learning, then feeding them fast enough so GPUs stay busy.</div>
               </div>
               <div class="sf-col intro-ch-ft" style="background:#F2EEFF;border:1px solid #C4B0FF;">
                 <div class="sf-col-h" style="color:#5B21B6;">🔧 Fine-Tune Data</div>
-                <div class="sf-col-d" style="color:#374151;">Instruction JSONL datasets, preference pairs, synthetic data generation and curation pipelines.</div>
+                <div class="sf-col-d" style="color:#374151;">Smaller, curated datasets used to steer model behavior for a specific product or domain.</div>
               </div>
               <div class="sf-col" style="background:#E8FAF0;border:1px solid #86E6B2;">
                 <div class="sf-col-h" style="color:#065F46;">🚀 Inference Serving</div>
-                <div class="sf-col-d" style="color:#374151;">Vector DB, model serving runtimes, API gateways, semantic cache and batch vs real-time routing.</div>
+                <div class="sf-col-d" style="color:#374151;">APIs and serving systems that deliver answers to apps and users, with routing and caching to keep latency low.</div>
               </div>
             </div>
           </div>
         </div>
 
         <div class="intro-mlops-side">
-          <div class="intro-mlops-label">MLOps<span>Cross-cutting - spans L4 &amp; L5</span></div>
+          <div class="intro-mlops-label">MLOps<span>Simple meaning: the day-to-day operations layer for ML teams (track runs, test quality, and ship updates safely)</span></div>
           <div class="sf-layer intro-mlops-layer" style="background:#F6EEFB;border:1px solid #D8BFF5;">
             <div class="sf-content">
               <div class="sf-bms">
@@ -2115,7 +2138,7 @@ body.theme-light .btn.nav-active{
         <div class="sf-num" style="color:#6B7280;">6</div>
         <div class="sf-content">
           <div class="sf-name" style="color:#92400E;">Control Plane · FinOps · Security &amp; Compliance</div>
-          <div class="sf-desc" style="color:#374151;">AI control plane (quota, SLO, request routing), model router, infra observability (DCGM→Prometheus→Grafana), LLM observability (LangFuse, Helicone), GPU cost attribution, capacity strategy, marketplace/billing, IAM, data privacy (GDPR/HIPAA), compliance (SOC2, AI Act).</div>
+          <div class="sf-desc" style="color:#374151;">The governance layer: who can use what, how costs are tracked, how systems are monitored, and how security and compliance requirements are enforced.</div>
           <div class="sf-bms">
             <div class="sf-bm owner"><div class="sf-bm-dot" style="background:#D97706"></div><span class="sf-bm-name">Aggregator</span><span class="sf-tag"style="background:#FEF3C7;color:#111827;border:1px solid #D9770633">marketplace = core product</span></div>
             <div class="sf-bm owner"><div class="sf-bm-dot" style="background:#0891B2"></div><span class="sf-bm-name">Inf. API / Model</span><span class="sf-tag"style="background:#CFFAFE;color:#111827;border:1px solid #0891B233">owns full control + compliance</span></div>
@@ -2136,7 +2159,7 @@ body.theme-light .btn.nav-active{
         <div class="sf-num" style="color:#6B7280;">7</div>
         <div class="sf-content">
           <div class="sf-name" style="color:#5B21B6;">Application &amp; End-User Interface</div>
-          <div class="sf-desc" style="color:#374151;">RAG pipelines, knowledge graphs, autonomous agents, tool calling / MCP, workflow automation, chat / copilot UIs, API products, enterprise integrations (Salesforce, SAP, GitHub Copilot). <strong>Neocloud largely absent here</strong> — stops at raw compute API.</div>
+          <div class="sf-desc" style="color:#374151;">The product layer users actually see: chat apps, copilots, APIs, and workflow tools. This is where infrastructure becomes customer value.</div>
           <div class="sf-bms">
             <div class="sf-bm owner"><div class="sf-bm-dot" style="background:#0891B2"></div><span class="sf-bm-name">Inf. API / Model</span><span class="sf-tag"style="background:#CFFAFE;color:#111827;border:1px solid #0891B233">ChatGPT · Claude.ai · API products</span></div>
             <div class="sf-bm owner"><div class="sf-bm-dot" style="background:#2563EB"></div><span class="sf-bm-name">Hyperscaler</span><span class="sf-tag"style="background:#DBEAFE;color:#111827;border:1px solid #2563EB33">Copilot · Bedrock · Vertex AI</span></div>
@@ -4593,10 +4616,27 @@ function renderDB(){
   
   var tierLabels={bmaas:'BMaaS',gpuaas:'GPUaaS',mlaas:'MLaaS',waas:'WaaS'};
   var cmBadge=function(cm){var cl={platinum:'cm-platinum',gold:'cm-gold',silver:'cm-silver',bronze:'cm-bronze',unrated:'cm-unrated'};return '<span class="mbadge '+cl[cm]+'">'+cm+'</span>';};
-  var ynOpts='<option value="">All</option><option value="yes">✓ Yes</option><option value="no">· No</option>';
-  var regionOpts='<option value="">All</option><option value="north_america">North America</option><option value="europe">Europe</option><option value="asia_pacific">Asia-Pacific</option><option value="middle_east">Middle East</option><option value="latin_america">Latin America</option>';
-  var stackOpts='<option value="">All</option><option value="bmaas">BMaaS</option><option value="gpuaas">GPUaaS</option><option value="mlaas">MLaaS</option><option value="waas">WaaS</option>';
-  var cmOpts='<option value="">All</option><option value="platinum">Platinum</option><option value="gold">Gold</option><option value="silver">Silver</option><option value="bronze">Bronze</option><option value="unrated">Unrated</option>';
+  function mkOpts(items,active){
+    return items.map(function(it){
+      return '<option value="'+it.v+'"'+(String(active||'')===String(it.v)?' selected':'')+'>'+it.l+'</option>';
+    }).join('');
+  }
+  var ynOpts=mkOpts([{v:'',l:'All'},{v:'yes',l:'✓ Yes'},{v:'no',l:'· No'}],null);
+  var regionOpts=mkOpts([
+    {v:'',l:'All'},
+    {v:'north_america',l:'North America'},
+    {v:'europe',l:'Europe'},
+    {v:'asia_pacific',l:'Asia-Pacific'},
+    {v:'middle_east',l:'Middle East'},
+    {v:'latin_america',l:'Latin America'}
+  ],dbHeaderFilters.region);
+  var stackOpts=mkOpts([{v:'',l:'All'},{v:'bmaas',l:'BMaaS'},{v:'gpuaas',l:'GPUaaS'},{v:'mlaas',l:'MLaaS'},{v:'waas',l:'WaaS'}],dbHeaderFilters.tier);
+  var cmOpts=mkOpts([{v:'',l:'All'},{v:'platinum',l:'Platinum'},{v:'gold',l:'Gold'},{v:'silver',l:'Silver'},{v:'bronze',l:'Bronze'},{v:'unrated',l:'Unrated'}],dbHeaderFilters.cm);
+  var ynOptsS3=mkOpts([{v:'',l:'All'},{v:'yes',l:'✓ Yes'},{v:'no',l:'· No'}],dbHeaderFilters.s3);
+  var ynOptsIb=mkOpts([{v:'',l:'All'},{v:'yes',l:'✓ Yes'},{v:'no',l:'· No'}],dbHeaderFilters.ib);
+  var ynOptsSoc2=mkOpts([{v:'',l:'All'},{v:'yes',l:'✓ Yes'},{v:'no',l:'· No'}],dbHeaderFilters.soc2);
+  var ynOptsPub=mkOpts([{v:'',l:'All'},{v:'yes',l:'✓ Yes'},{v:'no',l:'· No'}],dbHeaderFilters.pub);
+  var ynOptsEu=mkOpts([{v:'',l:'All'},{v:'yes',l:'✓ Yes'},{v:'no',l:'· No'}],dbHeaderFilters.eu);
   
   var s='<table class="db-table"><thead><tr>'
     +'<th onclick="dbSort(\'name\')">Company ↕</th>'
@@ -4607,11 +4647,11 @@ function renderDB(){
     +'<th onclick="dbSort(\'rev\')">Rev $M ↕</th>'
     +'<th onclick="dbSort(\'fte\')">FTE ↕</th>'
     +'<th><div class="db-th-wrap"><span class="db-th-label">ClusterMAX</span><select class="db-th-filter" onchange="dbSetHeaderFilter(\'cm\',this.value)" onclick="event.stopPropagation()">'+cmOpts+'</select></div></th>'
-    +'<th><div class="db-th-wrap"><span class="db-th-label">S3</span><select class="db-th-filter" onchange="dbSetHeaderFilter(\'s3\',this.value)" onclick="event.stopPropagation()">'+ynOpts+'</select></div></th>'
-    +'<th><div class="db-th-wrap"><span class="db-th-label">IB</span><select class="db-th-filter" onchange="dbSetHeaderFilter(\'ib\',this.value)" onclick="event.stopPropagation()">'+ynOpts+'</select></div></th>'
-    +'<th><div class="db-th-wrap"><span class="db-th-label">SOC2</span><select class="db-th-filter" onchange="dbSetHeaderFilter(\'soc2\',this.value)" onclick="event.stopPropagation()">'+ynOpts+'</select></div></th>'
-    +'<th><div class="db-th-wrap"><span class="db-th-label">Public</span><select class="db-th-filter" onchange="dbSetHeaderFilter(\'pub\',this.value)" onclick="event.stopPropagation()">'+ynOpts+'</select></div></th>'
-    +'<th><div class="db-th-wrap"><span class="db-th-label">EU/Sov</span><select class="db-th-filter" onchange="dbSetHeaderFilter(\'eu\',this.value)" onclick="event.stopPropagation()">'+ynOpts+'</select></div></th>'
+    +'<th><div class="db-th-wrap"><span class="db-th-label">S3</span><select class="db-th-filter" onchange="dbSetHeaderFilter(\'s3\',this.value)" onclick="event.stopPropagation()">'+ynOptsS3+'</select></div></th>'
+    +'<th><div class="db-th-wrap"><span class="db-th-label">IB</span><select class="db-th-filter" onchange="dbSetHeaderFilter(\'ib\',this.value)" onclick="event.stopPropagation()">'+ynOptsIb+'</select></div></th>'
+    +'<th><div class="db-th-wrap"><span class="db-th-label">SOC2</span><select class="db-th-filter" onchange="dbSetHeaderFilter(\'soc2\',this.value)" onclick="event.stopPropagation()">'+ynOptsSoc2+'</select></div></th>'
+    +'<th><div class="db-th-wrap"><span class="db-th-label">Public</span><select class="db-th-filter" onchange="dbSetHeaderFilter(\'pub\',this.value)" onclick="event.stopPropagation()">'+ynOptsPub+'</select></div></th>'
+    +'<th><div class="db-th-wrap"><span class="db-th-label">EU/Sov</span><select class="db-th-filter" onchange="dbSetHeaderFilter(\'eu\',this.value)" onclick="event.stopPropagation()">'+ynOptsEu+'</select></div></th>'
     +'<th style="min-width:200px;">Differentiator</th>'
     +'</tr></thead><tbody>';
   
@@ -4662,7 +4702,11 @@ function toggleIntroTrainFt(){
   var intro=document.getElementById('page-intro');
   var cb=document.getElementById('introHideTrainFt');
   if(!intro||!cb) return;
-  intro.classList.toggle('intro-hide-trainft', !!cb.checked);
+  var hide=!!cb.checked;
+  intro.classList.toggle('intro-hide-trainft', hide);
+  intro.querySelectorAll('.intro-ch-train,.intro-ch-ft').forEach(function(el){
+    el.classList.toggle('intro-hidden-col', hide);
+  });
 }
 
 function showPage(id){
