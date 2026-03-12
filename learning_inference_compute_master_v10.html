@@ -404,6 +404,7 @@ details>summary::-webkit-details-marker{display:none;}
 .emb3d-ctrl-label{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;}
 .emb3d-layer{width:100%;accent-color:var(--cyan);}
 .emb3d-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
+.emb3d-meta2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
 .emb3d-card{background:rgba(255,255,255,.03);border:1px solid var(--border2);border-radius:7px;padding:8px 10px;}
 .emb3d-card h4{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;}
 .emb3d-card p{font-size:11px;color:var(--muted);line-height:1.5;}
@@ -412,6 +413,11 @@ details>summary::-webkit-details-marker{display:none;}
 .emb3d-array .dim{color:var(--cyan);}
 .emb3d-array .delta-pos{color:var(--green);}
 .emb3d-array .delta-neg{color:var(--red);}
+.emb3d-mini{font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--ink);line-height:1.7;}
+.emb3d-mini .mut{color:var(--muted);}
+.emb3d-mini .good{color:var(--green);}
+.emb3d-mini .warn{color:var(--amber);}
+.emb3d-mini .bad{color:var(--red);}
 .emb3d-note{margin-top:9px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);line-height:1.6;}
 
 /* QUANTIZATION + MODEL SIZE VISUAL SIMPLIFICATION */
@@ -430,6 +436,7 @@ details>summary::-webkit-details-marker{display:none;}
   .tf-dyn-link{min-width:0;justify-content:flex-start;padding-left:8px;transform:rotate(90deg);height:16px;}
   .emb3d-controls{grid-template-columns:1fr;}
   .emb3d-meta{grid-template-columns:1fr;}
+  .emb3d-meta2{grid-template-columns:1fr;}
 }
 
 /* MISC */
@@ -552,7 +559,17 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
         <div id="emb3d-array" class="emb3d-array"></div>
       </div>
     </div>
-    <div id="emb3d-note" class="emb3d-note"><strong style="color:var(--cyan);">What “local features” means:</strong> punctuation style, nearby phrase templates, capitalization behavior, short-range syntax cues, and token-level formatting patterns. Later layers add longer-range relations and factual retrieval.</div>
+    <div class="emb3d-meta2">
+      <div class="emb3d-card">
+        <h4>ID -> Token Path</h4>
+        <div id="emb3d-idpath" class="emb3d-mini"></div>
+      </div>
+      <div class="emb3d-card">
+        <h4>Logits -> Softmax (Toy Vocab)</h4>
+        <div id="emb3d-probs" class="emb3d-mini"></div>
+      </div>
+    </div>
+    <div id="emb3d-note" class="emb3d-note"><strong style="color:var(--cyan);">Green lines in decode:</strong> these are attention reads from cached prior-token states into the current candidate-token state at this layer. <strong style="color:var(--cyan);">What “local features” means:</strong> punctuation style, nearby phrase templates, capitalization behavior, short-range syntax cues, and token-level formatting patterns. Later layers add longer-range relations and factual retrieval.</div>
   </div>
 
   <!-- PART 1: PLAIN ENGLISH INTRO -->
@@ -1882,10 +1899,33 @@ var EMB3D = {
   playing: false,
   lastTs: 0,
   speedMs: 650,
+  events: [],
   baseVec: [0.18,-0.44,0.07,0.31,-0.12,0.22,-0.05,0.11],
   targetDecode: [0.84,-0.16,0.70,0.76,0.58,0.51,0.73,0.66],
   targetPrefill: [0.56,-0.20,0.33,0.47,0.24,0.29,0.37,0.30]
 };
+
+function emb3dEventForLayer(layer){
+  if(layer <= 8) return { t:'+ grammar scaffold', c:'var(--cyan)' };
+  if(layer <= 16) return { t:'+ token placement priors', c:'var(--cyan)' };
+  if(layer <= 24) return { t:'+ local phrase template', c:'var(--green)' };
+  if(layer <= 36) return { t:'+ capitalization/style cue', c:'var(--green)' };
+  if(layer <= 48) return { t:'+ relation: capital(country, ?)', c:'var(--amber)' };
+  if(layer <= 60) return { t:'+ factual retrieval pressure', c:'var(--amber)' };
+  if(layer <= 72) return { t:'+ suppress unrelated clusters', c:'var(--red)' };
+  return { t:'+ align to vocab logits', c:'var(--green)' };
+}
+
+function emb3dPushEvent(layer){
+  var ev = emb3dEventForLayer(layer);
+  EMB3D.events.push({
+    txt: 'L' + layer + ' ' + ev.t,
+    life: 1.0,
+    y: 0,
+    color: ev.c
+  });
+  if(EMB3D.events.length > 14) EMB3D.events.shift();
+}
 
 function setEmb3dSpeed(v){
   EMB3D.speedMs = v === 'slow' ? 950 : (v === 'fast' ? 280 : 650);
@@ -1905,6 +1945,7 @@ function setEmb3dPhase(phase){
   EMB3D.phase = phase;
   EMB3D.layer = 1;
   EMB3D.playing = false;
+  EMB3D.events = [];
   var pre = document.getElementById('emb3d-prefill');
   var dec = document.getElementById('emb3d-decode');
   if(pre) pre.classList.toggle('on', phase === 'prefill');
@@ -1921,6 +1962,7 @@ function setEmb3dPhase(phase){
 }
 
 function setEmb3dLayer(layer, fromSlider){
+  var prevLayer = EMB3D.layer;
   EMB3D.layer = Math.max(1, Math.min(80, layer || 1));
   if(fromSlider){
     EMB3D.playing = false;
@@ -1931,6 +1973,7 @@ function setEmb3dLayer(layer, fromSlider){
   if(sl && !fromSlider) sl.value = EMB3D.layer;
   var lbl = document.getElementById('emb3d-layer-label');
   if(lbl) lbl.textContent = 'Layer ' + EMB3D.layer + ' / 80';
+  if(EMB3D.layer > prevLayer) emb3dPushEvent(EMB3D.layer);
   emb3dUpdateMeta();
 }
 
@@ -1997,6 +2040,56 @@ function emb3dUpdateMeta(){
     }
     arrayEl.innerHTML = parts.join(' &nbsp;|&nbsp; ');
   }
+
+  var idPath = document.getElementById('emb3d-idpath');
+  if(idPath){
+    var tok = EMB3D.phase === 'decode' ? 'candidate(next)' : 'tracked_prompt_token';
+    var tokId = EMB3D.phase === 'decode' ? 14357 : 318;
+    idPath.innerHTML = '<span class="mut">input IDs:</span> [464, 3361, 286, 4881, 318] &rarr; '
+      + '<span class="mut">focus:</span> <strong>' + tok + '</strong> (ID ' + tokId + ')<br>'
+      + '<span class="mut">embedding lookup:</span> ID ' + tokId + ' &rarr; h0 in R<sup>8192</sup><br>'
+      + '<span class="mut">layer update:</span> h<sub>' + EMB3D.layer + '</sub> = h<sub>' + (EMB3D.layer-1) + '</sub> + &Delta;<sub>attn</sub> + &Delta;<sub>ffn</sub>';
+  }
+
+  var probsEl = document.getElementById('emb3d-probs');
+  if(probsEl){
+    var p = emb3dToyProbs(EMB3D.layer);
+    probsEl.innerHTML = '<span class="mut">logits:</span> Paris=' + p.logits.paris.toFixed(2)
+      + ', Lyon=' + p.logits.lyon.toFixed(2)
+      + ', Pizza=' + p.logits.pizza.toFixed(2)
+      + ', Other=' + p.logits.other.toFixed(2) + '<br>'
+      + '<span class="mut">softmax:</span> '
+      + '<span class="good">Paris ' + (p.probs.paris*100).toFixed(1) + '%</span> | '
+      + '<span class="warn">Lyon ' + (p.probs.lyon*100).toFixed(1) + '%</span> | '
+      + '<span class="bad">Pizza ' + (p.probs.pizza*100).toFixed(1) + '%</span> | '
+      + '<span class="mut">Other ' + (p.probs.other*100).toFixed(1) + '%</span><br>'
+      + '<span class="mut">across full vocabulary:</span> 1 chosen token sampled from 128,256 token probabilities.';
+  }
+}
+
+function emb3dToyProbs(layer){
+  var t = emb3dEase((layer - 1) / 79);
+  var logits = {
+    paris: 0.6 + 4.2*t,
+    lyon: 0.4 + 1.6*t,
+    pizza: 1.2 - 1.6*t,
+    other: 0.8 - 0.5*t
+  };
+  var maxL = Math.max(logits.paris, logits.lyon, logits.pizza, logits.other);
+  var eParis = Math.exp(logits.paris - maxL);
+  var eLyon = Math.exp(logits.lyon - maxL);
+  var ePizza = Math.exp(logits.pizza - maxL);
+  var eOther = Math.exp(logits.other - maxL);
+  var s = eParis + eLyon + ePizza + eOther;
+  return {
+    logits: logits,
+    probs: {
+      paris: eParis/s,
+      lyon: eLyon/s,
+      pizza: ePizza/s,
+      other: eOther/s
+    }
+  };
 }
 
 function initEmb3dCanvas(){
@@ -2121,6 +2214,19 @@ function drawEmb3d(ts){
       }
     }
   }
+
+  // Decaying learning event text that drops down and fades
+  EMB3D.events.forEach(function(ev, i){
+    ev.life = Math.max(0, ev.life - 0.0105);
+    ev.y += 0.35;
+    if(ev.life <= 0) return;
+    ctx.globalAlpha = ev.life;
+    ctx.fillStyle = ev.color;
+    ctx.font = '11px IBM Plex Mono';
+    ctx.fillText(ev.txt, 16, 24 + i*16 + ev.y);
+    ctx.globalAlpha = 1;
+  });
+  EMB3D.events = EMB3D.events.filter(function(ev){ return ev.life > 0; });
 
   window.requestAnimationFrame(drawEmb3d);
 }
