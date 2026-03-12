@@ -590,7 +590,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
 
           <div style="background:rgba(26,191,208,.1);border:1px solid rgba(26,191,208,.28);border-radius:6px;padding:7px;">
             <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--cyan);margin-bottom:4px;">2) KV write (all 80 layers)</div>
-            <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--ink);">cache += {K_t^l, V_t^l}</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--ink);">cache &larr; cache U {K<sub>t</sub><sup>(l)</sup>, V<sub>t</sub><sup>(l)</sup>}</div>
             <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);margin-top:3px;">meaning attributes are now retrievable</div>
           </div>
 
@@ -598,7 +598,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
 
           <div style="background:rgba(232,160,32,.1);border:1px solid rgba(232,160,32,.28);border-radius:6px;padding:7px;">
             <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--amber);margin-bottom:4px;">3) Next run (t+1)</div>
-            <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--ink);">Q_(t+1) attends to cached K,V</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--ink);">Q<sub>t+1</sub> attends to cached {K<sub>&le;t</sub>, V<sub>&le;t</sub>}</div>
             <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);margin-top:3px;">biases toward punctuation or follow-up facts</div>
           </div>
         </div>
@@ -614,18 +614,19 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
     <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:10px 12px;margin-bottom:10px;">
       <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--cyan);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;">Tracked dimensions example (illustrative): how one token vector changes and drives output</div>
       <div style="font-size:11px;color:var(--muted);line-height:1.58;margin-bottom:8px;">Below we track 4 sample coordinates of the <span style="color:var(--ink);">1 &times; 8,192</span> state for token <span style="color:var(--green);">"France"</span>. Each layer applies <span style="color:var(--purple);">Attention</span> and <span style="color:var(--blue);">FFN</span>, then adds both via residual: <span style="font-family:'IBM Plex Mono',monospace;color:var(--ink);">h(l+1) = h(l) + Delta_attn + Delta_ffn</span>.</div>
+      <div style="font-size:10px;color:var(--muted);line-height:1.55;margin-bottom:8px;">Notation: <span style="font-family:'IBM Plex Mono',monospace;">h<sub>0</sub></span> is the initial embedding state. <span style="font-family:'IBM Plex Mono',monospace;">Delta_attn<sup>(20)</sup></span> and <span style="font-family:'IBM Plex Mono',monospace;">Delta_ffn<sup>(20)</sup></span> are both from the same representative layer block (around layer 20). <span style="font-family:'IBM Plex Mono',monospace;">h<sub>20</sub>, h<sub>60</sub>, h<sub>80</sub></span> are cumulative states after 20, 60, and 80 layers.</div>
 
       <div style="overflow-x:auto;margin-bottom:8px;">
         <table style="width:100%;border-collapse:collapse;font-family:'IBM Plex Mono',monospace;font-size:8.5px;min-width:760px;">
           <thead>
             <tr style="border-bottom:1px solid rgba(255,255,255,.14);">
               <th style="text-align:left;padding:6px 8px;color:var(--muted);">Dim</th>
-              <th style="text-align:right;padding:6px 8px;color:var(--muted);">h0</th>
-              <th style="text-align:right;padding:6px 8px;color:var(--purple);">L20 Delta_attn</th>
-              <th style="text-align:right;padding:6px 8px;color:var(--blue);">L20 Delta_ffn</th>
-              <th style="text-align:right;padding:6px 8px;color:var(--ink);">h20</th>
-              <th style="text-align:right;padding:6px 8px;color:var(--ink);">h60</th>
-              <th style="text-align:right;padding:6px 8px;color:var(--green);">h80 (final)</th>
+              <th style="text-align:right;padding:6px 8px;color:var(--muted);">h<sub>0</sub> (initial)</th>
+              <th style="text-align:right;padding:6px 8px;color:var(--purple);">Delta_attn<sup>(20)</sup></th>
+              <th style="text-align:right;padding:6px 8px;color:var(--blue);">Delta_ffn<sup>(20)</sup></th>
+              <th style="text-align:right;padding:6px 8px;color:var(--ink);">h<sub>20</sub></th>
+              <th style="text-align:right;padding:6px 8px;color:var(--ink);">h<sub>60</sub></th>
+              <th style="text-align:right;padding:6px 8px;color:var(--green);">h<sub>80</sub> (final)</th>
             </tr>
           </thead>
           <tbody>
