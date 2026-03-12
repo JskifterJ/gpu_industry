@@ -389,6 +389,21 @@ details>summary::-webkit-details-marker{display:none;}
 .tf-dyn-t-hidden .tf-dyn-stage-title{color:var(--blue);}
 .tf-dyn-t-output{border-color:rgba(232,160,32,.35);background:rgba(232,160,32,.08);}
 .tf-dyn-t-output .tf-dyn-stage-title{color:var(--amber);}
+
+/* EMBEDDING SPACE (3D ANALOGY) */
+.emb3d-wrap{background:rgba(255,255,255,.03);border:1px solid var(--border2);border-radius:10px;padding:14px 16px;margin-bottom:18px;}
+.emb3d-h{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:9px;}
+.emb3d-title{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--cyan);text-transform:uppercase;letter-spacing:.08em;}
+.emb3d-btns{display:flex;gap:6px;flex-wrap:wrap;}
+.emb3d-btn{font-family:'IBM Plex Mono',monospace;font-size:8.5px;padding:4px 10px;border-radius:4px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;}
+.emb3d-btn.on{border-color:var(--cyan);background:rgba(26,191,208,.12);color:var(--cyan);}
+.emb3d-canvas{width:100%;height:280px;display:block;border-radius:8px;border:1px solid var(--border2);background:rgba(0,0,0,.35);}
+.emb3d-note{margin-top:9px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);line-height:1.6;}
+
+/* QUANTIZATION + MODEL SIZE VISUAL SIMPLIFICATION */
+.q-step-card{background:rgba(255,255,255,.04)!important;border:1px solid var(--border2)!important;}
+.q-step-track{background:var(--dim)!important;}
+.ms-qbtn{border:1px solid var(--border2)!important;background:rgba(255,255,255,.03)!important;}
 @media (max-width: 1120px){
   .econx-grid{grid-template-columns:1fr;}
   .econx-compare{grid-template-columns:1fr;}
@@ -490,6 +505,18 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
 <div style="background:var(--bg);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:24px 26px;margin-bottom:20px;">
   <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:var(--cyan);text-transform:uppercase;letter-spacing:.15em;margin-bottom:5px;">Before we begin</div>
   <div style="font-family:'IBM Plex Mono',monospace;font-size:17px;font-weight:600;color:var(--ink);margin-bottom:20px;">What exactly is a language model?</div>
+
+  <div class="emb3d-wrap">
+    <div class="emb3d-h">
+      <div class="emb3d-title">Embedding Space (3D Analogy)</div>
+      <div class="emb3d-btns">
+        <button id="emb3d-prefill" class="emb3d-btn on" onclick="setEmb3dPhase('prefill')">Prefill (parallel)</button>
+        <button id="emb3d-decode" class="emb3d-btn" onclick="setEmb3dPhase('decode')">Decode (sequential)</button>
+      </div>
+    </div>
+    <canvas id="emb3d-canvas" class="emb3d-canvas"></canvas>
+    <div id="emb3d-note" class="emb3d-note"><strong style="color:var(--cyan);">Prefill:</strong> all prompt tokens are processed together and can attend to each other in one pass. <strong style="color:var(--amber);">Decode:</strong> one new token is added each step, attending over cached history.</div>
+  </div>
 
   <!-- PART 1: PLAIN ENGLISH INTRO -->
   <div style="font-size:13px;color:var(--muted);line-height:1.85;margin-bottom:22px;">
@@ -1339,7 +1366,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
       </div>
 
       <div id="ms-formula-blocks" style="display:flex;flex-direction:column;gap:8px;margin-top:10px;">
-        <details style="background:rgba(74,144,232,.08);border:1px solid rgba(74,144,232,.3);border-radius:6px;padding:8px 10px;">
+        <details style="background:rgba(255,255,255,.04);border:1px solid var(--border2);border-radius:6px;padding:8px 10px;">
           <summary style="cursor:pointer;list-style:none;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--blue);text-transform:uppercase;letter-spacing:.08em;">What determines L (layers)?</summary>
           <div style="font-size:11.5px;color:var(--muted);line-height:1.7;margin-top:8px;">L is how many times each token is refined. Too few layers underfit; too many layers with fixed width give diminishing returns. Modern scaling laws suggest growing width and depth together. In practice, 70B-class dense models commonly land near <strong style="color:var(--ink);">~80 layers</strong>.</div>
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px;font-family:'IBM Plex Mono',monospace;font-size:8.5px;">
@@ -1532,7 +1559,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
           </div>
         </details>
 
-        <details style="background:rgba(138,110,232,.08);border:1px solid rgba(138,110,232,.3);border-radius:6px;padding:8px 10px;">
+        <details style="background:rgba(255,255,255,.04);border:1px solid var(--border2);border-radius:6px;padding:8px 10px;">
           <summary style="cursor:pointer;list-style:none;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--purple);text-transform:uppercase;letter-spacing:.08em;">Number of hidden dimensions (d)</summary>
           <div style="font-size:11.5px;color:var(--muted);line-height:1.7;margin-top:8px;">d controls how wide each token vector is. Bigger d increases representational capacity, but because core matrices are d&times;d, memory and compute scale with <strong style="color:var(--ink);">d²</strong>.</div>
           <div style="display:flex;flex-direction:column;gap:5px;font-family:'IBM Plex Mono',monospace;font-size:8.5px;margin-top:8px;">
@@ -1543,7 +1570,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
           <div style="font-size:10.5px;color:var(--muted);margin-top:8px;line-height:1.55;">Doubling d makes each major matrix 4&times; larger. That is the core reason model size jumps rapidly.</div>
         </details>
 
-        <details style="background:rgba(26,191,208,.08);border:1px solid rgba(26,191,208,.3);border-radius:6px;padding:8px 10px;">
+        <details style="background:rgba(255,255,255,.04);border:1px solid var(--border2);border-radius:6px;padding:8px 10px;">
           <summary style="cursor:pointer;list-style:none;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--cyan);text-transform:uppercase;letter-spacing:.08em;">What determines vocabulary size (V)?</summary>
           <div style="font-size:11.5px;color:var(--muted);line-height:1.7;margin-top:8px;">V comes from tokenizer design: language coverage, code symbols, punctuation granularity, multilingual support, and desired compression efficiency. Bigger V reduces token splits for rare words/code, but increases embedding parameters linearly (<strong style="color:var(--ink);">V &times; d</strong>).</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;font-family:'IBM Plex Mono',monospace;font-size:8.5px;">
@@ -1562,15 +1589,15 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
       <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);margin-bottom:8px;letter-spacing:.03em;">All memory and size examples below assume a <strong style="color:var(--ink);">70B parameter</strong> model.</div>
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-        <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:5px;padding:7px 9px;">
+        <div class="q-step-card" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:5px;padding:7px 9px;">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
             <div>
-              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink);font-weight:600;">FP32</span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink);font-weight:600;">1. FP32</span>
               <span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);margin-left:6px;">32-bit float &middot; 4 bytes/param</span>
             </div>
             <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);">280 GB</span>
           </div>
-          <div style="background:#1a2030;border-radius:2px;height:8px;overflow:hidden;margin-bottom:3px;"><div style="width:100%;height:100%;background:rgba(74,144,232,.6);border-radius:2px;"></div></div>
+          <div class="q-step-track" style="background:#1a2030;border-radius:2px;height:8px;overflow:hidden;margin-bottom:3px;"><div style="width:100%;height:100%;background:rgba(255,255,255,.55);border-radius:2px;"></div></div>
           <div style="margin-bottom:4px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:5px 6px;display:flex;justify-content:space-between;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:7.5px;">
             <span style="color:var(--red);"><span class="tip" data-tip="Sign bit chooses positive (+) or negative (-).">Sign</span><br><strong style="color:var(--ink);">+</strong></span>
             <span style="color:var(--amber);"><span class="tip" data-tip="Exponent field sets numeric scale (roughly where the decimal point sits).">Exponent</span><br><strong style="color:var(--ink);">127</strong></span>
@@ -1580,15 +1607,15 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
           <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);"><span>1 <span class="tip" data-tip="One sign bit (+/-).">sign</span> + 8 <span class="tip" data-tip="Exponent bits define numeric range. 8 bits gives 256 encoded exponent states.">exponent bits</span> + 23 <span class="tip" data-tip="Fraction bits define precision detail.">fraction bits</span></span><span style="color:var(--blue);">Baseline accuracy</span></div>
         </div>
 
-        <div style="background:rgba(48,200,112,.06);border:1.5px solid rgba(48,200,112,.4);border-radius:5px;padding:7px 9px;">
+        <div class="q-step-card" style="background:rgba(48,200,112,.06);border:1.5px solid rgba(48,200,112,.4);border-radius:5px;padding:7px 9px;">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
             <div>
-              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--green);font-weight:600;">BF16 &#10003;</span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--green);font-weight:600;">2. BF16 &#10003;</span>
               <span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);margin-left:6px;">16-bit float &middot; 2 bytes/param</span>
             </div>
             <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--green);">140 GB</span>
           </div>
-          <div style="background:#1a2030;border-radius:2px;height:8px;overflow:hidden;margin-bottom:3px;"><div style="width:50%;height:100%;background:var(--green);border-radius:2px;"></div></div>
+          <div class="q-step-track" style="background:#1a2030;border-radius:2px;height:8px;overflow:hidden;margin-bottom:3px;"><div style="width:50%;height:100%;background:rgba(255,255,255,.55);border-radius:2px;"></div></div>
           <div style="margin-bottom:4px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:5px 6px;display:flex;justify-content:space-between;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:7.5px;">
             <span style="color:var(--red);"><span class="tip" data-tip="Sign bit chooses positive (+) or negative (-).">Sign</span><br><strong style="color:var(--ink);">+</strong></span>
             <span style="color:var(--amber);"><span class="tip" data-tip="Exponent keeps BF16 range similar to FP32.">Exponent</span><br><strong style="color:var(--ink);">127</strong></span>
@@ -1599,15 +1626,15 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
           <div style="font-size:10px;color:var(--green);margin-top:3px;">Production standard &mdash; same numeric range as FP32, fewer decimals. Negligible quality loss.</div>
         </div>
 
-        <div style="background:rgba(232,160,32,.07);border:1px solid rgba(232,160,32,.3);border-radius:5px;padding:7px 9px;">
+        <div class="q-step-card" style="background:rgba(232,160,32,.07);border:1px solid rgba(232,160,32,.3);border-radius:5px;padding:7px 9px;">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
             <div>
-              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--amber);font-weight:600;">FP8 / INT8</span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--amber);font-weight:600;">3. FP8 / INT8</span>
               <span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);margin-left:6px;">8-bit &middot; 1 byte/param</span>
             </div>
             <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--amber);">70 GB</span>
           </div>
-          <div style="background:#1a2030;border-radius:2px;height:8px;overflow:hidden;margin-bottom:3px;"><div style="width:25%;height:100%;background:var(--amber);border-radius:2px;"></div></div>
+          <div class="q-step-track" style="background:#1a2030;border-radius:2px;height:8px;overflow:hidden;margin-bottom:3px;"><div style="width:25%;height:100%;background:rgba(255,255,255,.55);border-radius:2px;"></div></div>
           <div style="margin-bottom:4px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:5px 6px;display:flex;justify-content:space-between;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:7.5px;">
             <span style="color:var(--red);"><span class="tip" data-tip="Sign bit chooses positive (+) or negative (-).">Sign</span><br><strong style="color:var(--ink);">+</strong></span>
             <span style="color:var(--amber);"><span class="tip" data-tip="Integer bucket is the stored quantized integer code before de-quantization.">Integer bucket</span><br><strong style="color:var(--ink);">104</strong></span>
@@ -1619,15 +1646,15 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
           <div style="font-size:10px;color:var(--muted);margin-top:3px;">Frontier labs use this in production. Fits a single 8-GPU node. Small logic/math degradation.</div>
         </div>
 
-        <div style="background:rgba(224,72,72,.07);border:1px solid rgba(224,72,72,.3);border-radius:5px;padding:7px 9px;">
+        <div class="q-step-card" style="background:rgba(224,72,72,.07);border:1px solid rgba(224,72,72,.3);border-radius:5px;padding:7px 9px;">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
             <div>
-              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--red);font-weight:600;">INT4</span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--red);font-weight:600;">4. INT4</span>
               <span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);margin-left:6px;">4-bit integer &middot; 0.5 bytes/param</span>
             </div>
             <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--red);">35 GB</span>
           </div>
-          <div style="background:#1a2030;border-radius:2px;height:8px;overflow:hidden;margin-bottom:3px;"><div style="width:12.5%;height:100%;background:var(--red);border-radius:2px;"></div></div>
+          <div class="q-step-track" style="background:#1a2030;border-radius:2px;height:8px;overflow:hidden;margin-bottom:3px;"><div style="width:12.5%;height:100%;background:rgba(255,255,255,.55);border-radius:2px;"></div></div>
           <div style="margin-bottom:4px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:5px 6px;display:flex;justify-content:space-between;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:7.5px;">
             <span style="color:var(--red);"><span class="tip" data-tip="Sign bit chooses positive (+) or negative (-).">Sign</span><br><strong style="color:var(--ink);">+</strong></span>
             <span style="color:#d08686;"><span class="tip" data-tip="Integer bucket is the stored quantized code at 4-bit precision.">Integer bucket</span><br><strong style="color:var(--ink);">5</strong></span>
@@ -1679,10 +1706,10 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
         <div>
           <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--amber);margin-bottom:7px;">Precision</div>
           <div style="display:flex;flex-direction:column;gap:4px;" id="ms-quant-btns">
-            <button onclick="setQuant(4,'FP32')" data-name="FP32" data-bytes="4" data-label="FP32 — 4 bytes/param" class="ms-qbtn" style="font-family:'IBM Plex Mono',monospace;font-size:9px;padding:4px 8px;border-radius:4px;cursor:pointer;border:1px solid rgba(74,144,232,.4);background:rgba(74,144,232,.08);color:var(--blue);">FP32 — 4 bytes/param</button>
-            <button onclick="setQuant(2,'BF16')" data-name="BF16" data-bytes="2" data-label="BF16 — 2 bytes/param" class="ms-qbtn active" style="font-family:'IBM Plex Mono',monospace;font-size:9px;padding:4px 8px;border-radius:4px;cursor:pointer;border:1.5px solid var(--green);background:rgba(48,200,112,.15);color:var(--green);">BF16 — 2 bytes/param</button>
-            <button onclick="setQuant(1,'INT8')" data-name="INT8" data-bytes="1" data-label="INT8 — 1 byte/param" class="ms-qbtn" style="font-family:'IBM Plex Mono',monospace;font-size:9px;padding:4px 8px;border-radius:4px;cursor:pointer;border:1px solid rgba(232,160,32,.4);background:rgba(232,160,32,.08);color:var(--amber);">INT8 — 1 byte/param</button>
-            <button onclick="setQuant(0.5,'INT4')" data-name="INT4" data-bytes="0.5" data-label="INT4 — 0.5 bytes/param" class="ms-qbtn" style="font-family:'IBM Plex Mono',monospace;font-size:9px;padding:4px 8px;border-radius:4px;cursor:pointer;border:1px solid rgba(224,72,72,.4);background:rgba(224,72,72,.08);color:var(--red);">INT4 — 0.5 bytes/param</button>
+            <button onclick="setQuant(4,'FP32')" data-name="FP32" data-bytes="4" data-label="1. FP32 — 4 bytes/param" class="ms-qbtn" style="font-family:'IBM Plex Mono',monospace;font-size:9px;padding:4px 8px;border-radius:4px;cursor:pointer;border:1px solid var(--border2);background:rgba(255,255,255,.03);color:var(--blue);">1. FP32 — 4 bytes/param</button>
+            <button onclick="setQuant(2,'BF16')" data-name="BF16" data-bytes="2" data-label="2. BF16 — 2 bytes/param" class="ms-qbtn active" style="font-family:'IBM Plex Mono',monospace;font-size:9px;padding:4px 8px;border-radius:4px;cursor:pointer;border:1px solid var(--border2);background:rgba(255,255,255,.03);color:var(--green);">2. BF16 — 2 bytes/param</button>
+            <button onclick="setQuant(1,'INT8')" data-name="INT8" data-bytes="1" data-label="3. INT8 — 1 byte/param" class="ms-qbtn" style="font-family:'IBM Plex Mono',monospace;font-size:9px;padding:4px 8px;border-radius:4px;cursor:pointer;border:1px solid var(--border2);background:rgba(255,255,255,.03);color:var(--amber);">3. INT8 — 1 byte/param</button>
+            <button onclick="setQuant(0.5,'INT4')" data-name="INT4" data-bytes="0.5" data-label="4. INT4 — 0.5 bytes/param" class="ms-qbtn" style="font-family:'IBM Plex Mono',monospace;font-size:9px;padding:4px 8px;border-radius:4px;cursor:pointer;border:1px solid var(--border2);background:rgba(255,255,255,.03);color:var(--red);">4. INT4 — 0.5 bytes/param</button>
           </div>
         </div>
       </div>
@@ -1792,10 +1819,10 @@ function pinFormulaBlock(kind){
 function setQuant(bytes, name){
   _msQuant = bytes; _msQuantName = name;
   var tones = {
-    FP32: { color:'var(--blue)',  border:'rgba(74,144,232,.4)', activeBorder:'var(--blue)',  bg:'rgba(74,144,232,.08)', activeBg:'rgba(74,144,232,.2)' },
-    BF16: { color:'var(--green)', border:'rgba(48,200,112,.42)', activeBorder:'var(--green)', bg:'rgba(48,200,112,.08)', activeBg:'rgba(48,200,112,.2)' },
-    INT8: { color:'var(--amber)', border:'rgba(232,160,32,.4)', activeBorder:'var(--amber)', bg:'rgba(232,160,32,.08)', activeBg:'rgba(232,160,32,.2)' },
-    INT4: { color:'var(--red)',   border:'rgba(224,72,72,.4)',  activeBorder:'var(--red)',   bg:'rgba(224,72,72,.08)', activeBg:'rgba(224,72,72,.2)' }
+    FP32: { color:'var(--blue)' },
+    BF16: { color:'var(--green)' },
+    INT8: { color:'var(--amber)' },
+    INT4: { color:'var(--red)' }
   };
   var btns = document.querySelectorAll('.ms-qbtn');
   btns.forEach(function(b){
@@ -1804,12 +1831,157 @@ function setQuant(bytes, name){
     var tone = tones[btnName] || tones.FP32;
     var isActive = btnName === name;
     b.style.color = tone.color;
-    b.style.background = isActive ? tone.activeBg : tone.bg;
-    b.style.border = (isActive ? '1.5px solid ' + tone.activeBorder : '1px solid ' + tone.border);
+    b.style.background = isActive ? 'rgba(255,255,255,.08)' : 'rgba(255,255,255,.03)';
+    b.style.border = '1px solid var(--border2)';
     b.style.fontWeight = isActive ? '700' : '500';
     b.textContent = label + (isActive ? ' ✓' : '');
   });
   calcModelSize();
+}
+
+var _emb3dPhase = 'prefill';
+function setEmb3dPhase(phase){
+  _emb3dPhase = phase;
+  var pre = document.getElementById('emb3d-prefill');
+  var dec = document.getElementById('emb3d-decode');
+  if(pre) pre.classList.toggle('on', phase === 'prefill');
+  if(dec) dec.classList.toggle('on', phase === 'decode');
+  var note = document.getElementById('emb3d-note');
+  if(note){
+    note.innerHTML = phase === 'prefill'
+      ? '<strong style="color:var(--cyan);">Prefill:</strong> all prompt tokens are processed together and can attend to each other in one pass. <strong style="color:var(--amber);">Decode:</strong> one new token is added each step, attending over cached history.'
+      : '<strong style="color:var(--amber);">Decode:</strong> one new token is generated each loop from the current hidden state, while keys/values from prior tokens are reused from cache. <strong style="color:var(--cyan);">Prefill:</strong> remains the parallel prompt-processing stage.';
+  }
+}
+
+function initEmb3dCanvas(){
+  var canvas = document.getElementById('emb3d-canvas');
+  if(!canvas) return null;
+  var dpr = Math.max(1, window.devicePixelRatio || 1);
+  var w = Math.floor(canvas.clientWidth);
+  var h = Math.floor(canvas.clientHeight);
+  canvas.width = Math.floor(w * dpr);
+  canvas.height = Math.floor(h * dpr);
+  var ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return { ctx: ctx, w: w, h: h };
+}
+
+function drawEmb3d(ts){
+  var state = initEmb3dCanvas();
+  if(!state) return;
+  var ctx = state.ctx, w = state.w, h = state.h;
+  var isLight = document.body.classList.contains('light');
+  ctx.clearRect(0,0,w,h);
+  var grid = isLight ? 'rgba(20,30,50,.11)' : 'rgba(220,230,255,.10)';
+  for(var gx=0; gx<=12; gx++){
+    var x = (gx/12)*w;
+    ctx.strokeStyle = grid;
+    ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke();
+  }
+  for(var gy=0; gy<=8; gy++){
+    var y = (gy/8)*h;
+    ctx.strokeStyle = grid;
+    ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke();
+  }
+
+  var cx = w*0.5, cy = h*0.56, rx = Math.max(90, w*0.34), ry = h*0.24;
+  var count = _emb3dPhase === 'prefill' ? 8 : 1;
+  var labels = _emb3dPhase === 'prefill' ? ['The','capital','of','France','is','in','Europe','.'] : ['Paris'];
+  var pts = [];
+  for(var i=0; i<count; i++){
+    var a = (i/Math.max(count,1))*Math.PI*2 + ts*0.00035;
+    var x3 = Math.cos(a), y3 = Math.sin(a*1.27), z3 = Math.sin(a*0.63 + 1.1);
+    pts.push({
+      x: cx + x3*rx + z3*24,
+      y: cy + y3*ry - z3*14,
+      z: z3,
+      lbl: labels[i] || ('t'+i)
+    });
+  }
+
+  var link = isLight ? 'rgba(40,170,130,.30)' : 'rgba(48,200,112,.40)';
+  if(_emb3dPhase === 'prefill'){
+    for(var p=0; p<pts.length; p++){
+      for(var q=p+1; q<pts.length; q++){
+        if((p+q)%3===0){
+          ctx.strokeStyle = link;
+          ctx.beginPath(); ctx.moveTo(pts[p].x, pts[p].y); ctx.lineTo(pts[q].x, pts[q].y); ctx.stroke();
+        }
+      }
+    }
+  } else {
+    for(var k=0; k<7; k++){
+      var tx = cx - rx + (k/6)*(2*rx);
+      var ty = cy + Math.sin((k*0.75)+(ts*0.002))*8 + 24;
+      ctx.fillStyle = isLight ? 'rgba(40,50,70,.28)' : 'rgba(212,208,200,.28)';
+      ctx.beginPath(); ctx.arc(tx, ty, 3.4, 0, Math.PI*2); ctx.fill();
+      ctx.strokeStyle = link;
+      ctx.beginPath(); ctx.moveTo(tx,ty); ctx.lineTo(pts[0].x,pts[0].y); ctx.stroke();
+    }
+  }
+
+  pts.sort(function(a,b){ return a.z-b.z; });
+  for(var n=0; n<pts.length; n++){
+    var r = 4.2 + (pts[n].z+1)*2.2;
+    ctx.fillStyle = isLight ? '#C94D4D' : '#FF6B6B';
+    ctx.beginPath(); ctx.arc(pts[n].x, pts[n].y, r, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = isLight ? '#1F2937' : '#D4D0C8';
+    ctx.font = '11px IBM Plex Mono';
+    ctx.fillText(pts[n].lbl, pts[n].x + 8, pts[n].y - 7);
+  }
+
+  window.requestAnimationFrame(drawEmb3d);
+}
+
+function applyGlobalGlossaryTooltips(){
+  var glossary = {
+    'logit': 'Raw score before probabilities. Higher logit means a token is more likely.',
+    'logits': 'Raw scores before probabilities. Higher logits mean tokens are more likely.',
+    'softmax': 'Function that converts scores into probabilities that sum to 1.',
+    'embedding': 'A dense vector representation of a token in model space.',
+    'embeddings': 'Dense vector representations of tokens in model space.',
+    'prefill': 'Initial pass where all prompt tokens are processed together.',
+    'decode': 'Autoregressive loop that generates one token at a time.',
+    'attention': 'Mechanism that decides which prior tokens matter for the current token.',
+    'residual stream': 'Running hidden state carried forward and updated at each layer.',
+    'ffn': 'Feed-forward network inside each layer that transforms token features.',
+    'kv cache': 'Stored key/value tensors from prior tokens reused during decode.',
+    'quantization': 'Representing weights with fewer bits to reduce memory.',
+    'parameter': 'A learned weight value in the model.',
+    'parameters': 'Learned weight values in the model.',
+    'tensor': 'Multi-dimensional array used for model computations.',
+    'tensors': 'Multi-dimensional arrays used for model computations.'
+  };
+  var terms = Object.keys(glossary).sort(function(a,b){ return b.length-a.length; });
+  var root = document.querySelector('.page');
+  if(!root) return;
+  var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+  var nodes = [];
+  while(walker.nextNode()) nodes.push(walker.currentNode);
+  nodes.forEach(function(node){
+    var p = node.parentElement;
+    if(!p) return;
+    if(p.closest('script,style,code,pre,.tip,.glossary-term')) return;
+    var src = node.nodeValue;
+    if(!src || src.trim().length < 4) return;
+    var out = src;
+    var changed = false;
+    terms.forEach(function(term){
+      var re = new RegExp('\\b' + term.replace(/[.*+?^${}()|[\\]\\]/g, '\\\\$&') + '\\b', 'gi');
+      if(re.test(out)){
+        changed = true;
+        out = out.replace(re, function(m){
+          return '<span class="tip glossary-term" data-tip="' + glossary[term] + '">' + m + '</span>';
+        });
+      }
+    });
+    if(changed){
+      var span = document.createElement('span');
+      span.innerHTML = out;
+      p.replaceChild(span, node);
+    }
+  });
 }
 
 function calcModelSize(){
@@ -4924,6 +5096,9 @@ document.addEventListener('DOMContentLoaded', function(){
   econxBuildInterconnectBars();
   econxSetScaleBatch(20);
   tlReset();
+  setEmb3dPhase('prefill');
+  window.requestAnimationFrame(drawEmb3d);
+  applyGlobalGlossaryTooltips();
   // speed slider label
   var sp = document.getElementById('tl-speed');
   if(sp) sp.addEventListener('input', function(){ var l = document.getElementById('tl-speed-lbl'); if(l) l.textContent = (900/parseInt(this.value)).toFixed(1)+'\u00d7'; });
