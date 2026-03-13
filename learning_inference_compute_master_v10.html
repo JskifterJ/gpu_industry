@@ -310,6 +310,7 @@ details>summary::-webkit-details-marker{display:none;}
   letter-spacing:.1em;background:var(--panel);border-bottom:1px solid transparent;}
 .ref-acc>details[open]>summary{border-bottom-color:var(--border);}
 .ref-acc>details>div{padding:24px 28px;background:var(--panel);}
+.fold-attn-ffn>summary::before{transition:none;}
 
 /* INTEGRATED ECONOMICS */
 .econx-grid{display:grid;grid-template-columns:320px minmax(0,1fr);gap:18px;align-items:start;}
@@ -379,16 +380,16 @@ details>summary::-webkit-details-marker{display:none;}
 .tf-dyn-bar-row{display:grid;grid-template-columns:64px 1fr 36px;gap:7px;align-items:center;font-family:'IBM Plex Mono',monospace;font-size:8px;}
 .tf-dyn-bar-track{height:10px;border-radius:4px;background:#1a2030;overflow:hidden;}
 .tf-dyn-bar-fill{height:100%;border-radius:4px;}
-.tf-dyn-t-input{border-color:rgba(48,200,112,.35);background:rgba(48,200,112,.08);}
-.tf-dyn-t-input .tf-dyn-stage-title{color:var(--green);}
-.tf-dyn-t-embed{border-color:rgba(26,191,208,.35);background:rgba(26,191,208,.07);}
-.tf-dyn-t-embed .tf-dyn-stage-title{color:var(--cyan);}
+.tf-dyn-t-input{border-color:rgba(232,160,32,.35);background:rgba(232,160,32,.08);}
+.tf-dyn-t-input .tf-dyn-stage-title{color:var(--amber);}
+.tf-dyn-t-embed{border-color:rgba(255,255,255,.14);background:rgba(255,255,255,.03);}
+.tf-dyn-t-embed .tf-dyn-stage-title{color:var(--muted);}
 .tf-dyn-t-transform{border-color:rgba(138,110,232,.35);background:rgba(138,110,232,.08);}
 .tf-dyn-t-transform .tf-dyn-stage-title{color:var(--purple);}
-.tf-dyn-t-hidden{border-color:rgba(74,144,232,.35);background:rgba(74,144,232,.08);}
-.tf-dyn-t-hidden .tf-dyn-stage-title{color:var(--blue);}
-.tf-dyn-t-output{border-color:rgba(232,160,32,.35);background:rgba(232,160,32,.08);}
-.tf-dyn-t-output .tf-dyn-stage-title{color:var(--amber);}
+.tf-dyn-t-hidden{border-color:rgba(255,255,255,.14);background:rgba(255,255,255,.03);}
+.tf-dyn-t-hidden .tf-dyn-stage-title{color:var(--muted);}
+.tf-dyn-t-output{border-color:rgba(48,200,112,.35);background:rgba(48,200,112,.08);}
+.tf-dyn-t-output .tf-dyn-stage-title{color:var(--green);}
 
 /* EMBEDDING SPACE TRACKER */
 .emb3d-wrap{background:rgba(255,255,255,.03);border:1px solid var(--border2);border-radius:10px;padding:14px 16px;margin-bottom:18px;}
@@ -1431,7 +1432,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
           </div>
         </details>
 
-        <details style="background:linear-gradient(90deg,rgba(138,110,232,.08),rgba(232,160,32,.08));border:1px solid rgba(232,160,32,.3);border-radius:6px;padding:8px 10px;">
+        <details class="fold-attn-ffn" style="background:linear-gradient(90deg,rgba(138,110,232,.08),rgba(232,160,32,.08));border:1px solid rgba(232,160,32,.3);border-radius:6px;padding:8px 10px;">
           <summary style="cursor:pointer;list-style:none;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--amber);text-transform:uppercase;letter-spacing:.08em;">Attention + FFN layer makeup (4 + 8)</summary>
 
           <div style="font-size:11.5px;color:var(--muted);line-height:1.7;margin-top:10px;">Each transformer layer runs two sequential operations on every token vector. <strong style="color:var(--purple);">Attention</strong> routes information &mdash; it lets each token borrow context from other positions. <strong style="color:var(--amber);">FFN</strong> then looks up factual associations stored in its weights. Both operations <em>add</em> their result into a shared <strong style="color:var(--cyan);">residual stream</strong> rather than replacing what was there.</div>
@@ -1653,13 +1654,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
             <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);">280 GB</span>
           </div>
           <div class="q-step-track" style="background:#1a2030;border-radius:2px;height:8px;overflow:hidden;margin-bottom:3px;"><div style="width:100%;height:100%;background:rgba(255,255,255,.55);border-radius:2px;"></div></div>
-          <div style="margin-bottom:4px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:5px 6px;display:flex;justify-content:space-between;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:7.5px;">
-            <span style="color:var(--red);"><span class="tip" data-tip="Sign bit chooses positive (+) or negative (-).">Sign</span><br><strong style="color:var(--ink);">+</strong></span>
-            <span style="color:var(--amber);"><span class="tip" data-tip="Exponent field sets numeric scale (roughly where the decimal point sits).">Exponent</span><br><strong style="color:var(--ink);">127</strong></span>
-            <span style="color:var(--blue);"><span class="tip" data-tip="Fraction (mantissa/significand) stores fine-grained detail after scaling.">Fraction</span><br><strong style="color:var(--ink);">0.625</strong></span>
-            <span style="color:var(--muted);"><span class="tip" data-tip="Example value reconstructed from sign + exponent + fraction fields.">Example value</span><br><strong style="color:var(--ink);">+1.625</strong></span>
-          </div>
-          <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);"><span>1 <span class="tip" data-tip="One sign bit (+/-).">sign</span> + 8 <span class="tip" data-tip="Exponent bits define numeric range. 8 bits gives 256 encoded exponent states.">exponent bits</span> + 23 <span class="tip" data-tip="Fraction bits define precision detail.">fraction bits</span></span><span style="color:var(--blue);">Baseline accuracy</span></div>
+          <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);margin-top:4px;"><span>1 <span class="tip" data-tip="One sign bit (+/-).">sign</span> + 8 <span class="tip" data-tip="Exponent bits define numeric range. 8 bits gives 256 encoded exponent states.">exponent bits</span> + 23 <span class="tip" data-tip="Fraction bits define precision detail.">fraction bits</span></span><span style="color:var(--blue);">Baseline accuracy</span></div>
         </div>
 
         <div class="q-step-card" style="background:rgba(48,200,112,.06);border:1.5px solid rgba(48,200,112,.4);border-radius:5px;padding:7px 9px;">
@@ -1671,13 +1666,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
             <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--green);">140 GB</span>
           </div>
           <div class="q-step-track" style="background:#1a2030;border-radius:2px;height:8px;overflow:hidden;margin-bottom:3px;"><div style="width:50%;height:100%;background:rgba(255,255,255,.55);border-radius:2px;"></div></div>
-          <div style="margin-bottom:4px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:5px 6px;display:flex;justify-content:space-between;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:7.5px;">
-            <span style="color:var(--red);"><span class="tip" data-tip="Sign bit chooses positive (+) or negative (-).">Sign</span><br><strong style="color:var(--ink);">+</strong></span>
-            <span style="color:var(--amber);"><span class="tip" data-tip="Exponent keeps BF16 range similar to FP32.">Exponent</span><br><strong style="color:var(--ink);">127</strong></span>
-            <span style="color:var(--green);"><span class="tip" data-tip="Fewer fraction bits than FP32, so fewer decimal details are preserved.">Fraction</span><br><strong style="color:var(--ink);">0.62</strong></span>
-            <span style="color:var(--muted);"><span class="tip" data-tip="Example value reconstructed from sign + exponent + fraction fields.">Example value</span><br><strong style="color:var(--ink);">+1.62</strong></span>
-          </div>
-          <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);"><span>1 <span class="tip" data-tip="One sign bit (+/-).">sign</span> + 8 <span class="tip" data-tip="Exponent bits define range. BF16 keeps 8 like FP32.">exponent bits</span> + 7 <span class="tip" data-tip="Fraction bits define precision detail. BF16 has fewer than FP32.">fraction bits</span></span><span style="color:var(--green);">~99.9% of FP32 quality</span></div>
+          <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);margin-top:4px;"><span>1 <span class="tip" data-tip="One sign bit (+/-).">sign</span> + 8 <span class="tip" data-tip="Exponent bits define range. BF16 keeps 8 like FP32.">exponent bits</span> + 7 <span class="tip" data-tip="Fraction bits define precision detail. BF16 has fewer than FP32.">fraction bits</span></span><span style="color:var(--green);">~99.9% of FP32 quality</span></div>
           <div style="font-size:10px;color:var(--green);margin-top:3px;">Production standard &mdash; same numeric range as FP32, fewer decimals. Negligible quality loss.</div>
         </div>
 
@@ -1690,14 +1679,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
             <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--amber);">70 GB</span>
           </div>
           <div class="q-step-track" style="background:#1a2030;border-radius:2px;height:8px;overflow:hidden;margin-bottom:3px;"><div style="width:25%;height:100%;background:rgba(255,255,255,.55);border-radius:2px;"></div></div>
-          <div style="margin-bottom:4px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:5px 6px;display:flex;justify-content:space-between;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:7.5px;">
-            <span style="color:var(--red);"><span class="tip" data-tip="Sign bit chooses positive (+) or negative (-).">Sign</span><br><strong style="color:var(--ink);">+</strong></span>
-            <span style="color:var(--amber);"><span class="tip" data-tip="Integer bucket is the stored quantized integer code before de-quantization.">Integer bucket</span><br><strong style="color:var(--ink);">104</strong></span>
-            <span style="color:var(--muted);"><span class="tip" data-tip="Scale factor converts integer buckets back to approximate real values: real_value ≈ integer_bucket × scale_factor.">Scale factor</span><br><strong style="color:var(--ink);">x0.0156</strong></span>
-            <span style="color:var(--muted);"><span class="tip" data-tip="Example de-quantized value after applying sign and scale factor.">Example value</span><br><strong style="color:var(--ink);">+1.62</strong></span>
-          </div>
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:7.8px;color:var(--muted);margin:-1px 0 4px 0;"><span class="tip" data-tip="Simple de-quantization example. Actual kernels often also use a zero-point and per-channel/per-group scales.">Worked example:</span> <strong style="color:var(--ink);">(+1) &times; 104 &times; 0.0156 &asymp; +1.62</strong></div>
-          <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);"><span>Integer storage: <span class="tip" data-tip="One sign bit (+/-).">sign</span> + <span class="tip" data-tip="Value bits hold integer codes. For INT8, 7 bits plus sign are commonly shown in this simplified view.">value bits</span> (no exponent field)</span><span style="color:var(--amber);">~98&ndash;99% of FP32 quality</span></div>
+          <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);margin-top:4px;"><span>FP8 E4M3: 1 <span class="tip" data-tip="One sign bit (+/-).">sign</span> + 4 <span class="tip" data-tip="Exponent bits define numeric range.">exponent bits</span> + 3 <span class="tip" data-tip="Fraction bits define precision detail.">fraction bits</span> &middot; INT8: 1 sign + 7 value bits</span><span style="color:var(--amber);">~98&ndash;99% of FP32 quality</span></div>
           <div style="font-size:10px;color:var(--muted);margin-top:3px;">Frontier labs use this in production. Fits a single 8-GPU node. Small logic/math degradation.</div>
         </div>
 
@@ -1710,14 +1692,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
             <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--red);">35 GB</span>
           </div>
           <div class="q-step-track" style="background:#1a2030;border-radius:2px;height:8px;overflow:hidden;margin-bottom:3px;"><div style="width:12.5%;height:100%;background:rgba(255,255,255,.55);border-radius:2px;"></div></div>
-          <div style="margin-bottom:4px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:5px 6px;display:flex;justify-content:space-between;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:7.5px;">
-            <span style="color:var(--red);"><span class="tip" data-tip="Sign bit chooses positive (+) or negative (-).">Sign</span><br><strong style="color:var(--ink);">+</strong></span>
-            <span style="color:#d08686;"><span class="tip" data-tip="Integer bucket is the stored quantized code at 4-bit precision.">Integer bucket</span><br><strong style="color:var(--ink);">5</strong></span>
-            <span style="color:var(--muted);"><span class="tip" data-tip="Scale factor converts low-bit integer codes back to approximate real values.">Scale factor</span><br><strong style="color:var(--ink);">x0.32</strong></span>
-            <span style="color:var(--muted);"><span class="tip" data-tip="Example de-quantized value after applying sign and scale factor.">Example value</span><br><strong style="color:var(--ink);">+1.60</strong></span>
-          </div>
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:7.8px;color:var(--muted);margin:-1px 0 4px 0;"><span class="tip" data-tip="Simple de-quantization example. Actual kernels often also use a zero-point and per-channel/per-group scales.">Worked example:</span> <strong style="color:var(--ink);">(+1) &times; 5 &times; 0.32 = +1.60</strong></div>
-          <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);"><span>Integer storage: <span class="tip" data-tip="One sign bit (+/-).">sign</span> + <span class="tip" data-tip="Value bits hold integer codes. Fewer bits shrink memory but reduce precision.">value bits</span> (no exponent field)</span><span style="color:var(--red);">~92&ndash;95% of FP32 quality</span></div>
+          <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);margin-top:4px;"><span>1 <span class="tip" data-tip="One sign bit (+/-).">sign</span> + 3 <span class="tip" data-tip="Value bits hold integer codes. Fewer bits shrink memory but reduce precision.">value bits</span> (no exponent field)</span><span style="color:var(--red);">~92&ndash;95% of FP32 quality</span></div>
           <div style="font-size:10px;color:var(--red);margin-top:3px;line-height:1.5;"><strong>Edge performance degrades first:</strong> complex reasoning, multi-step math, code generation.</div>
         </div>
       </div>
@@ -2029,13 +2004,7 @@ function emb3dUpdateMeta(){
   for(var i=0; i<cur.length; i++){
     html += '<div class="emb3d-flow-cell dim-label" style="font-size:7.5px;">h[' + i + ']</div>';
   }
-  html += '<div class="emb3d-flow-cell truncate" style="font-size:7px;">more</div>';
-  html += '<div class="emb3d-flow-cell row-label">sum</div>';
-  html += '<div class="emb3d-flow-cell row-label">bias</div>';
-  html += '<div class="emb3d-flow-cell row-label">logit</div>';
-  html += '<div class="emb3d-flow-cell row-label">value</div>';
-  html += '<div class="emb3d-flow-cell row-label">prob</div>';
-  html += '<div class="emb3d-flow-cell row-label">value</div>';
+  html += '<div class="emb3d-flow-cell truncate" style="font-size:7px;">...rest of 8,192 dims</div>';
   html += '</div>';
   
   // Column 1: Hidden Vector values
@@ -2116,7 +2085,7 @@ function emb3dUpdateMeta(){
   
   // Column: Remaining vocabulary indicator (extended)
   html += '<div class="emb3d-flow-col">';
-  html += '<div class="emb3d-flow-header" style="color:var(--muted);font-size:7px;" title="128,256 tokens total">128k+</div>';
+  html += '<div class="emb3d-flow-header" style="color:var(--muted);font-size:7px;" title="128,256 tokens total">...rest of 128k token vocab</div>';
   html += '<div class="emb3d-flow-cell truncate">dims</div>';
   for(var i=1; i<cur.length; i++){
     html += '<div class="emb3d-flow-cell truncate">·</div>';

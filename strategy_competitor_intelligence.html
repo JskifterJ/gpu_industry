@@ -86,6 +86,34 @@ body.light .theme-toggle-thumb{transform:translateX(16px);}
 .embed-head{padding:12px 14px;border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);}
 .embed-frame{display:block;width:100%;height:calc(100vh - 240px);min-height:900px;border:0;background:var(--bg-s);}
 
+/* comparison controls */
+.cmp-controls{display:grid;grid-template-columns:2fr repeat(4,minmax(130px,1fr)) 1.4fr auto;gap:8px;padding:12px;background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:12px;}
+.cmp-input,.cmp-select{width:100%;background:var(--surf);border:1px solid var(--border);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:10px;padding:8px 10px;border-radius:6px;}
+.cmp-stack-filter{display:flex;gap:4px;flex-wrap:wrap;align-items:center;}
+.cmp-stack-btn{font-family:'JetBrains Mono',monospace;font-size:9px;padding:5px 7px;border-radius:5px;border:1px solid var(--border);background:var(--surf);color:var(--muted);cursor:pointer;}
+.cmp-stack-btn.active{border-color:rgba(56,189,248,.35);background:rgba(56,189,248,.1);color:var(--accent);}
+.cmp-clear-btn{font-family:'JetBrains Mono',monospace;font-size:10px;padding:8px 10px;border-radius:6px;border:1px solid var(--border);background:var(--surf);color:var(--muted);cursor:pointer;white-space:nowrap;}
+.cmp-clear-btn:hover{color:var(--text);border-color:var(--border-l);}
+.cmp-stack-cells{display:grid;grid-template-columns:repeat(8,minmax(24px,1fr));gap:4px;min-width:236px;}
+.cmp-stack-cell{height:22px;border-radius:4px;border:1px solid rgba(255,255,255,.18);font-family:'JetBrains Mono',monospace;font-size:8px;display:flex;align-items:center;justify-content:center;font-weight:700;}
+.cmp-stack-cell.none{opacity:.26;filter:grayscale(.4);}
+.cmp-stack-cell.limited{opacity:.52;}
+.cmp-stack-cell.partner{opacity:.75;}
+.cmp-stack-cell.partial{opacity:.88;}
+.cmp-stack-cell.full{opacity:1;}
+.cmp-stack-cell.l0{background:rgba(148,163,184,.22);color:#94a3b8;}
+.cmp-stack-cell.l1{background:rgba(232,200,64,.22);color:#e8c840;}
+.cmp-stack-cell.l2{background:rgba(90,172,232,.22);color:#5aace8;}
+.cmp-stack-cell.l3{background:rgba(90,184,106,.22);color:#5ab86a;}
+.cmp-stack-cell.l4{background:rgba(155,89,182,.22);color:#9b59b6;}
+.cmp-stack-cell.l5{background:rgba(230,126,34,.22);color:#e67e22;}
+.cmp-stack-cell.l6{background:rgba(232,67,147,.22);color:#e84393;}
+.cmp-stack-cell.l7{background:rgba(142,68,173,.22);color:#8e44ad;}
+
+@media (max-width: 1400px){
+  .cmp-controls{grid-template-columns:1fr 1fr;}
+}
+
 /* ── TIER SECTION ── */
 .tier-sect{margin-bottom:40px;}
 .tier-hdr{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);}
@@ -439,16 +467,56 @@ table.stk td.grp-border-l{border-left:2px solid var(--border-ll)!important;}
     </div>
     <div style="font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace;">📊 Last updated: March 2026 · Data: ClusterMAX 2.0 + Saturn Cloud Dec 2025 + Thunder Compute Feb 2026 + online research</div>
   </div>
+  <div class="cmp-controls">
+    <input id="cmp-filter-query" class="cmp-input" type="text" placeholder="Filter across provider, USP, model, software, buyer..."/>
+    <input id="cmp-price-min" class="cmp-input" type="number" step="0.01" placeholder="Min $/h"/>
+    <input id="cmp-price-max" class="cmp-input" type="number" step="0.01" placeholder="Max $/h"/>
+    <select id="cmp-filter-egress" class="cmp-select">
+      <option value="all">Egress: All</option>
+      <option value="free">Egress: Free</option>
+      <option value="paid">Egress: Paid</option>
+      <option value="other">Egress: Other</option>
+    </select>
+    <select id="cmp-filter-supply" class="cmp-select">
+      <option value="all">Supply: All</option>
+      <option value="owned">Supply: Owned</option>
+      <option value="mixed">Supply: Mixed</option>
+      <option value="partner">Supply: Partner</option>
+      <option value="hyperscaler">Supply: Hyperscaler</option>
+      <option value="other">Supply: Other</option>
+    </select>
+    <select id="cmp-sort" class="cmp-select">
+      <option value="tier-desc">Sort: Tier (High to Low)</option>
+      <option value="price-asc">Sort: Price (Low to High)</option>
+      <option value="price-desc">Sort: Price (High to Low)</option>
+      <option value="stack-desc">Sort: Stack Presence (High to Low)</option>
+      <option value="name-asc">Sort: Provider (A-Z)</option>
+      <option value="egress-asc">Sort: Egress (Free first)</option>
+      <option value="supply-asc">Sort: Supply (Owned first)</option>
+    </select>
+    <button id="cmp-clear" class="cmp-clear-btn" type="button">Reset</button>
+    <div class="cmp-stack-filter" id="cmp-stack-filter">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin-right:2px;">Require:</span>
+      <button type="button" class="cmp-stack-btn" data-layer="0">L0</button>
+      <button type="button" class="cmp-stack-btn" data-layer="1">L1</button>
+      <button type="button" class="cmp-stack-btn" data-layer="2">L2</button>
+      <button type="button" class="cmp-stack-btn" data-layer="3">L3</button>
+      <button type="button" class="cmp-stack-btn" data-layer="4">L4</button>
+      <button type="button" class="cmp-stack-btn" data-layer="5">L5</button>
+      <button type="button" class="cmp-stack-btn" data-layer="6">L6</button>
+      <button type="button" class="cmp-stack-btn" data-layer="7">L7</button>
+    </div>
+  </div>
   <div style="overflow-x:auto;border:1px solid var(--border);border-radius:10px;">
     <table class="cmp-table" id="cmp-table" style="width:100%;border-collapse:collapse;background:var(--card);font-size:12px;">
       <thead style="background:var(--surf);position:sticky;top:0;z-index:10;">
         <tr style="border-bottom:1px solid var(--border);">
           <th style="padding:12px 10px;text-align:left;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;white-space:nowrap;color:var(--accent);">Provider & Tier</th>
-          <th style="padding:12px 10px;text-align:left;font-family:'Syne',sans-serif;font-size:11px;font-weight:600;color:var(--muted);max-width:180px;">USP & Market Position</th>
+          <th style="padding:12px 10px;text-align:left;font-family:'Syne',sans-serif;font-size:11px;font-weight:600;color:var(--muted);min-width:320px;max-width:420px;">USP & Market Position</th>
           <th style="padding:12px 10px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);">Business Model</th>
           <th style="padding:12px 10px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);">H100 Pricing<br/><span style="font-size:9px;">On-Demand / 1-Yr</span></th>
           <th style="padding:12px 10px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);">Orchestration</th>
-          <th style="padding:12px 10px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);">Stack Layers</th>
+          <th style="padding:12px 10px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);">Stack Presence (L0-L7)</th>
           <th style="padding:12px 10px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);">Geography</th>
           <th style="padding:12px 10px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);">Egress Fees</th>
           <th style="padding:12px 10px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);">Supply Provenance</th>
@@ -1664,12 +1732,22 @@ function providerStackValues(provider){
   return (provider.stack || []).map(v=>SPACE_SCORE_COLORS[v] || 1);
 }
 
-function providerStackBlockValues(provider){
-  return (provider.stack || []).map(v=>SPACE_STACK_BLOCK_SCORE[v] ?? -1);
+function providerLayerOccupancyLabel(provider){
+  const occupied = (provider.stack || [])
+    .map((cov, i)=>({cov, layer:`L${i}`}))
+    .filter(x=>x.cov !== 'none')
+    .map(x=>x.layer);
+  return occupied.length ? occupied.join(' ') : 'none';
 }
 
-function providerStackBlockLabel(provider){
-  return providerStackBlockValues(provider).join(' ');
+function providerLayerBoxesHtml(provider){
+  const covOpacity = {none:0.2,limited:0.45,partner:0.62,partial:0.82,full:1};
+  return (provider.stack || []).map((cov, i)=>{
+    const layer = LAYERS_DEF[i];
+    const color = layer ? layer.color : '#94a3b8';
+    const alpha = covOpacity[cov] ?? 0.2;
+    return `<span style="display:inline-block;min-width:20px;padding:1px 4px;margin-right:3px;border-radius:3px;border:1px solid ${color}66;background:${color}22;color:${color};opacity:${alpha};font-family:'JetBrains Mono',monospace;font-size:9px;line-height:1.35;">L${i}</span>`;
+  }).join('');
 }
 
 function providerLogoBadge(provider){
@@ -1815,7 +1893,7 @@ function renderSpacePlot(){
   const hasStackPath = axesInUse.includes('stackPath');
   if(hintEl){
     hintEl.innerHTML = spaceMode==='2d'
-      ? 'Block mode with anti-overlap blowout: each competitor is placed inside a coordinate block. Under each marker, stack blocks are shown as L0-L7 scores in -1..3 scale (none=-1, limited=0, partner=1, partial=2, full=3). Hover hollow cluster dots to see who shares the exact same coordinate.'
+      ? 'Block mode with anti-overlap blowout: each competitor is placed inside a coordinate block. Under each marker, occupied layers are shown directly as L0-L7 labels (not internal scores), and hover shows color-coded layer boxes aligned to the value-chain layer colors.'
       : (hasStackPath
         ? 'Stack path enabled: each provider is rendered as a line from L0 to L7 on the selected stack axis (coverage score 1-5).'
         : 'Point mode: each provider is rendered as a single marker based on selected metrics.');
@@ -1853,14 +1931,16 @@ function renderSpacePlot(){
           p.xBlock,
           p.yBlock,
           p.occupancy,
-          providerStackBlockLabel(p.provider)
+          providerLayerOccupancyLabel(p.provider),
+          providerLayerBoxesHtml(p.provider)
         ]),
         hovertemplate:
           `<b>%{customdata[0]}</b> · %{customdata[1]}<br>Total: %{customdata[2]}/50` +
           `<br>${spaceAxisLabel(xAxis)} (raw): %{customdata[3]}` +
           `<br>${spaceAxisLabel(yAxis)} (raw): %{customdata[4]}` +
           `<br>Block: (%{customdata[5]}, %{customdata[6]}) · Occupancy: %{customdata[7]}` +
-          `<br>Stack blocks L0-L7: %{customdata[8]}<extra></extra>`
+          `<br>Occupied layers: %{customdata[8]}` +
+          `<br>%{customdata[9]}<extra></extra>`
       });
 
       traces.push({
@@ -1870,7 +1950,7 @@ function renderSpacePlot(){
         hoverinfo:'skip',
         x:pts.map(p=>p.xPlot),
         y:pts.map(p=>p.yPlot - yStep * 0.22),
-        text:pts.map(p=>providerStackBlockLabel(p.provider)),
+        text:pts.map(p=>providerLayerOccupancyLabel(p.provider)),
         textposition:'middle center',
         textfont:{size:8,color:'#64748b'}
       });
@@ -2047,8 +2127,10 @@ const COMPARISON_DATA = [
 function buildComparison(){
   const tbody=document.getElementById('cmp-body');
   if(!tbody) return;
+  const rows=getComparisonRows();
   let html='';
-  COMPARISON_DATA.forEach(p=>{
+  rows.forEach(p=>{
+    const stackHtml=renderStackPresenceCells(p.stackArr);
     html+=`<tr style="border-bottom:1px solid var(--border);">
       <td style="padding:12px 10px;font-family:'Syne',sans-serif;font-weight:600;white-space:nowrap;">
         <div style="display:flex;align-items:center;gap:8px;">
@@ -2056,11 +2138,11 @@ function buildComparison(){
           <div style="font-family:'JetBrains Mono',monospace;">${p.name}</div>
         </div>
       </td>
-      <td style="padding:12px 10px;font-size:11px;color:var(--sub);line-height:1.5;max-width:180px;"><strong>${p.usp.split('.')[0]}.</strong> ${p.usp.split('.').slice(1).join('.')}</td>
+      <td style="padding:10px 12px;font-size:11px;color:var(--sub);line-height:1.35;min-width:320px;max-width:420px;"><strong>${p.usp.split('.')[0]}.</strong> ${p.usp.split('.').slice(1).join('.')}</td>
       <td style="padding:12px 10px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);">${p.model}</td>
       <td style="padding:12px 10px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;"><div style="font-weight:600;color:var(--accent);">${p.h100on}</div><div style="font-size:9px;color:var(--muted);">${p.h100res}</div></td>
       <td style="padding:12px 10px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--sub);">${p.orch}</td>
-      <td style="padding:12px 10px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);">${p.stack}</td>
+      <td style="padding:10px 10px;">${stackHtml}</td>
       <td style="padding:12px 10px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--sub);">${p.geography}</td>
       <td style="padding:12px 10px;text-align:center;font-size:11px;">${p.egress}</td>
       <td style="padding:12px 10px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--sub);">${p.provenance}</td>
@@ -2069,7 +2151,159 @@ function buildComparison(){
       <td style="padding:12px 10px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);font-weight:600;">${p.layer}</td>
     </tr>`;
   });
-  tbody.innerHTML=html;
+  tbody.innerHTML=html || '<tr><td colspan="12" style="padding:20px;color:var(--muted);font-family:\'JetBrains Mono\',monospace;font-size:11px;text-align:center;">No providers match current filters.</td></tr>';
+}
+
+const CMP_STATE={
+  query:'',
+  priceMin:null,
+  priceMax:null,
+  egress:'all',
+  supply:'all',
+  sort:'tier-desc',
+  layers:new Set()
+};
+
+const CMP_TIER_SCORE={platinum:3,gold:2,silver:1};
+const CMP_LAYER_KEYS=['l0','l1','l2','l3','l4','l5','l6','l7'];
+
+function cmpPriceNum(str){
+  if(!str) return null;
+  const m=String(str).match(/\$\s*(\d+(?:\.\d+)?)/);
+  return m ? Number(m[1]) : null;
+}
+
+function cmpEgressKey(v){
+  const s=(v||'').toLowerCase();
+  if(s.includes('free')) return 'free';
+  if(s.includes('$') || s.includes('/gb')) return 'paid';
+  return 'other';
+}
+
+function cmpSupplyKey(v){
+  const s=(v||'').toLowerCase();
+  if(s.includes('hyperscaler')) return 'hyperscaler';
+  if(s.includes('partner')) return 'partner';
+  if(s.includes('mix')) return 'mixed';
+  if(s.includes('owned')) return 'owned';
+  return 'other';
+}
+
+function providerStackById(id){
+  const p=PROVIDERS.find(x=>x.id===id);
+  return p && Array.isArray(p.stack) && p.stack.length===8 ? p.stack : ['none','none','none','none','none','none','none','none'];
+}
+
+function stackPresenceScore(arr){
+  const m={none:0,limited:1,partner:2,partial:3,full:4};
+  return arr.reduce((sum,v)=>sum+(m[v]||0),0);
+}
+
+function renderStackPresenceCells(stackArr){
+  return `<div class="cmp-stack-cells">${CMP_LAYER_KEYS.map((k,i)=>`<div class="cmp-stack-cell ${k} ${stackArr[i]||'none'}">L${i}</div>`).join('')}</div>`;
+}
+
+function getComparisonRows(){
+  const q=CMP_STATE.query.trim().toLowerCase();
+  let rows=COMPARISON_DATA.map(p=>{
+    const stackArr=providerStackById(p.id);
+    return {
+      ...p,
+      stackArr,
+      priceNum:cmpPriceNum(p.h100on),
+      egressKey:cmpEgressKey(p.egress),
+      supplyKey:cmpSupplyKey(p.provenance),
+      stackScore:stackPresenceScore(stackArr)
+    };
+  });
+
+  rows=rows.filter(p=>{
+    if(q){
+      const hay=[p.name,p.usp,p.model,p.h100on,p.h100res,p.orch,p.geography,p.egress,p.provenance,p.software,p.buyers,p.layer,p.stack].join(' ').toLowerCase();
+      if(!hay.includes(q)) return false;
+    }
+    if(CMP_STATE.egress!=='all' && p.egressKey!==CMP_STATE.egress) return false;
+    if(CMP_STATE.supply!=='all' && p.supplyKey!==CMP_STATE.supply) return false;
+    if(CMP_STATE.priceMin!==null && (p.priceNum===null || p.priceNum<CMP_STATE.priceMin)) return false;
+    if(CMP_STATE.priceMax!==null && (p.priceNum===null || p.priceNum>CMP_STATE.priceMax)) return false;
+    if(CMP_STATE.layers.size){
+      for(const idx of CMP_STATE.layers){
+        if((p.stackArr[idx]||'none')==='none') return false;
+      }
+    }
+    return true;
+  });
+
+  const supplyOrd={owned:0,mixed:1,partner:2,hyperscaler:3,other:4};
+  const egressOrd={free:0,paid:1,other:2};
+
+  rows.sort((a,b)=>{
+    switch(CMP_STATE.sort){
+      case 'price-asc': return (a.priceNum??999)-(b.priceNum??999);
+      case 'price-desc': return (b.priceNum??-1)-(a.priceNum??-1);
+      case 'stack-desc': return b.stackScore-a.stackScore;
+      case 'name-asc': return a.name.localeCompare(b.name);
+      case 'egress-asc': return (egressOrd[a.egressKey]??9)-(egressOrd[b.egressKey]??9);
+      case 'supply-asc': return (supplyOrd[a.supplyKey]??9)-(supplyOrd[b.supplyKey]??9);
+      case 'tier-desc':
+      default:
+        return (CMP_TIER_SCORE[b.tier]||0)-(CMP_TIER_SCORE[a.tier]||0) || (a.priceNum??999)-(b.priceNum??999);
+    }
+  });
+
+  return rows;
+}
+
+function resetComparisonFilters(){
+  CMP_STATE.query='';
+  CMP_STATE.priceMin=null;
+  CMP_STATE.priceMax=null;
+  CMP_STATE.egress='all';
+  CMP_STATE.supply='all';
+  CMP_STATE.sort='tier-desc';
+  CMP_STATE.layers.clear();
+  const q=document.getElementById('cmp-filter-query'); if(q) q.value='';
+  const pmin=document.getElementById('cmp-price-min'); if(pmin) pmin.value='';
+  const pmax=document.getElementById('cmp-price-max'); if(pmax) pmax.value='';
+  const e=document.getElementById('cmp-filter-egress'); if(e) e.value='all';
+  const s=document.getElementById('cmp-filter-supply'); if(s) s.value='all';
+  const o=document.getElementById('cmp-sort'); if(o) o.value='tier-desc';
+  document.querySelectorAll('#cmp-stack-filter .cmp-stack-btn').forEach(btn=>btn.classList.remove('active'));
+  buildComparison();
+}
+
+function initComparisonControls(){
+  const q=document.getElementById('cmp-filter-query');
+  const pmin=document.getElementById('cmp-price-min');
+  const pmax=document.getElementById('cmp-price-max');
+  const e=document.getElementById('cmp-filter-egress');
+  const s=document.getElementById('cmp-filter-supply');
+  const o=document.getElementById('cmp-sort');
+  const c=document.getElementById('cmp-clear');
+  if(!q || !pmin || !pmax || !e || !s || !o || !c) return;
+
+  q.addEventListener('input',()=>{CMP_STATE.query=q.value||''; buildComparison();});
+  pmin.addEventListener('input',()=>{CMP_STATE.priceMin=pmin.value===''?null:Number(pmin.value); buildComparison();});
+  pmax.addEventListener('input',()=>{CMP_STATE.priceMax=pmax.value===''?null:Number(pmax.value); buildComparison();});
+  e.addEventListener('change',()=>{CMP_STATE.egress=e.value; buildComparison();});
+  s.addEventListener('change',()=>{CMP_STATE.supply=s.value; buildComparison();});
+  o.addEventListener('change',()=>{CMP_STATE.sort=o.value; buildComparison();});
+  c.addEventListener('click',resetComparisonFilters);
+
+  document.querySelectorAll('#cmp-stack-filter .cmp-stack-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const idx=Number(btn.dataset.layer);
+      if(Number.isNaN(idx)) return;
+      if(CMP_STATE.layers.has(idx)){
+        CMP_STATE.layers.delete(idx);
+        btn.classList.remove('active');
+      }else{
+        CMP_STATE.layers.add(idx);
+        btn.classList.add('active');
+      }
+      buildComparison();
+    });
+  });
 }
 
 // ═══════════════════════════════════════════════════════
@@ -2077,6 +2311,7 @@ function buildComparison(){
 // ═══════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded',()=>{
   applyStoredTheme();
+  initComparisonControls();
   buildComparison();
   renderArchetypes();
   renderOverview();
