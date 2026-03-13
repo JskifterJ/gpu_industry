@@ -9,22 +9,22 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <style>
 :root{
-  --bg:#060A10;--panel:#0B1018;--panel2:#111820;--panel3:#161E2A;
-  --border:rgba(255,255,255,.06);--border2:rgba(255,255,255,.12);
-  --ink:#D4D0C8;--muted:#8A9BB0;--dim:#2E3848;
-  --amber:#E8A020;--amber-d:rgba(232,160,32,.12);
-  --cyan:#1ABFD0;--cyan-d:rgba(26,191,208,.12);
-  --purple:#8A6EE8;--purple-d:rgba(138,110,232,.12);
-  --green:#30C870;--green-d:rgba(48,200,112,.12);
-  --red:#E04848;--red-d:rgba(224,72,72,.12);
-  --blue:#4A90E8;--blue-d:rgba(74,144,232,.12);
-  --teal:#00C8A0;--teal-d:rgba(0,200,160,.12);
-  --orange:#F07830;
+  --bg:#F5F8FC;--panel:#FFFFFF;--panel2:#F2F6FB;--panel3:#EAF0F7;
+  --border:rgba(29,54,84,.14);--border2:rgba(29,54,84,.22);
+  --ink:#1D2B3A;--muted:#5F7288;--dim:#DCE4EE;
+  --amber:#B77412;--amber-d:rgba(183,116,18,.13);
+  --cyan:#0E95AA;--cyan-d:rgba(14,149,170,.12);
+  --purple:#6F58C9;--purple-d:rgba(111,88,201,.12);
+  --green:#2B9C5A;--green-d:rgba(43,156,90,.12);
+  --red:#C64545;--red-d:rgba(198,69,69,.12);
+  --blue:#3B74C7;--blue-d:rgba(59,116,199,.12);
+  --teal:#0E9E83;--teal-d:rgba(14,158,131,.12);
+  --orange:#CF6F22;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;}
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-  background-image:radial-gradient(rgba(255,255,255,.025) 1px,transparent 1px);background-size:32px 32px;}
+  background-image:radial-gradient(rgba(44,82,130,.06) 1px,transparent 1px);background-size:32px 32px;}
 .page{position:relative;z-index:1;max-width:1280px;margin:0 auto;padding:0 28px 100px;}
 
 /* HEADER */
@@ -34,14 +34,14 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   text-transform:uppercase;color:var(--amber);margin-bottom:9px;}
 h1{font-family:'IBM Plex Mono',monospace;font-size:clamp(17px,2.4vw,28px);
   font-weight:600;letter-spacing:-.02em;line-height:1.1;}
-.legend{display:flex;flex-wrap:wrap;gap:7px 16px;}
+.legend{display:flex;flex-wrap:wrap;gap:7px 16px;position:fixed;top:10px;right:26px;z-index:60;background:rgba(250,253,255,.92);border:1px solid var(--border2);border-radius:11px;padding:8px 12px;box-shadow:0 8px 26px rgba(19,45,78,.10);backdrop-filter:blur(6px);max-width:min(860px,calc(100vw - 56px));}
 .leg{display:flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;
   font-size:9.5px;color:var(--muted);}
 .leg-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0;}
 
 /* LAYOUT */
 .flow{display:flex;flex-direction:column;gap:0;}
-.box{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:18px 20px;}
+.box{background:var(--panel);border:1.35px solid var(--border2);border-radius:10px;padding:18px 20px;box-shadow:0 3px 14px rgba(22,46,78,.05);}
 .step-badge{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap;}
 .step-num{display:flex;align-items:center;justify-content:center;
   width:34px;height:34px;border-radius:8px;flex-shrink:0;
@@ -54,7 +54,7 @@ h1{font-family:'IBM Plex Mono',monospace;font-size:clamp(17px,2.4vw,28px);
 .conn{display:flex;flex-direction:column;align-items:center;height:48px;position:relative;}
 .conn-line{width:2px;flex:1;background:linear-gradient(to bottom,var(--border2),var(--border));}
 .conn-label{position:absolute;top:50%;transform:translateY(-50%);left:calc(50% + 10px);
-  background:var(--panel2);border:1px solid var(--border2);border-radius:4px;
+  background:#F8FBFF;border:1.2px solid var(--border2);border-radius:4px;
   padding:3px 9px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--muted);white-space:nowrap;}
 .pulse-wrap{position:absolute;top:0;left:calc(50% - 1px);width:2px;height:100%;overflow:visible;pointer-events:none;}
 .pulse{position:absolute;width:6px;height:6px;border-radius:50%;left:-2px;animation:pflow 2s linear infinite;}
@@ -67,9 +67,9 @@ h1{font-family:'IBM Plex Mono',monospace;font-size:clamp(17px,2.4vw,28px);
 /* TOOLTIPS */
 .tip{border-bottom:1px dotted var(--muted);cursor:help;position:relative;display:inline;}
 .tip::after{content:attr(data-tip);position:absolute;left:50%;transform:translateX(-50%);
-  bottom:calc(100% + 8px);background:#1a2535;border:1px solid var(--border2);border-radius:7px;
+  bottom:calc(100% + 8px);background:#F8FBFF;border:1.1px solid var(--border2);border-radius:7px;
   padding:9px 13px;font-family:'IBM Plex Sans',sans-serif;font-size:11.5px;font-style:normal;
-  color:var(--muted);line-height:1.55;width:240px;white-space:normal;
+  color:var(--ink);line-height:1.55;width:240px;white-space:normal;
   pointer-events:none;opacity:0;transition:opacity .2s;z-index:1000;text-transform:none;letter-spacing:0;}
 .tip:hover::after{opacity:1;}
 
@@ -80,7 +80,7 @@ h1{font-family:'IBM Plex Mono',monospace;font-size:clamp(17px,2.4vw,28px);
 .s-tab{flex-shrink:0;padding:9px 11px;font-family:'IBM Plex Mono',monospace;font-size:9px;
   font-weight:600;cursor:pointer;color:var(--muted);border:none;background:none;
   border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;}
-.s-tab:hover{color:var(--ink);background:rgba(255,255,255,.03);}
+.s-tab:hover{color:var(--ink);background:rgba(30,65,110,.06);}
 .s-tab.active{color:var(--amber);border-bottom-color:var(--amber);background:var(--amber-d);}
 .s-content{padding:22px;}
 .s-panel{display:none;}.s-panel.active{display:block;}
@@ -129,7 +129,7 @@ h1{font-family:'IBM Plex Mono',monospace;font-size:clamp(17px,2.4vw,28px);
 /* ATTENTION SCORE BAR */
 .attn-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:4px;}
 .attn-word{font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--ink);width:68px;flex-shrink:0;text-align:right;}
-.attn-track{flex:1;background:#1a2030;border-radius:2px;height:13px;overflow:hidden;}
+.attn-track{flex:1;background:#DCE5F0;border-radius:2px;height:13px;overflow:hidden;}
 .attn-fill{height:100%;border-radius:2px;}
 .attn-pct{font-family:'IBM Plex Mono',monospace;font-size:9.5px;width:40px;flex-shrink:0;}
 
@@ -305,9 +305,9 @@ details>summary::before{content:'\25B8';font-size:11px;transition:transform .15s
 details[open]>summary::before{transform:rotate(90deg);}
 details>summary::-webkit-details-marker{display:none;}
 .ref-wrap{margin-top:60px;border-top:1px solid var(--border);padding-top:32px;}
-.ref-acc{border:1px solid rgba(255,255,255,.08);border-radius:10px;overflow:hidden;margin-bottom:12px;}
+.ref-acc{border:1px solid rgba(29,54,84,.16);border-radius:10px;overflow:hidden;margin-bottom:12px;background:var(--panel);}
 .ref-acc>details>summary{padding:16px 20px;font-size:11px;color:var(--ink);
-  letter-spacing:.1em;background:var(--panel);border-bottom:1px solid transparent;}
+  letter-spacing:.1em;background:var(--panel2);border-bottom:1px solid transparent;}
 .ref-acc>details[open]>summary{border-bottom-color:var(--border);}
 .ref-acc>details>div{padding:24px 28px;background:var(--panel);}
 .fold-attn-ffn>summary::before{transition:none;}
@@ -327,13 +327,12 @@ details>summary::-webkit-details-marker{display:none;}
 .econx-col-b{padding:10px 12px;display:flex;flex-direction:column;gap:6px;}
 .econx-metric{display:flex;justify-content:space-between;gap:10px;font-size:11px;line-height:1.45;}
 .econx-metric span:first-child{color:var(--muted);}
-.econx-metric span:last-child{text-align:right;}
 .econx-best{color:var(--green)!important;font-weight:600;}
 .econx-worst{color:var(--red)!important;font-weight:600;}
 .econx-bars{display:flex;flex-direction:column;gap:8px;}
 .econx-bar-row{display:grid;grid-template-columns:170px 1fr 54px;gap:10px;align-items:center;}
 .econx-bar-lbl{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);}
-.econx-bar-track{height:12px;background:#1a2030;border-radius:4px;overflow:hidden;position:relative;}
+.econx-bar-track{height:12px;background:#DCE5F0;border-radius:4px;overflow:hidden;position:relative;}
 .econx-bar-fill{height:100%;border-radius:4px;}
 .econx-bar-val{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--ink);text-align:right;}
 .econx-mini-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
@@ -344,13 +343,13 @@ details>summary::-webkit-details-marker{display:none;}
 .econx-tag{display:inline-flex;align-items:center;padding:2px 7px;border-radius:999px;font-family:'IBM Plex Mono',monospace;font-size:8px;border:1px solid var(--border2);}
 .econx-header-sub{font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);margin-top:4px;line-height:1.45;}
 .econx-cost-label{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:1px 0 6px;}
-.econx-cost-breakdown{display:flex;height:9px;border-radius:999px;overflow:hidden;background:#1a2030;border:1px solid rgba(255,255,255,.08);margin-bottom:6px;}
+.econx-cost-breakdown{display:flex;height:9px;border-radius:999px;overflow:hidden;background:#DCE5F0;border:1px solid var(--border2);margin-bottom:6px;}
 .econx-cost-segment{height:100%;}
 .econx-cost-legend{display:flex;flex-wrap:wrap;gap:8px 10px;margin-bottom:5px;}
 .econx-cost-legend-item{display:inline-flex;align-items:center;gap:5px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);}
 .econx-cost-dot{width:6px;height:6px;border-radius:50%;display:inline-block;}
 .econx-metric-bottom{margin-top:3px;padding-top:6px;border-top:1px solid var(--border);font-weight:600;}
-.econx-chart-wrap{height:230px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:8px 10px;}
+.econx-chart-wrap{height:230px;background:#F8FBFF;border:1.1px solid var(--border2);border-radius:8px;padding:8px 10px;}
 .econx-batch-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
 .econx-batch-row span{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);}
 .econx-batch-btn{border:1px solid var(--border2);background:var(--bg);color:var(--muted);border-radius:999px;padding:3px 9px;font-family:'IBM Plex Mono',monospace;font-size:8.5px;cursor:pointer;}
@@ -363,6 +362,8 @@ details>summary::-webkit-details-marker{display:none;}
 .econx-scenario-btn:hover{border-color:var(--amber);color:var(--amber);}
 .econx-scenario-btn.sel{border-color:var(--amber);background:rgba(232,160,32,.12);color:var(--amber);}
 .econx-fold>summary{color:var(--amber);}
+
+.flow{filter:saturate(.86);} 
 
 /* DYNAMIC TRANSFORMER PIPELINE */
 .tf-dyn-shell{background:var(--bg);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px 16px;margin-bottom:14px;}
@@ -382,7 +383,7 @@ details>summary::-webkit-details-marker{display:none;}
 .tf-dyn-line-strong{color:var(--green);border-color:rgba(48,200,112,.35);background:rgba(48,200,112,.08);}
 .tf-dyn-bars{display:flex;flex-direction:column;gap:5px;}
 .tf-dyn-bar-row{display:grid;grid-template-columns:64px 1fr 36px;gap:7px;align-items:center;font-family:'IBM Plex Mono',monospace;font-size:8px;}
-.tf-dyn-bar-track{height:10px;border-radius:4px;background:#1a2030;overflow:hidden;}
+.tf-dyn-bar-track{height:10px;border-radius:4px;background:#DCE5F0;overflow:hidden;}
 .tf-dyn-bar-fill{height:100%;border-radius:4px;}
 .tf-dyn-t-input{border-color:rgba(232,160,32,.35);background:rgba(232,160,32,.08);}
 .tf-dyn-t-input .tf-dyn-stage-title{color:var(--amber);}
@@ -449,6 +450,7 @@ details>summary::-webkit-details-marker{display:none;}
   .econx-mini-grid{grid-template-columns:1fr;}
 }
 @media (max-width: 980px){
+  .legend{position:static;top:auto;right:auto;max-width:100%;box-shadow:none;background:transparent;border:none;padding:0;backdrop-filter:none;}
   .tf-dyn-toolbar{grid-template-columns:1fr;gap:8px;}
   .tf-dyn-track{display:grid;grid-template-columns:1fr;overflow:visible;}
   .tf-dyn-stage{min-width:0;}
@@ -2342,22 +2344,18 @@ function applyGlobalGlossaryTooltips(){
     if(p.closest('script,style,code,pre,.tip,.glossary-term')) return;
     var src = node.nodeValue;
     if(!src || src.trim().length < 4) return;
-    var out = src;
-    var changed = false;
-    terms.forEach(function(term){
-      var re = new RegExp('\\b' + term.replace(/[.*+?^${}()|[\\]\\]/g, '\\\\$&') + '\\b', 'gi');
-      if(re.test(out)){
-        changed = true;
-        out = out.replace(re, function(m){
-          return '<span class="tip glossary-term" data-tip="' + glossary[term] + '">' + m + '</span>';
-        });
-      }
+    var pattern = new RegExp('\\b(' + terms.map(function(term){
+      return term.replace(/[.*+?^${}()|[\\]\\]/g, '\\\\$&');
+    }).join('|') + ')\\b', 'gi');
+    var changed = pattern.test(src);
+    if(!changed) return;
+    var out = src.replace(pattern, function(m){
+      var key = m.toLowerCase();
+      return '<span class="tip glossary-term" data-tip="' + glossary[key] + '">' + m + '</span>';
     });
-    if(changed){
-      var span = document.createElement('span');
-      span.innerHTML = out;
-      p.replaceChild(span, node);
-    }
+    var span = document.createElement('span');
+    span.innerHTML = out;
+    p.replaceChild(span, node);
   });
 }
 
@@ -4132,138 +4130,72 @@ function initMsCalculator(){
     <div class="step-num" style="color:var(--blue);border-color:var(--blue);background:var(--blue-d);">&#9319;</div>
     <div>
       <div class="step-label" style="color:var(--blue);">Storage &amp; Retention Pathways</div>
-      <div class="step-sub">Two primary post-request storage models &middot; object types &middot; actor ownership</div>
+      <div class="step-sub">Prompt output flow &middot; where data is saved &middot; byte-share by storage type</div>
     </div>
   </div>
   <div style="font-size:12.5px;color:var(--muted);line-height:1.75;margin-bottom:14px;">
-    Post-request data handling usually follows one of two architectures. The key distinction is where persistence is controlled: provider-managed infrastructure (often cloud-hosted, e.g. Anthropic via AWS) or enterprise-controlled infrastructure (private cloud/on-prem). In both cases, <span class="tip" data-tip="KV Cache: the stored Key and Value vectors for prior tokens. They stay in GPU memory so each new token can look back without recomputing the whole history. It grows with conversation length and is a core memory constraint.">KV cache</span> is typically transient runtime memory.
+    A simpler way to read this section: once the response is generated, some data is <strong style="color:var(--ink);">saved</strong> and some is only <strong style="color:var(--ink);">used temporarily</strong>.
+    Here, <strong style="color:var(--ink);">"persist" means "save to storage after the request"</strong>, and <strong style="color:var(--ink);">"consume" means "read later by product, analytics, security, or compliance systems"</strong>.
+    In most deployments, <span class="tip" data-tip="KV Cache: the stored Key and Value vectors for prior tokens. They stay in GPU memory so each new token can look back without recomputing the whole history. It grows with conversation length and is a core memory constraint.">KV cache</span> remains runtime-only and is not part of long-term storage.
   </div>
-
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
-    <div style="background:rgba(26,191,208,.1);border:1.5px solid rgba(26,191,208,.35);border-radius:8px;padding:11px 12px;">
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--cyan);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em;">Primary Option A &mdash; Provider-managed retention plane</div>
-      <div style="font-size:11.5px;color:var(--muted);line-height:1.6;">Inference may run in provider-operated cloud clusters. Metadata and safety/abuse traces are commonly persisted in provider telemetry systems. App-level history/output can be either provider-side features or customer-managed stores.</div>
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:8.2px;color:var(--muted);margin-top:7px;">Typical actor stack: model provider + cloud host + customer app team</div>
-    </div>
-    <div style="background:rgba(48,200,112,.1);border:1.5px solid rgba(48,200,112,.35);border-radius:8px;padding:11px 12px;">
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--green);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em;">Primary Option B &mdash; Enterprise-managed retention plane (on-prem/private)</div>
-      <div style="font-size:11.5px;color:var(--muted);line-height:1.6;">Inference and storage are kept inside customer-controlled environments (on-prem or private VPC). Logs, history, and memory stores are routed to enterprise SIEM/lakehouse/DB systems under internal policy and residency controls.</div>
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:8.2px;color:var(--muted);margin-top:7px;">Typical actor stack: enterprise platform team + security/compliance + infra ops</div>
-    </div>
-  </div>
-
-  <div style="background:var(--bg);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:12px 14px;margin-bottom:12px;">
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:7px;text-transform:uppercase;letter-spacing:.09em;">Storage handoff (plain English)</div>
-    <div style="font-size:12px;color:var(--muted);line-height:1.65;margin-bottom:10px;">This answers a simple question: <strong style="color:var(--ink);">after a token is generated, who writes the records, where do they land, and who reads them later?</strong> In other words, who &ldquo;satisfies demand&rdquo; when product, analytics, security, or compliance teams need the data.</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;align-items:stretch;">
-      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:8px 9px;">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--blue);margin-bottom:4px;">1) Generate</div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:8.4px;color:var(--muted);line-height:1.5;">LLM runtime creates outputs + operational events<br><strong style="color:var(--ink);">(provider cluster or enterprise cluster)</strong></div>
+  <div style="background:var(--panel2);border:1px solid var(--border2);border-radius:8px;padding:12px 14px;margin-bottom:12px;">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.08em;">Prompt to storage flow (simplified)</div>
+    <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1.2fr;gap:8px;align-items:stretch;">
+      <div style="background:var(--panel);border:1px solid var(--border);border-radius:7px;padding:9px 10px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--blue);margin-bottom:4px;">1) Prompt + Response</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.5;">User input and model output are produced at inference time.</div>
       </div>
-      <div style="background:rgba(74,144,232,.08);border:1px solid rgba(74,144,232,.25);border-radius:6px;padding:8px 9px;">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--cyan);margin-bottom:4px;">2) Persist</div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:8.4px;color:var(--muted);line-height:1.5;">Transcript DB, telemetry/log pipeline, vector store<br><strong style="color:var(--ink);">(provider-managed and/or customer-managed)</strong></div>
+      <div style="display:flex;align-items:center;justify-content:center;color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:11px;">&rarr;</div>
+      <div style="background:var(--panel);border:1px solid var(--border);border-radius:7px;padding:9px 10px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--blue);margin-bottom:4px;">2) Data Center Runtime</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.5;">Inference service decides what to keep in memory only vs what to save.</div>
       </div>
-      <div style="background:rgba(232,160,32,.08);border:1px solid rgba(232,160,32,.25);border-radius:6px;padding:8px 9px;">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--amber);margin-bottom:4px;">3) Consume</div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:8.4px;color:var(--muted);line-height:1.5;">App product, analytics, security, compliance queries<br><strong style="color:var(--ink);">(dashboards, audits, user history features)</strong></div>
+      <div style="display:flex;align-items:center;justify-content:center;color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:11px;">&rarr;</div>
+      <div style="background:var(--panel);border:1px solid var(--border);border-radius:7px;padding:9px 10px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--blue);margin-bottom:4px;">3) Storage Destinations</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.5;">Transcript DB, logs/audit store, analytics DB, optional vector memory.</div>
       </div>
     </div>
+    <div style="font-size:10.5px;color:var(--muted);line-height:1.55;margin-top:8px;">Runtime-only note: <span class="tip" data-tip="KV Cache: the stored Key and Value vectors for prior tokens. They stay in GPU memory so each new token can look back without recomputing the whole history. It grows with conversation length and is a core memory constraint.">KV cache</span> is usually not saved as durable storage.</div>
   </div>
 
-  <div style="background:var(--bg);border:1px solid rgba(255,255,255,.08);border-radius:7px;padding:10px 12px;">
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:7px;text-transform:uppercase;letter-spacing:.08em;">Post-prompt data mix (illustrative, left-aligned)</div>
-    <div style="overflow-x:auto;">
-      <table style="width:100%;border-collapse:collapse;font-family:'IBM Plex Mono',monospace;font-size:9px;">
-        <thead>
-          <tr style="border-bottom:1px solid var(--border2);">
-            <th style="text-align:left;padding:7px 8px;color:var(--muted);">Data type</th>
-            <th style="text-align:left;padding:7px 8px;color:var(--muted);">Typical stored payload / request</th>
-            <th style="text-align:left;padding:7px 8px;color:var(--muted);">Primary store</th>
-            <th style="text-align:left;padding:7px 8px;color:var(--muted);">Approx share of persisted bytes</th>
-            <th style="text-align:left;padding:7px 8px;color:var(--muted);">Typical owner</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr style="border-bottom:1px solid var(--border);">
-            <td style="padding:7px 8px;color:var(--cyan);">KV cache</td>
-            <td style="padding:7px 8px;color:var(--muted);">Runtime only (not persisted in most systems)</td>
-            <td style="padding:7px 8px;color:var(--muted);">GPU HBM / process memory</td>
-            <td style="padding:7px 8px;color:var(--ink);">~0%</td>
-            <td style="padding:7px 8px;color:var(--ink);">Runtime platform</td>
-          </tr>
-          <tr style="border-bottom:1px solid var(--border);">
-            <td style="padding:7px 8px;color:var(--blue);">Output text chunks</td>
-            <td style="padding:7px 8px;color:var(--muted);">~20 KB to 200 KB</td>
-            <td style="padding:7px 8px;color:var(--muted);">Transcript store / object store</td>
-            <td style="padding:7px 8px;color:var(--ink);">~5% to 15%</td>
-            <td style="padding:7px 8px;color:var(--ink);">App team</td>
-          </tr>
-          <tr style="border-bottom:1px solid var(--border);">
-            <td style="padding:7px 8px;color:var(--amber);">Conversation history (prompt + response)</td>
-            <td style="padding:7px 8px;color:var(--muted);">~150 KB to 2 MB</td>
-            <td style="padding:7px 8px;color:var(--muted);">Session DB + long-term transcript DB</td>
-            <td style="padding:7px 8px;color:var(--ink);">~45% to 70%</td>
-            <td style="padding:7px 8px;color:var(--ink);">App team / enterprise platform</td>
-          </tr>
-          <tr style="border-bottom:1px solid var(--border);">
-            <td style="padding:7px 8px;color:var(--purple);">Request, usage, safety logs</td>
-            <td style="padding:7px 8px;color:var(--muted);">~50 KB to 800 KB</td>
-            <td style="padding:7px 8px;color:var(--muted);">Telemetry pipeline, SIEM, audit lake</td>
-            <td style="padding:7px 8px;color:var(--ink);">~15% to 35%</td>
-            <td style="padding:7px 8px;color:var(--ink);">Provider ops and/or enterprise ops</td>
-          </tr>
-          <tr>
-            <td style="padding:7px 8px;color:var(--green);">Vector memory artifacts</td>
-            <td style="padding:7px 8px;color:var(--muted);">~20 KB to 500 KB (only if memory writes enabled)</td>
-            <td style="padding:7px 8px;color:var(--muted);">Vector DB</td>
-            <td style="padding:7px 8px;color:var(--ink);">~0% to 20%</td>
-            <td style="padding:7px 8px;color:var(--ink);">Usually customer-owned</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div style="font-size:11px;color:var(--muted);line-height:1.55;margin-top:8px;">Percentages are for <strong style="color:var(--ink);">persisted stores after a request</strong> (not runtime memory), so KV cache is effectively 0% in most architectures.</div>
-  </div>
-
-  <div style="background:rgba(138,110,232,.08);border:1.5px solid rgba(138,110,232,.28);border-radius:8px;padding:11px 12px;margin-top:10px;">
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--purple);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em;">Worked example: context-heavy reasoning request (Anthropic-style hosted endpoint)</div>
+  <div style="background:var(--panel2);border:1px solid var(--border2);border-radius:8px;padding:11px 12px;margin-top:10px;">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--blue);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em;">Scenario: persisted data share by storage type</div>
     <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:8px;">
       <span style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);">Scenario:</span>
       <button class="user-preset" id="stor-scen-light" onclick="setStorageScenario('light')">Light prompt</button>
       <button class="user-preset sel" id="stor-scen-heavy" onclick="setStorageScenario('heavy')">Heavy prompt</button>
       <button class="user-preset" id="stor-scen-agentic" onclick="setStorageScenario('agentic')">Agentic multi-tool</button>
     </div>
-    <div id="stor-scen-desc" style="font-size:12px;color:var(--muted);line-height:1.62;margin-bottom:7px;">Illustrative request profile: ~3K input-context tokens, ~400 reasoning tokens, ~300 final output tokens, standard safety/usage logging, full transcript stored.</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-      <div id="stor-scen-bytes" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:8px 9px;font-family:'IBM Plex Mono',monospace;font-size:8.8px;color:var(--muted);line-height:1.65;">
-        Approx persisted bytes per request:<br>
-        Transcript/history: <strong style="color:var(--ink);" id="stor-b-transcript">~240 KB</strong><br>
-        Provider/request/safety logs: <strong style="color:var(--ink);" id="stor-b-logs">~140 KB</strong><br>
-        App analytics metadata: <strong style="color:var(--ink);" id="stor-b-app">~45 KB</strong><br>
-        Vector-memory writes (if enabled): <strong style="color:var(--ink);" id="stor-b-vector">~0 KB</strong><br>
-        <span style="color:var(--purple);" id="stor-b-total">Total persisted: ~425 KB / request</span>
+    <div id="stor-scen-desc" style="font-size:12px;color:var(--muted);line-height:1.62;margin-bottom:10px;">Illustrative request profile: ~3K input-context tokens, ~400 reasoning tokens, ~300 final output tokens, standard safety/usage logging, full transcript stored.</div>
+
+    <div style="background:var(--panel);border:1px solid var(--border);border-radius:7px;padding:9px 10px;margin-bottom:10px;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Share of total persisted bytes</div>
+      <div id="stor-share-bar" style="display:flex;height:14px;border-radius:999px;overflow:hidden;background:#DCE5F0;border:1px solid var(--border2);">
+        <div id="stor-seg-transcript" style="width:56%;background:#4E79A7;"></div>
+        <div id="stor-seg-logs" style="width:33%;background:#6C92BE;"></div>
+        <div id="stor-seg-app" style="width:11%;background:#8AABD0;"></div>
+        <div id="stor-seg-vector" style="width:0%;background:#B6CAE3;"></div>
       </div>
-      <div id="stor-scen-share" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:8px 9px;font-family:'IBM Plex Mono',monospace;font-size:8.8px;color:var(--muted);line-height:1.65;">
-        Approx share of persisted bytes:<br>
-        Transcript/history: <strong style="color:var(--ink);" id="stor-p-transcript">~56%</strong><br>
-        Provider/request/safety logs: <strong style="color:var(--ink);" id="stor-p-logs">~33%</strong><br>
-        App analytics metadata: <strong style="color:var(--ink);" id="stor-p-app">~11%</strong><br>
-        Vector-memory artifacts: <strong style="color:var(--ink);" id="stor-p-vector">~0%</strong><br>
-        <span style="color:var(--purple);">KV cache: 0% persisted (runtime only)</span>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);margin-top:6px;" id="stor-b-total">Total persisted: ~425 KB / request</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+      <div style="background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:8px 9px;font-family:'IBM Plex Mono',monospace;font-size:8.8px;color:var(--muted);line-height:1.65;">
+        Transcript/history: <strong style="color:var(--ink);" id="stor-p-transcript">~56%</strong> (<span id="stor-b-transcript">~240 KB</span>)<br>
+        Request/safety logs: <strong style="color:var(--ink);" id="stor-p-logs">~33%</strong> (<span id="stor-b-logs">~140 KB</span>)
+      </div>
+      <div style="background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:8px 9px;font-family:'IBM Plex Mono',monospace;font-size:8.8px;color:var(--muted);line-height:1.65;">
+        App analytics metadata: <strong style="color:var(--ink);" id="stor-p-app">~11%</strong> (<span id="stor-b-app">~45 KB</span>)<br>
+        Vector-memory artifacts: <strong style="color:var(--ink);" id="stor-p-vector">~0%</strong> (<span id="stor-b-vector">~0 KB</span>)
       </div>
     </div>
+    <div style="font-size:10.5px;color:var(--muted);line-height:1.55;margin-top:8px;">The bar shows only durable storage after request completion. KV cache stays runtime-only in most architectures.</div>
   </div>
 
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
-    <div style="background:rgba(232,160,32,.08);border:1px solid rgba(232,160,32,.25);border-radius:7px;padding:10px 12px;">
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--amber);margin-bottom:4px;">Where does data live relative to GPU compute?</div>
-      <div style="font-size:12px;color:var(--muted);line-height:1.6;">Provider model: storage may be logically separate from GPU cluster but in same cloud/provider boundary. Enterprise model: storage is often co-governed with compute in private VPC or on-prem fabrics.</div>
-    </div>
-    <div style="background:rgba(224,72,72,.08);border:1px solid rgba(224,72,72,.25);border-radius:7px;padding:10px 12px;">
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--red);margin-bottom:4px;">Policy caveat</div>
-      <div style="font-size:12px;color:var(--muted);line-height:1.6;">Exact retention, training use, and data residency are contract/SKU dependent and still evolving in some enterprise offerings. Always treat these as deployment-specific controls, not universal defaults.</div>
-    </div>
+  <div style="background:var(--panel2);border:1px solid var(--border2);border-radius:7px;padding:10px 12px;margin-top:10px;">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:4px;">Deployment note</div>
+    <div style="font-size:12px;color:var(--muted);line-height:1.6;">Provider-hosted and enterprise-hosted setups route data differently, but the same core pattern applies: output is generated, selected records are saved, and downstream teams read those saved records later. Exact retention/training/residency behavior remains contract and deployment specific.</div>
   </div>
 </div>
 
@@ -4920,6 +4852,19 @@ function setStorageScenario(kind){
   if(el('stor-p-logs')) el('stor-p-logs').textContent = s.pLogs;
   if(el('stor-p-app')) el('stor-p-app').textContent = s.pApp;
   if(el('stor-p-vector')) el('stor-p-vector').textContent = s.pVector;
+
+  function pctValue(txt){
+    var n = parseFloat(String(txt || '').replace(/[^0-9.]/g, ''));
+    return isNaN(n) ? 0 : Math.max(0, Math.min(100, n));
+  }
+  var segTranscript = el('stor-seg-transcript');
+  var segLogs = el('stor-seg-logs');
+  var segApp = el('stor-seg-app');
+  var segVector = el('stor-seg-vector');
+  if(segTranscript) segTranscript.style.width = pctValue(s.pTranscript) + '%';
+  if(segLogs) segLogs.style.width = pctValue(s.pLogs) + '%';
+  if(segApp) segApp.style.width = pctValue(s.pApp) + '%';
+  if(segVector) segVector.style.width = pctValue(s.pVector) + '%';
 
   ['light','heavy','agentic'].forEach(function(n){
     var btn = el('stor-scen-'+n);
