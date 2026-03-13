@@ -355,6 +355,13 @@ details>summary::-webkit-details-marker{display:none;}
 .econx-batch-row span{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);}
 .econx-batch-btn{border:1px solid var(--border2);background:var(--bg);color:var(--muted);border-radius:999px;padding:3px 9px;font-family:'IBM Plex Mono',monospace;font-size:8.5px;cursor:pointer;}
 .econx-batch-btn.sel{border-color:var(--amber);background:rgba(232,160,32,.12);color:var(--amber);}
+.econx-quick-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px;}
+.econx-quick-btn{border:1px solid var(--border2);background:var(--bg);color:var(--muted);border-radius:999px;padding:2px 9px;font-family:'IBM Plex Mono',monospace;font-size:8px;cursor:pointer;}
+.econx-quick-btn:hover{border-color:var(--amber);color:var(--amber);}
+.econx-scenario-row{display:flex;flex-wrap:wrap;gap:7px;}
+.econx-scenario-btn{border:1px solid var(--border2);background:var(--bg);color:var(--muted);border-radius:7px;padding:6px 9px;font-family:'IBM Plex Mono',monospace;font-size:8px;line-height:1.4;cursor:pointer;text-align:left;}
+.econx-scenario-btn:hover{border-color:var(--amber);color:var(--amber);}
+.econx-scenario-btn.sel{border-color:var(--amber);background:rgba(232,160,32,.12);color:var(--amber);}
 .econx-fold>summary{color:var(--amber);}
 .optional-fold{margin-top:12px;border-color:rgba(138,110,232,.18);}
 .optional-fold>details>summary{background:rgba(138,110,232,.07);color:var(--purple);}
@@ -3939,6 +3946,12 @@ function initMsCalculator(){
       <div class="econx-stack">
         <div class="econx-card">
           <div class="econx-title">Workload Parameters</div>
+          <div class="econx-scenario-row" id="econxScenarioBtns" style="margin-bottom:9px;">
+            <button type="button" class="econx-scenario-btn" data-scenario="chat" onclick="econxApplyScenario('chat')">Short chat\n(consumer UI)</button>
+            <button type="button" class="econx-scenario-btn" data-scenario="claude_rag" onclick="econxApplyScenario('claude_rag')">Claude-style + RAG\n+ MCP tools</button>
+            <button type="button" class="econx-scenario-btn" data-scenario="agentic" onclick="econxApplyScenario('agentic')">Agentic research\nlong context + loops</button>
+            <button type="button" class="econx-scenario-btn" data-scenario="batch" onclick="econxApplyScenario('batch')">Batch generation\nthroughput-first</button>
+          </div>
           <div class="econx-controls">
             <div class="econx-ctrl">
               <div class="econx-ctrl-row"><span>Model size</span></div>
@@ -3960,16 +3973,41 @@ function initMsCalculator(){
               </select>
             </div>
             <div class="econx-ctrl">
-              <div class="econx-ctrl-row"><span>Input tokens</span><span id="econxInputLabel">1,024</span></div>
-              <input type="range" id="econxInput" min="128" max="16384" step="128" value="1024" oninput="econxUpdate()">
+              <div class="econx-ctrl-row"><span>Input tokens (base prompt)</span><span id="econxInputLabel">1,024</span></div>
+              <input type="range" id="econxInput" min="128" max="131072" step="128" value="1024" oninput="econxUpdate()">
             </div>
             <div class="econx-ctrl">
               <div class="econx-ctrl-row"><span>Output tokens</span><span id="econxOutputLabel">512</span></div>
-              <input type="range" id="econxOutput" min="64" max="4096" step="64" value="512" oninput="econxUpdate()">
+              <input type="range" id="econxOutput" min="64" max="32768" step="64" value="512" oninput="econxUpdate()">
             </div>
             <div class="econx-ctrl">
               <div class="econx-ctrl-row"><span>Batch size</span><span id="econxBatchLabel">1</span></div>
-              <input type="range" id="econxBatch" min="1" max="32" step="1" value="1" oninput="econxUpdate()">
+              <input type="range" id="econxBatch" min="1" max="200" step="1" value="1" oninput="econxUpdate()">
+              <div class="econx-quick-row">
+                <button type="button" class="econx-quick-btn" onclick="econxSetBatch(20)">20</button>
+                <button type="button" class="econx-quick-btn" onclick="econxSetBatch(50)">50</button>
+                <button type="button" class="econx-quick-btn" onclick="econxSetBatch(100)">100</button>
+                <button type="button" class="econx-quick-btn" onclick="econxSetBatch(200)">200</button>
+              </div>
+            </div>
+            <div class="econx-ctrl">
+              <div class="econx-ctrl-row"><span>Attached docs / folders</span><span id="econxDocsLabel">0</span></div>
+              <input type="range" id="econxDocs" min="0" max="80" step="1" value="0" oninput="econxUpdate()">
+            </div>
+            <div class="econx-ctrl">
+              <div class="econx-ctrl-row"><span>Avg tokens per attached doc</span></div>
+              <select id="econxDocTokens" class="econx-select" onchange="econxUpdate()">
+                <option value="512">~512 tok/doc</option>
+                <option value="1024" selected>~1,024 tok/doc</option>
+                <option value="2048">~2,048 tok/doc</option>
+                <option value="4096">~4,096 tok/doc</option>
+              </select>
+              <div class="econx-note" id="econxEffectiveInputNote" style="margin-top:5px;">Effective input = base prompt + attached docs.</div>
+            </div>
+            <div class="econx-ctrl">
+              <div class="econx-ctrl-row"><span>Cards per node (weight sharding limit)</span><span id="econxCardsPerNodeLabel">8</span></div>
+              <input type="range" id="econxCardsPerNode" min="1" max="8" step="1" value="8" oninput="econxUpdate()">
+              <div class="econx-note" style="margin-top:5px;">Lower values force cross-node traffic, so decode slows even if total GPU count is unchanged.</div>
             </div>
             <div class="econx-ctrl">
               <div class="econx-ctrl-row"><span>Electricity $/kWh</span><span id="econxElecLabel">$0.10</span></div>
@@ -4012,6 +4050,7 @@ function initMsCalculator(){
           <div class="econx-title">Cost Per 1 Million Output Tokens + Time To Produce Them</div>
           <div class="econx-chart-wrap" style="margin-bottom:10px;"><canvas id="econxCostChart"></canvas></div>
           <div id="econxCostSpeedSummary" style="overflow-x:auto;"></div>
+          <div id="econxNodeConstraint" style="margin-top:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:10px 12px;"></div>
           <details style="margin-top:10px;">
             <summary style="color:var(--amber);">Show economics math</summary>
             <div id="econxMath" style="padding-top:10px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);line-height:1.9;"></div>
@@ -4930,6 +4969,13 @@ var ECONX_GPU_COUNTS = [1, 2, 4, 8, 16];
 var ECONX_SCALE_BATCH = 20;
 var econxCostChart = null;
 var econxScaleChart = null;
+var ECONX_SCENARIOS = {
+  chat: { model:'13B', precision:'BF16', input:768, output:220, batch:20, docs:0, docTokens:1024, cardsPerNode:8, gpus:['L40S 48GB','A100 SXM4 80GB','H100 SXM5'] },
+  claude_rag: { model:'70B', precision:'BF16', input:4096, output:900, batch:50, docs:8, docTokens:1024, cardsPerNode:8, gpus:['H100 SXM5','H200 SXM5','B200 SXM'] },
+  agentic: { model:'70B', precision:'BF16', input:12000, output:2600, batch:20, docs:24, docTokens:2048, cardsPerNode:4, gpus:['A100 SXM4 80GB','H100 SXM5','B200 SXM'] },
+  batch: { model:'34B', precision:'INT8', input:512, output:320, batch:200, docs:0, docTokens:1024, cardsPerNode:8, gpus:['L40S 48GB','A100 SXM4 80GB','H100 SXM5'] }
+};
+var ECONX_ACTIVE_SCENARIO = '';
 
 function econxKeys(){
   return Object.keys(ECONX_GPUS).sort(function(a,b){
@@ -4990,6 +5036,15 @@ function econxGpusNeeded(totalMem, vram){
   return 32;
 }
 
+function econxNodeTopology(n, cardsPerNode){
+  var cpn = Math.max(1, Math.min(8, cardsPerNode || 8));
+  var nodes = Math.max(1, Math.ceil(n / cpn));
+  var extraNodeHops = Math.max(0, nodes - 1);
+  var bwPenalty = 1 + (extraNodeHops * 0.45);
+  var latPenalty = 1 + (extraNodeHops * 0.80);
+  return { cards_per_node: cpn, nodes: nodes, hops: extraNodeHops, bw_penalty: bwPenalty, lat_penalty: latPenalty };
+}
+
 function econxIcEff(type, n){
   var tbl = ECONX_IC_EFF[type] || ECONX_IC_EFF.pcie;
   var key = Math.min(n, 16);
@@ -4999,11 +5054,12 @@ function econxIcEff(type, n){
   return eff;
 }
 
-function econxDecodeMetrics(modelMemGB, model, n, gpu){
+function econxDecodeMetrics(modelMemGB, model, n, gpu, cardsPerNode){
   var readMs = (modelMemGB / n * 1000) / gpu.bandwidth;
+  var topo = econxNodeTopology(n, cardsPerNode);
   if(n === 1){
     var effRead = readMs / (gpu.sustained || 1.0);
-    return { read_ms: effRead, comms_ms: 0, total_ms: effRead, tps: 1000 / effRead, ic_eff: 1.0 };
+    return { read_ms: effRead, comms_ms: 0, total_ms: effRead, tps: 1000 / effRead, ic_eff: 1.0, nodes: topo.nodes, cards_per_node: topo.cards_per_node };
   }
   // All-reduce: ring all-reduce sends 2*(N-1)/N * data through the ring
   var arBytes = 2 * model.hidden * 2;
@@ -5012,33 +5068,35 @@ function econxDecodeMetrics(modelMemGB, model, n, gpu){
   var effectiveIcBw = gpu.ic_bw * icEff;
   var bwMs = (2 * (n - 1) / n * arBytes * nAr) / (effectiveIcBw * 1e9) * 1000;
   var latMs = nAr * gpu.ic_lat / 1000;
-  var commMs = bwMs + latMs;
+  var commMs = (bwMs * topo.bw_penalty) + (latMs * topo.lat_penalty);
   // Apply sustained efficiency to all components
   var rawTotal = readMs + commMs;
   var total = rawTotal / (gpu.sustained || 1.0);
-  return { read_ms: readMs / (gpu.sustained || 1.0), comms_ms: commMs / (gpu.sustained || 1.0), total_ms: total, tps: 1000 / total, ic_eff: icEff };
+  return { read_ms: readMs / (gpu.sustained || 1.0), comms_ms: commMs / (gpu.sustained || 1.0), total_ms: total, tps: 1000 / total, ic_eff: icEff, nodes: topo.nodes, cards_per_node: topo.cards_per_node, bw_penalty: topo.bw_penalty, lat_penalty: topo.lat_penalty };
 }
 
-function econxTTFTMs(model, inputTok, n, gpu){
+function econxTTFTMs(model, inputTok, n, gpu, cardsPerNode){
   var flops = 2 * inputTok * model.params * 1e9;
   var computeMs = flops / (n * gpu.tflops * 1e12) * 1000;
   if(n === 1) return computeMs / gpu.sustained;
+  var topo = econxNodeTopology(n, cardsPerNode);
   var effIcBw = gpu.ic_bw * econxIcEff(gpu.ic_type, n);
   var arBytes = 2 * model.hidden * inputTok * 2;
   var allReduces = 2 * model.layers;
-  var bwMs = (2 * (n - 1) / n * arBytes * allReduces) / (effIcBw * 1e9) * 1000;
-  var latMs = allReduces * gpu.ic_lat / 1000;
+  var bwMs = ((2 * (n - 1) / n * arBytes * allReduces) / (effIcBw * 1e9) * 1000) * topo.bw_penalty;
+  var latMs = (allReduces * gpu.ic_lat / 1000) * topo.lat_penalty;
   return (computeMs + bwMs + latMs) / gpu.sustained;
 }
 
-function econxBuildResult(gpu, model, modelMem, inputTok, outputTok, batch, elec, rack, pue, n){
+function econxBuildResult(gpu, model, modelMem, inputTok, outputTok, batch, elec, rack, pue, n, cardsPerNode){
   if(!gpu || !model) return null;
   var kvMem = econxKvCacheGB(model, inputTok + outputTok, batch);
   var totalMem = modelMem + kvMem + modelMem * 0.10;
   if((gpu.vram * n) < totalMem || n > 32) return null;
 
-  var decode = econxDecodeMetrics(modelMem, model, n, gpu);
-  var ttft = econxTTFTMs(model, inputTok, n, gpu);
+  var decode = econxDecodeMetrics(modelMem, model, n, gpu, cardsPerNode);
+  var ttft = econxTTFTMs(model, inputTok, n, gpu, cardsPerNode);
+  var topo = econxNodeTopology(n, cardsPerNode);
   var decodeTotalMs = outputTok * decode.total_ms / batch;
   var totalMs = ttft + decodeTotalMs;
   var gpuHours = (totalMs / 3600000) * n;
@@ -5080,26 +5138,57 @@ function econxBuildResult(gpu, model, modelMem, inputTok, outputTok, batch, elec
     total_cost: totalCost,
     tps_effective: tpsEffective,
     time_for_1m_s: 1000000 / tpsEffective,
-    cost_per_1m_out: (totalCost / outputTok) * 1e6
+    cost_per_1m_out: (totalCost / outputTok) * 1e6,
+    cards_per_node: topo.cards_per_node,
+    nodes: topo.nodes,
+    topo_bw_penalty: topo.bw_penalty,
+    topo_lat_penalty: topo.lat_penalty
   };
 }
 
-function econxFull(gpuKey, modelKey, prec, inputTok, outputTok, batch, elec, rack, pue){
+function econxFull(gpuKey, modelKey, prec, inputTok, outputTok, batch, elec, rack, pue, cardsPerNode){
   var gpu = ECONX_GPUS[gpuKey];
   var model = ECONX_MODELS[modelKey];
   if(!gpu || !model) return null;
   var modelMem = econxModelMemGB(model.params, prec);
   var totalMem = modelMem + econxKvCacheGB(model, inputTok + outputTok, batch) + modelMem * 0.10;
   var n = econxGpusNeeded(totalMem, gpu.vram);
-  return econxBuildResult(gpu, model, modelMem, inputTok, outputTok, batch, elec, rack, pue, n);
+  return econxBuildResult(gpu, model, modelMem, inputTok, outputTok, batch, elec, rack, pue, n, cardsPerNode);
 }
 
-function econxFullForN(gpuKey, modelKey, prec, inputTok, outputTok, batch, elec, rack, pue, n){
+function econxFullForN(gpuKey, modelKey, prec, inputTok, outputTok, batch, elec, rack, pue, n, cardsPerNode){
   var gpu = ECONX_GPUS[gpuKey];
   var model = ECONX_MODELS[modelKey];
   if(!gpu || !model) return null;
   var modelMem = econxModelMemGB(model.params, prec);
-  return econxBuildResult(gpu, model, modelMem, inputTok, outputTok, batch, elec, rack, pue, n);
+  return econxBuildResult(gpu, model, modelMem, inputTok, outputTok, batch, elec, rack, pue, n, cardsPerNode);
+}
+
+function econxSetBatch(v){
+  var b = el('econxBatch');
+  if(!b) return;
+  b.value = Math.max(parseInt(b.min, 10), Math.min(parseInt(b.max, 10), v));
+  econxUpdate();
+}
+
+function econxApplyScenario(name){
+  var s = ECONX_SCENARIOS[name];
+  if(!s) return;
+  ECONX_ACTIVE_SCENARIO = name;
+  if(el('econxModel')) el('econxModel').value = s.model;
+  if(el('econxPrecision')) el('econxPrecision').value = s.precision;
+  if(el('econxInput')) el('econxInput').value = s.input;
+  if(el('econxOutput')) el('econxOutput').value = s.output;
+  if(el('econxBatch')) el('econxBatch').value = s.batch;
+  if(el('econxDocs')) el('econxDocs').value = s.docs;
+  if(el('econxDocTokens')) el('econxDocTokens').value = String(s.docTokens);
+  if(el('econxCardsPerNode')) el('econxCardsPerNode').value = s.cardsPerNode;
+  if(el('econxGpuA') && s.gpus[0]) el('econxGpuA').value = s.gpus[0];
+  if(el('econxGpuB') && s.gpus[1]) el('econxGpuB').value = s.gpus[1];
+  if(el('econxGpuC') && s.gpus[2]) el('econxGpuC').value = s.gpus[2];
+  var btns = document.querySelectorAll('#econxScenarioBtns .econx-scenario-btn');
+  btns.forEach(function(btn){ btn.classList.toggle('sel', btn.getAttribute('data-scenario') === name); });
+  econxUpdate();
 }
 
 function econxPopulateGpuSelects(){
@@ -5173,6 +5262,7 @@ function econxUpdateNetworkExample(outputTok){
 function econxMetricValue(metric, r){
   if(!r) return null;
   if(metric === 'gpus') return r.n;
+  if(metric === 'nodes') return r.nodes;
   if(metric === 'rack') return r.rack_u;
   if(metric === 'ttft') return r.ttft_ms;
   if(metric === 'decode') return r.decode.total_ms;
@@ -5269,7 +5359,7 @@ function econxDrawCostChart(results){
   });
 }
 
-function econxDrawScaleChart(results, modelKey, prec, inputTok, outputTok, elec, rack, pue){
+function econxDrawScaleChart(results, modelKey, prec, inputTok, outputTok, elec, rack, pue, cardsPerNode){
   if(!window.Chart || !el('econxScaleChart')) return;
   var labels = ECONX_GPU_COUNTS.map(function(n){ return n + ' GPU' + (n > 1 ? 's' : ''); });
   var datasets = [];
@@ -5278,7 +5368,7 @@ function econxDrawScaleChart(results, modelKey, prec, inputTok, outputTok, elec,
     datasets.push({
       label: entry.key,
       data: ECONX_GPU_COUNTS.map(function(n){
-        var rr = econxFullForN(entry.key, modelKey, prec, inputTok, outputTok, ECONX_SCALE_BATCH, elec, rack, pue, n);
+        var rr = econxFullForN(entry.key, modelKey, prec, inputTok, outputTok, ECONX_SCALE_BATCH, elec, rack, pue, n, cardsPerNode);
         return rr ? Number(rr.tps_effective.toFixed(1)) : null;
       }),
       borderColor: entry.gpu.color,
@@ -5331,16 +5421,23 @@ function econxUpdate(){
   if(!el('econxModel')) return;
   var modelKey = el('econxModel').value;
   var prec = el('econxPrecision').value;
-  var inputTok = parseInt(el('econxInput').value, 10) || 1024;
+  var inputBase = parseInt(el('econxInput').value, 10) || 1024;
   var outputTok = parseInt(el('econxOutput').value, 10) || 512;
   var batch = parseInt(el('econxBatch').value, 10) || 1;
+  var docs = parseInt((el('econxDocs') && el('econxDocs').value) || '0', 10) || 0;
+  var docTok = parseInt((el('econxDocTokens') && el('econxDocTokens').value) || '1024', 10) || 1024;
+  var inputTok = inputBase + (docs * docTok);
+  var cardsPerNode = parseInt((el('econxCardsPerNode') && el('econxCardsPerNode').value) || '8', 10) || 8;
   var elec = parseFloat(el('econxElec').value) || 0.10;
   var pue = parseFloat(el('econxPue').value) || 1.40;
   var rack = parseFloat(el('econxRack').value) || 150;
 
-  el('econxInputLabel').textContent = inputTok.toLocaleString();
+  el('econxInputLabel').textContent = inputBase.toLocaleString();
   el('econxOutputLabel').textContent = outputTok.toLocaleString();
   el('econxBatchLabel').textContent = econxFmtNum(batch, 0);
+  if(el('econxDocsLabel')) el('econxDocsLabel').textContent = econxFmtNum(docs, 0);
+  if(el('econxCardsPerNodeLabel')) el('econxCardsPerNodeLabel').textContent = econxFmtNum(cardsPerNode, 0);
+  if(el('econxEffectiveInputNote')) el('econxEffectiveInputNote').innerHTML = 'Effective input = ' + econxFmtNum(inputBase, 0) + ' base + ' + econxFmtNum(docs, 0) + ' x ' + econxFmtNum(docTok, 0) + ' = <strong style="color:var(--ink);">' + econxFmtNum(inputTok, 0) + ' tokens</strong>';
   el('econxElecLabel').textContent = '$' + elec.toFixed(2);
   el('econxPueLabel').textContent = pue.toFixed(2) + '×';
   el('econxRackLabel').textContent = '$' + econxFmtNum(rack, 0);
@@ -5348,7 +5445,7 @@ function econxUpdate(){
   var cols = ['A','B','C'];
   var results = cols.map(function(col){
     var key = el('econxGpu' + col).value;
-    return { key: key, gpu: ECONX_GPUS[key], result: econxFull(key, modelKey, prec, inputTok, outputTok, batch, elec, rack, pue) };
+    return { key: key, gpu: ECONX_GPUS[key], result: econxFull(key, modelKey, prec, inputTok, outputTok, batch, elec, rack, pue, cardsPerNode) };
   });
 
   econxUpdateNetworkExample(outputTok);
@@ -5356,6 +5453,7 @@ function econxUpdate(){
   var metrics = [
     { key:'gpus', label:'GPUs needed', best:'min', fmt:function(r){ return r ? econxFmtNum(r.n, 0) + 'x' : 'N/A'; } },
     { key:'interconnect', label:'Interconnect type', best:'none', fmt:function(r, gpu){ return r ? gpu.interconnect : 'N/A'; } },
+    { key:'nodes', label:'Nodes required', best:'min', fmt:function(r){ return r ? econxFmtNum(r.nodes, 0) : 'N/A'; } },
     { key:'rack', label:'Rack size required', best:'min', fmt:function(r){ return r ? econxFmtNum(r.rack_u, 1) + 'U' : 'N/A'; } },
     { key:'ttft', label:'TTFT (prefill)', best:'min', fmt:function(r){ return r ? econxFmtMs(r.ttft_ms, 1) : 'N/A'; } },
     { key:'decode', label:'Decode / token', best:'min', fmt:function(r){ return r ? econxFmtMs(r.decode.total_ms, 2) : 'N/A'; } },
@@ -5416,7 +5514,7 @@ function econxUpdate(){
         + '<span class="econx-cost-legend-item"><i class="econx-cost-dot" style="background:#a78bfa;"></i>Rack ' + econxFmtNum(rackPct, 1) + '%</span>'
         + '<span class="econx-cost-legend-item"><i class="econx-cost-dot" style="background:#f87171;"></i>Reliability ' + econxFmtNum(relPct, 1) + '%</span>'
         + '</div>'
-        + '<div class="econx-header-sub">Interconnect: ' + gpu.interconnect + ' · ' + econxFmtNum(gpu.bandwidth, 0) + ' GB/s HBM</div>'
+        + '<div class="econx-header-sub">Interconnect: ' + gpu.interconnect + ' · ' + econxFmtNum(gpu.bandwidth, 0) + ' GB/s HBM · ' + econxFmtNum(r.cards_per_node, 0) + ' cards/node</div>'
         + body
         + '<div class="econx-metric econx-metric-bottom"><span>Bottom line: $ / 1M out tokens</span><span>' + econxFmtMoney(r.cost_per_1m_out, 1) + '</span></div>'
         + '<div class="econx-metric"><span>Bottom line: time / 1M out tokens</span><span>' + econxFmtTimeFor1M(1000000 / r.tps_effective) + '</span></div>'
@@ -5438,7 +5536,29 @@ function econxUpdate(){
   }
 
   econxDrawCostChart(results);
-  econxDrawScaleChart(results, modelKey, prec, inputTok, outputTok, elec, rack, pue);
+  econxDrawScaleChart(results, modelKey, prec, inputTok, outputTok, elec, rack, pue, cardsPerNode);
+
+  var nodeBox = el('econxNodeConstraint');
+  if(nodeBox){
+    var b200Single = econxFullForN('B200 SXM', modelKey, prec, inputTok, outputTok, batch, elec, rack, pue, 1, 1);
+    var h100Four = econxFullForN('H100 SXM5', modelKey, prec, inputTok, outputTok, batch, elec, rack, pue, 4, 4);
+    if(b200Single && h100Four){
+      var b200ModelSlice = b200Single.model_mem / b200Single.n;
+      var h100ModelSlice = h100Four.model_mem / h100Four.n;
+      var ratio = h100Four.tps_effective > 0 ? (b200Single.tps_effective / h100Four.tps_effective) : 0;
+      var faster = ratio >= 1 ? 'single B200' : '4x H100';
+      nodeBox.innerHTML = ''
+        + '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:9px;color:var(--amber);margin-bottom:6px;">Why 1 card per node can lose (simplified)</div>'
+        + '<div class="econx-note" style="margin-bottom:7px;">Constraint: each decode step still streams model weights + synchronizes token state. Sharding weights across multiple in-node cards can beat a single faster card.</div>'
+        + '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:8.7px;color:var(--muted);line-height:1.75;">'
+        + 'Single B200: model slice/card = ' + econxFmtNum(b200ModelSlice, 1) + ' GB, decode/token = ' + econxFmtNum(b200Single.decode.total_ms, 2) + ' ms, tok/s = ' + econxFmtNum(b200Single.tps_effective, 1) + '<br>'
+        + '4x H100 (same node): model slice/card = ' + econxFmtNum(h100ModelSlice, 1) + ' GB, decode/token = ' + econxFmtNum(h100Four.decode.total_ms, 2) + ' ms, tok/s = ' + econxFmtNum(h100Four.tps_effective, 1) + '<br>'
+        + 'Throughput ratio = B200/H100x4 = ' + econxFmtNum(ratio, 2) + 'x, so faster config here: <strong style="color:var(--ink);">' + faster + '</strong>'
+        + '</div>';
+    } else {
+      nodeBox.innerHTML = '<div class="econx-note">Current workload does not fit one of the comparison topologies (1x B200 vs 4x H100).</div>';
+    }
+  }
 
   var math = el('econxMath');
   if(math && results[0] && results[0].result){
@@ -5448,6 +5568,8 @@ function econxUpdate(){
       + 'model memory = ' + ECONX_MODELS[modelKey].params + 'B x ' + ECONX_BPP[prec] + ' bytes = ' + econxFmtNum(rr.model_mem, 1) + ' GB<br>'
       + 'kv cache = 2 x layers x kv_heads x 128 x seq_len x batch x 2 bytes = ' + econxFmtNum(rr.kv_mem, 1) + ' GB<br>'
       + 'gpus needed = rounded power-of-2 fit = ' + econxFmtNum(rr.n, 0) + 'x<br>'
+      + 'nodes needed = ceil(gpus / cards_per_node) = ceil(' + econxFmtNum(rr.n, 0) + ' / ' + econxFmtNum(cardsPerNode, 0) + ') = ' + econxFmtNum(rr.nodes, 0) + '<br>'
+      + 'cross-node penalty = bw x' + econxFmtNum(rr.topo_bw_penalty, 2) + ', latency x' + econxFmtNum(rr.topo_lat_penalty, 2) + '<br>'
       + 'decode time/token = ' + econxFmtNum(rr.decode.read_ms, 2) + ' ms memory read + ' + econxFmtNum(rr.decode.comms_ms, 2) + ' ms comms = ' + econxFmtNum(rr.decode.total_ms, 2) + ' ms<br>'
       + 'ttft = ' + econxFmtNum(rr.ttft_ms, 1) + ' ms for ' + econxFmtNum(inputTok, 0) + ' input tokens<br>'
       + 'compute cost = ' + econxFmtMoney(rr.compute_cost, 6) + '<br>'
@@ -5468,6 +5590,7 @@ document.addEventListener('DOMContentLoaded', function(){
   econxPopulateGpuSelects();
   econxBuildInterconnectBars();
   econxSetScaleBatch(20);
+  econxApplyScenario('claude_rag');
   tlReset();
   setEmb3dPhase('prefill');
   window.requestAnimationFrame(drawEmb3d);

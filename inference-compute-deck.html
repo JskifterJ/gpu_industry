@@ -109,7 +109,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg);
 
 /* ─────────────── SLIDE CHROME (header) ─────────────── */
 .slide-chrome {
-  position: absolute; top: 0; left: 0; right: 0;
+  position: relative; flex-shrink: 0;
   display: flex; align-items: center; justify-content: space-between;
   padding: 16px 48px;
   z-index: 10;
@@ -203,14 +203,8 @@ html.light .toggle-thumb { transform: translateX(12px); }
 .key-badge { border: 1px solid var(--dim2); border-radius: 3px; padding: 1px 5px; font-size: 8px; color: var(--dim); }
 
 /* ─────────────── SLIDE BODY LAYOUT ─────────────── */
-.slide-body  { flex: 1; display: flex; padding-top: 58px; padding-bottom: 58px; overflow: hidden; }
+.slide-body  { flex: 1; display: flex; padding-bottom: 58px; overflow: hidden; }
 .pad         { padding: 0 48px; }
-
-/* Keep content clear of fixed slide header/footer on every section. */
-.slide .slide-body {
-  padding-top: 78px !important;
-  padding-bottom: 84px !important;
-}
 
 /* Scrollable slide bodies need explicit bottom clearance */
 .slide-body.scroll { padding-bottom: 0; overflow: auto; }
@@ -348,10 +342,48 @@ html.light .toggle-thumb { transform: translateX(12px); }
 .wf-val  { font-family: var(--mono); font-size: 11px; color: var(--sw); width: 85px; letter-spacing: 0.04em; flex-shrink: 0; }
 .wf-mult { font-family: var(--mono); font-size: 9px; color: var(--dim); width: 38px; letter-spacing: 0.06em; flex-shrink: 0; }
 
+/* ─────────────── DROPDOWN (details/summary) ─────────────── */
+details.deck-drop { margin: 0; }
+details.deck-drop summary {
+  cursor: pointer; list-style: none; display: flex; align-items: center; gap: 6px;
+  font-family: var(--mono); font-size: 7.5px; letter-spacing: 0.18em; text-transform: uppercase;
+  font-weight: 600; color: var(--sw); user-select: none; padding: 3px 0;
+}
+details.deck-drop summary::-webkit-details-marker { display: none; }
+details.deck-drop summary::before {
+  content: '▶'; font-size: 7px; color: var(--sw); transition: transform 0.2s; flex-shrink: 0;
+}
+details.deck-drop[open] summary::before { transform: rotate(90deg); }
+details.deck-drop summary.llm-drop { color: var(--llm); }
+details.deck-drop summary.llm-drop::before { color: var(--llm); }
+details.deck-drop .drop-body { padding-top: 5px; }
+
+/* ─────────────── MoE EXPERT GRID ─────────────── */
+.moe-expert-grid { display: grid; gap: 3px; }
+.moe-expert-cell {
+  border-radius: 2px; aspect-ratio: 1; display: flex; align-items: center;
+  justify-content: center; font-family: var(--mono); font-size: 5.5px;
+  transition: background 0.2s;
+}
+.moe-expert-cell.idle   { background: var(--bg3); border: 1px solid var(--border); color: var(--dim2); }
+.moe-expert-cell.active { background: linear-gradient(135deg, var(--llm), #d97706); border: 1px solid #f59e0b; color: #fff; font-weight: 700; }
+.moe-expert-cell.router { background: rgba(99,102,241,0.25); border: 1px solid #6366f1; color: #a5b4fc; font-weight: 700; }
+
 .sw-innovations { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-.sw-innov-card  { background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; padding: 13px 14px; border-left: 3px solid var(--sw); }
-.sw-innov-name  { font-family: var(--mono); font-size: 10px; font-weight: 500; color: var(--sw); letter-spacing: 0.06em; margin-bottom: 6px; }
-.sw-innov-desc  { font-size: 11.5px; color: var(--muted); line-height: 1.55; font-weight: 300; }
+.sw-innov-card  { background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; padding: 11px 12px; border-left: 3px solid var(--sw); display: flex; flex-direction: column; gap: 8px; }
+.sw-innov-name  { font-family: var(--mono); font-size: 10px; font-weight: 500; color: var(--sw); letter-spacing: 0.06em; margin-bottom: 2px; }
+.sw-innov-section-label { font-family: var(--mono); font-size: 7.5px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 600; margin-bottom: 3px; }
+.sw-innov-simple-label  { color: var(--llm); }
+.sw-innov-tech-label    { color: var(--sw); }
+.sw-innov-simple { font-size: 10.5px; color: var(--text); line-height: 1.55; font-weight: 300; }
+.sw-innov-tech   { font-family: var(--mono); font-size: 9px; color: var(--muted); line-height: 1.6; }
+.sw-innov-divider { border: none; border-top: 1px dashed var(--border); margin: 0; }
+/* MoE diagram */
+.moe-diagram { display: flex; flex-direction: column; gap: 6px; }
+.moe-router-row { display: flex; align-items: center; gap: 6px; }
+.moe-param-bar { display: flex; height: 24px; border-radius: 3px; overflow: hidden; gap: 2px; }
+.moe-seg-active { background: linear-gradient(90deg, var(--llm), rgba(180,83,9,0.7)); border-radius: 2px; display: flex; align-items: center; justify-content: center; }
+.moe-seg-idle   { background: var(--bg3); border-radius: 2px; flex: 1; border: 1px dashed var(--border); }
 .sw-gain-box    { background: linear-gradient(135deg, rgba(45,212,191,0.08), rgba(45,212,191,0.03)); border: 1px solid var(--sw-mid); border-radius: 4px; padding: 14px 18px; display: flex; align-items: center; gap: 20px; }
 .sw-gain-num    { font-family: var(--display); font-size: 56px; color: var(--sw); line-height: 1; letter-spacing: 0.02em; flex-shrink: 0; }
 .sw-gain-text   { font-size: 13px; color: var(--muted); line-height: 1.6; font-weight: 300; }
@@ -615,7 +647,7 @@ html.light #s1 .bg-grid {
       <span class="domain-pill pill-neutral">Competitive Positioning</span>
     </div>
     <div class="cover-meta anim anim-5">
-      <div class="meta-item"><span class="meta-label">Slides</span><span class="meta-val">12 sections</span></div>
+      <div class="meta-item"><span class="meta-label">Slides</span><span class="meta-val">13 sections</span></div>
       <div class="meta-item"><span class="meta-label">Horizon</span><span class="meta-val">2025 – 2028</span></div>
       <div class="meta-item"><span class="meta-label">Companies</span><span class="meta-val">4 archetypes profiled</span></div>
       <div class="meta-item"><span class="meta-label">Date</span><span class="meta-val">March 2026</span></div>
@@ -637,7 +669,7 @@ html.light #s1 .bg-grid {
     </div>
   </div>
 
-  <div class="slide-body" style="flex-direction:column;padding:0 48px 64px;gap:14px;overflow:auto;">
+  <div class="slide-body" style="flex-direction:column;padding:0 48px 58px;gap:14px;overflow:auto;">
     <div class="anim anim-1" style="padding-top:8px;">
       <div class="sec-label neutral">Framework</div>
       <div style="font-family:var(--display);font-size:clamp(26px,3.5vw,42px);letter-spacing:0.04em;line-height:1;color:var(--text);">Three Domains. One Outcome.</div>
@@ -719,7 +751,7 @@ html.light #s1 .bg-grid {
     </div>
   </div>
 
-  <div class="slide-body" style="flex-direction:column;padding:0 48px 64px;gap:16px;overflow:auto;">
+  <div class="slide-body" style="flex-direction:column;padding:0 48px 58px;gap:16px;overflow:auto;">
     <div class="anim anim-1" style="padding-top:8px;">
       <div class="sec-label hw">Hardware</div>
       <div style="font-family:var(--display);font-size:clamp(24px,3vw,38px);letter-spacing:0.04em;line-height:1;color:var(--text);">The Silicon Race.<br><span style="color:var(--hw)">Memory bandwidth is the new compute.</span></div>
@@ -837,6 +869,42 @@ html.light #s1 .bg-grid {
         </div>
       </div>
     </div>
+
+    <!-- Supply chain constraint strip -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;" class="anim anim-4">
+      <div style="background:var(--hw-dim);border:1px solid var(--hw-mid);border-radius:4px;padding:12px 14px;border-left:3px solid var(--hw)">
+        <div style="font-family:var(--mono);font-size:8.5px;color:var(--hw);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:6px;">① ASML — The First Chokepoint</div>
+        <div style="font-size:11.5px;color:var(--muted);line-height:1.6;font-weight:300;">ASML ships <strong style="color:var(--text)">~50–55 High-NA EUV machines per year</strong> globally — there is no other supplier. Each machine costs ~$380M and requires 12–18 months of lead time. Sub-3nm lithography capacity is therefore physically capped, and cannot be scaled in any window shorter than a decade.</div>
+      </div>
+      <div style="background:var(--hw-dim);border:1px solid var(--hw-mid);border-radius:4px;padding:12px 14px;border-left:3px solid var(--hw)">
+        <div style="font-family:var(--mono);font-size:8.5px;color:var(--hw);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:6px;">② TSMC — The Second Chokepoint</div>
+        <div style="font-size:11.5px;color:var(--muted);line-height:1.6;font-weight:300;">TSMC is the <strong style="color:var(--text)">sole sub-3nm GPU foundry</strong> in production. H100/H200/B200 — all fabbed at TSMC on 4N/3NP nodes. Foundry expansion (CoWoS packaging for HBM) has a multi-year ramp. No competitor has reached equivalent yield at these nodes. Even NVIDIA is capacity-constrained by what TSMC can produce.</div>
+      </div>
+      <div style="background:var(--hw-dim);border:1px solid var(--hw-mid);border-radius:4px;padding:12px 14px;border-left:3px solid var(--hw)">
+        <div style="font-family:var(--mono);font-size:8.5px;color:var(--hw);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:6px;">③ NVIDIA — Allocation Dynamics</div>
+        <div style="font-size:11.5px;color:var(--muted);line-height:1.6;font-weight:300;"><strong style="color:var(--text)">Priority allocation</strong> flows to hyperscalers (AWS, Azure, GCP) and select government partners first — through NVIDIA Preferred Partner (NPN) agreements and direct government deals. <span style="color:var(--text)">Every new GPU generation is supply-constrained for 18–24 months post-launch</span> — structurally, not accidentally. Smaller operators and new geographies wait.</div>
+      </div>
+    </div>
+
+    <!-- Epoch AI data callout -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;" class="anim anim-5">
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:9px 12px;border-top:2px solid var(--hw);">
+        <div style="font-family:var(--display);font-size:22px;color:var(--hw);line-height:1;">3.3×</div>
+        <div style="font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;line-height:1.4;margin-top:3px;">Global AI compute<br>capacity growth / year<br><span style="color:var(--dim);font-size:7px;">Epoch AI · Jan 2026</span></div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:9px 12px;border-top:2px solid var(--hw);">
+        <div style="font-family:var(--display);font-size:22px;color:var(--hw);line-height:1;">7 mo</div>
+        <div style="font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;line-height:1.4;margin-top:3px;">Doubling time<br>H100-equivalent capacity<br><span style="color:var(--dim);font-size:7px;">Epoch AI · Jan 2026</span></div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:9px 12px;border-top:2px solid var(--sw);">
+        <div style="font-family:var(--display);font-size:22px;color:var(--sw);line-height:1;">&gt;60%</div>
+        <div style="font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;line-height:1.4;margin-top:3px;">NVIDIA share of total<br>AI chip compute capacity<br><span style="color:var(--dim);font-size:7px;">Epoch AI · Jan 2026</span></div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:9px 12px;border-top:2px solid var(--llm);">
+        <div style="font-family:var(--display);font-size:22px;color:var(--llm);line-height:1;">2e29</div>
+        <div style="font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;line-height:1.4;margin-top:3px;">FLOP training runs<br>likely feasible by 2030<br><span style="color:var(--dim);font-size:7px;">Epoch AI · Aug 2024</span></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -854,7 +922,7 @@ html.light #s1 .bg-grid {
     </div>
   </div>
 
-  <div class="slide-body" style="flex-direction:column;padding:0 48px 64px;gap:16px;overflow:auto;">
+  <div class="slide-body" style="flex-direction:column;padding:0 48px 58px;gap:16px;overflow:auto;">
     <div class="anim anim-1" style="padding-top:8px;">
       <div class="sec-label hw">Memory Arithmetic</div>
       <div style="font-family:var(--display);font-size:clamp(22px,2.8vw,36px);letter-spacing:0.04em;line-height:1;color:var(--text);">Context Window Grows → <span style="color:var(--hw)">Concurrent Users Collapse.</span></div>
@@ -923,7 +991,7 @@ html.light #s1 .bg-grid {
     </div>
   </div>
 
-  <div class="slide-body" style="flex-direction:column;padding:0 48px 64px;gap:16px;overflow:auto;">
+  <div class="slide-body" style="flex-direction:column;padding:0 48px 58px;gap:16px;overflow:auto;">
     <div class="anim anim-1" style="padding-top:8px;">
       <div class="sec-label hw">Depreciation Framework</div>
       <div style="font-family:var(--display);font-size:clamp(22px,2.8vw,36px);letter-spacing:0.04em;line-height:1;color:var(--text);">The Three-Stage <span style="color:var(--hw)">GPU Value Cascade.</span></div>
@@ -1009,11 +1077,11 @@ html.light #s1 .bg-grid {
     </div>
   </div>
 
-  <div class="slide-body" style="flex-direction:column;padding:0 48px 64px;gap:14px;overflow:auto;">
+  <div class="slide-body" style="flex-direction:column;padding:0 48px 58px;gap:14px;overflow:auto;">
     <div class="anim anim-1" style="padding-top:8px;">
       <div class="sec-label neutral">Market Structure</div>
-      <div style="font-family:var(--display);font-size:clamp(22px,2.8vw,36px);letter-spacing:0.04em;line-height:1;color:var(--text);">Compute is Becoming a <span style="color:var(--llm)">Financial Asset.</span></div>
-      <div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:8px;letter-spacing:0.04em;max-width:680px;">Companies like Ornn Compute are building the financial infrastructure for GPU markets — standardizing the compute unit, enabling futures contracts, and securitizing hardware purchases. The question is whether barriers to true commoditization can ever be overcome.</div>
+      <div style="font-family:var(--display);font-size:clamp(22px,2.8vw,36px);letter-spacing:0.04em;line-height:1;color:var(--text);">Compute is Becoming a <span style="color:var(--llm)">Financial Asset.</span> Supply Stays <span style="color:var(--hw)">Structurally Scarce.</span></div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:8px;letter-spacing:0.04em;max-width:780px;">Ornn Compute and peers are building GPU market infrastructure — futures contracts, securitized hardware, standard compute units. But the ASML→TSMC→NVIDIA supply chain guarantees that the newest silicon will remain rationed to select partners and governments for the foreseeable future, sustaining a parallel broker economy that no exchange can yet replace.</div>
     </div>
 
     <div class="ornn-grid anim anim-2">
@@ -1050,6 +1118,38 @@ html.light #s1 .bg-grid {
         </div>
       </div>
     </div>
+
+    <!-- Broker market + supply constraint -->
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:15px 20px;display:grid;grid-template-columns:1fr 1fr;gap:20px;" class="anim anim-4">
+      <div>
+        <div style="font-family:var(--mono);font-size:8.5px;color:var(--llm);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:10px;">The Durable Broker Market</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.65;font-weight:300;">
+          <p style="margin-bottom:8px;">Because NVIDIA allocates newest silicon (B200, Rubin) primarily to hyperscalers and select government partners, <strong style="color:var(--text)">a large share of global compute capacity is invisible to the open market</strong>. It doesn't appear on Lambda Labs or Vast.ai — it sits in Microsoft, AWS, and Saudi Aramco clusters, accessible only through direct commercial relationships.</p>
+          <p>This creates a structurally durable role for <strong style="color:var(--text)">cross-geography hardware brokers</strong> — operators with personal networks into the allocation chain who can source H200/B200 access in jurisdictions and at volumes that are simply not publicly available. This broker market persists <em>until</em> a marketplace or aggregator can establish live links to every entity globally with surplus, publicly-accessible compute — a problem that is commercial and political, not technical.</p>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="font-family:var(--mono);font-size:8.5px;color:var(--hw);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:4px;">Structural Scarcity Timeline</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="display:grid;grid-template-columns:70px 1fr;gap:8px;align-items:baseline;padding:5px 8px;background:var(--hw-dim);border-left:2px solid var(--hw);border-radius:2px;">
+            <div style="font-family:var(--mono);font-size:9px;color:var(--hw)">B200 (2025)</div>
+            <div style="font-family:var(--mono);font-size:9px;color:var(--muted);line-height:1.4">Deep Stage I. Hyperscaler + government allocation priority. 12–18 months until open-market spot supply meaningful.</div>
+          </div>
+          <div style="display:grid;grid-template-columns:70px 1fr;gap:8px;align-items:baseline;padding:5px 8px;background:rgba(251,191,36,0.07);border-left:2px solid var(--llm);border-radius:2px;">
+            <div style="font-family:var(--mono);font-size:9px;color:var(--llm)">Rubin (2026+)</div>
+            <div style="font-family:var(--mono);font-size:9px;color:var(--muted);line-height:1.4">Will enter with same dynamics. TSMC CoWoS-L capacity limited. ASML High-NA EUV throughput ceiling unchanged. Scarcity resets with every generation.</div>
+          </div>
+          <div style="display:grid;grid-template-columns:70px 1fr;gap:8px;align-items:baseline;padding:5px 8px;background:rgba(45,212,191,0.07);border-left:2px solid var(--sw);border-radius:2px;">
+            <div style="font-family:var(--mono);font-size:9px;color:var(--sw)">Aggregator path</div>
+            <div style="font-family:var(--mono);font-size:9px;color:var(--muted);line-height:1.4">A marketplace that can source live capacity links from all willing entities — governments, enterprises, research institutes — globally. Solves the information asymmetry. Currently: not built.</div>
+          </div>
+          <div style="margin-top:4px;padding:8px 10px;background:var(--bg3);border-radius:3px;border:1px solid var(--border);">
+            <div style="font-family:var(--mono);font-size:8px;color:var(--dim);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:3px;">Broker Moat Lifecycle</div>
+            <div style="font-size:11px;color:var(--muted);line-height:1.5;font-weight:300;">Personal network → repeat allocation → pricing opacity → margin. Collapses when a transparent aggregator achieves sufficient supplier coverage. The window is probably 3–6 years per chip generation.</div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1067,7 +1167,7 @@ html.light #s1 .bg-grid {
     </div>
   </div>
 
-  <div class="slide-body" style="flex:1;padding:0 48px 64px;display:flex;flex-direction:column;gap:18px;overflow:auto;">
+  <div class="slide-body" style="flex:1;padding:0 48px 58px;display:flex;flex-direction:column;gap:18px;overflow:auto;">
     <div class="anim anim-1" style="padding-top:8px;">
       <div class="sec-label sw">Software</div>
       <div style="font-family:var(--display);font-size:clamp(26px,3.5vw,42px);letter-spacing:0.04em;line-height:1;color:var(--text);">Same GPU. <span style="color:var(--sw)">16× the Output.</span></div>
@@ -1096,20 +1196,52 @@ html.light #s1 .bg-grid {
       <div class="sw-innovations">
         <div class="sw-innov-card">
           <div class="sw-innov-name">PagedAttention</div>
-          <div class="sw-innov-desc">OS virtual memory paging applied to KV cache. Eliminates fragmentation. Near-100% VRAM utilization vs ~60% naive. Foundation of vLLM.</div>
+          <div class="sw-innov-section-label sw-innov-simple-label">In simple terms</div>
+          <div class="sw-innov-simple">When a model talks to many users at once, it needs scratch paper to track each conversation. Naive systems reserve a giant fixed pad per user — most of it wasted. PagedAttention borrows the same trick your OS uses for RAM: break it into small equal-sized pages, allocate only what's needed, share pages between users when context overlaps.</div>
+          <details class="deck-drop">
+            <summary>Technical detail</summary>
+            <div class="drop-body"><div class="sw-innov-tech">KV cache stored in non-contiguous fixed-size blocks (pages) via a block table — identical to OS virtual memory. Eliminates internal/external fragmentation — VRAM utilisation jumps from ~60% (naive) to near 100%. Enables request-level memory sharing: sequences sharing a prefix (system prompt, RAG context) reference the same physical KV blocks. Foundation of vLLM; critical for high-concurrency serving.</div></div>
+          </details>
         </div>
         <div class="sw-innov-card">
           <div class="sw-innov-name">FlashAttention-3</div>
-          <div class="sw-innov-desc">SRAM-tiled attention for H100 Tensor Cores. 75% peak FLOPS vs 30% naive. Enables 128k+ context at viable cost by cutting O(N²) HBM reads.</div>
+          <div class="sw-innov-section-label sw-innov-simple-label">In simple terms</div>
+          <div class="sw-innov-simple">Attention must compare every word to every other word — expensive because it constantly shuttles data between slow GPU storage (HBM) and fast processors. FlashAttention reorders the math to fit inside the tiny ultra-fast on-chip memory (SRAM), dramatically cutting trips to slow storage. Longer contexts become viable at practical cost.</div>
+          <details class="deck-drop">
+            <summary>Technical detail</summary>
+            <div class="drop-body"><div class="sw-innov-tech">Tiles Q/K/V matrices to fit in SRAM, computing attention in blocks via online softmax without materialising the full N×N matrix in HBM. FA-3 adds H100-specific optimisations: warp-specialisation, async WGMMA + SMEM pipelining, FP8 accumulation. Achieves 75% peak H100 FLOPs vs ~35% naive. Reduces HBM reads/writes from O(N²) → O(N) in the attention step. Enables 128k+ context at practical throughput.</div></div>
+          </details>
         </div>
         <div class="sw-innov-card">
           <div class="sw-innov-name">Speculative Decoding</div>
-          <div class="sw-innov-desc">Small draft model proposes K tokens; large model verifies all K in one parallel pass. EAGLE-2 achieves 3–4× speedup at &gt;90% acceptance rate.</div>
+          <div class="sw-innov-section-label sw-innov-simple-label">In simple terms</div>
+          <div class="sw-innov-simple">Large models generate one word at a time — always waiting. Speculative decoding adds a small cheap "draft" model that guesses several words at once. The big model checks all guesses in a single parallel pass — like a professor grading a student's draft with one glance rather than dictating word-by-word. Right guesses come for free; wrong ones are discarded.</div>
+          <details class="deck-drop">
+            <summary>Technical detail</summary>
+            <div class="drop-body"><div class="sw-innov-tech">Draft model (e.g. Llama 3.2 1B) autoregressively proposes K tokens. Target model runs one parallel forward pass verifying all K via rejection sampling — accepted tokens cost zero extra compute beyond the single verify step. EAGLE-2 uses a feature-level draft matching the target's hidden states: 3–4× latency speedup at &gt;90% token acceptance. GPU utilisation improves dramatically as verification parallelises across K positions.</div></div>
+          </details>
         </div>
         <div class="sw-innov-card">
           <div class="sw-innov-name">RadixAttention</div>
-          <div class="sw-innov-desc">KV cache as radix tree: shared system prompts/RAG context computed once, reused across requests. 4–6× gain for agentic pipelines with shared context.</div>
+          <div class="sw-innov-section-label sw-innov-simple-label">In simple terms</div>
+          <div class="sw-innov-simple">If 1,000 users share the same long system prompt, naive serving computes it 1,000 times. RadixAttention treats the KV cache like a shared library — common prefixes are computed once and stored as a reusable tree. Any request that shares a prefix gets those results instantly, no re-computation. Like a shared photocopied memo rather than re-reading the original 1,000 times.</div>
+          <details class="deck-drop">
+            <summary>Technical detail</summary>
+            <div class="drop-body"><div class="sw-innov-tech">KV cache managed as a radix tree indexed by token sequence. Incoming requests walk the tree: matched prefix pages are reused directly (zero FLOPS), divergence triggers new KV computation and a new branch. LRU eviction manages memory under pressure. Deployed in SGLang. 4–6× throughput gain for multi-turn agentic workloads and multi-tenant deployments with shared context.</div></div>
+          </details>
         </div>
+      </div>
+    </div>
+
+    <!-- Value migration callout -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;" class="anim anim-4">
+      <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--hw);border-radius:4px;padding:13px 16px;">
+        <div style="font-family:var(--mono);font-size:8.5px;color:var(--hw);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;">Hardware Physics: The Hard Ceiling</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6;font-weight:300;">Transistor density improvements are slowing (Moore's Law decay). HBM bandwidth scales ~40–60% per generation — meaningful, but not the 10× leaps of the CUDA era. Memory wall, power density ceiling (500W–1kW TDP approaching datacenter limits), and interconnect latency are <strong style="color:var(--text)">physical constraints that software cannot fully overcome</strong> but can navigate around via architectural innovation (MoE, speculative decoding, quantization). Hardware will keep improving — but the <em>marginal</em> gain per dollar shifts over time toward the software and model layers.</div>
+      </div>
+      <div style="background:linear-gradient(135deg,var(--sw-dim),rgba(45,212,191,0.04));border:1px solid var(--sw-mid);border-radius:4px;padding:13px 16px;">
+        <div style="font-family:var(--mono);font-size:8.5px;color:var(--sw);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;">Value Creation Is Moving Up the Stack</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6;font-weight:300;">As hardware matures and margins compress, <strong style="color:var(--text)">the coupling between inference software quality and GPU utilization becomes the primary commercial differentiator</strong> for enterprises deploying models at scale. A provider that can sustain 85% GPU utilization, sub-50ms P99 latency, and 99.9% model uptime is not selling the same product as a provider at 40% utilization with cold-start latency — even with identical silicon. The enterprise will pay for this delta. <em>Software performance, uptime, and utilization are the new compute moat.</em></div>
       </div>
     </div>
   </div>
@@ -1130,8 +1262,8 @@ html.light #s1 .bg-grid {
   </div>
 
   <div class="slide-body" style="flex-direction:row;gap:0;padding:0;">
-    <div style="width:55%;padding:0 28px 0 48px;display:flex;flex-direction:column;gap:16px;overflow:auto;">
-      <div class="anim anim-1" style="padding-top:8px;">
+    <div style="width:55%;padding:0 28px 58px 48px;display:flex;flex-direction:column;gap:16px;overflow:auto;">
+      <div class="anim anim-1" style="padding-top:4px;">
         <div class="sec-label llm">Models</div>
         <div style="font-family:var(--display);font-size:clamp(22px,3vw,36px);letter-spacing:0.04em;line-height:1;color:var(--text);">The Model <span style="color:var(--llm)">Stratification.</span></div>
         <div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:8px;letter-spacing:0.04em;line-height:1.6;">Not "big vs small" — a deliberate capability tiering by deployment context. MoE changed the frontier economics. Quantization changed the edge economics.</div>
@@ -1196,9 +1328,99 @@ html.light #s1 .bg-grid {
       </div>
 
       <div style="background:var(--llm-dim);border:1px solid var(--llm-mid);border-radius:4px;padding:11px 14px;" class="anim anim-5">
-        <div style="font-family:var(--mono);font-size:8.5px;color:var(--llm);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:6px;">MoE: Why It Changes Everything</div>
-        <div style="font-size:11.5px;color:var(--muted);line-height:1.6;font-weight:300;">MoE activates 10–15% of parameters per forward pass — but all weights must reside in HBM. Result: MoE inference is <strong style="color:var(--text)">even more memory-capacity-bound</strong> than dense. DeepSeek R1 671B requires 16× H100s (weights only) — but at frontier capability for $6M in training vs ~$100M+. This is the economic discontinuity that resets the market.</div>
+        <div style="font-family:var(--mono);font-size:8.5px;color:var(--llm);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;">What is MoE — and Why Does It Change Everything?</div>
+
+        <!-- Expert grid — always visible -->
+        <div style="margin-bottom:9px;">
+          <div style="font-family:var(--mono);font-size:7.5px;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:5px;">DeepSeek V3 · 256 experts per layer · only 8 active per token</div>
+          <!-- 16×16 = 256 expert cells; experts 4,9,27,44,71,112,148,193 lit orange; expert [0] is "router" -->
+          <div style="display:grid;grid-template-columns:repeat(16,1fr);gap:2px;margin-bottom:6px;" id="moe-grid">
+            <!-- generated via JS below -->
+          </div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;font-family:var(--mono);font-size:8px;color:var(--muted);">
+            <span><span style="display:inline-block;width:8px;height:8px;background:linear-gradient(135deg,var(--llm),#d97706);border-radius:1px;margin-right:3px;vertical-align:middle;"></span>Active expert (8 of 256)</span>
+            <span><span style="display:inline-block;width:8px;height:8px;background:var(--bg3);border:1px solid var(--border);border-radius:1px;margin-right:3px;vertical-align:middle;"></span>Idle expert (248 of 256 — weights in HBM, not computing)</span>
+            <span><span style="display:inline-block;width:8px;height:8px;background:rgba(99,102,241,0.3);border:1px solid #6366f1;border-radius:1px;margin-right:3px;vertical-align:middle;"></span>Router</span>
+          </div>
+        </div>
+
+        <!-- HBM vs compute bars — always visible -->
+        <div style="margin-bottom:8px;">
+          <div style="font-family:var(--mono);font-size:7.5px;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:5px;">Memory vs compute — the MoE paradox</div>
+          <div style="display:flex;flex-direction:column;gap:4px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="font-family:var(--mono);font-size:8px;color:var(--muted);width:84px;text-align:right;flex-shrink:0;">Dense 70B (FP16)</div>
+              <div style="flex:1;height:18px;display:flex;border-radius:2px;overflow:hidden;gap:1px;">
+                <div style="width:10%;background:linear-gradient(90deg,var(--sw),rgba(45,212,191,0.5));border-radius:2px;"></div>
+                <div style="flex:1;background:var(--bg3);"></div>
+              </div>
+              <div style="font-family:var(--mono);font-size:8px;color:var(--sw);width:72px;flex-shrink:0;">140 GB VRAM<br><span style="color:var(--dim);font-size:7px;">1–2× H200</span></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="font-family:var(--mono);font-size:8px;color:var(--muted);width:84px;text-align:right;flex-shrink:0;">MoE 671B (FP8)</div>
+              <div style="flex:1;height:18px;display:flex;border-radius:2px;overflow:hidden;position:relative;">
+                <!-- 256 tiny expert blocks, 8 orange, rest grey -->
+                <div style="display:flex;flex:1;gap:1px;padding:1px;" id="hbm-bar"></div>
+              </div>
+              <div style="font-family:var(--mono);font-size:8px;color:var(--llm);width:72px;flex-shrink:0;">671 GB VRAM<br><span style="color:var(--dim);font-size:7px;">8–16× H200</span></div>
+            </div>
+          </div>
+          <div style="font-family:var(--mono);font-size:8px;color:var(--muted);margin-top:5px;line-height:1.55;">FLOP cost ≈ dense 37B. Memory cost = dense 671B. <strong style="color:var(--text)">All 256 expert blocks must permanently reside in HBM</strong> — the router decides at runtime which 8 fire. You can't evict the others.</div>
+        </div>
+
+        <!-- Narrative in dropdown -->
+        <details class="deck-drop">
+          <summary class="llm-drop">How it works — full explanation</summary>
+          <div class="drop-body">
+            <div style="font-family:var(--mono);font-size:7.5px;color:var(--llm);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:4px;margin-top:2px;">In simple terms</div>
+            <div style="font-size:10.5px;color:var(--text);line-height:1.6;font-weight:300;margin-bottom:8px;">Imagine a hospital with 256 specialist doctors. For each patient, a triage nurse (the <em>router</em>) decides which 8 specialists are most relevant and calls only them in. The patient gets highly specialised care, but you only pay for 8 doctors at a time — not all 256. MoE works the same way: a lightweight router assigns each token to the best 8 of 256 expert networks. You get the knowledge of a 671B model at the cost of computing only ~37B parameters per token.</div>
+            <div style="font-family:var(--mono);font-size:7.5px;color:var(--sw);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:4px;">Technical</div>
+            <div style="font-family:var(--mono);font-size:8.5px;color:var(--muted);line-height:1.6;">Each transformer FFN layer is replaced by N parallel expert FFN layers + a learned router. Router softmax scores tokens across N experts; top-K are activated. DeepSeek V3: 671B total, 256 experts/layer, top-8 active → 37B active params/token. Training cost ~$6M vs ~$100M for a hypothetical dense equivalent. FLOP cost ≈ dense 37B — but <strong style="color:var(--text)">all 671B weights must permanently reside in HBM</strong>. This is the economic discontinuity that resets the market.</div>
+          </div>
+        </details>
       </div>
+
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:11px 14px;" class="anim anim-6">
+        <div style="font-family:var(--mono);font-size:8.5px;color:var(--hw);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:7px;">Capability Per Parameter: Smaller Models Are Getting Smarter</div>
+        <div style="font-size:10.5px;color:var(--muted);line-height:1.6;font-weight:300;margin-bottom:7px;">The relationship between parameter count and capability is no longer linear. A 2025-era 7B model, properly trained and quantized to INT4 (~4GB VRAM), routinely outperforms 2022-era 70B models on practical benchmarks. Phi-3 Mini (3.8B) exceeds GPT-3.5 on reasoning tasks. Qwen2.5-7B-Instruct (INT4) fits on a phone chip and beats models that required a server cluster three years ago.</div>
+        <div style="display:flex;gap:8px;font-size:9px;font-family:var(--mono);color:var(--muted);">
+          <div style="flex:1;background:var(--bg3);border-radius:3px;padding:7px 9px;border-left:2px solid var(--hw);">
+            <div style="color:var(--text);margin-bottom:3px;font-size:8.5px;">Why this is happening</div>
+            Better training data curation, synthetic data pipelines, RLHF/DPO alignment, and distillation from frontier models all improve capability per parameter. More knowledge packed per byte — not more bytes. Epoch AI data: compute efficiency doubling ~every 7 months even as absolute model size plateaus.
+          </div>
+          <div style="flex:1;background:var(--bg3);border-radius:3px;padding:7px 9px;border-left:2px solid var(--sw);">
+            <div style="color:var(--text);margin-bottom:3px;font-size:8.5px;">Quantization isn't linearly destructive</div>
+            FP16→INT4 drops precision per weight but capability loss is sub-linear on well-trained models. A 7B INT4 loses ~1–2% on most benchmarks vs FP16, while saving 75% VRAM. The model "knows" more than its precision suggests — what matters is the quality of training, not the representation precision at serving time.
+          </div>
+        </div>
+      </div>
+
+<script>
+(function(){
+  // Build 16×16 expert grid
+  const activeSet = new Set([4,9,27,44,71,112,148,193,220,255]); // 8 active + router at 0
+  const routerIdx = 0;
+  const grid = document.getElementById('moe-grid');
+  if(grid){ for(let i=0;i<256;i++){
+    const c=document.createElement('div');
+    c.style.cssText='border-radius:2px;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-family:monospace;font-size:5px;';
+    if(i===routerIdx){ c.style.background='rgba(99,102,241,0.35)'; c.style.border='1px solid #6366f1'; c.style.color='#a5b4fc'; c.style.fontWeight='700'; c.textContent='R'; }
+    else if(activeSet.has(i)){ c.style.background='linear-gradient(135deg,#b45309,#d97706)'; c.style.border='1px solid #f59e0b'; c.style.color='#fff'; c.style.fontWeight='700'; c.textContent='●'; }
+    else { c.style.background='var(--bg3)'; c.style.border='1px solid rgba(255,255,255,0.06)'; c.style.color='rgba(128,128,128,0.3)'; c.textContent='·'; }
+    grid.appendChild(c);
+  }}
+  // Build HBM bar — 64 segments representing 256 experts (groups of 4)
+  const bar = document.getElementById('hbm-bar');
+  const activeGroups = new Set([1,2,6,11,17,28,37,48,55,63]);
+  if(bar){ for(let i=0;i<64;i++){
+    const s=document.createElement('div');
+    s.style.cssText='flex:1;border-radius:1px;min-width:2px;';
+    if(activeGroups.has(i)){ s.style.background='linear-gradient(180deg,#d97706,#b45309)'; s.title='Active expert block'; }
+    else { s.style.background='rgba(128,128,128,0.18)'; s.style.border='1px solid rgba(128,128,128,0.1)'; s.title='Idle expert block (weights resident in HBM)'; }
+    bar.appendChild(s);
+  }}
+})();
+</script>
     </div>
   </div>
 </div>
@@ -1217,7 +1439,7 @@ html.light #s1 .bg-grid {
     </div>
   </div>
 
-  <div class="slide-body" style="flex-direction:column;padding:0 48px 64px;gap:16px;overflow:auto;">
+  <div class="slide-body" style="flex-direction:column;padding:0 48px 58px;gap:16px;overflow:auto;">
     <div class="anim anim-1" style="padding-top:8px;">
       <div class="sec-label llm">Workloads</div>
       <div style="font-family:var(--display);font-size:clamp(22px,2.8vw,36px);letter-spacing:0.04em;line-height:1;color:var(--text);">Training is <span style="color:var(--llm)">~15% of the Story.</span> Inference is the Economy.</div>
@@ -1274,6 +1496,40 @@ html.light #s1 .bg-grid {
         <div class="wl-card-note"><strong style="color:var(--text)">~5–8%</strong> GPU-hours but >40% of inference endpoints by device count. Apple M4/Snapdragon X. 7B Q4_K_M = 4GB, 50–80 tok/s. Privacy-first; permanently removes commodity tasks from cloud.</div>
       </div>
     </div>
+
+    <!-- Workload definitions dropdown -->
+    <details class="deck-drop anim anim-3" style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:10px 14px;">
+      <summary style="font-family:var(--mono);font-size:8.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);cursor:pointer;list-style:none;display:flex;align-items:center;gap:6px;user-select:none;">
+        <span style="font-size:7px;color:var(--muted);transition:transform 0.2s;" class="drop-arrow">▶</span>
+        Workload Definitions — what each category actually means
+      </summary>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;">
+        <div style="background:var(--bg3);border-left:2px solid #6366f1;border-radius:3px;padding:8px 10px;">
+          <div style="font-family:var(--mono);font-size:8.5px;color:#818cf8;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px;">Frontier Training</div>
+          <div style="font-size:10px;color:var(--muted);line-height:1.6;">The initial large-scale pre-training run that builds a foundation model from scratch — ingesting trillions of tokens across weeks or months. Compute-bound and requires tightly-coupled GPU clusters (NVLink/InfiniBand fabric). Happens once per model generation. Most compute-intensive workload per job, but lowest frequency. ~12–18% of total GPU demand in 2025, declining share as inference proliferates.</div>
+        </div>
+        <div style="background:var(--bg3);border-left:2px solid #93c5fd;border-radius:3px;padding:8px 10px;">
+          <div style="font-family:var(--mono);font-size:8.5px;color:#93c5fd;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px;">Synthetic Data Gen</div>
+          <div style="font-size:10px;color:var(--muted);line-height:1.6;">Using an already-trained model to generate vast quantities of labelled examples, reasoning traces, or preference pairs that are then used to train or fine-tune the next model. Feeds RLHF, DPO, and GRPO pipelines. Latency-insensitive — max throughput is the only objective. Competes directly with training for GPU allocation since both are offline batch workloads. ~10% and rising steeply as post-training becomes the primary lever for capability improvement.</div>
+        </div>
+        <div style="background:var(--bg3);border-left:2px solid var(--sw);border-radius:3px;padding:8px 10px;">
+          <div style="font-family:var(--mono);font-size:8.5px;color:var(--sw);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px;">Batch Inference</div>
+          <div style="font-size:10px;color:var(--muted);line-height:1.6;">Serving model responses to real users and applications — the dominant category at ~50–55% of GPU demand. Covers everything from chatbot API calls to document processing pipelines. Memory-bandwidth-bound: the GPU must stream the entire weight matrix from HBM for every token generated. Throughput-optimised using continuous batching (requests queued and served in parallel) and PagedAttention. Inference volumes are doubling every ~6 months per hyperscaler disclosures.</div>
+        </div>
+        <div style="background:var(--bg3);border-left:2px solid var(--llm);border-radius:3px;padding:8px 10px;">
+          <div style="font-family:var(--mono);font-size:8.5px;color:var(--llm);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px;">Agentic / Multi-step</div>
+          <div style="font-size:10px;color:var(--muted);line-height:1.6;">Multi-turn model pipelines where the model calls tools, browses the web, executes code, or orchestrates sub-agents — repeating inference 8–40+ times per user task. Context accumulates across turns, creating intense KV-cache memory pressure. Unlike batch inference, latency matters deeply: each step in the chain must complete before the next begins. Fastest-growing segment YoY — Anthropic, OpenAI and Google all report &gt;3× agentic API volume growth. ~12–15% of GPU demand.</div>
+        </div>
+        <div style="background:var(--bg3);border-left:2px solid var(--red);border-radius:3px;padding:8px 10px;">
+          <div style="font-family:var(--mono);font-size:8.5px;color:var(--red);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px;">Fine-tuning / PEFT</div>
+          <div style="font-size:10px;color:var(--muted);line-height:1.6;">Adapting a foundation model to a specific domain, task, or enterprise dataset — without training from scratch. Parameter-Efficient Fine-Tuning (PEFT) techniques like LoRA and QLoRA update a tiny fraction of weights (~0.1–1%), making this accessible on a single A100 or even consumer GPU. Latency-insensitive. Highly cost-elastic — enterprises run fine-tuning jobs overnight on spot instances. Grows rapidly as Llama 3, Mistral, and Qwen mature as base models. ~8–10% of GPU demand.</div>
+        </div>
+        <div style="background:var(--bg3);border-left:2px solid #34d399;border-radius:3px;padding:8px 10px;">
+          <div style="font-family:var(--mono);font-size:8.5px;color:#34d399;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px;">On-Device Inference</div>
+          <div style="font-size:10px;color:var(--muted);line-height:1.6;">Model inference running entirely on end-user hardware — smartphones (Apple NPU, Snapdragon X Elite), laptops (Apple M4, Intel NPU), edge servers (Jetson Orin). No cloud GPU involved. Requires aggressive quantization: a 7B model at Q4_K_M (4-bit) fits in ~4GB DRAM and runs at 50–80 tok/s. Privacy-first by design — data never leaves the device. ~5–8% of GPU-hours but represents &gt;40% of all inference endpoints by device count. Permanently removes commodity tasks from cloud, compressing cloud margins over time.</div>
+        </div>
+      </div>
+    </details>
 
     <!-- Demand breakdown bar -->
     <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:12px 18px;display:flex;flex-direction:column;gap:8px;" class="anim anim-3">
@@ -1451,8 +1707,8 @@ html.light #s1 .bg-grid {
   </div>
 
   <div class="slide-body" style="overflow:hidden;">
-    <div style="flex:1;padding:0 48px 0;display:flex;flex-direction:column;gap:10px;overflow:hidden;">
-      <div class="anim anim-1" style="padding-top:8px;">
+    <div style="flex:1;padding:0 48px 58px;display:flex;flex-direction:column;gap:10px;overflow:hidden;">
+      <div class="anim anim-1" style="padding-top:12px;">
         <div class="sec-label neutral">Competitive Landscape</div>
         <div style="display:flex;justify-content:space-between;align-items:baseline;">
           <div style="font-family:var(--display);font-size:clamp(22px,3vw,36px);letter-spacing:0.04em;line-height:1;color:var(--text);">Four Archetypes. <span style="color:var(--muted)">Distinct value-chain positions.</span></div>
@@ -1602,7 +1858,7 @@ html.light #s1 .bg-grid {
     <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(192,132,252,0.05) 0%,rgba(45,212,191,0.04) 40%,transparent 70%);"></div>
   </div>
 
-  <div class="slide-chrome" style="position:relative;z-index:10;">
+  <div class="slide-chrome">
     <div class="chrome-left">
       <div class="chrome-logo">ClusterMAX™</div>
       <div class="chrome-sep"></div>
@@ -1623,16 +1879,16 @@ html.light #s1 .bg-grid {
       <div class="anim anim-2" style="font-family:'Barlow',sans-serif;font-size:clamp(15px,1.8vw,19px);font-weight:300;font-style:italic;color:var(--text);line-height:1.5;">"The GPU cloud market is not a hardware rental market. It is a software-defined performance arbitrage market — and the winner owns the layer where silicon meets intelligence."</div>
       <div class="anim anim-3" style="font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:0.15em;text-transform:uppercase;">— The Compute Stack Brief · Vol. III</div>
       <div class="opp-box anim anim-4">
-        <div class="opp-label">★ Startup White Space</div>
-        <div class="opp-text">Production-grade <strong style="color:var(--sw)">agentic inference + integrated storage</strong>: stateful, multi-turn, long-context sessions with KV persistence, per-task pricing, and zero-egress co-located object storage. Not yet solved at production scale by any single provider.</div>
+        <div class="opp-label">★ Three Opportunity Windows</div>
+        <div class="opp-text"><strong style="color:var(--sw)">① Agentic inference + integrated storage</strong> — stateful, multi-turn, long-context with KV persistence and zero-egress object storage. Not solved at production scale.<br><strong style="color:var(--hw)">② Cross-geography hardware brokerage</strong> — network-based access to newest-generation silicon in jurisdictions and volumes unavailable on open markets; persists until a transparent aggregator exists.<br><strong style="color:var(--llm)">③ Software utilization as a product</strong> — GPU utilization, model uptime, and inference latency sold as SLA guarantees rather than best-effort. The enterprise will pay a significant premium for operational certainty over raw FLOPS.</div>
       </div>
     </div>
 
     <div style="flex:1;padding:0 48px 0 36px;display:flex;flex-direction:column;justify-content:center;gap:10px;border-left:1px solid var(--border);overflow:auto;padding-bottom:58px;">
       <div class="force-point anim anim-2" style="border-left:3px solid var(--hw)">
         <div class="fp-num" style="color:var(--hw)">01</div>
-        <div><div class="fp-title" style="color:var(--hw)">Hardware will partially commoditize</div>
-        <div class="fp-body">AMD MI300X, B200 ramp, and GPU supply normalization will compress raw GPU-hour margins by 40–60% by 2027. Margin migrates up-stack to software. Ornn-style futures markets accelerate this transition by introducing price discovery.</div></div>
+        <div><div class="fp-title" style="color:var(--hw)">Hardware will commoditize — but the frontier stays scarce</div>
+        <div class="fp-body">AMD MI300X, B200 ramp, and GPU supply normalization will compress H100-tier margins by 40–60% by 2027. But the ASML→TSMC→NVIDIA supply chain structurally constrains every new generation to 18–24 months of rationed allocation. This sustains a durable market for cross-geography hardware brokers — operators with direct network access to allocations that never reach the open market — until a transparent aggregator achieves sufficient supplier coverage globally.</div></div>
       </div>
       <div class="force-point anim anim-3" style="border-left:3px solid var(--sw)">
         <div class="fp-num" style="color:var(--sw)">02</div>
@@ -1642,7 +1898,7 @@ html.light #s1 .bg-grid {
       <div class="force-point anim anim-4" style="border-left:3px solid var(--llm)">
         <div class="fp-num" style="color:var(--llm)">03</div>
         <div><div class="fp-title" style="color:var(--llm)">80% of tasks migrate on-device by 2027</div>
-        <div class="fp-body">Q4-quantized 30B on a $1,500 machine at conversational speed by 2026. Commodity API workloads (summarize, classify, Q&amp;A) leave cloud at scale. The residual cloud demand is higher-value, higher-margin long-context and agentic work.</div></div>
+        <div class="fp-body">Q4-quantized 30B on a $1,500 machine at conversational speed by 2026. Commodity API workloads (summarize, classify, Q&A) leave cloud at scale. The residual cloud demand is higher-value, higher-margin long-context and agentic work.</div></div>
       </div>
       <div class="force-point anim anim-5" style="border-left:3px solid var(--blue)">
         <div class="fp-num" style="color:var(--blue)">04</div>
@@ -1651,8 +1907,8 @@ html.light #s1 .bg-grid {
       </div>
       <div class="force-point anim anim-6" style="border-left:3px solid var(--green)">
         <div class="fp-num" style="color:var(--green)">05</div>
-        <div><div class="fp-title" style="color:var(--green)">Storage integration becomes the moat multiplier</div>
-        <div class="fp-body">Co-located object storage eliminates the last hardware-layer friction in AI workflows. Zero-egress training data + checkpoint storage + model weight registry is a bundled offering that pure-play compute providers cannot easily replicate. The compute-storage integration is where the next durable margin lives.</div></div>
+        <div><div class="fp-title" style="color:var(--green)">Value creation moves up the stack — software + storage become the moat</div>
+        <div class="fp-body">As hardware hits physical limits (memory wall, power density ceiling, TSMC node deceleration), the marginal performance gain per dollar migrates to the software layer above it. GPU utilization, model uptime, and inference latency — not raw FLOPS — become the enterprise buying criteria. The provider coupling best-in-class inference software with co-located, zero-egress object storage owns the only defensible margin left when silicon commoditizes.</div></div>
       </div>
     </div>
   </div>
@@ -1676,7 +1932,7 @@ html.light #s1 .bg-grid {
     </div>
   </div>
 
-  <div class="slide-body" style="flex-direction:column;padding:0 48px 64px;gap:14px;overflow:auto;position:relative;z-index:2;">
+  <div class="slide-body" style="flex-direction:column;padding:0 48px 58px;gap:14px;overflow:auto;position:relative;z-index:2;">
     <div class="anim anim-1" style="padding-top:8px;">
       <div class="sec-label neutral">Outlook</div>
       <div style="font-family:var(--display);font-size:clamp(22px,3vw,38px);letter-spacing:0.04em;line-height:1;color:var(--text);">The Forces, <span style="color:var(--hw)">Mapped to Time.</span></div>
@@ -1703,7 +1959,7 @@ html.light #s1 .bg-grid {
           <div class="tl-event hw"><strong>H200</strong> Stage I→II. B200 Stage I. H100 spot $1.80/hr.</div>
           <div class="tl-event sw"><strong>vLLM 0.6/SGLang 0.4</strong> stable. 16× SW multiplier realized. RadixCache production.</div>
           <div class="tl-event llm"><strong>DeepSeek R1/V3</strong> resets frontier economics. MoE at $6M training cost.</div>
-          <div class="tl-event neutral"><strong>CoreWeave IPO.</strong> Ornn futures contracts live. Hardware scarcity easing.</div>
+          <div class="tl-event neutral"><strong>CoreWeave IPO.</strong> Ornn futures contracts live. B200 supply rationed to hyperscalers + governments — <strong>broker market for newest-gen silicon active.</strong></div>
           <div class="tl-event" style="border-left-color:var(--green);background:rgba(52,211,153,0.07);color:var(--muted)"><strong style="color:var(--text)">Inference engine optimization</strong> — 14–16× SW multiplier is the most underpriced lever in the market.</div>
         </div>
       </div>
@@ -1715,7 +1971,7 @@ html.light #s1 .bg-grid {
           <div class="tl-event hw"><strong>B200 Stage II.</strong> Rubin (HBM4, 288GB+, 12+ TB/s) announced/samples. H100 enters Stage III for training.</div>
           <div class="tl-event sw"><strong>Triton maturity.</strong> First production workloads on AMD ROCm. CUDA moat narrows at edges.</div>
           <div class="tl-event llm"><strong>Quantized 30B</strong> at conversational speed on $1,500 consumer device. 80% of commodity tasks off cloud.</div>
-          <div class="tl-event neutral"><strong>EU AI Act</strong> enforcement begins. Gulf state sovereign AI clusters operational. Ornn-style futures markets gain liquidity.</div>
+          <div class="tl-event neutral"><strong>EU AI Act</strong> enforcement begins. Gulf state sovereign AI clusters operational. Ornn-style futures markets gain liquidity. <strong>Rubin allocation dynamics replicate B200 scarcity pattern</strong> — broker market resets.</div>
           <div class="tl-event" style="border-left-color:var(--green);background:rgba(52,211,153,0.07);color:var(--muted)"><strong style="color:var(--text)">Agentic infra gap</strong> — no production-grade stateful multi-hop serving stack exists yet. White space.</div>
         </div>
       </div>
@@ -1727,7 +1983,7 @@ html.light #s1 .bg-grid {
           <div class="tl-event hw"><strong>Rubin production.</strong> H100 Stage III complete. GPU-hour spot approaches $0.50/hr for H100-equivalent. Hardware commodity trap closes.</div>
           <div class="tl-event sw"><strong>Compiler abstraction</strong> (MLIR, XLA) enables hardware-agnostic kernels. Multi-vendor inference clusters viable.</div>
           <div class="tl-event llm"><strong>1T+ MoE</strong> frontier models standard. Long-context (1M+) production deployments normal. MLA replaces MHA at frontier.</div>
-          <div class="tl-event neutral"><strong>GPU-hour futures</strong> traded on regulated exchanges. $50B+ sovereign cloud market active. Hardware margins compress 40–60%.</div>
+          <div class="tl-event neutral"><strong>GPU-hour futures</strong> traded on regulated exchanges. $50B+ sovereign cloud market active. Hardware margins compress 40–60%. <strong>First aggregators</strong> attempting to index public-facing compute across governments + enterprises — broker moat begins structural erosion.</div>
           <div class="tl-event" style="border-left-color:var(--green);background:rgba(52,211,153,0.07);color:var(--muted)"><strong style="color:var(--text)">Compute-storage integration</strong> — co-location moat becomes decisive as hardware margins thin. Storage providers with GPU adjacency win.</div>
         </div>
       </div>
@@ -1846,6 +2102,15 @@ document.addEventListener('touchend', e => {
 });
 
 btnPrev.disabled = true;
+
+// Animate drop-arrow span inside non-CSS-before details elements
+document.querySelectorAll('details').forEach(d => {
+  const arrow = d.querySelector('.drop-arrow');
+  if (!arrow) return;
+  d.addEventListener('toggle', () => {
+    arrow.style.transform = d.open ? 'rotate(90deg)' : '';
+  });
+});
 </script>
 </body>
 </html>

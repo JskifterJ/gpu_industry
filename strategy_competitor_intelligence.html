@@ -94,13 +94,14 @@ body.light .theme-toggle-thumb{transform:translateX(16px);}
 .cmp-stack-btn.active{border-color:rgba(56,189,248,.35);background:rgba(56,189,248,.1);color:var(--accent);}
 .cmp-clear-btn{font-family:'JetBrains Mono',monospace;font-size:10px;padding:8px 10px;border-radius:6px;border:1px solid var(--border);background:var(--surf);color:var(--muted);cursor:pointer;white-space:nowrap;}
 .cmp-clear-btn:hover{color:var(--text);border-color:var(--border-l);}
-.cmp-stack-cells{display:grid;grid-template-columns:repeat(8,minmax(24px,1fr));gap:4px;min-width:236px;}
+.cmp-stack-cells{display:grid;grid-template-columns:repeat(9,minmax(24px,1fr));gap:4px;min-width:264px;}
 .cmp-stack-cell{height:22px;border-radius:4px;border:1px solid rgba(255,255,255,.18);font-family:'JetBrains Mono',monospace;font-size:8px;display:flex;align-items:center;justify-content:center;font-weight:700;}
 .cmp-stack-cell.none{opacity:.26;filter:grayscale(.4);}
 .cmp-stack-cell.limited{opacity:.52;}
 .cmp-stack-cell.partner{opacity:.75;}
 .cmp-stack-cell.partial{opacity:.88;}
 .cmp-stack-cell.full{opacity:1;}
+.cmp-stack-cell.ln1{background:rgba(231,76,60,.22);color:#e74c3c;}
 .cmp-stack-cell.l0{background:rgba(148,163,184,.22);color:#94a3b8;}
 .cmp-stack-cell.l1{background:rgba(232,200,64,.22);color:#e8c840;}
 .cmp-stack-cell.l2{background:rgba(90,172,232,.22);color:#5aace8;}
@@ -149,6 +150,7 @@ body.light .theme-toggle-thumb{transform:translateX(16px);}
 .lp.partial{opacity:.65;}
 .lp.partner{opacity:.45;}
 .lp.none{opacity:.15;background:var(--border)!important;color:var(--muted)!important;}
+.lp-ln1{background:rgba(231,76,60,.25);color:#e74c3c;}
 .lp-l0{background:rgba(148,163,184,.25);color:#94a3b8;}
 .lp-l1{background:rgba(232,200,64,.25);color:#e8c840;}
 .lp-l2{background:rgba(90,172,232,.25);color:#5aace8;}
@@ -433,7 +435,7 @@ table.stk td.grp-border-l{border-left:2px solid var(--border-ll)!important;}
 <header class="hdr">
   <div class="hdr-l">
     <div class="hdr-title">GPU Cloud <em>Intelligence</em></div>
-    <div class="hdr-meta">ClusterMAX 2.0 · SemiAnalysis Nov 2025 · 15 Providers · L0–L7 Stack Model</div>
+    <div class="hdr-meta">ClusterMAX 2.0 · SemiAnalysis Nov 2025 · 15 Providers · L−1–L7 Stack Model</div>
   </div>
   <div style="display:flex;align-items:center;gap:12px;">
     <div class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">
@@ -469,8 +471,19 @@ table.stk td.grp-border-l{border-left:2px solid var(--border-ll)!important;}
   </div>
   <div class="cmp-controls">
     <input id="cmp-filter-query" class="cmp-input" type="text" placeholder="Filter across provider, USP, model, software, buyer..."/>
-    <input id="cmp-price-min" class="cmp-input" type="number" step="0.01" placeholder="Min $/h"/>
-    <input id="cmp-price-max" class="cmp-input" type="number" step="0.01" placeholder="Max $/h"/>
+    <select id="cmp-filter-price" class="cmp-select">
+      <option value="all">Pricing: All tiers</option>
+      <option value="low">Pricing: Low</option>
+      <option value="medium">Pricing: Medium</option>
+      <option value="high">Pricing: High</option>
+    </select>
+    <select id="cmp-filter-contract" class="cmp-select">
+      <option value="all">Contract: All</option>
+      <option value="hourly">Contract: Hourly</option>
+      <option value="daily">Contract: Daily</option>
+      <option value="weekly">Contract: Weekly</option>
+      <option value="long-term">Contract: Long-term (months+)</option>
+    </select>
     <select id="cmp-filter-egress" class="cmp-select">
       <option value="all">Egress: All</option>
       <option value="free">Egress: Free</option>
@@ -487,24 +500,26 @@ table.stk td.grp-border-l{border-left:2px solid var(--border-ll)!important;}
     </select>
     <select id="cmp-sort" class="cmp-select">
       <option value="tier-desc">Sort: Tier (High to Low)</option>
-      <option value="price-asc">Sort: Price (Low to High)</option>
-      <option value="price-desc">Sort: Price (High to Low)</option>
+      <option value="price-asc">Sort: Pricing Tier (Low to High)</option>
+      <option value="price-desc">Sort: Pricing Tier (High to Low)</option>
       <option value="stack-desc">Sort: Stack Presence (High to Low)</option>
       <option value="name-asc">Sort: Provider (A-Z)</option>
+      <option value="contract-asc">Sort: Contract (Hourly to Long-term)</option>
       <option value="egress-asc">Sort: Egress (Free first)</option>
       <option value="supply-asc">Sort: Supply (Owned first)</option>
     </select>
     <button id="cmp-clear" class="cmp-clear-btn" type="button">Reset</button>
     <div class="cmp-stack-filter" id="cmp-stack-filter">
       <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin-right:2px;">Require:</span>
-      <button type="button" class="cmp-stack-btn" data-layer="0">L0</button>
-      <button type="button" class="cmp-stack-btn" data-layer="1">L1</button>
-      <button type="button" class="cmp-stack-btn" data-layer="2">L2</button>
-      <button type="button" class="cmp-stack-btn" data-layer="3">L3</button>
-      <button type="button" class="cmp-stack-btn" data-layer="4">L4</button>
-      <button type="button" class="cmp-stack-btn" data-layer="5">L5</button>
-      <button type="button" class="cmp-stack-btn" data-layer="6">L6</button>
-      <button type="button" class="cmp-stack-btn" data-layer="7">L7</button>
+      <button type="button" class="cmp-stack-btn" data-layer="0">L−1</button>
+      <button type="button" class="cmp-stack-btn" data-layer="1">L0</button>
+      <button type="button" class="cmp-stack-btn" data-layer="2">L1</button>
+      <button type="button" class="cmp-stack-btn" data-layer="3">L2</button>
+      <button type="button" class="cmp-stack-btn" data-layer="4">L3</button>
+      <button type="button" class="cmp-stack-btn" data-layer="5">L4</button>
+      <button type="button" class="cmp-stack-btn" data-layer="6">L5</button>
+      <button type="button" class="cmp-stack-btn" data-layer="7">L6</button>
+      <button type="button" class="cmp-stack-btn" data-layer="8">L7</button>
     </div>
   </div>
   <div style="overflow-x:auto;border:1px solid var(--border);border-radius:10px;">
@@ -514,9 +529,10 @@ table.stk td.grp-border-l{border-left:2px solid var(--border-ll)!important;}
           <th style="padding:12px 10px;text-align:left;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;white-space:nowrap;color:var(--accent);">Provider & Tier</th>
           <th style="padding:12px 10px;text-align:left;font-family:'Syne',sans-serif;font-size:11px;font-weight:600;color:var(--muted);min-width:320px;max-width:420px;">USP & Market Position</th>
           <th style="padding:12px 10px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);">Business Model</th>
-          <th style="padding:12px 10px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);">H100 Pricing<br/><span style="font-size:9px;">On-Demand / 1-Yr</span></th>
+          <th style="padding:12px 10px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);">Pricing Tier</th>
+          <th style="padding:12px 10px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);">Contract Flexibility</th>
           <th style="padding:12px 10px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);">Orchestration</th>
-          <th style="padding:12px 10px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);">Stack Presence (L0-L7)</th>
+          <th style="padding:12px 10px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);">Stack Presence (L−1–L7)</th>
           <th style="padding:12px 10px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);">Geography</th>
           <th style="padding:12px 10px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);">Egress Fees</th>
           <th style="padding:12px 10px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);">Supply Provenance</th>
@@ -703,12 +719,14 @@ const CRITERIA = ['Security','Lifecycle','Orchestration','Storage','Networking',
 const QUAL = {5:'Excellent',4:'Strong',3:'Adequate',2:'Weak',1:'Poor'};
 const SC = {5:'#22c55e',4:'#84cc16',3:'#eab308',2:'#f97316',1:'#ef4444'};
 
-// L0-L7 layer definitions
+// L−1 to L7 layer definitions
 const LAYERS_DEF = [
-  { id:'l0', label:'L0', name:'Silicon & Energy Inputs', color:'#94a3b8',
-    desc:'Ownership of critical upstream inputs: custom silicon design (TPUs, Trainium/Inferentia, etc.) and direct control of energy sourcing/capture. Higher ownership indicates stronger vertical integration and supply resilience.' },
+  { id:'ln1', label:'L−1', name:'Energy & Connectivity Infrastructure', color:'#e74c3c',
+    desc:'Ownership of energy infrastructure (power plants, PPAs, stranded/flare gas energy, direct power grid supply) and/or high-bandwidth internet connectivity (own fiber, submarine cables, ISP/AS ownership, transit peering). Distinguishes providers who directly control their power supply and network backbone from those fully dependent on third-party utilities.' },
+  { id:'l0', label:'L0', name:'Silicon & Hardware Supply Chain', color:'#94a3b8',
+    desc:'Custom silicon design and supply chain: GPU/AI ASICs (TPUs, Trainium/Inferentia, Azure Maia), networking chip design, foundry relationships, advanced packaging. Only providers that design or co-design chips score here — pure GPU procurement is none.' },
   { id:'l1', label:'L1', name:'Physical Infrastructure', color:'#e8c840',
-    desc:'Data centers (owned or colo), utility power (40–500MW), liquid cooling, GPU server racks (HGX 8-way nodes), InfiniBand fabric (400G NDR). The IB fabric is the most differentiating physical asset.' },
+    desc:'Data centers (owned or colo), utility power connection (40–500MW), liquid cooling, GPU server racks (HGX 8-way nodes), InfiniBand fabric (400G NDR). The IB fabric is the most differentiating physical asset.' },
   { id:'l2', label:'L2', name:'Firmware, Drivers & Libraries', color:'#5aace8',
     desc:'CUDA/ROCm GPU programming stacks, NCCL collective communication, cuDNN/cuBLAS math libraries, BMC/IPMI firmware, MIG partitioning. NCCL correct config is prerequisite for distributed training.' },
   { id:'l3', label:'L3', name:'Virtualisation & Orchestration', color:'#5ab86a',
@@ -723,7 +741,7 @@ const LAYERS_DEF = [
     desc:'RAG pipelines, AI agents, chat/copilot UIs, API products, enterprise integrations, fine-tune and experiment tracking platforms exposed to end users.' },
 ];
 
-// Stack coverage per provider: [l0,l1,l2,l3,l4,l5,l6,l7]
+// Stack coverage per provider: [ln1,l0,l1,l2,l3,l4,l5,l6,l7]
 // full | partial | partner | limited | none
 
 const PROVIDERS = [
@@ -731,7 +749,7 @@ const PROVIDERS = [
     id:'coreweave', name:'CoreWeave', tier:'platinum', model:'Neocloud',
     headline:'The industry benchmark. Sole Platinum-tier provider. Bare metal with BlueField DPUs for hyperscaler-grade isolation. SUNK is the most mature Slurm-on-K8s solution. Commands 10–15% pricing premium over nearest competitors.',
     scores:{Security:5,Lifecycle:5,Orchestration:5,Storage:5,Networking:5,Reliability:5,Monitoring:5,Pricing:2,Partnerships:5,Availability:4},
-    stack:['partial','full','partial','full','partial','full','full','none'],
+    stack:['partial','none','full','partial','full','partial','full','full','none'],
     unique:[
       'SUNK (Slurm-on-K8s): Only fully production-hardened SonK solution — co-schedules Slurm+K8s jobs on the same hardware pool simultaneously',
       'LOTA (Local Object Transfer Accelerator): Transparent distributed NVMe cache hitting >7 GB/s per GPU on Blackwell — no other neocloud offers this',
@@ -750,7 +768,7 @@ const PROVIDERS = [
     id:'nebius', name:'Nebius', tier:'gold', model:'Neocloud',
     headline:'CoreWeave\'s closest rival. Bare-metal-equivalent performance via KubeVirt confirmed by MLPerf v5.1 on GB200 NVL72. Only Gold-tier neocloud with robust spot/preemptible market. Open-source Soperator gives full roadmap transparency.',
     scores:{Security:3,Lifecycle:4,Orchestration:4,Storage:4,Networking:4,Reliability:4,Monitoring:3,Pricing:4,Partnerships:3,Availability:4},
-    stack:['partner','full','partial','full','partial','full','partial','partial'],
+    stack:['partner','none','full','partial','full','partial','full','partial','partial'],
     unique:[
       'Soperator (open source): The only production-grade SonK project with a fully public GitHub roadmap, used by 3 other clouds (Voltage Park, GCORE)',
       'KubeVirt all the way down: Slurm-on-K8s-on-VMs-on-K8s — enables instant provisioning, snapshots, bare-metal perf via GPU passthrough',
@@ -770,7 +788,7 @@ const PROVIDERS = [
     id:'oracle', name:'Oracle', tier:'gold', model:'Hyperscaler',
     headline:'Most cost-effective hyperscaler. Anchors 60%+ of US Stargate. Fastest capacity deployment. Wins enterprise deals with OpenAI, Meta, ByteDance, Nvidia. Oracle Linux default and poor CycleCloud-equivalent UX creates friction.',
     scores:{Security:4,Lifecycle:3,Orchestration:4,Storage:4,Networking:3,Reliability:4,Monitoring:3,Pricing:4,Partnerships:5,Availability:5},
-    stack:['partner','partial','partial','full','partial','partner','partial','none'],
+    stack:['partial','none','partial','partial','full','partial','partner','partial','none'],
     unique:[
       '$300B+ OpenAI deal and 60%+ of US Stargate: Largest single AI infrastructure commitment in history — validates Oracle\'s hyperscale execution',
       'Only hyperscaler without an in-house AGI program: Makes Oracle genuinely neutral — can sign Meta, ByteDance, Nvidia and OpenAI simultaneously without conflict of interest',
@@ -789,7 +807,7 @@ const PROVIDERS = [
     id:'azure', name:'Azure', tier:'gold', model:'Hyperscaler',
     headline:'Enterprise-grade security and the only hyperscaler deploying InfiniBand + SHARP at scale. AKS (Kubernetes) is strong; CycleCloud (Slurm) is weak and user-burden-heavy. OpenAI anchor tenant consuming most capacity.',
     scores:{Security:5,Lifecycle:3,Orchestration:3,Storage:4,Networking:4,Reliability:3,Monitoring:3,Pricing:2,Partnerships:4,Availability:3},
-    stack:['partial','full','full','full','partial','full','full','partial'],
+    stack:['full','partial','full','full','full','partial','full','full','partial'],
     unique:[
       'Only hyperscaler with InfiniBand + SHARP at scale: SHARP (Scalable Hierarchical Aggregation and Reduction Protocol) reduces allreduce latency at large node counts — no other hyperscaler offers this',
       'FedRAMP High / DoD IL5 compliance: The only GPU cloud with certifications for classified US government workloads — a captive market for defense AI',
@@ -808,7 +826,7 @@ const PROVIDERS = [
     id:'fluidstack', name:'FluidStack', tier:'gold', model:'Neocloud',
     headline:'No owned infrastructure — turns partner DCs into Gold-tier experiences. Unique forward-deployed engineering model. Google-backstopped via Terawulf/Cipher capacity. Meta, Poolside, Blackforest Labs customers.',
     scores:{Security:3,Lifecycle:4,Orchestration:4,Storage:3,Networking:4,Reliability:3,Monitoring:4,Pricing:4,Partnerships:4,Availability:3},
-    stack:['none','none','none','full','partial','partner','full','none'],
+    stack:['none','none','none','none','full','partial','partner','full','none'],
     unique:[
       'Operator-as-a-Service model: Zero hardware ownership but Gold-tier outcome — the only provider that successfully converts Bronze-tier DC infrastructure into Gold-tier customer experience',
       'Forward-deployed engineering: Issues patched in hours, not weeks. HPC-X missing from base image → fixed within 24 hours; NVIDIAscape CVE → patched in minutes of notification',
@@ -827,7 +845,7 @@ const PROVIDERS = [
     id:'crusoe', name:'Crusoe', tier:'gold', model:'Neocloud',
     headline:'3.4GW claimed DC footprint. Oracle JV on Stargate (Abilene). SonK is early-stage and not production-ready. Engineering culture concerns with key IC departures. Pivoting from cloud provider to DC infrastructure.',
     scores:{Security:3,Lifecycle:3,Orchestration:2,Storage:3,Networking:3,Reliability:3,Monitoring:3,Pricing:3,Partnerships:4,Availability:4},
-    stack:['partial','full','partial','limited','partial','partial','partial','none'],
+    stack:['full','none','full','partial','limited','partial','partial','partial','none'],
     unique:[
       'Digital Flare Mitigation / Crusoe Spark: Converts natural gas waste from oil extraction into GPU compute power — a genuinely differentiated sustainable power source now productized as Crusoe Spark for B200s',
       'Oracle Abilene JV (>1.2GW, $15B): Joint venture on the largest single AI datacenter project underway — if they execute, positions Crusoe as a major DC infrastructure provider',
@@ -845,7 +863,7 @@ const PROVIDERS = [
     id:'gcp', name:'Google Cloud', tier:'silver', model:'Hyperscaler',
     headline:'Best-in-class GKE Kubernetes with Kueue/JobSet out of the box. CoMMA straggler detection unique. gIB plugin UX creates friction. NVL36×2 not true NVL72. Fast-tracking to Gold — strongest silver provider.',
     scores:{Security:4,Lifecycle:3,Orchestration:5,Storage:4,Networking:3,Reliability:3,Monitoring:4,Pricing:2,Partnerships:4,Availability:4},
-    stack:['full','full','full','full','full','full','full','full'],
+    stack:['full','full','full','full','full','full','full','full','full'],
     unique:[
       'GKE with Kueue + JobSet pre-installed: The only hyperscaler where you get industry-standard ML batch scheduling primitives out of the box — no custom setup',
       'CoMMA (Collective Monitoring and Management Agent): eBPF-based straggler detection for distributed training — identifies which specific ranks are lagging in AllReduce/AllGather; no equivalent exists elsewhere',
@@ -864,7 +882,7 @@ const PROVIDERS = [
     id:'aws', name:'AWS', tier:'silver', model:'Hyperscaler',
     headline:'World\'s largest cloud. SageMaker HyperPod setup took SemiAnalysis 14 hours and 4 attempts. EFA is opaque vs InfiniBand. Monitoring near-absent for Slurm. Ecosystem lock-in is the real moat.',
     scores:{Security:4,Lifecycle:1,Orchestration:2,Storage:4,Networking:2,Reliability:3,Monitoring:2,Pricing:2,Partnerships:4,Availability:5},
-    stack:['full','full','full','partial','full','full','full','full'],
+    stack:['full','full','full','full','partial','full','full','full','full'],
     unique:[
       'Trainium2 / Inferentia2: AWS-designed chips for training and inference — only alternative to NVIDIA ASICs at hyperscale with actual commercial deployment',
       'Largest cloud ecosystem: 200+ services, deepest enterprise integration, broadest compliance portfolio — AWS lock-in is a competitive moat no other AI cloud can replicate',
@@ -883,7 +901,7 @@ const PROVIDERS = [
     id:'together', name:'Together.ai', tier:'silver', model:'Orchestrator',
     headline:'Serverless inference endpoint business offsets idle cluster compute. TKC/FlashAttention is a genuine kernel differentiator. #1 in customer reliability complaints due to multi-DC partner variance. Instant Clusters (KubeVirt+Slinky) is promising.',
     scores:{Security:3,Lifecycle:3,Orchestration:4,Storage:3,Networking:3,Reliability:2,Monitoring:3,Pricing:4,Partnerships:3,Availability:3},
-    stack:['none','partner','partial','full','full','full','partial','full'],
+    stack:['none','none','partner','partial','full','full','full','partial','full'],
     unique:[
       'TKC (Together Kernel Collection) / FlashAttention: The only neocloud with a dedicated kernel team (VP of Kernels is unique in the industry). FlashAttention is used industry-wide and originated here',
       'Dual revenue model: Serverless inference API absorbs idle cluster compute — reduces effective cost for cluster customers and hedges against GPU underutilization',
@@ -901,7 +919,7 @@ const PROVIDERS = [
     id:'lambda', name:'Lambda', tier:'silver', model:'Neocloud',
     headline:'Largest on-demand GPU fleet but frequently sold out. Deep HPC hardware expertise not yet translated to polished cloud UX. Microsoft $1.5B+ deal. Exiting inference API to focus purely on clusters.',
     scores:{Security:3,Lifecycle:2,Orchestration:3,Storage:3,Networking:3,Reliability:3,Monitoring:2,Pricing:3,Partnerships:4,Availability:4},
-    stack:['partner','full','partial','partial','partial','partner','limited','none'],
+    stack:['partial','none','full','partial','partial','partial','partner','limited','none'],
     unique:[
       'Largest on-demand GPU fleet: When not sold out, Lambda has more OD H100/H200 inventory than any neocloud — critical for researchers who can\'t commit to reservations',
       'Microsoft $1.5B contract for Nvidia GPUs: Signals Lambda is moving into hyperscale-adjacent territory — validates their capacity execution capability',
@@ -919,7 +937,7 @@ const PROVIDERS = [
     id:'scaleway', name:'Scaleway', tier:'silver', model:'Neocloud',
     headline:'EU GDPR-sovereign premium. Slurm-only (no Kubernetes strategy). Spectrum-X RoCE. Targets funded European AI startups. H100 only; no Blackwell yet. Strong niche, limited TAM.',
     scores:{Security:3,Lifecycle:3,Orchestration:2,Storage:2,Networking:3,Reliability:3,Monitoring:3,Pricing:3,Partnerships:2,Availability:2},
-    stack:['partner','full','partial','partial','none','limited','partial','none'],
+    stack:['partial','none','full','partial','partial','none','limited','partial','none'],
     unique:[
       'GDPR-native sovereign cloud: Infrastructure fully within EU legal boundaries, processed by EU entities — genuine data sovereignty for EU AI companies, not just a compliance checkbox',
       'Spectrum-X RoCE performance: Working with customers to benchmark Spectrum-X vs InfiniBand — showed 20% synthetic improvement in some tests',
@@ -937,7 +955,7 @@ const PROVIDERS = [
     id:'gcore', name:'GCORE', tier:'silver', model:'Neocloud',
     headline:'Enterprise-grade hyperscaler-style console. EU+US footprint. Kubernetes solid OOB with VAST storage. Monitoring and health checks entirely left to the user — a significant gap for production training.',
     scores:{Security:4,Lifecycle:3,Orchestration:3,Storage:3,Networking:3,Reliability:3,Monitoring:1,Pricing:3,Partnerships:3,Availability:3},
-    stack:['partner','full','partial','partial','none','partner','partial','none'],
+    stack:['partial','none','full','partial','partial','none','partner','partial','none'],
     unique:[
       'PCI DSS compliance + global footprint: Luxembourg HQ with EU + US regions and plans for Nordics — enterprise compliance posture unusual for a GPU-specialized cloud',
       'Soperator-based SonK (via API): Slurm-on-Kubernetes available through API documentation — same Soperator used by Nebius, proving portability of the open-source stack',
@@ -955,7 +973,7 @@ const PROVIDERS = [
     id:'vultr', name:'Vultr', tier:'silver', model:'Neocloud',
     headline:'32 global regions. AMD MI355X (AMD-backed) + Nvidia B200. CVEs found in testing. Cluster features early-stage but improving rapidly. Joined NVIDIA embargo program. Motivated AMD to create their own security program.',
     scores:{Security:2,Lifecycle:3,Orchestration:2,Storage:3,Networking:3,Reliability:2,Monitoring:2,Pricing:3,Partnerships:4,Availability:4},
-    stack:['partner','full','partial','limited','partial','partial','limited','none'],
+    stack:['partial','none','full','partial','limited','partial','partial','limited','none'],
     unique:[
       'Motivated AMD\'s security embargo program: Vultr\'s outreach to AMD\'s Product Security Office directly caused AMD to create their formal security embargo program — industry impact beyond their market position',
       '32 global regions with AMD MI355X: Most geographically diverse GPU cloud with AMD hardware — unique for teams needing non-US AMD compute',
@@ -973,7 +991,7 @@ const PROVIDERS = [
     id:'voltagep', name:'Voltage Park', tier:'silver', model:'Neocloud',
     headline:'Lowest prices in the market. H100-only today. SonK foundation improving rapidly (24-hour turnaround on feedback). Manual failure remediation. CVE vulnerabilities. Recovering from reputational issues; strong technical foundation.',
     scores:{Security:2,Lifecycle:3,Orchestration:3,Storage:3,Networking:3,Reliability:2,Monitoring:1,Pricing:5,Partnerships:2,Availability:2},
-    stack:['none','partial','partial','partial','none','partial','limited','none'],
+    stack:['none','none','partial','partial','partial','none','partial','limited','none'],
     unique:[
       'Lowest pricing in the market: Consistent cheapest GPU-hr for H100 across any tracked provider — critical for price-sensitive startups and academic teams',
       'Soperator-based SonK with correct topology.conf: Among Soperator deployments, Voltage Park has topology-aware scheduling, prolog/epilog, pyxis/enroot all configured — better defaults than Crusoe\'s custom SonK',
@@ -991,7 +1009,7 @@ const PROVIDERS = [
     id:'tensorwave', name:'TensorWave', tier:'silver', model:'Neocloud',
     headline:'AMD-only (8,192 MI325X, Tucson AZ). $100M Series A from AMD Ventures. 7 outages in 2-month testing window. No DCGM equivalent for AMD (RDC-based monitoring absent). Team is responsive but ops maturity is early.',
     scores:{Security:3,Lifecycle:2,Orchestration:2,Storage:3,Networking:3,Reliability:1,Monitoring:1,Pricing:3,Partnerships:4,Availability:2},
-    stack:['partner','full','partial','limited','partial','partner','limited','none'],
+    stack:['partner','none','full','partial','limited','partial','partner','limited','none'],
     unique:[
       'AMD-exclusive at scale: 8,192 MI325X in a single facility — the largest pure AMD GPU cluster operated by any neocloud; critical for AMD ecosystem validation workloads',
       '$100M AMD Ventures backing: AMD\'s strategic investment signals TensorWave is AMD\'s preferred cloud partner — preferential hardware access and roadmap insight for MI400',
@@ -1101,9 +1119,10 @@ const CRIT_DETAILS = {
   }
 };
 
-// Stack layers for table (grouped by L0-L7)
+// Stack layers for table (grouped by L−1 to L7)
 const STACK_COLS = [
-  {group:'L0 · Silicon & Energy Inputs',cols:['Silicon Ownership','Energy Inputs Ownership']},
+  {group:'L−1 · Energy & Connectivity',cols:['Energy Infrastructure','Network / ISP Connectivity']},
+  {group:'L0 · Silicon & Hardware Supply',cols:['Silicon Ownership']},
   {group:'L1 · Physical Infrastructure',cols:['IB / HPC Fabric','Storage HW']},
   {group:'L2 · Drivers & Libraries',cols:['CUDA/ROCm','NCCL Config','BMC/Firmware']},
   {group:'L3 · Orchestration',cols:['Managed Slurm','Managed K8s','SonK','Spot/Preemptible']},
@@ -1114,24 +1133,24 @@ const STACK_COLS = [
 ];
 
 // Provider stack coverage: flat array matching all cols in order
-// Silicon | Energy | IB Net | Storage HW | CUDA | NCCL | BMC | Slurm | K8s | SonK | Spot | Training | Inference | Finetune | POSIX | Object | LocalNVMe | Serving | Monitoring | HealthChk | IAM | FinOps | InfAPI | AIPlat | UI
+// Energy | NetworkISP | Silicon | IB Net | Storage HW | CUDA | NCCL | BMC | Slurm | K8s | SonK | Spot | Training | Inference | Finetune | POSIX | Object | LocalNVMe | Serving | Monitor | HealthChk | IAM | FinOps | InfAPI | AIPlat | UI
 const STACKS = {
-  // Cols: Silicon | Energy | IB/Net | StorageHW | CUDA | NCCL | BMC | Slurm | K8s | SonK | Spot | Training | Inference | Finetune | POSIX | Object | LocalNVMe | Serving | Monitor | HealthChk | IAM | FinOps | InfAPI | AIPlat | UI
-  coreweave: ['none','partial','full','full','partial','full','full','full','full','full','none','partial','partial','partner','full','full','full','none','full','full','full','full','none','none','none'],
-  nebius:    ['none','partial','full','partial','partial','full','partial','full','full','full','full','partial','partial','partner','full','full','limited','partial','partial','partial','partial','limited','partial','none','none'],
-  oracle:    ['none','partial','partial','full','partial','partial','partial','full','full','none','partial','partial','partial','partner','partner','full','none','none','partial','partial','full','partial','none','none','none'],
-  azure:     ['partial','partial','full','full','full','partial','full','full','full','limited','partial','partial','partial','partner','full','full','none','none','partial','partial','full','partial','partial','full','partial'],
-  fluidstack:['none','none','partner','partner','none','partial','none','full','full','partial','partial','partial','partial','none','partner','partner','none','none','full','partial','partial','limited','none','none','none'],
-  crusoe:    ['none','full','partial','partial','partial','partial','partial','limited','partial','limited','partial','partial','partial','none','partial','partial','none','none','partial','limited','partial','limited','none','none','none'],
-  gcp:       ['full','partial','partial','full','full','full','full','partial','full','limited','partial','full','full','full','full','full','none','full','full','partial','full','full','partial','full','full'],
-  aws:       ['full','partial','partial','full','full','full','full','partial','partial','limited','partial','full','full','full','full','full','none','full','limited','partial','full','full','partial','full','full'],
-  together:  ['none','none','partner','partner','none','partial','none','partial','full','partial','partial','full','full','full','partner','partner','none','full','partial','limited','partial','limited','full','none','none'],
-  lambda:    ['none','partner','partial','partner','partial','partial','partial','partial','partial','limited','partial','partial','none','partner','partner','partner','none','none','limited','partial','partial','limited','none','none','none'],
-  scaleway:  ['none','partner','partial','partial','partial','partial','partial','full','none','none','none','partial','none','none','limited','limited','none','none','partial','partial','partial','limited','none','none','none'],
-  gcore:     ['none','partner','partial','partner','partial','partial','partial','limited','full','limited','partial','partial','partial','none','partner','partner','none','none','none','none','full','limited','none','none','none'],
-  vultr:     ['none','partner','partial','partial','partial','partial','partial','limited','partial','limited','partial','partial','none','none','partial','partial','none','none','none','none','partial','limited','none','none','none'],
-  voltagep:  ['none','none','partial','partial','partial','partial','partial','partial','partial','partial','partial','partial','none','none','partial','partial','none','none','none','none','partial','limited','none','none','none'],
-  tensorwave:['none','partner','partial','partner','partial','partial','partial','limited','limited','limited','none','partial','partial','none','partner','partner','none','none','none','none','partial','limited','none','none','none'],
+  // Cols: Energy | NetworkISP | Silicon | IB/Net | StorageHW | CUDA | NCCL | BMC | Slurm | K8s | SonK | Spot | Training | Inference | Finetune | POSIX | Object | LocalNVMe | Serving | Monitor | HealthChk | IAM | FinOps | InfAPI | AIPlat | UI
+  coreweave: ['partial','limited','none','full','full','partial','full','full','full','full','full','none','partial','partial','partner','full','full','full','none','full','full','full','full','none','none','none'],
+  nebius:    ['partial','none','none','full','partial','partial','full','partial','full','full','full','full','partial','partial','partner','full','full','limited','partial','partial','partial','partial','limited','partial','none','none'],
+  oracle:    ['partial','partial','none','partial','full','partial','partial','partial','full','full','none','partial','partial','partial','partner','partner','full','none','none','partial','partial','full','partial','none','none','none'],
+  azure:     ['partial','full','partial','full','full','full','partial','full','full','full','limited','partial','partial','partial','partner','full','full','none','none','partial','partial','full','partial','partial','full','partial'],
+  fluidstack:['none','none','none','partner','partner','none','partial','none','full','full','partial','partial','partial','partial','none','partner','partner','none','none','full','partial','partial','limited','none','none','none'],
+  crusoe:    ['full','limited','none','partial','partial','partial','partial','partial','limited','partial','limited','partial','partial','partial','none','partial','partial','none','none','partial','limited','partial','limited','none','none','none'],
+  gcp:       ['partial','full','full','partial','full','full','full','full','partial','full','limited','partial','full','full','full','full','full','none','full','full','partial','full','full','partial','full','full'],
+  aws:       ['partial','full','full','partial','full','full','full','full','partial','partial','limited','partial','full','full','full','full','full','none','full','limited','partial','full','full','partial','full','full'],
+  together:  ['none','none','none','partner','partner','none','partial','none','partial','full','partial','partial','full','full','full','partner','partner','none','full','partial','limited','partial','limited','full','none','none'],
+  lambda:    ['partner','limited','none','partial','partner','partial','partial','partial','partial','partial','limited','partial','partial','none','partner','partner','partner','none','none','limited','partial','partial','limited','none','none','none'],
+  scaleway:  ['partner','partial','none','partial','partial','partial','partial','partial','full','none','none','none','partial','none','none','limited','limited','none','none','partial','partial','partial','limited','none','none','none'],
+  gcore:     ['partner','partial','none','partial','partner','partial','partial','partial','limited','full','limited','partial','partial','partial','none','partner','partner','none','none','none','none','full','limited','none','none','none'],
+  vultr:     ['partner','partial','none','partial','partial','partial','partial','partial','limited','partial','limited','partial','partial','none','none','partial','partial','none','none','none','none','partial','limited','none','none','none'],
+  voltagep:  ['none','none','none','partial','partial','partial','partial','partial','partial','partial','partial','partial','partial','none','none','partial','partial','none','none','none','none','partial','limited','none','none','none'],
+  tensorwave:['partner','none','none','partial','partner','partial','partial','partial','limited','limited','limited','none','partial','partial','none','partner','partner','none','none','none','none','partial','limited','none','none','none'],
 };
 
 // H2H Analysis pairs
@@ -1540,7 +1559,7 @@ function buildStack(){
   // Group header row
   h+='<tr><th style="background:var(--surf);"></th>';
   STACK_COLS.forEach((g,gi)=>{
-    const colors=['#94a3b8','#e8c840','#5aace8','#5ab86a','#9b59b6','#e67e22','#e84393','#8e44ad'];
+    const colors=['#e74c3c','#94a3b8','#e8c840','#5aace8','#5ab86a','#9b59b6','#e67e22','#e84393','#8e44ad'];
     const c=colors[gi]||'var(--accent)';
     h+=`<th colspan="${g.cols.length}" class="group-hdr" style="border-left:2px solid ${c}40;color:${c};">${g.group}</th>`;
   });
@@ -1549,7 +1568,7 @@ function buildStack(){
   h+='<tr><th style="background:var(--surf);">Provider</th>';
   let colIdx=1;
   STACK_COLS.forEach((g,gi)=>{
-    const colors=['#94a3b8','#e8c840','#5aace8','#5ab86a','#9b59b6','#e67e22','#e84393','#8e44ad'];
+    const colors=['#e74c3c','#94a3b8','#e8c840','#5aace8','#5ab86a','#9b59b6','#e67e22','#e84393','#8e44ad'];
     const c=colors[gi]||'var(--accent)';
     g.cols.forEach((col,ci2)=>{
       const isFirst=ci2===0;
@@ -1565,7 +1584,7 @@ function buildStack(){
     h+=`<tr><td><div class="pname-cell"><div class="tier-dot ${p.tier}"></div><div class="pcell-name">${p.name}</div></div></td>`;
     let ci2=0;
     STACK_COLS.forEach((g,gi)=>{
-      const colors=['#94a3b8','#e8c840','#5aace8','#5ab86a','#9b59b6','#e67e22','#e84393','#8e44ad'];
+      const colors=['#e74c3c','#94a3b8','#e8c840','#5aace8','#5ab86a','#9b59b6','#e67e22','#e84393','#8e44ad'];
       const c=colors[gi]||'var(--accent)';
       g.cols.forEach((col,cj)=>{
         const s=st[ci2]||'none';
@@ -2107,30 +2126,45 @@ function applyStoredTheme(){
 //  BUSINESS MODEL COMPARISON TABLE DATA
 // ═══════════════════════════════════════════════════════
 const COMPARISON_DATA = [
-  {id:'coreweave',name:'CoreWeave',tier:'platinum',usp:'Industry benchmark for production-grade training. Sole Platinum-tier provider. SUNK (Slurm-on-K8s) + LOTA cache + BlueField DPU isolation set the standard.',model:'Asset-Heavy Neocloud',h100on:'$6.16/h SXM',h100res:'$5.50/h (1-yr)',orch:'SUNK (co-schedules Slurm+K8s)',stack:'L2–L5 Full',geography:'US, UK, Spain, Sweden, Norway',egress:'✓ Free',provenance:'✓ Owned hardware',software:'SUNK · LOTA cache · BlueField-3',buyers:'Foundation model labs, enterprise AI teams',layer:'P-3–4'},
-  {id:'nebius',name:'Nebius',tier:'gold',usp:"CoreWeave's closest rival. Only Gold-tier neocloud with spot/preemptible market. KubeVirt bare-metal equivalence (MLPerf v5.1). Open-source Soperator.",model:'Asset-Heavy Neocloud',h100on:'$2.95/h',h100res:'$2.00/h (1-yr)',orch:'Soperator (Slurm-on-K8s, open-source)',stack:'L2–L5 Full',geography:'US, EU (Finland, France, Iceland)',egress:'✓ Free (compute)',provenance:'✓ Owned infrastructure',software:'Soperator · KubeVirt · YDB storage',buyers:'Startups, research labs, EU enterprises',layer:'P-2–4'},
-  {id:'oracle',name:'Oracle',tier:'gold',usp:'Most cost-effective hyperscaler. 60%+ of US Stargate. No in-house AGI program = genuinely neutral (OpenAI + Meta + ByteDance simultaneously).',model:'Hyperscaler',h100on:'Contact (wholesale)',h100res:'Contact',orch:'OKE Kubernetes + manual Slurm',stack:'L2–L5 Partial',geography:'45 global regions',egress:'✓ Free (differentiator)',provenance:'⚠️ Mix owned + reseller',software:'OKE · RoCE only (no IB)',buyers:'Hyperscale enterprises, frontier labs',layer:'P-4'},
-  {id:'azure',name:'Azure',tier:'gold',usp:"Only hyperscaler with InfiniBand + SHARP at scale. FedRAMP/DoD IL5 compliance. AKS (strong). OpenAI anchor tenant.",model:'Hyperscaler',h100on:'$12.29/h (most expensive)',h100res:'Contact',orch:'AKS (strong) + CycleCloud Slurm (weak)',stack:'L2–L6 Full',geography:'Global',egress:'$0.08–0.12/GB (lock-in)',provenance:'⚠️ Hyperscaler model',software:'AKS node auto-repair · IB+SHARP',buyers:'Enterprises with FedRAMP reqs, OpenAI clients',layer:'P-3–4'},
-  {id:'fluidstack',name:'FluidStack',tier:'gold',usp:"Zero owned infrastructure—turns Tier-2/3 DCs into Gold-tier experiences. Forward-deployed engineering (bugs fixed in hours). Google-backstopped.",model:'Operator-as-Service (Hybrid)',h100on:'$2.10–2.30/h',h100res:'Contact',orch:'Full K8s + ArgoCD IaC transparency',stack:'L3–L5 Partner-dependent',geography:'Multi-DC across US/EU',egress:'✓ Free',provenance:'⚠️ Partner DCs, IaC transparent',software:'ArgoCD IaC shared with customers',buyers:'Anthropic, Meta, Poolside (frontier labs)',layer:'P-4'},
-  {id:'crusoe',name:'Crusoe',tier:'gold',usp:'3.4GW claimed footprint. Digital Flare Mitigation productized as Crusoe Spark. Oracle Abilene JV ($15B+). Stranded energy arbitrage.',model:'Asset-Heavy + Green Energy',h100on:'$3.90–4.29/h',h100res:'Contact',orch:'SonK (early-stage, not production-ready)',stack:'L1–L5 Partial',geography:'US (Permian, TX, WY), Iceland',egress:'✓ Free',provenance:'✓ Owned infrastructure',software:'DFM / Crusoe Spark · AMD MI355X',buyers:'Climate-conscious enterprises, Oracle partnership tier',layer:'P-3–4'},
-  {id:'gcp',name:'Google Cloud',tier:'silver',usp:'Best-in-class GKE + Kueue/JobSet OOB. CoMMA straggler detection (unique). Full AI-to-app vertical (Vertex AI, Gemini).',model:'Hyperscaler',h100on:'$11.06/h (quota approval)',h100res:'Contact',orch:'GKE (best) + Cluster Director Slurm (preview)',stack:'L0–L7 Full coverage',geography:'Global',egress:'$0.08–0.12/GB',provenance:'⚠️ Hyperscaler model',software:'GKE · Kueue/JobSet · CoMMA straggler det.',buyers:'Enterprises with Vertex AI workflows',layer:'P-3–4'},
-  {id:'aws',name:'AWS',tier:'silver',usp:"World's largest cloud. Trainium/Inferentia custom chips. S3/FSx ecosystem lock-in is the moat. SageMaker HyperPod setup is painful.",model:'Hyperscaler',h100on:'$6.88/h',h100res:'Contact',orch:'SageMaker HyperPod (notoriously painful)',stack:'L0–L7 Full coverage',geography:'Global',egress:'$0.08–0.12/GB (lock-in)',provenance:'⚠️ Hyperscaler model',software:'Trainium/Inferentia · EFA (opaque)',buyers:'Enterprises already on AWS',layer:'P-3–5'},
-  {id:'together',name:'Together.ai',tier:'silver',usp:'Serverless inference endpoint business (avoids idle compute). TKC kernel team (FlashAttention). Instant Clusters with Slinky/KubeVirt.',model:'Hybrid (Inference + Clusters)',h100on:'From $2.95/h (Instant)',h100res:'Contact',orch:'Kubernetes + optional KubeVirt',stack:'L4–L5 ML layers strong',geography:'US + EU DCs',egress:'✓ Free',provenance:'⚠️ Multi-DC partner model',software:'TKC / FlashAttention · Serverless',buyers:'Startups needing inference + fine-tune',layer:'P-2–4'},
-  {id:'lambda',name:'Lambda',tier:'silver',usp:"Largest on-demand H100/H200 fleet when available. 1-Click Clusters. Deep HPC expertise. Frequently sold out (supply constraint = owned fleet).",model:'Asset-Heavy Neocloud',h100on:'$2.49–2.99/h',h100res:'Contact',orch:'1-Click Clusters (managed K8s/Slurm)',stack:'L2–L4 Strong for training',geography:'US (SF, Texas)',egress:'✓ Free',provenance:'✓ Owned hardware',software:'1-Click Clusters · VAST storage',buyers:'Researchers, AI startups, students',layer:'P-2–3'},
-  {id:'scaleway',name:'Scaleway',tier:'silver',usp:'EU GDPR-sovereign premium. Slurm-only (no K8s strategy). Spectrum-X RoCE. Targets funded European AI startups.',model:'Asset-Heavy Neocloud (EU-native)',h100on:'$2.40–2.80/h (EU)',h100res:'Contact',orch:'Slurm-only (K8s not roadmap)',stack:'L2–L4 HPC-focused',geography:'EU only (France, Netherlands)',egress:'✓ Free within EU',provenance:'✓ Owned infrastructure',software:'Spectrum-X RoCE · EU sovereign',buyers:'European enterprises, GDPR-sensitive teams',layer:'P-4'},
-  {id:'gcore',name:'GCORE',tier:'silver',usp:'Enterprise-grade hyperscaler-style console. PCI DSS compliance. Soperator SonK via API. EU+US footprint. Monitoring gaps.',model:'Asset-Heavy Neocloud',h100on:'$2.40–2.90/h',h100res:'Contact',orch:'Kubernetes + Soperator SonK (API)',stack:'L2–L5 Partial',geography:'EU + US, Nordics planned',egress:'✓ Free',provenance:'✓ Owned infrastructure',software:'Soperator (API) · PCI DSS',buyers:'Fintech AI, EU enterprises',layer:'P-3–4'},
-  {id:'vultr',name:'Vultr',tier:'silver',usp:'32 global regions (broadest geographic reach). AMD MI355X + Nvidia B200. AMD Ventures backed. Motivated AMD to create security program.',model:'Distributed Neocloud',h100on:'$2.99/h',h100res:'Contact',orch:'Managed VKE Kubernetes + Slurm',stack:'L2–L5 Partial',geography:'32 zones globally',egress:'$0.01/GB (after 2TB free)',provenance:'✓ Mix owned colo',software:'VKE K8s · AMD/Nvidia dual-vendor',buyers:'Geographically distributed teams',layer:'P-3'},
-  {id:'voltagep',name:'Voltage Park',tier:'silver',usp:'Lowest prices in market ($1.99/h). H100-only today. Soperator SonK improving rapidly (24h turnaround on feedback).',model:'Budget Neocloud',h100on:'$1.99/h (cheapest)',h100res:'Contact',orch:'Soperator SonK (improving)',stack:'L2–L4 Basic',geography:'US (TX, VA, WA)',egress:'✓ Free',provenance:'⚠️ Early-stage ops',software:'Soperator · OIDC for K8s',buyers:'Budget-conscious startups, students',layer:'P-2–3'},
-  {id:'tensorwave',name:'TensorWave',tier:'silver',usp:'AMD-exclusive at scale (8,192 MI325X). AMD Ventures $100M backed. Largest pure-AMD cluster in any cloud.',model:'AMD-Specialized Neocloud',h100on:'N/A (AMD only)',h100res:'N/A',orch:'RKE2 Kubernetes + Slurm',stack:'L2–L5 AMD focused',geography:'US (multi-zone)',egress:'Claims transparent',provenance:'✓ Owned infrastructure',software:'AMD ROCm · AMD Ventures roadmap',buyers:'AMD ecosystem users, ROCm researchers',layer:'P-3–4'}
+  {id:'coreweave',name:'CoreWeave',tier:'platinum',usp:'Industry benchmark for production-grade training. Sole Platinum-tier provider. SUNK (Slurm-on-K8s) + LOTA cache + BlueField DPU isolation set the standard.',model:'Asset-Heavy Neocloud',pricingTier:'high',contractTerm:'long-term',orch:'SUNK (co-schedules Slurm+K8s)',stack:'L2–L5 Full',geography:'US, UK, Spain, Sweden, Norway',egress:'✓ Free',provenance:'✓ Owned hardware',software:'SUNK · LOTA cache · BlueField-3',buyers:'Foundation model labs, enterprise AI teams',layer:'P-3–4'},
+  {id:'nebius',name:'Nebius',tier:'gold',usp:"CoreWeave's closest rival. Only Gold-tier neocloud with spot/preemptible market. KubeVirt bare-metal equivalence (MLPerf v5.1). Open-source Soperator.",model:'Asset-Heavy Neocloud',pricingTier:'low',contractTerm:'hourly',orch:'Soperator (Slurm-on-K8s, open-source)',stack:'L2–L5 Full',geography:'US, EU (Finland, France, Iceland)',egress:'✓ Free (compute)',provenance:'✓ Owned infrastructure',software:'Soperator · KubeVirt · YDB storage',buyers:'Startups, research labs, EU enterprises',layer:'P-2–4'},
+  {id:'oracle',name:'Oracle',tier:'gold',usp:'Most cost-effective hyperscaler. 60%+ of US Stargate. No in-house AGI program = genuinely neutral (OpenAI + Meta + ByteDance simultaneously).',model:'Hyperscaler',pricingTier:'medium',contractTerm:'long-term',orch:'OKE Kubernetes + manual Slurm',stack:'L2–L5 Partial',geography:'45 global regions',egress:'✓ Free (differentiator)',provenance:'⚠️ Mix owned + reseller',software:'OKE · RoCE only (no IB)',buyers:'Hyperscale enterprises, frontier labs',layer:'P-4'},
+  {id:'azure',name:'Azure',tier:'gold',usp:"Only hyperscaler with InfiniBand + SHARP at scale. FedRAMP/DoD IL5 compliance. AKS (strong). OpenAI anchor tenant.",model:'Hyperscaler',pricingTier:'high',contractTerm:'hourly',orch:'AKS (strong) + CycleCloud Slurm (weak)',stack:'L2–L6 Full',geography:'Global',egress:'$0.08–0.12/GB (lock-in)',provenance:'⚠️ Hyperscaler model',software:'AKS node auto-repair · IB+SHARP',buyers:'Enterprises with FedRAMP reqs, OpenAI clients',layer:'P-3–4'},
+  {id:'fluidstack',name:'FluidStack',tier:'gold',usp:"Zero owned infrastructure—turns Tier-2/3 DCs into Gold-tier experiences. Forward-deployed engineering (bugs fixed in hours). Google-backstopped.",model:'Operator-as-Service (Hybrid)',pricingTier:'low',contractTerm:'weekly',orch:'Full K8s + ArgoCD IaC transparency',stack:'L3–L5 Partner-dependent',geography:'Multi-DC across US/EU',egress:'✓ Free',provenance:'⚠️ Partner DCs, IaC transparent',software:'ArgoCD IaC shared with customers',buyers:'Anthropic, Meta, Poolside (frontier labs)',layer:'P-4'},
+  {id:'crusoe',name:'Crusoe',tier:'gold',usp:'3.4GW claimed footprint. Digital Flare Mitigation productized as Crusoe Spark. Oracle Abilene JV ($15B+). Stranded energy arbitrage.',model:'Asset-Heavy + Green Energy',pricingTier:'medium',contractTerm:'long-term',orch:'SonK (early-stage, not production-ready)',stack:'L1–L5 Partial',geography:'US (Permian, TX, WY), Iceland',egress:'✓ Free',provenance:'✓ Owned infrastructure',software:'DFM / Crusoe Spark · AMD MI355X',buyers:'Climate-conscious enterprises, Oracle partnership tier',layer:'P-3–4'},
+  {id:'gcp',name:'Google Cloud',tier:'silver',usp:'Best-in-class GKE + Kueue/JobSet OOB. CoMMA straggler detection (unique). Full AI-to-app vertical (Vertex AI, Gemini).',model:'Hyperscaler',pricingTier:'high',contractTerm:'hourly',orch:'GKE (best) + Cluster Director Slurm (preview)',stack:'L0–L7 Full coverage',geography:'Global',egress:'$0.08–0.12/GB',provenance:'⚠️ Hyperscaler model',software:'GKE · Kueue/JobSet · CoMMA straggler det.',buyers:'Enterprises with Vertex AI workflows',layer:'P-3–4'},
+  {id:'aws',name:'AWS',tier:'silver',usp:"World's largest cloud. Trainium/Inferentia custom chips. S3/FSx ecosystem lock-in is the moat. SageMaker HyperPod setup is painful.",model:'Hyperscaler',pricingTier:'high',contractTerm:'hourly',orch:'SageMaker HyperPod (notoriously painful)',stack:'L0–L7 Full coverage',geography:'Global',egress:'$0.08–0.12/GB (lock-in)',provenance:'⚠️ Hyperscaler model',software:'Trainium/Inferentia · EFA (opaque)',buyers:'Enterprises already on AWS',layer:'P-3–5'},
+  {id:'together',name:'Together.ai',tier:'silver',usp:'Serverless inference endpoint business (avoids idle compute). TKC kernel team (FlashAttention). Instant Clusters with Slinky/KubeVirt.',model:'Hybrid (Inference + Clusters)',pricingTier:'medium',contractTerm:'hourly',orch:'Kubernetes + optional KubeVirt',stack:'L4–L5 ML layers strong',geography:'US + EU DCs',egress:'✓ Free',provenance:'⚠️ Multi-DC partner model',software:'TKC / FlashAttention · Serverless',buyers:'Startups needing inference + fine-tune',layer:'P-2–4'},
+  {id:'lambda',name:'Lambda',tier:'silver',usp:"Largest on-demand H100/H200 fleet when available. 1-Click Clusters. Deep HPC expertise. Frequently sold out (supply constraint = owned fleet).",model:'Asset-Heavy Neocloud',pricingTier:'medium',contractTerm:'hourly',orch:'1-Click Clusters (managed K8s/Slurm)',stack:'L2–L4 Strong for training',geography:'US (SF, Texas)',egress:'✓ Free',provenance:'✓ Owned hardware',software:'1-Click Clusters · VAST storage',buyers:'Researchers, AI startups, students',layer:'P-2–3'},
+  {id:'scaleway',name:'Scaleway',tier:'silver',usp:'EU GDPR-sovereign premium. Slurm-only (no K8s strategy). Spectrum-X RoCE. Targets funded European AI startups.',model:'Asset-Heavy Neocloud (EU-native)',pricingTier:'medium',contractTerm:'long-term',orch:'Slurm-only (K8s not roadmap)',stack:'L2–L4 HPC-focused',geography:'EU only (France, Netherlands)',egress:'✓ Free within EU',provenance:'✓ Owned infrastructure',software:'Spectrum-X RoCE · EU sovereign',buyers:'European enterprises, GDPR-sensitive teams',layer:'P-4'},
+  {id:'gcore',name:'GCORE',tier:'silver',usp:'Enterprise-grade hyperscaler-style console. PCI DSS compliance. Soperator SonK via API. EU+US footprint. Monitoring gaps.',model:'Asset-Heavy Neocloud',pricingTier:'medium',contractTerm:'hourly',orch:'Kubernetes + Soperator SonK (API)',stack:'L2–L5 Partial',geography:'EU + US, Nordics planned',egress:'✓ Free',provenance:'✓ Owned infrastructure',software:'Soperator (API) · PCI DSS',buyers:'Fintech AI, EU enterprises',layer:'P-3–4'},
+  {id:'vultr',name:'Vultr',tier:'silver',usp:'32 global regions (broadest geographic reach). AMD MI355X + Nvidia B200. AMD Ventures backed. Motivated AMD to create security program.',model:'Distributed Neocloud',pricingTier:'medium',contractTerm:'hourly',orch:'Managed VKE Kubernetes + Slurm',stack:'L2–L5 Partial',geography:'32 zones globally',egress:'$0.01/GB (after 2TB free)',provenance:'✓ Mix owned colo',software:'VKE K8s · AMD/Nvidia dual-vendor',buyers:'Geographically distributed teams',layer:'P-3'},
+  {id:'voltagep',name:'Voltage Park',tier:'silver',usp:'Lowest prices in market. H100-only today. Soperator SonK improving rapidly (24h turnaround on feedback).',model:'Budget Neocloud',pricingTier:'low',contractTerm:'hourly',orch:'Soperator SonK (improving)',stack:'L2–L4 Basic',geography:'US (TX, VA, WA)',egress:'✓ Free',provenance:'⚠️ Early-stage ops',software:'Soperator · OIDC for K8s',buyers:'Budget-conscious startups, students',layer:'P-2–3'},
+  {id:'tensorwave',name:'TensorWave',tier:'silver',usp:'AMD-exclusive at scale (8,192 MI325X). AMD Ventures $100M backed. Largest pure-AMD cluster in any cloud.',model:'AMD-Specialized Neocloud',pricingTier:'medium',contractTerm:'weekly',orch:'RKE2 Kubernetes + Slurm',stack:'L2–L5 AMD focused',geography:'US (multi-zone)',egress:'Claims transparent',provenance:'✓ Owned infrastructure',software:'AMD ROCm · AMD Ventures roadmap',buyers:'AMD ecosystem users, ROCm researchers',layer:'P-3–4'}
 ];
 
 function buildComparison(){
   const tbody=document.getElementById('cmp-body');
   if(!tbody) return;
   const rows=getComparisonRows();
+  const priceUi={
+    low:{lbl:'Low',bg:'rgba(34,197,94,.14)',fg:'var(--s5)',bd:'rgba(34,197,94,.28)'},
+    medium:{lbl:'Medium',bg:'rgba(234,179,8,.14)',fg:'var(--s3)',bd:'rgba(234,179,8,.28)'},
+    high:{lbl:'High',bg:'rgba(239,68,68,.14)',fg:'var(--s1)',bd:'rgba(239,68,68,.28)'},
+    other:{lbl:'Other',bg:'rgba(148,163,184,.12)',fg:'var(--muted)',bd:'rgba(148,163,184,.24)'}
+  };
+  const contractUi={
+    hourly:{lbl:'Hourly',bg:'rgba(56,189,248,.1)',fg:'var(--accent)',bd:'rgba(56,189,248,.25)'},
+    daily:{lbl:'Daily',bg:'rgba(90,172,232,.12)',fg:'#5aace8',bd:'rgba(90,172,232,.28)'},
+    weekly:{lbl:'Weekly',bg:'rgba(230,126,34,.12)',fg:'#e67e22',bd:'rgba(230,126,34,.26)'},
+    'long-term':{lbl:'Long-term',bg:'rgba(155,89,182,.12)',fg:'#9b59b6',bd:'rgba(155,89,182,.26)'},
+    other:{lbl:'Other',bg:'rgba(148,163,184,.12)',fg:'var(--muted)',bd:'rgba(148,163,184,.24)'}
+  };
   let html='';
   rows.forEach(p=>{
     const stackHtml=renderStackPresenceCells(p.stackArr);
+    const pu=priceUi[p.priceTierKey]||priceUi.other;
+    const cu=contractUi[p.contractKey]||contractUi.other;
     html+=`<tr style="border-bottom:1px solid var(--border);">
       <td style="padding:12px 10px;font-family:'Syne',sans-serif;font-weight:600;white-space:nowrap;">
         <div style="display:flex;align-items:center;gap:8px;">
@@ -2140,7 +2174,8 @@ function buildComparison(){
       </td>
       <td style="padding:10px 12px;font-size:11px;color:var(--sub);line-height:1.35;min-width:320px;max-width:420px;"><strong>${p.usp.split('.')[0]}.</strong> ${p.usp.split('.').slice(1).join('.')}</td>
       <td style="padding:12px 10px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);">${p.model}</td>
-      <td style="padding:12px 10px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;"><div style="font-weight:600;color:var(--accent);">${p.h100on}</div><div style="font-size:9px;color:var(--muted);">${p.h100res}</div></td>
+      <td style="padding:12px 10px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;"><span style="display:inline-flex;align-items:center;justify-content:center;min-width:68px;padding:4px 8px;border-radius:999px;background:${pu.bg};color:${pu.fg};border:1px solid ${pu.bd};font-weight:700;letter-spacing:.04em;text-transform:uppercase;">${pu.lbl}</span></td>
+      <td style="padding:12px 10px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;"><span style="display:inline-flex;align-items:center;justify-content:center;min-width:90px;padding:4px 8px;border-radius:999px;background:${cu.bg};color:${cu.fg};border:1px solid ${cu.bd};font-weight:700;letter-spacing:.02em;">${cu.lbl}</span></td>
       <td style="padding:12px 10px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--sub);">${p.orch}</td>
       <td style="padding:10px 10px;">${stackHtml}</td>
       <td style="padding:12px 10px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--sub);">${p.geography}</td>
@@ -2151,13 +2186,13 @@ function buildComparison(){
       <td style="padding:12px 10px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);font-weight:600;">${p.layer}</td>
     </tr>`;
   });
-  tbody.innerHTML=html || '<tr><td colspan="12" style="padding:20px;color:var(--muted);font-family:\'JetBrains Mono\',monospace;font-size:11px;text-align:center;">No providers match current filters.</td></tr>';
+  tbody.innerHTML=html || '<tr><td colspan="13" style="padding:20px;color:var(--muted);font-family:\'JetBrains Mono\',monospace;font-size:11px;text-align:center;">No providers match current filters.</td></tr>';
 }
 
 const CMP_STATE={
   query:'',
-  priceMin:null,
-  priceMax:null,
+  priceTier:'all',
+  contract:'all',
   egress:'all',
   supply:'all',
   sort:'tier-desc',
@@ -2165,12 +2200,18 @@ const CMP_STATE={
 };
 
 const CMP_TIER_SCORE={platinum:3,gold:2,silver:1};
-const CMP_LAYER_KEYS=['l0','l1','l2','l3','l4','l5','l6','l7'];
+const CMP_LAYER_KEYS=['ln1','l0','l1','l2','l3','l4','l5','l6','l7'];
 
-function cmpPriceNum(str){
-  if(!str) return null;
-  const m=String(str).match(/\$\s*(\d+(?:\.\d+)?)/);
-  return m ? Number(m[1]) : null;
+function cmpPriceTierKey(v){
+  const s=(v||'').toLowerCase();
+  if(s==='low' || s==='medium' || s==='high') return s;
+  return 'other';
+}
+
+function cmpContractKey(v){
+  const s=(v||'').toLowerCase();
+  if(s==='hourly' || s==='daily' || s==='weekly' || s==='long-term') return s;
+  return 'other';
 }
 
 function cmpEgressKey(v){
@@ -2191,7 +2232,7 @@ function cmpSupplyKey(v){
 
 function providerStackById(id){
   const p=PROVIDERS.find(x=>x.id===id);
-  return p && Array.isArray(p.stack) && p.stack.length===8 ? p.stack : ['none','none','none','none','none','none','none','none'];
+  return p && Array.isArray(p.stack) && p.stack.length===9 ? p.stack : ['none','none','none','none','none','none','none','none','none'];
 }
 
 function stackPresenceScore(arr){
@@ -2200,7 +2241,7 @@ function stackPresenceScore(arr){
 }
 
 function renderStackPresenceCells(stackArr){
-  return `<div class="cmp-stack-cells">${CMP_LAYER_KEYS.map((k,i)=>`<div class="cmp-stack-cell ${k} ${stackArr[i]||'none'}">L${i}</div>`).join('')}</div>`;
+  return `<div class="cmp-stack-cells">${LAYERS_DEF.map((l,i)=>`<div class="cmp-stack-cell ${l.id} ${stackArr[i]||'none'}" title="${l.name}">${l.label}</div>`).join('')}</div>`;
 }
 
 function getComparisonRows(){
@@ -2210,7 +2251,8 @@ function getComparisonRows(){
     return {
       ...p,
       stackArr,
-      priceNum:cmpPriceNum(p.h100on),
+      priceTierKey:cmpPriceTierKey(p.pricingTier),
+      contractKey:cmpContractKey(p.contractTerm),
       egressKey:cmpEgressKey(p.egress),
       supplyKey:cmpSupplyKey(p.provenance),
       stackScore:stackPresenceScore(stackArr)
@@ -2219,13 +2261,13 @@ function getComparisonRows(){
 
   rows=rows.filter(p=>{
     if(q){
-      const hay=[p.name,p.usp,p.model,p.h100on,p.h100res,p.orch,p.geography,p.egress,p.provenance,p.software,p.buyers,p.layer,p.stack].join(' ').toLowerCase();
+      const hay=[p.name,p.usp,p.model,p.pricingTier,p.contractTerm,p.orch,p.geography,p.egress,p.provenance,p.software,p.buyers,p.layer,p.stack].join(' ').toLowerCase();
       if(!hay.includes(q)) return false;
     }
+    if(CMP_STATE.priceTier!=='all' && p.priceTierKey!==CMP_STATE.priceTier) return false;
+    if(CMP_STATE.contract!=='all' && p.contractKey!==CMP_STATE.contract) return false;
     if(CMP_STATE.egress!=='all' && p.egressKey!==CMP_STATE.egress) return false;
     if(CMP_STATE.supply!=='all' && p.supplyKey!==CMP_STATE.supply) return false;
-    if(CMP_STATE.priceMin!==null && (p.priceNum===null || p.priceNum<CMP_STATE.priceMin)) return false;
-    if(CMP_STATE.priceMax!==null && (p.priceNum===null || p.priceNum>CMP_STATE.priceMax)) return false;
     if(CMP_STATE.layers.size){
       for(const idx of CMP_STATE.layers){
         if((p.stackArr[idx]||'none')==='none') return false;
@@ -2236,18 +2278,21 @@ function getComparisonRows(){
 
   const supplyOrd={owned:0,mixed:1,partner:2,hyperscaler:3,other:4};
   const egressOrd={free:0,paid:1,other:2};
+  const priceOrd={low:0,medium:1,high:2,other:3};
+  const contractOrd={hourly:0,daily:1,weekly:2,'long-term':3,other:4};
 
   rows.sort((a,b)=>{
     switch(CMP_STATE.sort){
-      case 'price-asc': return (a.priceNum??999)-(b.priceNum??999);
-      case 'price-desc': return (b.priceNum??-1)-(a.priceNum??-1);
+      case 'price-asc': return (priceOrd[a.priceTierKey]??9)-(priceOrd[b.priceTierKey]??9);
+      case 'price-desc': return (priceOrd[b.priceTierKey]??9)-(priceOrd[a.priceTierKey]??9);
       case 'stack-desc': return b.stackScore-a.stackScore;
       case 'name-asc': return a.name.localeCompare(b.name);
       case 'egress-asc': return (egressOrd[a.egressKey]??9)-(egressOrd[b.egressKey]??9);
       case 'supply-asc': return (supplyOrd[a.supplyKey]??9)-(supplyOrd[b.supplyKey]??9);
+      case 'contract-asc': return (contractOrd[a.contractKey]??9)-(contractOrd[b.contractKey]??9);
       case 'tier-desc':
       default:
-        return (CMP_TIER_SCORE[b.tier]||0)-(CMP_TIER_SCORE[a.tier]||0) || (a.priceNum??999)-(b.priceNum??999);
+        return (CMP_TIER_SCORE[b.tier]||0)-(CMP_TIER_SCORE[a.tier]||0) || (priceOrd[a.priceTierKey]??9)-(priceOrd[b.priceTierKey]??9);
     }
   });
 
@@ -2256,15 +2301,15 @@ function getComparisonRows(){
 
 function resetComparisonFilters(){
   CMP_STATE.query='';
-  CMP_STATE.priceMin=null;
-  CMP_STATE.priceMax=null;
+  CMP_STATE.priceTier='all';
+  CMP_STATE.contract='all';
   CMP_STATE.egress='all';
   CMP_STATE.supply='all';
   CMP_STATE.sort='tier-desc';
   CMP_STATE.layers.clear();
   const q=document.getElementById('cmp-filter-query'); if(q) q.value='';
-  const pmin=document.getElementById('cmp-price-min'); if(pmin) pmin.value='';
-  const pmax=document.getElementById('cmp-price-max'); if(pmax) pmax.value='';
+  const p=document.getElementById('cmp-filter-price'); if(p) p.value='all';
+  const ct=document.getElementById('cmp-filter-contract'); if(ct) ct.value='all';
   const e=document.getElementById('cmp-filter-egress'); if(e) e.value='all';
   const s=document.getElementById('cmp-filter-supply'); if(s) s.value='all';
   const o=document.getElementById('cmp-sort'); if(o) o.value='tier-desc';
@@ -2274,17 +2319,17 @@ function resetComparisonFilters(){
 
 function initComparisonControls(){
   const q=document.getElementById('cmp-filter-query');
-  const pmin=document.getElementById('cmp-price-min');
-  const pmax=document.getElementById('cmp-price-max');
+  const p=document.getElementById('cmp-filter-price');
+  const ct=document.getElementById('cmp-filter-contract');
   const e=document.getElementById('cmp-filter-egress');
   const s=document.getElementById('cmp-filter-supply');
   const o=document.getElementById('cmp-sort');
   const c=document.getElementById('cmp-clear');
-  if(!q || !pmin || !pmax || !e || !s || !o || !c) return;
+  if(!q || !p || !ct || !e || !s || !o || !c) return;
 
   q.addEventListener('input',()=>{CMP_STATE.query=q.value||''; buildComparison();});
-  pmin.addEventListener('input',()=>{CMP_STATE.priceMin=pmin.value===''?null:Number(pmin.value); buildComparison();});
-  pmax.addEventListener('input',()=>{CMP_STATE.priceMax=pmax.value===''?null:Number(pmax.value); buildComparison();});
+  p.addEventListener('change',()=>{CMP_STATE.priceTier=p.value; buildComparison();});
+  ct.addEventListener('change',()=>{CMP_STATE.contract=ct.value; buildComparison();});
   e.addEventListener('change',()=>{CMP_STATE.egress=e.value; buildComparison();});
   s.addEventListener('change',()=>{CMP_STATE.supply=s.value; buildComparison();});
   o.addEventListener('change',()=>{CMP_STATE.sort=o.value; buildComparison();});
