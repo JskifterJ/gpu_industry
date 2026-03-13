@@ -34,7 +34,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   text-transform:uppercase;color:var(--amber);margin-bottom:9px;}
 h1{font-family:'IBM Plex Mono',monospace;font-size:clamp(17px,2.4vw,28px);
   font-weight:600;letter-spacing:-.02em;line-height:1.1;}
-.legend{display:flex;flex-wrap:wrap;gap:7px 16px;position:fixed;top:10px;right:26px;z-index:60;background:rgba(250,253,255,.92);border:1px solid var(--border2);border-radius:11px;padding:8px 12px;box-shadow:0 8px 26px rgba(19,45,78,.10);backdrop-filter:blur(6px);max-width:min(860px,calc(100vw - 56px));}
+.legend{display:flex;flex-wrap:wrap;gap:7px 16px;position:static;top:auto;right:auto;z-index:1;background:rgba(250,253,255,.92);border:1px solid var(--border2);border-radius:11px;padding:8px 12px;box-shadow:0 4px 12px rgba(19,45,78,.06);backdrop-filter:none;max-width:min(860px,100%);}
 .leg{display:flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;
   font-size:9.5px;color:var(--muted);}
 .leg-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0;}
@@ -98,7 +98,7 @@ h1{font-family:'IBM Plex Mono',monospace;font-size:clamp(17px,2.4vw,28px);
 .sp-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start;}
 .sp-grid.wide{grid-template-columns:1fr;}
 .sp-intro{font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:14px;}
-.sp-demo{background:var(--bg);border:1px solid rgba(255,255,255,.1);border-radius:8px;
+.sp-demo{background:var(--panel2);border:1px solid var(--border2);border-radius:8px;
   padding:14px 16px;margin-bottom:12px;}
 .sp-demo-lbl{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);
   text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;}
@@ -397,29 +397,29 @@ details>summary::-webkit-details-marker{display:none;}
 .tf-dyn-t-output .tf-dyn-stage-title{color:var(--green);}
 
 /* EMBEDDING SPACE TRACKER */
-.emb3d-wrap{background:rgba(255,255,255,.03);border:1px solid var(--border2);border-radius:10px;padding:14px 16px;margin-bottom:18px;}
+.emb3d-wrap{background:var(--panel2);border:1px solid var(--border2);border-radius:10px;padding:14px 16px;margin-bottom:18px;}
 .emb3d-h{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:9px;}
 .emb3d-title{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--cyan);text-transform:uppercase;letter-spacing:.08em;}
 .emb3d-btns{display:flex;gap:6px;flex-wrap:wrap;}
 .emb3d-btn{font-family:'IBM Plex Mono',monospace;font-size:8.5px;padding:4px 10px;border-radius:4px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;}
 .emb3d-btn.on{border-color:var(--cyan);background:rgba(26,191,208,.12);color:var(--cyan);}
-.emb3d-canvas{width:100%;height:300px;display:block;border-radius:8px;border:1px solid var(--border2);background:rgba(0,0,0,.35);}
+.emb3d-canvas{width:100%;height:300px;display:block;border-radius:8px;border:1px solid var(--border2);background:#F4F8FD;}
 .emb3d-controls{display:grid;grid-template-columns:auto 1fr auto auto;gap:8px;align-items:center;margin-top:10px;}
-.emb3d-play{font-family:'IBM Plex Mono',monospace;font-size:8.5px;padding:4px 10px;border-radius:4px;border:1px solid var(--border2);background:rgba(255,255,255,.03);color:var(--ink);cursor:pointer;}
+.emb3d-play{font-family:'IBM Plex Mono',monospace;font-size:8.5px;padding:4px 10px;border-radius:4px;border:1px solid var(--border2);background:var(--panel);color:var(--ink);cursor:pointer;}
 .emb3d-speed{font-family:'IBM Plex Mono',monospace;font-size:8.5px;padding:4px 8px;border-radius:4px;border:1px solid var(--border2);background:var(--panel2);color:var(--ink);}
 .emb3d-ctrl-label{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;}
 .emb3d-layer{width:100%;accent-color:var(--cyan);}
 .emb3d-meta{display:grid;grid-template-columns:1fr;gap:8px;margin-top:10px;}
 .emb3d-meta2{display:grid;grid-template-columns:1fr;gap:8px;margin-top:8px;}
-.emb3d-card{background:rgba(255,255,255,.03);border:1px solid var(--border2);border-radius:7px;padding:8px 10px;}
+.emb3d-card{background:var(--panel);border:1px solid var(--border2);border-radius:7px;padding:8px 10px;}
 .emb3d-card h4{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;}
 .emb3d-card p{font-size:11px;color:var(--muted);line-height:1.5;}
-.emb3d-stage-bar{background:rgba(255,255,255,.025);border:1px solid var(--border2);border-radius:6px;padding:6px 8px;margin-bottom:8px;font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--ink);line-height:1.5;}
+.emb3d-stage-bar{background:var(--panel);border:1px solid var(--border2);border-radius:6px;padding:6px 8px;margin-bottom:8px;font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--ink);line-height:1.5;}
 .emb3d-stage-bar .mut{color:var(--muted);}
 .emb3d-stage-name{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--ink);margin-bottom:4px;}
 .emb3d-array{display:none;}
 .emb3d-process{display:flex;flex-direction:column;gap:8px;}
-.emb3d-choice{font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--ink);line-height:1.7;padding:6px 8px;background:rgba(255,255,255,.025);border:1px solid var(--border2);border-radius:6px;}
+.emb3d-choice{font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--ink);line-height:1.7;padding:6px 8px;background:var(--panel);border:1px solid var(--border2);border-radius:6px;}
 .emb3d-note{margin-top:9px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);line-height:1.6;}
 
 /* HORIZONTAL COLUMN FLOW VISUALIZATION */
@@ -438,7 +438,7 @@ details>summary::-webkit-details-marker{display:none;}
 .emb3d-flow-cell.row-label{background:rgba(255,255,255,.06);color:var(--muted);font-size:7.5px;text-transform:uppercase;letter-spacing:.04em;}
 .emb3d-flow-cell.merge{height:calc((var(--emb3d-flow-row-height) * 6) + (var(--emb3d-flow-gap) * 5));background:rgba(255,255,255,.04);color:var(--muted);font-size:7px;line-height:1.45;border-top:2px solid rgba(232,160,32,.22);}
 .emb3d-flow-result{background:rgba(232,160,32,.12);border:1px solid rgba(232,160,32,.3);border-radius:3px;padding:5px 7px;font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--amber);font-weight:600;text-align:center;height:var(--emb3d-flow-row-height);display:flex;align-items:center;justify-content:center;width:100%;}
-.emb3d-flow-col-intro{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);padding:8px;background:rgba(255,255,255,.02);border-radius:6px;margin-bottom:8px;line-height:1.5;}
+.emb3d-flow-col-intro{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);padding:8px;background:var(--panel);border:1px solid var(--border2);border-radius:6px;margin-bottom:8px;line-height:1.5;}
 
 /* QUANTIZATION + MODEL SIZE VISUAL SIMPLIFICATION */
 .q-step-card{background:rgba(255,255,255,.04)!important;border:1px solid var(--border2)!important;}
@@ -547,7 +547,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
   </div>
 </div>
   
-<div style="background:var(--bg);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:24px 26px;margin-bottom:20px;">
+<div style="background:var(--panel2);border:1px solid var(--border2);border-radius:10px;padding:24px 26px;margin-bottom:20px;">
   <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:var(--cyan);text-transform:uppercase;letter-spacing:.15em;margin-bottom:5px;">Before we begin</div>
   <div style="font-family:'IBM Plex Mono',monospace;font-size:17px;font-weight:600;color:var(--ink);margin-bottom:20px;">What exactly is a language model?</div>
 
@@ -1299,34 +1299,34 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
           Every token gets converted into a vector of 8,192 decimal numbers. You can think of this as a <strong style="color:var(--ink);">location in a 8,192-dimensional coordinate space</strong> &mdash; an abstract map of meaning. Just as two cities that are geographically close share similar climates and culture, two tokens that are <em>mathematically close</em> in this space share similar meaning and usage patterns.
         </div>
         <!-- 2D analogy diagram -->
-        <div style="background:var(--bg);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:14px 16px;">
+        <div style="background:var(--panel);border:1px solid var(--border2);border-radius:8px;padding:14px 16px;">
           <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--muted);margin-bottom:10px;">2D analogy of what 8,192-dim space "looks" like (simplified)</div>
-          <div style="position:relative;width:100%;height:160px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:6px;overflow:hidden;">
+          <div style="position:relative;width:100%;height:160px;background:#F8FBFF;border:1px solid var(--border2);border-radius:6px;overflow:hidden;">
             <!-- Grid lines -->
-            <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:20px 20px;"></div>
+            <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(29,54,84,.11) 1px,transparent 1px),linear-gradient(90deg,rgba(29,54,84,.11) 1px,transparent 1px);background-size:20px 20px;"></div>
             <!-- Cluster: European countries -->
-            <div style="position:absolute;left:24%;top:22%;width:9px;height:9px;border-radius:50%;background:var(--blue);border:1.5px solid rgba(255,255,255,.5);" title="France"></div>
+            <div style="position:absolute;left:24%;top:22%;width:9px;height:9px;border-radius:50%;background:var(--blue);border:1.5px solid rgba(29,54,84,.35);" title="France"></div>
             <div style="position:absolute;left:28%;top:19%;width:9px;height:9px;border-radius:50%;background:var(--blue);opacity:.8;" title="Germany"></div>
             <div style="position:absolute;left:31%;top:25%;width:9px;height:9px;border-radius:50%;background:var(--blue);opacity:.7;" title="Italy"></div>
             <div style="position:absolute;left:20%;top:28%;width:9px;height:9px;border-radius:50%;background:var(--blue);opacity:.7;" title="Spain"></div>
             <!-- Cluster: capitals -->
-            <div style="position:absolute;left:48%;top:30%;width:9px;height:9px;border-radius:50%;background:var(--cyan);border:1.5px solid rgba(255,255,255,.5);" title="Paris"></div>
+            <div style="position:absolute;left:48%;top:30%;width:9px;height:9px;border-radius:50%;background:var(--cyan);border:1.5px solid rgba(29,54,84,.35);" title="Paris"></div>
             <div style="position:absolute;left:52%;top:26%;width:9px;height:9px;border-radius:50%;background:var(--cyan);opacity:.8;" title="Berlin"></div>
             <div style="position:absolute;left:55%;top:33%;width:9px;height:9px;border-radius:50%;background:var(--cyan);opacity:.7;" title="Rome"></div>
             <!-- Cluster: animals -->
-            <div style="position:absolute;left:72%;top:65%;width:9px;height:9px;border-radius:50%;background:var(--amber);border:1.5px solid rgba(255,255,255,.5);" title="dog"></div>
+            <div style="position:absolute;left:72%;top:65%;width:9px;height:9px;border-radius:50%;background:var(--amber);border:1.5px solid rgba(29,54,84,.35);" title="dog"></div>
             <div style="position:absolute;left:76%;top:60%;width:9px;height:9px;border-radius:50%;background:var(--amber);opacity:.8;" title="cat"></div>
             <div style="position:absolute;left:68%;top:70%;width:9px;height:9px;border-radius:50%;background:var(--amber);opacity:.7;" title="wolf"></div>
             <!-- Cluster: code -->
-            <div style="position:absolute;left:18%;top:72%;width:9px;height:9px;border-radius:50%;background:var(--purple);border:1.5px solid rgba(255,255,255,.5);" title="def"></div>
+            <div style="position:absolute;left:18%;top:72%;width:9px;height:9px;border-radius:50%;background:var(--purple);border:1.5px solid rgba(29,54,84,.35);" title="def"></div>
             <div style="position:absolute;left:22%;top:68%;width:9px;height:9px;border-radius:50%;background:var(--purple);opacity:.8;" title="return"></div>
             <!-- Labels -->
-            <div style="position:absolute;left:16%;top:10%;font-family:'IBM Plex Mono',monospace;font-size:7.5px;color:var(--blue);background:rgba(6,10,16,.85);padding:1px 4px;border-radius:2px;border:1px solid rgba(74,144,232,.3);">European countries</div>
-            <div style="position:absolute;left:44%;top:16%;font-family:'IBM Plex Mono',monospace;font-size:7.5px;color:var(--cyan);background:rgba(6,10,16,.85);padding:1px 4px;border-radius:2px;border:1px solid rgba(26,191,208,.3);">European capitals</div>
-            <div style="position:absolute;left:63%;top:52%;font-family:'IBM Plex Mono',monospace;font-size:7.5px;color:var(--amber);background:rgba(6,10,16,.85);padding:1px 4px;border-radius:2px;border:1px solid rgba(232,160,32,.3);">animals</div>
-            <div style="position:absolute;left:8%;top:60%;font-family:'IBM Plex Mono',monospace;font-size:7.5px;color:var(--purple);background:rgba(6,10,16,.85);padding:1px 4px;border-radius:2px;border:1px solid rgba(138,110,232,.3);">code keywords</div>
+            <div style="position:absolute;left:16%;top:10%;font-family:'IBM Plex Mono',monospace;font-size:7.5px;color:var(--blue);background:rgba(255,255,255,.93);padding:1px 4px;border-radius:2px;border:1px solid rgba(74,144,232,.35);">European countries</div>
+            <div style="position:absolute;left:44%;top:16%;font-family:'IBM Plex Mono',monospace;font-size:7.5px;color:var(--cyan);background:rgba(255,255,255,.93);padding:1px 4px;border-radius:2px;border:1px solid rgba(26,191,208,.35);">European capitals</div>
+            <div style="position:absolute;left:63%;top:52%;font-family:'IBM Plex Mono',monospace;font-size:7.5px;color:var(--amber);background:rgba(255,255,255,.93);padding:1px 4px;border-radius:2px;border:1px solid rgba(232,160,32,.35);">animals</div>
+            <div style="position:absolute;left:8%;top:60%;font-family:'IBM Plex Mono',monospace;font-size:7.5px;color:var(--purple);background:rgba(255,255,255,.93);padding:1px 4px;border-radius:2px;border:1px solid rgba(138,110,232,.35);">code keywords</div>
             <!-- Distance line example -->
-            <div style="position:absolute;left:28.5%;top:24%;width:1px;height:36px;background:rgba(255,255,255,.2);transform-origin:top;transform:rotate(45deg);"></div>
+            <div style="position:absolute;left:28.5%;top:24%;width:1px;height:36px;background:rgba(29,54,84,.35);transform-origin:top;transform:rotate(45deg);"></div>
             <div style="position:absolute;left:53%;top:24%;font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--muted);">France&harr;Paris: close<br>(related meaning)</div>
           </div>
           <div style="font-size:11px;color:var(--muted);margin-top:7px;line-height:1.55;">Countries cluster near each other. Capitals cluster near each other. And crucially, the <em>direction</em> from &ldquo;France&rdquo; to &ldquo;Paris&rdquo; is roughly the same as from &ldquo;Germany&rdquo; to &ldquo;Berlin&rdquo; &mdash; the model learned the <em>relationship</em> &ldquo;country&rarr;capital&rdquo; as a consistent geometric direction in this space.</div>
@@ -1751,25 +1751,25 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
       </div>
 
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;">
-        <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:10px;text-align:center;">
+        <div style="background:var(--panel2);border:1px solid var(--border2);border-radius:6px;padding:10px;text-align:center;">
           <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);margin-bottom:4px;">PARAMETERS</div>
           <div style="font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:700;color:var(--ink);" id="ms-params">70.0B</div>
         </div>
-        <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:10px;text-align:center;">
+        <div style="background:var(--panel2);border:1px solid var(--border2);border-radius:6px;padding:10px;text-align:center;">
           <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);margin-bottom:4px;">VRAM (weights)</div>
           <div style="font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:700;color:var(--amber);" id="ms-vram">140 GB</div>
         </div>
-        <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:10px;text-align:center;">
+        <div style="background:var(--panel2);border:1px solid var(--border2);border-radius:6px;padding:10px;text-align:center;">
           <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);margin-bottom:4px;">LAYERS × d²</div>
           <div style="font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:700;color:var(--purple);" id="ms-ld2">5.37T</div>
         </div>
-        <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:10px;text-align:center;">
+        <div style="background:var(--panel2);border:1px solid var(--border2);border-radius:6px;padding:10px;text-align:center;">
           <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);margin-bottom:4px;">H100s NEEDED</div>
           <div style="font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:700;color:var(--cyan);" id="ms-gpus">2</div>
         </div>
       </div>
 
-      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:10px 12px;margin-bottom:10px;">
+      <div style="background:var(--panel2);border:1px solid var(--border2);border-radius:7px;padding:10px 12px;margin-bottom:10px;">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;">
           <div>
             <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;">Workload Configuration -> Required GPU Configuration</div>
@@ -2184,7 +2184,7 @@ function drawEmb3d(ts){
   }
 
   var ctx = state.ctx, w = state.w, h = state.h;
-  var isLight = document.body.classList.contains('light');
+  var isLight = !document.body.classList.contains('dark');
   ctx.clearRect(0,0,w,h);
   var grid = isLight ? 'rgba(20,30,50,.11)' : 'rgba(220,230,255,.10)';
   for(var gx=0; gx<=12; gx++){
@@ -2423,7 +2423,7 @@ function renderMsConfigFit(totalB, vramGB){
         var on = i < inNode;
         dots += '<span style="width:10px;height:10px;border-radius:2px;border:1px solid rgba(255,255,255,.2);background:' + (on ? t.color : 'rgba(255,255,255,.12)') + ';display:block;"></span>';
       }
-      nodeCards += '<div style="border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.03);border-radius:6px;padding:6px;min-width:92px;">';
+      nodeCards += '<div style="border:1px solid var(--border2);background:var(--panel);border-radius:6px;padding:6px;min-width:92px;">';
       nodeCards += '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:8px;color:var(--muted);margin-bottom:5px;">Node ' + n + ' (' + inNode + '/' + t.perNode + ')</div>';
       nodeCards += '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;">' + dots + '</div>';
       nodeCards += '</div>';
@@ -2435,7 +2435,7 @@ function renderMsConfigFit(totalB, vramGB){
       nodeCards += '<span style="font-family:\'IBM Plex Mono\',monospace;font-size:8px;color:var(--muted);">+' + (nodes - visibleNodes) + ' more node(s)</span>';
     }
 
-    html += '<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:8px 9px;">';
+    html += '<div style="background:var(--panel2);border:1px solid var(--border2);border-radius:6px;padding:8px 9px;">';
     html += '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px;">';
     html += '<span style="font-family:\'IBM Plex Mono\',monospace;font-size:9px;color:'+t.color+';font-weight:600;">'+t.name+'</span>';
     html += '<span style="font-family:\'IBM Plex Mono\',monospace;font-size:8px;color:'+fitColor+';">'+fit+'</span>';
@@ -2446,11 +2446,11 @@ function renderMsConfigFit(totalB, vramGB){
     html += '<div>VRAM/GPU: <strong style="color:var(--ink);">'+t.vram+' GB</strong></div>';
     html += '<div>Usable: <strong style="color:var(--ink);">'+usable.toFixed(1)+' GB</strong></div>';
     html += '</div>';
-    html += '<div style="border:1px dashed rgba(255,255,255,.18);border-radius:6px;padding:7px;background:rgba(255,255,255,.02);margin-bottom:6px;">';
+    html += '<div style="border:1px dashed var(--border2);border-radius:6px;padding:7px;background:var(--panel);margin-bottom:6px;">';
     html += '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">Cluster topology (nodes chained by interconnect)</div>';
     html += '<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">' + nodeCards + '</div>';
     html += '</div>';
-    html += '<div style="height:8px;background:#1a2030;border-radius:3px;overflow:hidden;">';
+    html += '<div style="height:8px;background:#DCE5F0;border-radius:3px;overflow:hidden;">';
     html += '<div style="height:100%;width:'+fill.toFixed(1)+'%;background:'+t.color+';opacity:.75;"></div>';
     html += '</div>';
     html += '</div>';
@@ -2589,9 +2589,9 @@ function initMsCalculator(){
         &hellip; <span style="color:var(--muted);">8,187 more</span>
       </div>
       <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);margin:10px 0 6px;text-transform:uppercase;letter-spacing:.09em;">2D/3D intuition: one token as a point in a huge coordinate system</div>
-      <svg viewBox="0 0 520 170" style="display:block;width:100%;height:auto;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:6px;margin-bottom:8px;">
+      <svg viewBox="0 0 520 170" style="display:block;width:100%;height:auto;background:#F8FBFF;border:1px solid var(--border2);border-radius:6px;margin-bottom:8px;">
         <!-- perspective grid -->
-        <g stroke="rgba(255,255,255,.08)" stroke-width="1">
+        <g stroke="rgba(29,54,84,.14)" stroke-width="1">
           <line x1="86" y1="144" x2="430" y2="144"/>
           <line x1="86" y1="144" x2="160" y2="38"/>
           <line x1="86" y1="144" x2="28" y2="92"/>
@@ -2630,7 +2630,7 @@ function initMsCalculator(){
         </g>
 
         <!-- highlight token -->
-        <circle cx="255" cy="108" r="7.5" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.2"/>
+        <circle cx="255" cy="108" r="7.5" fill="none" stroke="rgba(29,54,84,.45)" stroke-width="1.2"/>
         <text x="226" y="80" fill="var(--ink)" font-family="IBM Plex Mono, monospace" font-size="9">"France" vector</text>
       </svg>
       <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin:10px 0 6px;text-transform:uppercase;letter-spacing:.09em;">Words in similar contexts end up with similar coordinates:</div>
