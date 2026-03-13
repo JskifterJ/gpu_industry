@@ -251,12 +251,62 @@ html.light .toggle-thumb { transform: translateX(12px); }
 #s2 .force-cards { display: flex; gap: 14px; padding: 0 48px; }
 #s2 .force-card  { flex: 1; border: 1px solid var(--border); border-radius: 4px; padding: 14px 16px; background: var(--bg2); }
 #s2 .force-card-title { font-family: var(--display); font-size: 15px; letter-spacing: 0.08em; margin-bottom: 8px; }
-#s2 .force-card-items { display: flex; flex-wrap: wrap; gap: 5px; }
+#s2 .force-card-items { display: flex; flex-direction: column; gap: 7px; }
 #s2 .force-item { font-family: var(--mono); font-size: 9px; padding: 2px 7px; border-radius: 2px; letter-spacing: 0.06em; }
 .fi-hw  { color: var(--hw);  background: var(--hw-dim); }
 .fi-sw  { color: var(--sw);  background: var(--sw-dim); }
 .fi-llm { color: var(--llm); background: var(--llm-dim); }
 .fi-sub { color: var(--dim); background: transparent; font-family: var(--mono); font-size: 8.5px; letter-spacing: 0.04em; padding-left: 2px; }
+#s2 .force-theme {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 7px 8px;
+}
+#s2 .force-theme-title {
+  font-family: var(--mono);
+  font-size: 7.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+  font-weight: 600;
+}
+#s2 .force-theme-copy {
+  font-size: 10.5px;
+  line-height: 1.5;
+  color: var(--muted);
+  font-weight: 300;
+}
+#s2 .ft-hw  { color: var(--hw); }
+#s2 .ft-sw  { color: var(--sw); }
+#s2 .ft-llm { color: var(--llm); }
+#s2 .force-tech {
+  border-top: 1px dashed var(--border);
+  padding-top: 7px;
+  margin-top: 2px;
+}
+#s2 .force-tech summary {
+  color: var(--muted);
+  font-size: 7px;
+  letter-spacing: 0.16em;
+}
+#s2 .force-tech summary::before {
+  color: currentColor;
+}
+#s2 .force-tech-list {
+  margin: 6px 0 0;
+  padding-left: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+#s2 .force-tech-list li {
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--dim);
+  letter-spacing: 0.02em;
+  line-height: 1.45;
+}
 
 /* ─────────────── HW TIMELINE ─────────────── */
 .hw-timeline { display: flex; gap: 0; position: relative; margin-top: 4px; }
@@ -598,6 +648,7 @@ html.light #s1 .bg-grid {
   .nav { padding: 12px 24px 16px; }
   .workload-cards { grid-template-columns: repeat(3, 1fr); }
   .company-matrix { grid-template-columns: 1fr; }
+  #s2 .force-cards { flex-direction: column; padding: 0 24px; }
 }
 </style>
 </head>
@@ -673,7 +724,7 @@ html.light #s1 .bg-grid {
     <div class="anim anim-1" style="padding-top:8px;">
       <div class="sec-label neutral">Framework</div>
       <div style="font-family:var(--display);font-size:clamp(26px,3.5vw,42px);letter-spacing:0.04em;line-height:1;color:var(--text);">Three Domains. One Outcome.</div>
-      <div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:8px;letter-spacing:0.04em;max-width:560px;">GPU compute performance emerges from the intersection of all three. Optimizing any domain in isolation misses the compounding effect at their boundaries.</div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:8px;letter-spacing:0.04em;max-width:660px;">GPU compute performance emerges from the intersection of all three. Each domain below is compressed into five structural themes, aligned to the later five-force and timeline synthesis.</div>
     </div>
 
     <div class="anim anim-2" style="flex:1;display:flex;align-items:center;justify-content:center;">
@@ -703,34 +754,61 @@ html.light #s1 .bg-grid {
       <div class="force-card" style="border-left:3px solid var(--hw)">
         <div class="force-card-title" style="color:var(--hw)">Hardware</div>
         <div class="force-card-items">
-          <span class="force-item fi-hw">H100 / H200 / B200</span>
-          <span class="force-item fi-hw">HBM3e · 4.8–8 TB/s</span>
-          <span class="force-item fi-hw">NVLink 4.0 / 5.0</span>
-          <span class="force-item fi-hw">AMD MI300X</span>
-          <span class="force-item fi-hw">InfiniBand NDR400</span>
+          <div class="force-theme"><div class="force-theme-title ft-hw">01 Frontier Supply Constraint</div><div class="force-theme-copy">Newest silicon stays rationed through a persistent chokepoint chain [ASML -> TSMC -> NVIDIA allocation].</div></div>
+          <div class="force-theme"><div class="force-theme-title ft-hw">02 Depreciation Cascade</div><div class="force-theme-copy">Every generation reprices through premium -> scale -> commodity phases, with workloads moving down-market.</div></div>
+          <div class="force-theme"><div class="force-theme-title ft-hw">03 Energy Wall</div><div class="force-theme-copy">Power and cooling density now constrain expansion as much as chip supply [MW/site, rack thermal envelope].</div></div>
+          <div class="force-theme"><div class="force-theme-title ft-hw">04 Commoditization + Financialization</div><div class="force-theme-copy">Past premium stage, capacity behaves more like an asset class [forwards, futures, securitized offtake].</div></div>
+          <div class="force-theme"><div class="force-theme-title ft-hw">05 TPU / ASIC Considerations</div><div class="force-theme-copy">Alternative silicon improves cost on tuned stacks but raises portability and ecosystem lock-in risk.</div></div>
+          <details class="deck-drop force-tech">
+            <summary style="color:var(--hw)">[Technical Notes]</summary>
+            <div class="drop-body">
+              <ul class="force-tech-list">
+                <li>HBM bandwidth scales slower than inference demand growth; memory remains first-order bottleneck.</li>
+                <li>Interconnect stack (NVLink, NDR/IB, fabric topology) materially changes realized cluster throughput.</li>
+                <li>TPU/Trainium gain efficiency under compiler-constrained paths but reduce model/runtime portability.</li>
+              </ul>
+            </div>
+          </details>
         </div>
       </div>
       <div class="force-card" style="border-left:3px solid var(--sw)">
         <div class="force-card-title" style="color:var(--sw)">Software</div>
         <div class="force-card-items">
-          <span class="force-item fi-sw">FlashAttention-3</span>
-          <span class="force-item fi-sw">PagedAttention (vLLM)</span>
-          <span class="force-item fi-sw">Speculative Decoding</span>
-          <span class="force-item fi-sw">RadixCache (SGLang)</span>
-          <span class="force-item fi-sw">TensorRT-LLM</span>
+          <div class="force-theme"><div class="force-theme-title ft-sw">01 Throughput Primitives</div><div class="force-theme-copy">Kernel and serving innovations now drive most near-term cost declines [attention kernels, batching, speculative decode].</div></div>
+          <div class="force-theme"><div class="force-theme-title ft-sw">02 Memory Orchestration</div><div class="force-theme-copy">Better KV management converts VRAM waste into concurrency and steadier latency under load.</div></div>
+          <div class="force-theme"><div class="force-theme-title ft-sw">03 MoE Serving Economics</div><div class="force-theme-copy">MoE lowers active compute per token while keeping large memory footprints resident [HBM-heavy economics].</div></div>
+          <div class="force-theme"><div class="force-theme-title ft-sw">04 Orchestration Moat</div><div class="force-theme-copy">With bare-metal commoditizing, integrated runtime quality is the durable differentiator.</div></div>
+          <div class="force-theme"><div class="force-theme-title ft-sw">05 Enterprise SLA Layer</div><div class="force-theme-copy">Buyers increasingly pay for outcomes: utilization, latency, uptime, and operational certainty.</div></div>
+          <details class="deck-drop force-tech">
+            <summary style="color:var(--sw)">[Technical Notes]</summary>
+            <div class="drop-body">
+              <ul class="force-tech-list">
+                <li>PagedAttention + prefix/radix reuse lift effective VRAM utilization and multi-tenant throughput.</li>
+                <li>MoE top-k routing reduces active FLOPs but leaves full expert weights memory-resident in serving.</li>
+                <li>Compiler/runtime choices (CUDA/Triton/ROCm/MLIR path) determine cross-hardware portability.</li>
+              </ul>
+            </div>
+          </details>
         </div>
       </div>
       <div class="force-card" style="border-left:3px solid var(--llm)">
         <div class="force-card-title" style="color:var(--llm)">Models &amp; Usage</div>
         <div class="force-card-items">
-          <span class="force-item fi-llm">Dense → MoE scaling</span>
-          <span class="force-item fi-llm">FP8 / INT4 precision</span>
-          <span class="force-item fi-llm">LLaMA 3 · DeepSeek V3</span>
-          <span class="force-item fi-llm">Long Context (1M+)</span>
-          <span class="force-item fi-sub">↳ Usage: Agentic loops</span>
-          <span class="force-item fi-sub">↳ Usage: Batch inference</span>
-          <span class="force-item fi-sub">↳ Usage: RAG pipelines</span>
-          <span class="force-item fi-sub">↳ Usage: On-device 1–30B</span>
+          <div class="force-theme"><div class="force-theme-title ft-llm">01 Architecture Shift</div><div class="force-theme-copy">Dense -> MoE and tool-using model behavior are redefining serving requirements and economics.</div></div>
+          <div class="force-theme"><div class="force-theme-title ft-llm">02 Precision Ladder</div><div class="force-theme-copy">Quantization unlocks wider deployment surfaces from cloud to edge [FP8/INT8/INT4].</div></div>
+          <div class="force-theme"><div class="force-theme-title ft-llm">03 Inference-First Mix</div><div class="force-theme-copy">Inference now dominates GPU-hours, and agentic workloads multiply tokens per completed user task.</div></div>
+          <div class="force-theme"><div class="force-theme-title ft-llm">04 Cloud-Edge Split</div><div class="force-theme-copy">Commodity workloads drift on-device; cloud demand concentrates in long-context and frontier reasoning.</div></div>
+          <div class="force-theme"><div class="force-theme-title ft-llm">05 Price-Volume Flywheel</div><div class="force-theme-copy">Lower unit cost expands adoption classes and shifts margin to workflow integration quality.</div></div>
+          <details class="deck-drop force-tech">
+            <summary class="llm-drop">[Technical Notes]</summary>
+            <div class="drop-body">
+              <ul class="force-tech-list">
+                <li>MoE increases parameter footprint while reducing active compute, amplifying memory-system importance.</li>
+                <li>Long-context and agentic chains stress KV cache growth, scheduler quality, and tail-latency controls.</li>
+                <li>On-device viability is tightly coupled to quantization quality and NPU/DRAM bandwidth ceilings.</li>
+              </ul>
+            </div>
+          </details>
         </div>
       </div>
     </div>
