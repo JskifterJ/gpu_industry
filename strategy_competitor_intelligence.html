@@ -120,6 +120,10 @@ body.light .theme-toggle-thumb{transform:translateX(16px);}
 .cmp-tier-dot.silver{color:var(--silv);border-color:rgba(148,163,184,.35);background:rgba(148,163,184,.08);}
 .cmp-tier-dot.bronze{color:#d97706;border-color:rgba(217,119,6,.35);background:rgba(217,119,6,.1);}
 .cmp-tier-dot.emerging{color:#a78bfa;border-color:rgba(167,139,250,.35);background:rgba(167,139,250,.1);}
+.cmp-conf{font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 7px;border-radius:999px;border:1px solid var(--border);display:inline-flex;align-items:center;justify-content:center;letter-spacing:.04em;text-transform:uppercase;}
+.cmp-conf.high{color:var(--s5);border-color:rgba(34,197,94,.35);background:rgba(34,197,94,.12);}
+.cmp-conf.medium{color:var(--s3);border-color:rgba(234,179,8,.35);background:rgba(234,179,8,.12);}
+.cmp-conf.low{color:var(--s2);border-color:rgba(249,115,22,.35);background:rgba(249,115,22,.12);}
 .cmp-stack-cell.none{opacity:.26;filter:grayscale(.4);}
 .cmp-stack-cell.limited{opacity:.52;}
 .cmp-stack-cell.partner{opacity:.75;}
@@ -2161,6 +2165,31 @@ const COMPARISON_DATA = [
   {id:'vultr',name:'Vultr',tier:'silver',usp:'Wide geographic spread and dual-vendor silicon strategy for distributed teams.',model:'Hybrid orchestrator',pricingTier:'medium',contractTerm:'hourly',k8s:true,slurm:true,coScheduling:false,coType:'None',coMaturity:'Functional',stackArr:['none','none','partial','partial','partial','partial','partial','limited','none'],geography:'Global (32 zones)',regions:['NA','EU','APAC'],egressPolicy:'metered',egressDetail:'Low-rate egress after included thresholds.',provenance:'Mix of owned and colocated capacity.',software:'VKE management with NVIDIA/AMD optionality.',buyersTags:['Distributed Teams','Startups','Cost Sensitive'],buyersText:'Teams optimizing geographic placement and practical cloud flexibility.',workloads:'Distributed training, geo-sharded inference, hybrid GPU fleets.',hardware:'B200, MI355X, H100 (zone dependent)',gaps:'Depth of orchestration and support consistency varies by zone.'}
 ];
 
+const CMP_CONFIDENCE={
+  coreweave:{level:'high',note:'Tier and orchestration positioning directly corroborated by ClusterMAX 2.0.'},
+  nebius:{level:'high',note:'Tier, Soperator posture, and comparative positioning directly corroborated by ClusterMAX 2.0.'},
+  crusoe:{level:'high',note:'Gold-tier placement and positioning are directly corroborated in ClusterMAX 2.0.'},
+  azure:{level:'high',note:'Gold-tier placement and hyperscaler positioning are directly corroborated in ClusterMAX 2.0.'},
+  oracle:{level:'high',note:'Gold-tier placement and comparative references are directly corroborated in ClusterMAX 2.0.'},
+  fluidstack:{level:'high',note:'Gold-tier entry and ecosystem context are directly corroborated in ClusterMAX 2.0.'},
+  aws:{level:'high',note:'Silver-tier positioning and peer grouping are directly corroborated in ClusterMAX 2.0.'},
+  gcp:{level:'high',note:'Silver-tier positioning and peer grouping are directly corroborated in ClusterMAX 2.0.'},
+  together:{level:'high',note:'Silver-tier positioning is directly corroborated in ClusterMAX 2.0.'},
+  lambda:{level:'high',note:'Silver-tier positioning is directly corroborated in ClusterMAX 2.0.'},
+  gcore:{level:'high',note:'Soperator-based SonK usage is explicitly referenced in ClusterMAX 2.0.'},
+  voltagepark:{level:'high',note:'Soperator-based SonK usage is explicitly referenced in ClusterMAX 2.0.'},
+  datacrunch:{level:'medium',note:'Tiering and profile are aligned to attached market dataset and competitor notes; less direct depth in ClusterMAX prose.'},
+  tensorwave:{level:'medium',note:'Aligned to attached market dataset and competitor notes; limited direct ClusterMAX detail in extracted text.'},
+  buzz:{level:'medium',note:'Aligned to attached market dataset and competitor notes; limited direct ClusterMAX detail in extracted text.'},
+  qubrid:{level:'medium',note:'Aggregator/orchestrator positioning inferred from attached reports and value-chain mapping.'},
+  nscale:{level:'medium',note:'Positioning aligned to attached reports and market dataset with partial direct corroboration.'},
+  lepton:{level:'medium',note:'Stack-layer and buyer positioning inferred from attached dataset and comparative context.'},
+  gmo:{level:'medium',note:'Regional sovereign positioning aligned to attached market dataset and competitor notes.'},
+  firmus:{level:'medium',note:'Regional sovereign positioning aligned to attached market dataset and competitor notes.'},
+  scaleway:{level:'medium',note:'Sovereign-EU posture and orchestration framing aligned to comparative notes.'},
+  vultr:{level:'medium',note:'Business model and stack framing aligned to comparative notes and internal synthesis.'}
+};
+
 function buildComparison(){
   const tbody=document.getElementById('cmp-body');
   if(!tbody) return;
@@ -2190,11 +2219,13 @@ function buildComparison(){
     const cu=contractUi[p.contractKey]||contractUi.other;
     const eu=egressUi[p.egressPolicy]||egressUi.conditional;
     const tags=(p.buyersTags||[]).map(t=>`<span class="cmp-tag">${t}</span>`).join('');
+    const conf=CMP_CONFIDENCE[p.id]||{level:'medium',note:'Synthesized from attached reports and structured dataset overlap.'};
     html+=`<tr class="cmp-tr-main">
       <td style="padding:10px;">
         <div style="display:flex;align-items:center;gap:8px;">
           <span class="cmp-tier-dot ${p.tier}">${p.tier}</span>
           <div style="font-family:'JetBrains Mono',monospace;font-size:11px;">${p.name}</div>
+          <span class="cmp-conf ${conf.level}">${conf.level}</span>
         </div>
       </td>
       <td style="padding:10px 12px;font-size:11px;color:var(--sub);line-height:1.4;">${p.usp}</td>
@@ -2232,6 +2263,7 @@ function buildComparison(){
           <div class="cmp-detail-card">
             <h5>Risk / Gap</h5>
             <p>${p.gaps}</p>
+            <p><strong>Confidence Note:</strong> ${conf.note}</p>
           </div>
         </div>
       </td>

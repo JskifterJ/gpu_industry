@@ -4,12 +4,24 @@
       "company_name": "CoreWeave",
       "clustermax_tier": "Platinum",
       "headquarters_region": "North America",
-      "datacenter_geographies": ["US", "UK", "Spain", "Sweden", "Norway"]
+      "datacenter_geographies": [
+        "US",
+        "UK",
+        "Spain",
+        "Sweden",
+        "Norway"
+      ]
     },
     "market_positioning": {
       "stated_pitch": "The Essential Cloud for AI. The #1 AI cloud platform for performance, reliability, and scalability.",
       "customer_perception": "Recognized for scale and bare-metal performance, but criticized for high-commitment contracts and limited ad-hoc accessibility.",
-      "hardware_availability": ["H100", "H200", "B200", "GB200 NVL72", "GB300 NVL72"],
+      "hardware_availability": [
+        "H100",
+        "H200",
+        "B200",
+        "GB200 NVL72",
+        "GB300 NVL72"
+      ],
       "hardware_positioning_notes": "Apex premium positioning with early access to frontier Nvidia silicon."
     },
     "standardized_offerings": {
@@ -48,8 +60,46 @@
       "weaknesses_and_gaps": "Premium pricing and long-term commitments reduce flexibility for smaller or bursty workloads."
     },
     "customer_segmentation": {
-      "target_buyer_profiles": ["Frontier AI labs", "Large enterprise AI teams", "High-scale model developers"],
-      "typical_workloads": ["Large distributed pretraining", "Long-run fine-tuning", "Reserved enterprise inference"]
+      "target_buyer_profiles": [
+        "Frontier AI labs",
+        "Large enterprise AI teams",
+        "High-scale model developers"
+      ],
+      "typical_workloads": [
+        "Large distributed pretraining",
+        "Long-run fine-tuning",
+        "Reserved enterprise inference"
+      ]
+    },
+    "comparison_taxonomy": {
+      "business_model_class": "Asset-heavy orchestrator",
+      "pricing_tier": "high",
+      "contract_flexibility": "long-term",
+      "orchestration": {
+        "k8s": true,
+        "slurm": true,
+        "co_scheduling": true,
+        "co_scheduler_type": "SUNK",
+        "maturity": "Production-proven"
+      },
+      "egress": {
+        "policy": "free",
+        "detail": "Typically free across primary compute products."
+      },
+      "region_presence": {
+        "north_america": true,
+        "europe": true,
+        "apac": false
+      },
+      "buyer_tags": [
+        "Frontier Labs",
+        "Enterprise",
+        "Reserved Capacity"
+      ],
+      "confidence": {
+        "level": "high",
+        "note": "Corroborated by ClusterMAX tier/orchestration context."
+      }
     }
   },
   {
@@ -57,12 +107,22 @@
       "company_name": "Nebius",
       "clustermax_tier": "Gold",
       "headquarters_region": "Europe",
-      "datacenter_geographies": ["US", "Finland", "France", "Iceland"]
+      "datacenter_geographies": [
+        "US",
+        "Finland",
+        "France",
+        "Iceland"
+      ]
     },
     "market_positioning": {
       "stated_pitch": "Full-stack AI infrastructure with regional control and high-performance cloud orchestration.",
       "customer_perception": "Strong technical reputation and positive sentiment around transparency and preemptible flexibility.",
-      "hardware_availability": ["H100", "H200", "GB200 NVL72", "Vera Rubin (planned)"],
+      "hardware_availability": [
+        "H100",
+        "H200",
+        "GB200 NVL72",
+        "Vera Rubin (planned)"
+      ],
       "hardware_positioning_notes": "Premium European challenger with strong US/EU expansion momentum."
     },
     "standardized_offerings": {
@@ -101,8 +161,46 @@
       "weaknesses_and_gaps": "Still scaling total capacity footprint relative to the largest North American deployments."
     },
     "customer_segmentation": {
-      "target_buyer_profiles": ["AI startups", "Research labs", "EU enterprises with sovereignty requirements"],
-      "typical_workloads": ["Distributed training", "Spot-backed experimentation", "Inference clusters"]
+      "target_buyer_profiles": [
+        "AI startups",
+        "Research labs",
+        "EU enterprises with sovereignty requirements"
+      ],
+      "typical_workloads": [
+        "Distributed training",
+        "Spot-backed experimentation",
+        "Inference clusters"
+      ]
+    },
+    "comparison_taxonomy": {
+      "business_model_class": "Asset-heavy orchestrator",
+      "pricing_tier": "low",
+      "contract_flexibility": "hourly",
+      "orchestration": {
+        "k8s": true,
+        "slurm": true,
+        "co_scheduling": true,
+        "co_scheduler_type": "Soperator",
+        "maturity": "Production-strong"
+      },
+      "egress": {
+        "policy": "free",
+        "detail": "Generally free for core compute workloads."
+      },
+      "region_presence": {
+        "north_america": true,
+        "europe": true,
+        "apac": false
+      },
+      "buyer_tags": [
+        "Startups",
+        "Research",
+        "Sovereign EU"
+      ],
+      "confidence": {
+        "level": "high",
+        "note": "Corroborated by ClusterMAX tier/orchestration context."
+      }
     }
   },
   {
@@ -110,12 +208,20 @@
       "company_name": "Crusoe Cloud",
       "clustermax_tier": "Gold",
       "headquarters_region": "North America",
-      "datacenter_geographies": ["US", "Iceland"]
+      "datacenter_geographies": [
+        "US",
+        "Iceland"
+      ]
     },
     "market_positioning": {
       "stated_pitch": "Climate-aligned AI infrastructure built around clean and stranded energy.",
       "customer_perception": "Respected for power innovation with mixed sentiment on orchestration maturity.",
-      "hardware_availability": ["H100", "H200", "B200", "MI355X"],
+      "hardware_availability": [
+        "H100",
+        "H200",
+        "B200",
+        "MI355X"
+      ],
       "hardware_positioning_notes": "Energy-advantaged positioning tied to non-traditional power sourcing."
     },
     "standardized_offerings": {
@@ -154,8 +260,46 @@
       "weaknesses_and_gaps": "Geography and product consistency are constrained by energy-location dependencies."
     },
     "customer_segmentation": {
-      "target_buyer_profiles": ["ESG-focused enterprises", "Reserved-capacity buyers", "Energy-conscious AI teams"],
-      "typical_workloads": ["Large training runs", "AI factory reservations", "Long-horizon deployments"]
+      "target_buyer_profiles": [
+        "ESG-focused enterprises",
+        "Reserved-capacity buyers",
+        "Energy-conscious AI teams"
+      ],
+      "typical_workloads": [
+        "Large training runs",
+        "AI factory reservations",
+        "Long-horizon deployments"
+      ]
+    },
+    "comparison_taxonomy": {
+      "business_model_class": "Asset-heavy orchestrator",
+      "pricing_tier": "medium",
+      "contract_flexibility": "long-term",
+      "orchestration": {
+        "k8s": true,
+        "slurm": true,
+        "co_scheduling": true,
+        "co_scheduler_type": "Other",
+        "maturity": "Maturing"
+      },
+      "egress": {
+        "policy": "free",
+        "detail": "Generally positioned as free egress for compute-centric contracts."
+      },
+      "region_presence": {
+        "north_america": true,
+        "europe": true,
+        "apac": false
+      },
+      "buyer_tags": [
+        "Enterprise",
+        "Climate Focused",
+        "Reserved Capacity"
+      ],
+      "confidence": {
+        "level": "high",
+        "note": "Corroborated by ClusterMAX gold-tier references."
+      }
     }
   },
   {
@@ -163,12 +307,19 @@
       "company_name": "Together AI",
       "clustermax_tier": "Silver",
       "headquarters_region": "North America",
-      "datacenter_geographies": ["US", "EU"]
+      "datacenter_geographies": [
+        "US",
+        "EU"
+      ]
     },
     "market_positioning": {
       "stated_pitch": "Platform for building and running fast open-source AI.",
       "customer_perception": "Strong developer affinity for open-model speed, with reliability concerns tied to multi-DC partner variance.",
-      "hardware_availability": ["H100", "H200", "B200"],
+      "hardware_availability": [
+        "H100",
+        "H200",
+        "B200"
+      ],
       "hardware_positioning_notes": "Application-layer and inference-centric positioning over physical infrastructure ownership."
     },
     "standardized_offerings": {
@@ -207,8 +358,46 @@
       "weaknesses_and_gaps": "Operational consistency can vary by underlying partner data center quality."
     },
     "customer_segmentation": {
-      "target_buyer_profiles": ["Open-source AI app teams", "Inference-first startups", "Developer-platform buyers"],
-      "typical_workloads": ["Serverless inference", "Fine-tuning and serving", "Open-model APIs"]
+      "target_buyer_profiles": [
+        "Open-source AI app teams",
+        "Inference-first startups",
+        "Developer-platform buyers"
+      ],
+      "typical_workloads": [
+        "Serverless inference",
+        "Fine-tuning and serving",
+        "Open-model APIs"
+      ]
+    },
+    "comparison_taxonomy": {
+      "business_model_class": "Asset-light orchestrator",
+      "pricing_tier": "medium",
+      "contract_flexibility": "hourly",
+      "orchestration": {
+        "k8s": true,
+        "slurm": false,
+        "co_scheduling": false,
+        "co_scheduler_type": "None",
+        "maturity": "K8s-strong"
+      },
+      "egress": {
+        "policy": "free",
+        "detail": "Typically free for core inference and cluster offerings."
+      },
+      "region_presence": {
+        "north_america": true,
+        "europe": true,
+        "apac": false
+      },
+      "buyer_tags": [
+        "Startups",
+        "Inference First",
+        "Open Source"
+      ],
+      "confidence": {
+        "level": "high",
+        "note": "Corroborated by ClusterMAX silver-tier references."
+      }
     }
   },
   {
@@ -216,12 +405,17 @@
       "company_name": "Lepton AI",
       "clustermax_tier": "Gold",
       "headquarters_region": "North America",
-      "datacenter_geographies": ["US"]
+      "datacenter_geographies": [
+        "US"
+      ]
     },
     "market_positioning": {
       "stated_pitch": "Build and deploy AI applications at scale, in minutes.",
       "customer_perception": "Viewed as low-friction serverless AI infrastructure for application teams.",
-      "hardware_availability": ["H100", "A100"],
+      "hardware_availability": [
+        "H100",
+        "A100"
+      ],
       "hardware_positioning_notes": "Abstracts hardware complexity to maximize application development speed."
     },
     "standardized_offerings": {
@@ -260,8 +454,46 @@
       "weaknesses_and_gaps": "Not optimized for buyers requiring deep low-level control of network and bare-metal scheduling."
     },
     "customer_segmentation": {
-      "target_buyer_profiles": ["Application developers", "Serverless platform teams", "Product organizations shipping AI features"],
-      "typical_workloads": ["Serverless model deployment", "Low-ops inference", "Rapid prototyping"]
+      "target_buyer_profiles": [
+        "Application developers",
+        "Serverless platform teams",
+        "Product organizations shipping AI features"
+      ],
+      "typical_workloads": [
+        "Serverless model deployment",
+        "Low-ops inference",
+        "Rapid prototyping"
+      ]
+    },
+    "comparison_taxonomy": {
+      "business_model_class": "Asset-light orchestrator",
+      "pricing_tier": "medium",
+      "contract_flexibility": "hourly",
+      "orchestration": {
+        "k8s": false,
+        "slurm": false,
+        "co_scheduling": false,
+        "co_scheduler_type": "None",
+        "maturity": "N/A"
+      },
+      "egress": {
+        "policy": "conditional",
+        "detail": "Policy varies by serving and deployment model."
+      },
+      "region_presence": {
+        "north_america": true,
+        "europe": false,
+        "apac": false
+      },
+      "buyer_tags": [
+        "Developers",
+        "App Teams",
+        "Serverless"
+      ],
+      "confidence": {
+        "level": "medium",
+        "note": "Synthesized from attached reports and value-chain mapping."
+      }
     }
   },
   {
@@ -269,12 +501,19 @@
       "company_name": "Lambda Labs",
       "clustermax_tier": "Silver",
       "headquarters_region": "North America",
-      "datacenter_geographies": ["US"]
+      "datacenter_geographies": [
+        "US"
+      ]
     },
     "market_positioning": {
       "stated_pitch": "GPU Cloud built for Deep Learning.",
       "customer_perception": "Popular among developers for transparent pricing and low friction, with periodic complaints around capacity constraints.",
-      "hardware_availability": ["H100", "H200", "A100", "RTX 4090"],
+      "hardware_availability": [
+        "H100",
+        "H200",
+        "A100",
+        "RTX 4090"
+      ],
       "hardware_positioning_notes": "Value-oriented access to high-end GPUs, especially for on-demand experimentation."
     },
     "standardized_offerings": {
@@ -313,8 +552,46 @@
       "weaknesses_and_gaps": "Less mature managed orchestration and automated remediation than top enterprise-focused providers."
     },
     "customer_segmentation": {
-      "target_buyer_profiles": ["Independent researchers", "Early-stage startups", "Cost-sensitive GPU users"],
-      "typical_workloads": ["Single-node training", "Small-cluster experiments", "Prototype inference"]
+      "target_buyer_profiles": [
+        "Independent researchers",
+        "Early-stage startups",
+        "Cost-sensitive GPU users"
+      ],
+      "typical_workloads": [
+        "Single-node training",
+        "Small-cluster experiments",
+        "Prototype inference"
+      ]
+    },
+    "comparison_taxonomy": {
+      "business_model_class": "Asset-heavy orchestrator",
+      "pricing_tier": "medium",
+      "contract_flexibility": "hourly",
+      "orchestration": {
+        "k8s": false,
+        "slurm": false,
+        "co_scheduling": false,
+        "co_scheduler_type": "None",
+        "maturity": "Basic"
+      },
+      "egress": {
+        "policy": "free",
+        "detail": "Generally free or minimally restrictive for compute-centric usage."
+      },
+      "region_presence": {
+        "north_america": true,
+        "europe": false,
+        "apac": false
+      },
+      "buyer_tags": [
+        "Research",
+        "Startups",
+        "Cost Sensitive"
+      ],
+      "confidence": {
+        "level": "high",
+        "note": "Corroborated by ClusterMAX silver-tier references."
+      }
     }
   },
   {
@@ -322,12 +599,16 @@
       "company_name": "GMO GPU Cloud",
       "clustermax_tier": "Silver",
       "headquarters_region": "Asia-Pacific",
-      "datacenter_geographies": ["Japan"]
+      "datacenter_geographies": [
+        "Japan"
+      ]
     },
     "market_positioning": {
       "stated_pitch": "Japan's fastest-class generative AI cloud with local compliance and residency.",
       "customer_perception": "Strong domestic reputation for reliability and white-glove support.",
-      "hardware_availability": ["H100"],
+      "hardware_availability": [
+        "H100"
+      ],
       "hardware_positioning_notes": "Japan-first sovereign positioning for enterprise and research workloads."
     },
     "standardized_offerings": {
@@ -366,8 +647,46 @@
       "weaknesses_and_gaps": "Geographic concentration limits global elasticity and broad multinational deployment."
     },
     "customer_segmentation": {
-      "target_buyer_profiles": ["Japanese enterprises", "Domestic research institutions", "Public-sector buyers"],
-      "typical_workloads": ["Regional model training", "Manufacturing and robotics HPC", "Residency-constrained AI"]
+      "target_buyer_profiles": [
+        "Japanese enterprises",
+        "Domestic research institutions",
+        "Public-sector buyers"
+      ],
+      "typical_workloads": [
+        "Regional model training",
+        "Manufacturing and robotics HPC",
+        "Residency-constrained AI"
+      ]
+    },
+    "comparison_taxonomy": {
+      "business_model_class": "Asset-heavy orchestrator",
+      "pricing_tier": "medium",
+      "contract_flexibility": "long-term",
+      "orchestration": {
+        "k8s": false,
+        "slurm": true,
+        "co_scheduling": false,
+        "co_scheduler_type": "None",
+        "maturity": "Slurm-strong"
+      },
+      "egress": {
+        "policy": "conditional",
+        "detail": "Policy varies by customer class and domestic routing."
+      },
+      "region_presence": {
+        "north_america": false,
+        "europe": false,
+        "apac": true
+      },
+      "buyer_tags": [
+        "Sovereign",
+        "Enterprise",
+        "Public Sector"
+      ],
+      "confidence": {
+        "level": "medium",
+        "note": "Aligned to attached market dataset and competitor notes."
+      }
     }
   },
   {
@@ -375,12 +694,16 @@
       "company_name": "Firmus Technologies",
       "clustermax_tier": "Silver",
       "headquarters_region": "Asia-Pacific",
-      "datacenter_geographies": ["Australia (Tasmania)"]
+      "datacenter_geographies": [
+        "Australia (Tasmania)"
+      ]
     },
     "market_positioning": {
       "stated_pitch": "Australia's first sovereign AI factory campus.",
       "customer_perception": "Seen as a strategic regional provider for sovereign compute capacity.",
-      "hardware_availability": ["H100"],
+      "hardware_availability": [
+        "H100"
+      ],
       "hardware_positioning_notes": "Regional sovereign-scale positioning with emphasis on local infrastructure resilience."
     },
     "standardized_offerings": {
@@ -419,8 +742,46 @@
       "weaknesses_and_gaps": "Still maturing orchestration and application-layer capabilities versus global leaders."
     },
     "customer_segmentation": {
-      "target_buyer_profiles": ["Australian sovereign buyers", "Public-sector programs", "Regional enterprise AI teams"],
-      "typical_workloads": ["Sovereign hosting", "Reserved training capacity", "National AI infrastructure programs"]
+      "target_buyer_profiles": [
+        "Australian sovereign buyers",
+        "Public-sector programs",
+        "Regional enterprise AI teams"
+      ],
+      "typical_workloads": [
+        "Sovereign hosting",
+        "Reserved training capacity",
+        "National AI infrastructure programs"
+      ]
+    },
+    "comparison_taxonomy": {
+      "business_model_class": "Asset-heavy orchestrator",
+      "pricing_tier": "medium",
+      "contract_flexibility": "long-term",
+      "orchestration": {
+        "k8s": false,
+        "slurm": false,
+        "co_scheduling": false,
+        "co_scheduler_type": "None",
+        "maturity": "Basic"
+      },
+      "egress": {
+        "policy": "conditional",
+        "detail": "Commercially negotiated for sovereign and public programs."
+      },
+      "region_presence": {
+        "north_america": false,
+        "europe": false,
+        "apac": true
+      },
+      "buyer_tags": [
+        "Sovereign",
+        "Public Sector",
+        "Enterprise"
+      ],
+      "confidence": {
+        "level": "medium",
+        "note": "Aligned to attached market dataset and competitor notes."
+      }
     }
   },
   {
@@ -428,12 +789,19 @@
       "company_name": "Microsoft Azure",
       "clustermax_tier": "Gold",
       "headquarters_region": "North America",
-      "datacenter_geographies": ["Global"]
+      "datacenter_geographies": [
+        "Global"
+      ]
     },
     "market_positioning": {
       "stated_pitch": "The cloud of choice for AI.",
       "customer_perception": "Strong enterprise trust and compliance posture, with criticism around cost and non-anchor capacity access.",
-      "hardware_availability": ["H100", "H200", "B200", "Azure Maia"],
+      "hardware_availability": [
+        "H100",
+        "H200",
+        "B200",
+        "Azure Maia"
+      ],
       "hardware_positioning_notes": "Broad enterprise AI positioning with strong compliance and ecosystem integration."
     },
     "standardized_offerings": {
@@ -472,8 +840,46 @@
       "weaknesses_and_gaps": "Slurm UX and broad capacity access are less consistent than top specialist providers."
     },
     "customer_segmentation": {
-      "target_buyer_profiles": ["Global enterprises", "Government and regulated buyers", "Microsoft-stack organizations"],
-      "typical_workloads": ["Enterprise training and inference", "Compliance-heavy AI", "Managed AI platform deployments"]
+      "target_buyer_profiles": [
+        "Global enterprises",
+        "Government and regulated buyers",
+        "Microsoft-stack organizations"
+      ],
+      "typical_workloads": [
+        "Enterprise training and inference",
+        "Compliance-heavy AI",
+        "Managed AI platform deployments"
+      ]
+    },
+    "comparison_taxonomy": {
+      "business_model_class": "Hyperscaler orchestrator",
+      "pricing_tier": "high",
+      "contract_flexibility": "hourly",
+      "orchestration": {
+        "k8s": true,
+        "slurm": true,
+        "co_scheduling": false,
+        "co_scheduler_type": "None",
+        "maturity": "Split-control model"
+      },
+      "egress": {
+        "policy": "metered",
+        "detail": "Typical egress metered by region and commitment class."
+      },
+      "region_presence": {
+        "north_america": true,
+        "europe": true,
+        "apac": true
+      },
+      "buyer_tags": [
+        "Enterprise",
+        "Regulated",
+        "Government"
+      ],
+      "confidence": {
+        "level": "high",
+        "note": "Corroborated by ClusterMAX gold-tier references."
+      }
     }
   },
   {
@@ -481,12 +887,19 @@
       "company_name": "Oracle Cloud Infrastructure (OCI)",
       "clustermax_tier": "Gold",
       "headquarters_region": "North America",
-      "datacenter_geographies": ["Global"]
+      "datacenter_geographies": [
+        "Global"
+      ]
     },
     "market_positioning": {
       "stated_pitch": "Purpose-built infrastructure for AI.",
       "customer_perception": "Increasingly seen as a strong hyperscaler option for large AI contracts and cost/performance at scale.",
-      "hardware_availability": ["H100", "A100", "MI300X", "GB200 (large contracts)"],
+      "hardware_availability": [
+        "H100",
+        "A100",
+        "MI300X",
+        "GB200 (large contracts)"
+      ],
       "hardware_positioning_notes": "Large-deal AI positioning with broad regional footprint and enterprise contracting strength."
     },
     "standardized_offerings": {
@@ -525,8 +938,46 @@
       "weaknesses_and_gaps": "Developer ecosystem agility trails leading AI-native operators."
     },
     "customer_segmentation": {
-      "target_buyer_profiles": ["Large enterprises", "Frontier-lab-adjacent buyers", "Cost-sensitive hyperscale contracts"],
-      "typical_workloads": ["Large reserved training clusters", "Enterprise AI platform hosting", "Database plus AI workloads"]
+      "target_buyer_profiles": [
+        "Large enterprises",
+        "Frontier-lab-adjacent buyers",
+        "Cost-sensitive hyperscale contracts"
+      ],
+      "typical_workloads": [
+        "Large reserved training clusters",
+        "Enterprise AI platform hosting",
+        "Database plus AI workloads"
+      ]
+    },
+    "comparison_taxonomy": {
+      "business_model_class": "Hyperscaler orchestrator",
+      "pricing_tier": "medium",
+      "contract_flexibility": "long-term",
+      "orchestration": {
+        "k8s": true,
+        "slurm": true,
+        "co_scheduling": false,
+        "co_scheduler_type": "None",
+        "maturity": "Functional"
+      },
+      "egress": {
+        "policy": "free",
+        "detail": "Promotes free egress as a differentiation lever."
+      },
+      "region_presence": {
+        "north_america": true,
+        "europe": true,
+        "apac": true
+      },
+      "buyer_tags": [
+        "Enterprise",
+        "Frontier Adjacent",
+        "Cost Sensitive"
+      ],
+      "confidence": {
+        "level": "high",
+        "note": "Corroborated by ClusterMAX gold-tier references."
+      }
     }
   },
   {
@@ -534,12 +985,20 @@
       "company_name": "Amazon Web Services (AWS)",
       "clustermax_tier": "Silver",
       "headquarters_region": "North America",
-      "datacenter_geographies": ["Global"]
+      "datacenter_geographies": [
+        "Global"
+      ]
     },
     "market_positioning": {
       "stated_pitch": "The most comprehensive and broadly adopted cloud.",
       "customer_perception": "Trusted for breadth and reliability, but often criticized for complexity and lock-in economics in AI-heavy workflows.",
-      "hardware_availability": ["H100", "H200", "GB200/GB300 (large contracts)", "Trainium2", "Inferentia2"],
+      "hardware_availability": [
+        "H100",
+        "H200",
+        "GB200/GB300 (large contracts)",
+        "Trainium2",
+        "Inferentia2"
+      ],
       "hardware_positioning_notes": "Dual strategy around Nvidia compatibility and custom silicon cost-control."
     },
     "standardized_offerings": {
@@ -578,8 +1037,46 @@
       "weaknesses_and_gaps": "Distributed AI cluster UX and networking transparency are weaker than top specialist operators."
     },
     "customer_segmentation": {
-      "target_buyer_profiles": ["AWS-native enterprises", "Large S3/FSx customers", "Teams evaluating custom silicon"],
-      "typical_workloads": ["Mixed enterprise AI", "General-purpose inference", "Service-integrated app hosting"]
+      "target_buyer_profiles": [
+        "AWS-native enterprises",
+        "Large S3/FSx customers",
+        "Teams evaluating custom silicon"
+      ],
+      "typical_workloads": [
+        "Mixed enterprise AI",
+        "General-purpose inference",
+        "Service-integrated app hosting"
+      ]
+    },
+    "comparison_taxonomy": {
+      "business_model_class": "Hyperscaler orchestrator",
+      "pricing_tier": "high",
+      "contract_flexibility": "hourly",
+      "orchestration": {
+        "k8s": true,
+        "slurm": true,
+        "co_scheduling": false,
+        "co_scheduler_type": "None",
+        "maturity": "Functional"
+      },
+      "egress": {
+        "policy": "metered",
+        "detail": "Standard hyperscaler egress pricing with lock-in dynamics."
+      },
+      "region_presence": {
+        "north_america": true,
+        "europe": true,
+        "apac": true
+      },
+      "buyer_tags": [
+        "Enterprise",
+        "AWS Native",
+        "Platform Teams"
+      ],
+      "confidence": {
+        "level": "high",
+        "note": "Corroborated by ClusterMAX silver-tier references."
+      }
     }
   },
   {
@@ -587,12 +1084,19 @@
       "company_name": "Google Cloud Platform (GCP)",
       "clustermax_tier": "Silver",
       "headquarters_region": "North America",
-      "datacenter_geographies": ["Global"]
+      "datacenter_geographies": [
+        "Global"
+      ]
     },
     "market_positioning": {
       "stated_pitch": "Accelerate your AI transformation.",
       "customer_perception": "Highly regarded for Kubernetes and TPU workflows, with mixed sentiment on Nvidia-centric ergonomics.",
-      "hardware_availability": ["H100", "H200", "TPU v5", "TPU v6"],
+      "hardware_availability": [
+        "H100",
+        "H200",
+        "TPU v5",
+        "TPU v6"
+      ],
       "hardware_positioning_notes": "Strong integrated AI platform posture with TPU-first strategic bias."
     },
     "standardized_offerings": {
@@ -631,8 +1135,46 @@
       "weaknesses_and_gaps": "Still balancing TPU-first architecture with smooth high-performance Nvidia workflows for all buyers."
     },
     "customer_segmentation": {
-      "target_buyer_profiles": ["Kubernetes-first ML teams", "JAX and TPU users", "Vertex AI enterprise teams"],
-      "typical_workloads": ["Managed training/inference", "TPU-native experimentation", "Integrated MLOps and serving"]
+      "target_buyer_profiles": [
+        "Kubernetes-first ML teams",
+        "JAX and TPU users",
+        "Vertex AI enterprise teams"
+      ],
+      "typical_workloads": [
+        "Managed training/inference",
+        "TPU-native experimentation",
+        "Integrated MLOps and serving"
+      ]
+    },
+    "comparison_taxonomy": {
+      "business_model_class": "Hyperscaler orchestrator",
+      "pricing_tier": "high",
+      "contract_flexibility": "hourly",
+      "orchestration": {
+        "k8s": true,
+        "slurm": true,
+        "co_scheduling": false,
+        "co_scheduler_type": "None",
+        "maturity": "Functional"
+      },
+      "egress": {
+        "policy": "metered",
+        "detail": "Standard cloud egress model, varies by route and destination."
+      },
+      "region_presence": {
+        "north_america": true,
+        "europe": true,
+        "apac": true
+      },
+      "buyer_tags": [
+        "Enterprise",
+        "K8s First",
+        "TPU Users"
+      ],
+      "confidence": {
+        "level": "high",
+        "note": "Corroborated by ClusterMAX silver-tier references."
+      }
     }
   },
   {
@@ -640,12 +1182,21 @@
       "company_name": "DataCrunch (Verda)",
       "clustermax_tier": "Bronze",
       "headquarters_region": "Europe",
-      "datacenter_geographies": ["Finland", "Iceland"]
+      "datacenter_geographies": [
+        "Finland",
+        "Iceland"
+      ]
     },
     "market_positioning": {
       "stated_pitch": "Europe's dedicated AI hyperscaler powered by 100% renewable energy.",
       "customer_perception": "Highly reliable bare-metal provider with up-to-date CUDA support and strong EU sovereignty alignment.",
-      "hardware_availability": ["A100", "H100", "H200", "B200", "GB200 NVL72"],
+      "hardware_availability": [
+        "A100",
+        "H100",
+        "H200",
+        "B200",
+        "GB200 NVL72"
+      ],
       "hardware_positioning_notes": "Leverages naturally cold Nordic climates for free cooling and utilizes stranded renewable energy to offer competitive pricing on premium NVIDIA hardware."
     },
     "standardized_offerings": {
@@ -684,8 +1235,46 @@
       "weaknesses_and_gaps": "Geographically restricted to Europe, limiting appeal to US-based latency-sensitive applications."
     },
     "customer_segmentation": {
-      "target_buyer_profiles": ["EU startups", "Sovereignty-constrained enterprises", "Cost-sensitive researchers"],
-      "typical_workloads": ["Spot-backed fine-tuning", "EU-resident training jobs", "Inference endpoints for media generation"]
+      "target_buyer_profiles": [
+        "EU startups",
+        "Sovereignty-constrained enterprises",
+        "Cost-sensitive researchers"
+      ],
+      "typical_workloads": [
+        "Spot-backed fine-tuning",
+        "EU-resident training jobs",
+        "Inference endpoints for media generation"
+      ]
+    },
+    "comparison_taxonomy": {
+      "business_model_class": "Asset-heavy orchestrator",
+      "pricing_tier": "low",
+      "contract_flexibility": "hourly",
+      "orchestration": {
+        "k8s": true,
+        "slurm": true,
+        "co_scheduling": false,
+        "co_scheduler_type": "None",
+        "maturity": "Maturing"
+      },
+      "egress": {
+        "policy": "conditional",
+        "detail": "Varies by product and exchange-style procurement paths."
+      },
+      "region_presence": {
+        "north_america": false,
+        "europe": true,
+        "apac": false
+      },
+      "buyer_tags": [
+        "Sovereign EU",
+        "Startups",
+        "Cost Sensitive"
+      ],
+      "confidence": {
+        "level": "medium",
+        "note": "Aligned to market dataset and competitor notes."
+      }
     }
   },
   {
@@ -693,12 +1282,18 @@
       "company_name": "TensorWave",
       "clustermax_tier": "Bronze",
       "headquarters_region": "North America",
-      "datacenter_geographies": ["US (Pittsburgh, Miami, Arizona)"]
+      "datacenter_geographies": [
+        "US (Pittsburgh, Miami, Arizona)"
+      ]
     },
     "market_positioning": {
       "stated_pitch": "The AI and HPC cloud powered exclusively by AMD Instinct Series GPUs.",
       "customer_perception": "Pioneering the AMD alternative to NVIDIA, praised for memory-bandwidth economics with ongoing concerns around ROCm migration friction.",
-      "hardware_availability": ["MI300X", "MI325X", "MI350X"],
+      "hardware_availability": [
+        "MI300X",
+        "MI325X",
+        "MI350X"
+      ],
       "hardware_positioning_notes": "Exclusively utilizes AMD silicon and RoCEv2 Ethernet fabrics to avoid NVIDIA's high costs and supply chain constraints, focusing heavily on inference optimization."
     },
     "standardized_offerings": {
@@ -737,8 +1332,46 @@
       "weaknesses_and_gaps": "Lack of native CUDA support requires code refactoring; RoCEv2 fabric can face congestion under heavy training loads."
     },
     "customer_segmentation": {
-      "target_buyer_profiles": ["AMD-first ML teams", "Cost-sensitive inference providers", "Teams optimizing memory-bound models"],
-      "typical_workloads": ["Large-model inference", "ROCm-native training", "High-batch serving pipelines"]
+      "target_buyer_profiles": [
+        "AMD-first ML teams",
+        "Cost-sensitive inference providers",
+        "Teams optimizing memory-bound models"
+      ],
+      "typical_workloads": [
+        "Large-model inference",
+        "ROCm-native training",
+        "High-batch serving pipelines"
+      ]
+    },
+    "comparison_taxonomy": {
+      "business_model_class": "Asset-heavy orchestrator",
+      "pricing_tier": "medium",
+      "contract_flexibility": "weekly",
+      "orchestration": {
+        "k8s": true,
+        "slurm": true,
+        "co_scheduling": false,
+        "co_scheduler_type": "None",
+        "maturity": "Maturing"
+      },
+      "egress": {
+        "policy": "conditional",
+        "detail": "Transparent posture with policy varying by cluster class."
+      },
+      "region_presence": {
+        "north_america": true,
+        "europe": false,
+        "apac": false
+      },
+      "buyer_tags": [
+        "AMD First",
+        "Inference First",
+        "Cost Sensitive"
+      ],
+      "confidence": {
+        "level": "medium",
+        "note": "Aligned to market dataset and competitor notes."
+      }
     }
   },
   {
@@ -746,12 +1379,20 @@
       "company_name": "BUZZ High Performance Computing",
       "clustermax_tier": "Bronze",
       "headquarters_region": "North America",
-      "datacenter_geographies": ["Canada", "Sweden"]
+      "datacenter_geographies": [
+        "Canada",
+        "Sweden"
+      ]
     },
     "market_positioning": {
       "stated_pitch": "Sovereign AI infrastructure powered by green GPUs and renewable energy.",
       "customer_perception": "Seen as a disciplined operator with strong compliance posture and dependable network performance.",
-      "hardware_availability": ["H100", "H200", "B200", "GB200 NVL72"],
+      "hardware_availability": [
+        "H100",
+        "H200",
+        "B200",
+        "GB200 NVL72"
+      ],
       "hardware_positioning_notes": "Leverages legacy crypto-mining infrastructure to secure massive hydro-power allocations for dense NVIDIA clusters."
     },
     "standardized_offerings": {
@@ -790,8 +1431,46 @@
       "weaknesses_and_gaps": "Conservative expansion strategy limits hyper-growth compared to heavily venture-backed peers."
     },
     "customer_segmentation": {
-      "target_buyer_profiles": ["Sovereign government buyers", "Regulated enterprises", "Risk-averse AI infrastructure teams"],
-      "typical_workloads": ["Compliance-sensitive training", "Long-running distributed HPC", "Sovereign AI platform hosting"]
+      "target_buyer_profiles": [
+        "Sovereign government buyers",
+        "Regulated enterprises",
+        "Risk-averse AI infrastructure teams"
+      ],
+      "typical_workloads": [
+        "Compliance-sensitive training",
+        "Long-running distributed HPC",
+        "Sovereign AI platform hosting"
+      ]
+    },
+    "comparison_taxonomy": {
+      "business_model_class": "Asset-heavy orchestrator",
+      "pricing_tier": "medium",
+      "contract_flexibility": "long-term",
+      "orchestration": {
+        "k8s": true,
+        "slurm": true,
+        "co_scheduling": false,
+        "co_scheduler_type": "None",
+        "maturity": "Maturing"
+      },
+      "egress": {
+        "policy": "conditional",
+        "detail": "Contract-structured based on compliance and hosting model."
+      },
+      "region_presence": {
+        "north_america": true,
+        "europe": true,
+        "apac": false
+      },
+      "buyer_tags": [
+        "Sovereign",
+        "Regulated",
+        "Enterprise"
+      ],
+      "confidence": {
+        "level": "medium",
+        "note": "Aligned to market dataset and competitor notes."
+      }
     }
   },
   {
@@ -799,12 +1478,18 @@
       "company_name": "Qubrid AI",
       "clustermax_tier": "Bronze",
       "headquarters_region": "North America",
-      "datacenter_geographies": ["Global"]
+      "datacenter_geographies": [
+        "Global"
+      ]
     },
     "market_positioning": {
       "stated_pitch": "A full-stack AI platform integrating compute, inference, fine-tuning, and RAG.",
       "customer_perception": "Valued for abstraction and end-to-end developer workflow rather than raw infra ownership.",
-      "hardware_availability": ["A100", "H100", "H200"],
+      "hardware_availability": [
+        "A100",
+        "H100",
+        "H200"
+      ],
       "hardware_positioning_notes": "Focuses less on owning data centers and more on facilitating Layer 5 software abstractions via infrastructure partners."
     },
     "standardized_offerings": {
@@ -843,8 +1528,46 @@
       "weaknesses_and_gaps": "Lack of raw infrastructure ownership limits pricing flexibility at massive scales."
     },
     "customer_segmentation": {
-      "target_buyer_profiles": ["Enterprise developers", "Healthcare and finance AI teams", "Workflow-focused application builders"],
-      "typical_workloads": ["RAG pipelines", "Inference-first app deployment", "Autonomous agent workflows"]
+      "target_buyer_profiles": [
+        "Enterprise developers",
+        "Healthcare and finance AI teams",
+        "Workflow-focused application builders"
+      ],
+      "typical_workloads": [
+        "RAG pipelines",
+        "Inference-first app deployment",
+        "Autonomous agent workflows"
+      ]
+    },
+    "comparison_taxonomy": {
+      "business_model_class": "Asset-light aggregator",
+      "pricing_tier": "medium",
+      "contract_flexibility": "hourly",
+      "orchestration": {
+        "k8s": true,
+        "slurm": false,
+        "co_scheduling": false,
+        "co_scheduler_type": "None",
+        "maturity": "N/A"
+      },
+      "egress": {
+        "policy": "conditional",
+        "detail": "Depends on underlying infrastructure partner route."
+      },
+      "region_presence": {
+        "north_america": true,
+        "europe": true,
+        "apac": true
+      },
+      "buyer_tags": [
+        "Enterprise",
+        "Developers",
+        "Workflow Focused"
+      ],
+      "confidence": {
+        "level": "medium",
+        "note": "Aggregator positioning inferred from attached reports and value-chain mapping."
+      }
     }
   },
   {
@@ -852,12 +1575,16 @@
       "company_name": "Voltage Park",
       "clustermax_tier": "Emerging",
       "headquarters_region": "North America",
-      "datacenter_geographies": ["US (TX, VA, WA)"]
+      "datacenter_geographies": [
+        "US (TX, VA, WA)"
+      ]
     },
     "market_positioning": {
       "stated_pitch": "Accessible enterprise-grade AI infrastructure powered by a mission-driven, non-profit backed model.",
       "customer_perception": "Viewed as a strong price disruptor with reliable bare-metal economics, but constrained by US-only footprint.",
-      "hardware_availability": ["H100"],
+      "hardware_availability": [
+        "H100"
+      ],
       "hardware_positioning_notes": "Operates large-scale H100 fleets on Dell XE9680 servers under a zero-debt structure that supports aggressive pricing."
     },
     "standardized_offerings": {
@@ -896,8 +1623,46 @@
       "weaknesses_and_gaps": "US-only operations reduce fit for sovereignty-constrained international deployments."
     },
     "customer_segmentation": {
-      "target_buyer_profiles": ["Budget-conscious startups", "Independent ML engineers", "Teams needing fast H100 access"],
-      "typical_workloads": ["On-demand experimentation", "Cost-optimized fine-tuning", "Rapid RAG and inference deployment"]
+      "target_buyer_profiles": [
+        "Budget-conscious startups",
+        "Independent ML engineers",
+        "Teams needing fast H100 access"
+      ],
+      "typical_workloads": [
+        "On-demand experimentation",
+        "Cost-optimized fine-tuning",
+        "Rapid RAG and inference deployment"
+      ]
+    },
+    "comparison_taxonomy": {
+      "business_model_class": "Asset-heavy orchestrator",
+      "pricing_tier": "low",
+      "contract_flexibility": "hourly",
+      "orchestration": {
+        "k8s": true,
+        "slurm": true,
+        "co_scheduling": true,
+        "co_scheduler_type": "Soperator",
+        "maturity": "Early but improving"
+      },
+      "egress": {
+        "policy": "free",
+        "detail": "Promotes free egress to reinforce budget positioning."
+      },
+      "region_presence": {
+        "north_america": true,
+        "europe": false,
+        "apac": false
+      },
+      "buyer_tags": [
+        "Cost Sensitive",
+        "Startups",
+        "Independent Builders"
+      ],
+      "confidence": {
+        "level": "high",
+        "note": "Soperator-based SonK usage explicitly referenced in ClusterMAX 2.0."
+      }
     }
   },
   {
@@ -905,12 +1670,21 @@
       "company_name": "Nscale",
       "clustermax_tier": "Emerging",
       "headquarters_region": "Europe",
-      "datacenter_geographies": ["UK", "Norway", "US (Texas, North Carolina)", "Portugal"]
+      "datacenter_geographies": [
+        "UK",
+        "Norway",
+        "US (Texas, North Carolina)",
+        "Portugal"
+      ]
     },
     "market_positioning": {
       "stated_pitch": "Agile, AI-first infrastructure powered by renewable energy for gigawatt-scale deployments.",
       "customer_perception": "Recognized for scale and sustainability, with stronger enterprise than self-serve developer positioning.",
-      "hardware_availability": ["MI250X", "MI300X", "GB300"],
+      "hardware_availability": [
+        "MI250X",
+        "MI300X",
+        "GB300"
+      ],
       "hardware_positioning_notes": "Massive deployments of AMD and NVIDIA silicon utilizing closed-loop liquid cooling and hydro-linked power strategies."
     },
     "standardized_offerings": {
@@ -949,8 +1723,46 @@
       "weaknesses_and_gaps": "RoCE-oriented networking may underperform top InfiniBand stacks for absolute peak distributed pre-training."
     },
     "customer_segmentation": {
-      "target_buyer_profiles": ["Hyperscaler partners", "Large enterprises", "Power-constrained frontier AI programs"],
-      "typical_workloads": ["Gigawatt-scale reserved clusters", "Large distributed training", "Enterprise inference platforms"]
+      "target_buyer_profiles": [
+        "Hyperscaler partners",
+        "Large enterprises",
+        "Power-constrained frontier AI programs"
+      ],
+      "typical_workloads": [
+        "Gigawatt-scale reserved clusters",
+        "Large distributed training",
+        "Enterprise inference platforms"
+      ]
+    },
+    "comparison_taxonomy": {
+      "business_model_class": "Asset-heavy orchestrator",
+      "pricing_tier": "medium",
+      "contract_flexibility": "long-term",
+      "orchestration": {
+        "k8s": true,
+        "slurm": true,
+        "co_scheduling": false,
+        "co_scheduler_type": "None",
+        "maturity": "Maturing"
+      },
+      "egress": {
+        "policy": "conditional",
+        "detail": "Structured by contract and geography."
+      },
+      "region_presence": {
+        "north_america": true,
+        "europe": true,
+        "apac": false
+      },
+      "buyer_tags": [
+        "Enterprise",
+        "Hyperscaler Partners",
+        "Reserved Capacity"
+      ],
+      "confidence": {
+        "level": "medium",
+        "note": "Aligned to attached reports and market dataset."
+      }
     }
   }
 ]
