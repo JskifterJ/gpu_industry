@@ -103,6 +103,33 @@
     "customer_segmentation": {
       "target_buyer_profiles": ["AI startups", "Research labs", "EU enterprises with sovereignty requirements"],
       "typical_workloads": ["Distributed training", "Spot-backed experimentation", "Inference clusters"]
+    },
+    "comparison_taxonomy": {
+      "business_model_class": "Asset-heavy orchestrator",
+      "pricing_tier": "gold",
+      "contract_flexibility": "hourly",
+      "orchestration": {
+        "k8s": true,
+        "slurm": true,
+        "co_scheduling": true,
+        "co_scheduler_type": "Soperator",
+        "maturity": "Advanced Slurm plus Kubernetes operating model."
+      },
+      "egress": {
+        "policy": "conditional",
+        "detail": "Terms vary by service path and agreement."
+      },
+      "region_presence": {
+        "north_america": true,
+        "europe": true,
+        "apac": false,
+        "geography_list": "US, Finland, France, Iceland"
+      },
+      "buyer_tags": ["Scale Up", "Sovereign EU", "Startups"],
+      "confidence": {
+        "level": "medium",
+        "note": "Aligned to ClusterMAX references and internal synthesis."
+      }
     }
   },
   {
@@ -156,6 +183,33 @@
     "customer_segmentation": {
       "target_buyer_profiles": ["ESG-focused enterprises", "Reserved-capacity buyers", "Energy-conscious AI teams"],
       "typical_workloads": ["Large training runs", "AI factory reservations", "Long-horizon deployments"]
+    },
+    "comparison_taxonomy": {
+      "business_model_class": "Asset-heavy orchestrator",
+      "pricing_tier": "gold",
+      "contract_flexibility": "fixed-term",
+      "orchestration": {
+        "k8s": true,
+        "slurm": true,
+        "co_scheduling": false,
+        "co_scheduler_type": "None",
+        "maturity": "Managed Kubernetes and Slurm offered as distinct tracks."
+      },
+      "egress": {
+        "policy": "conditional",
+        "detail": "Transfer terms depend on reserved contract structure."
+      },
+      "region_presence": {
+        "north_america": true,
+        "europe": true,
+        "apac": false,
+        "geography_list": "US, Iceland"
+      },
+      "buyer_tags": ["Enterprise", "ESG", "Reserved Capacity"],
+      "confidence": {
+        "level": "medium",
+        "note": "Consistent with ClusterMAX-era gold positioning."
+      }
     }
   },
   {
@@ -209,6 +263,33 @@
     "customer_segmentation": {
       "target_buyer_profiles": ["Open-source AI app teams", "Inference-first startups", "Developer-platform buyers"],
       "typical_workloads": ["Serverless inference", "Fine-tuning and serving", "Open-model APIs"]
+    },
+    "comparison_taxonomy": {
+      "business_model_class": "Asset-light aggregator",
+      "pricing_tier": "silver",
+      "contract_flexibility": "hourly",
+      "orchestration": {
+        "k8s": true,
+        "slurm": false,
+        "co_scheduling": false,
+        "co_scheduler_type": "None",
+        "maturity": "Kubernetes-centric platform with limited direct Slurm depth."
+      },
+      "egress": {
+        "policy": "metered",
+        "detail": "Transfer economics inherited from underlying partners."
+      },
+      "region_presence": {
+        "north_america": true,
+        "europe": true,
+        "apac": false,
+        "geography_list": "US, EU"
+      },
+      "buyer_tags": ["Developers", "Inference First", "Open Source"],
+      "confidence": {
+        "level": "medium",
+        "note": "Silver standing preserved from canonical framing."
+      }
     }
   },
   {
@@ -262,6 +343,33 @@
     "customer_segmentation": {
       "target_buyer_profiles": ["Application developers", "Serverless platform teams", "Product organizations shipping AI features"],
       "typical_workloads": ["Serverless model deployment", "Low-ops inference", "Rapid prototyping"]
+    },
+    "comparison_taxonomy": {
+      "business_model_class": "Asset-light aggregator",
+      "pricing_tier": "gold",
+      "contract_flexibility": "hourly",
+      "orchestration": {
+        "k8s": false,
+        "slurm": false,
+        "co_scheduling": false,
+        "co_scheduler_type": "None",
+        "maturity": "Serverless-first orchestration without managed Slurm/K8s exposure."
+      },
+      "egress": {
+        "policy": "metered",
+        "detail": "Transfer terms follow deployment architecture and cloud path."
+      },
+      "region_presence": {
+        "north_america": true,
+        "europe": false,
+        "apac": false,
+        "geography_list": "US"
+      },
+      "buyer_tags": ["Developers", "Serverless", "Application Teams"],
+      "confidence": {
+        "level": "medium",
+        "note": "Gold placement reflects app-layer strengths in current dataset."
+      }
     }
   },
   {
@@ -315,6 +423,33 @@
     "customer_segmentation": {
       "target_buyer_profiles": ["Independent researchers", "Early-stage startups", "Cost-sensitive GPU users"],
       "typical_workloads": ["Single-node training", "Small-cluster experiments", "Prototype inference"]
+    },
+    "comparison_taxonomy": {
+      "business_model_class": "Asset-heavy orchestrator",
+      "pricing_tier": "silver",
+      "contract_flexibility": "hourly",
+      "orchestration": {
+        "k8s": false,
+        "slurm": false,
+        "co_scheduling": false,
+        "co_scheduler_type": "None",
+        "maturity": "Strong VM and bare-metal UX, lighter managed scheduler depth."
+      },
+      "egress": {
+        "policy": "metered",
+        "detail": "Standard transfer billing posture."
+      },
+      "region_presence": {
+        "north_america": true,
+        "europe": false,
+        "apac": false,
+        "geography_list": "US"
+      },
+      "buyer_tags": ["Startups", "Researchers", "Cost Sensitive"],
+      "confidence": {
+        "level": "medium",
+        "note": "Silver-tier posture consistent with canonical profile."
+      }
     }
   },
   {
@@ -368,6 +503,33 @@
     "customer_segmentation": {
       "target_buyer_profiles": ["Japanese enterprises", "Domestic research institutions", "Public-sector buyers"],
       "typical_workloads": ["Regional model training", "Manufacturing and robotics HPC", "Residency-constrained AI"]
+    },
+    "comparison_taxonomy": {
+      "business_model_class": "Colocate/operator",
+      "pricing_tier": "silver",
+      "contract_flexibility": "fixed-term",
+      "orchestration": {
+        "k8s": false,
+        "slurm": true,
+        "co_scheduling": false,
+        "co_scheduler_type": "None",
+        "maturity": "Slurm-led managed operations for domestic sovereign workloads."
+      },
+      "egress": {
+        "policy": "conditional",
+        "detail": "Terms shaped by domestic compliance and enterprise contracts."
+      },
+      "region_presence": {
+        "north_america": false,
+        "europe": false,
+        "apac": true,
+        "geography_list": "Japan"
+      },
+      "buyer_tags": ["Sovereign", "Regulated", "Enterprise"],
+      "confidence": {
+        "level": "medium",
+        "note": "Silver status and profile align with source framing."
+      }
     }
   },
   {
@@ -421,6 +583,33 @@
     "customer_segmentation": {
       "target_buyer_profiles": ["Australian sovereign buyers", "Public-sector programs", "Regional enterprise AI teams"],
       "typical_workloads": ["Sovereign hosting", "Reserved training capacity", "National AI infrastructure programs"]
+    },
+    "comparison_taxonomy": {
+      "business_model_class": "Colocate/operator",
+      "pricing_tier": "silver",
+      "contract_flexibility": "fixed-term",
+      "orchestration": {
+        "k8s": false,
+        "slurm": false,
+        "co_scheduling": false,
+        "co_scheduler_type": "None",
+        "maturity": "Infrastructure-forward sovereign posture with lighter managed orchestration depth."
+      },
+      "egress": {
+        "policy": "conditional",
+        "detail": "Transfer terms usually negotiated in sovereign projects."
+      },
+      "region_presence": {
+        "north_america": false,
+        "europe": false,
+        "apac": true,
+        "geography_list": "Australia (Tasmania)"
+      },
+      "buyer_tags": ["Sovereign", "Public Sector", "Enterprise"],
+      "confidence": {
+        "level": "medium",
+        "note": "Silver designation preserved from canonical set."
+      }
     }
   },
   {
@@ -474,6 +663,33 @@
     "customer_segmentation": {
       "target_buyer_profiles": ["Global enterprises", "Government and regulated buyers", "Microsoft-stack organizations"],
       "typical_workloads": ["Enterprise training and inference", "Compliance-heavy AI", "Managed AI platform deployments"]
+    },
+    "comparison_taxonomy": {
+      "business_model_class": "Hyperscaler",
+      "pricing_tier": "gold",
+      "contract_flexibility": "hybrid",
+      "orchestration": {
+        "k8s": true,
+        "slurm": true,
+        "co_scheduling": false,
+        "co_scheduler_type": "None",
+        "maturity": "Enterprise-grade Kubernetes and Slurm pathways at global scale."
+      },
+      "egress": {
+        "policy": "metered",
+        "detail": "Hyperscaler transfer billing with enterprise exceptions."
+      },
+      "region_presence": {
+        "north_america": true,
+        "europe": true,
+        "apac": true,
+        "geography_list": "Global"
+      },
+      "buyer_tags": ["Enterprise", "Regulated", "Global Scale"],
+      "confidence": {
+        "level": "medium",
+        "note": "Gold placement and profile align with ClusterMAX framing."
+      }
     }
   },
   {
@@ -527,6 +743,33 @@
     "customer_segmentation": {
       "target_buyer_profiles": ["Large enterprises", "Frontier-lab-adjacent buyers", "Cost-sensitive hyperscale contracts"],
       "typical_workloads": ["Large reserved training clusters", "Enterprise AI platform hosting", "Database plus AI workloads"]
+    },
+    "comparison_taxonomy": {
+      "business_model_class": "Hyperscaler",
+      "pricing_tier": "gold",
+      "contract_flexibility": "hybrid",
+      "orchestration": {
+        "k8s": true,
+        "slurm": true,
+        "co_scheduling": false,
+        "co_scheduler_type": "None",
+        "maturity": "Mature enterprise orchestration with strong bare-metal and managed options."
+      },
+      "egress": {
+        "policy": "metered",
+        "detail": "Hyperscaler transfer pricing with contract-specific incentives."
+      },
+      "region_presence": {
+        "north_america": true,
+        "europe": true,
+        "apac": true,
+        "geography_list": "Global"
+      },
+      "buyer_tags": ["Enterprise", "Large Contracts", "Global Scale"],
+      "confidence": {
+        "level": "medium",
+        "note": "Gold position preserved from canonical and ClusterMAX context."
+      }
     }
   },
   {
@@ -580,6 +823,33 @@
     "customer_segmentation": {
       "target_buyer_profiles": ["AWS-native enterprises", "Large S3/FSx customers", "Teams evaluating custom silicon"],
       "typical_workloads": ["Mixed enterprise AI", "General-purpose inference", "Service-integrated app hosting"]
+    },
+    "comparison_taxonomy": {
+      "business_model_class": "Hyperscaler",
+      "pricing_tier": "silver",
+      "contract_flexibility": "hybrid",
+      "orchestration": {
+        "k8s": true,
+        "slurm": true,
+        "co_scheduling": false,
+        "co_scheduler_type": "None",
+        "maturity": "Broad managed orchestration footprint with variable distributed-AI UX by path."
+      },
+      "egress": {
+        "policy": "metered",
+        "detail": "Standard hyperscaler data transfer model with carve-outs."
+      },
+      "region_presence": {
+        "north_america": true,
+        "europe": true,
+        "apac": true,
+        "geography_list": "Global"
+      },
+      "buyer_tags": ["Enterprise", "Global Scale", "Platform Native"],
+      "confidence": {
+        "level": "medium",
+        "note": "Silver assignment maintained from source framing."
+      }
     }
   },
   {
@@ -633,6 +903,33 @@
     "customer_segmentation": {
       "target_buyer_profiles": ["Kubernetes-first ML teams", "JAX and TPU users", "Vertex AI enterprise teams"],
       "typical_workloads": ["Managed training/inference", "TPU-native experimentation", "Integrated MLOps and serving"]
+    },
+    "comparison_taxonomy": {
+      "business_model_class": "Hyperscaler",
+      "pricing_tier": "silver",
+      "contract_flexibility": "hybrid",
+      "orchestration": {
+        "k8s": true,
+        "slurm": true,
+        "co_scheduling": false,
+        "co_scheduler_type": "None",
+        "maturity": "Very strong Kubernetes model with TPU-first platform orientation."
+      },
+      "egress": {
+        "policy": "metered",
+        "detail": "Hyperscaler transfer policy with product- and commitment-based variation."
+      },
+      "region_presence": {
+        "north_america": true,
+        "europe": true,
+        "apac": true,
+        "geography_list": "Global"
+      },
+      "buyer_tags": ["Kubernetes First", "Enterprise", "Global Scale"],
+      "confidence": {
+        "level": "medium",
+        "note": "Silver status follows ClusterMAX summary context."
+      }
     }
   },
   {
@@ -686,6 +983,33 @@
     "customer_segmentation": {
       "target_buyer_profiles": ["EU startups", "Sovereignty-constrained enterprises", "Cost-sensitive researchers"],
       "typical_workloads": ["Spot-backed fine-tuning", "EU-resident training jobs", "Inference endpoints for media generation"]
+    },
+    "comparison_taxonomy": {
+      "business_model_class": "Asset-heavy orchestrator",
+      "pricing_tier": "bronze",
+      "contract_flexibility": "hourly",
+      "orchestration": {
+        "k8s": true,
+        "slurm": true,
+        "co_scheduling": false,
+        "co_scheduler_type": "None",
+        "maturity": "Maturing managed Kubernetes plus Slurm operations with strong sovereignty alignment."
+      },
+      "egress": {
+        "policy": "conditional",
+        "detail": "Varies by product and contract path; no universal zero-egress policy published."
+      },
+      "region_presence": {
+        "north_america": false,
+        "europe": true,
+        "apac": false,
+        "geography_list": "Finland, Iceland"
+      },
+      "buyer_tags": ["Sovereign EU", "Startups", "Cost Sensitive"],
+      "confidence": {
+        "level": "medium",
+        "note": "Bronze placement and infrastructure profile are aligned to ClusterMAX-era references and attached context files."
+      }
     }
   },
   {
@@ -739,6 +1063,33 @@
     "customer_segmentation": {
       "target_buyer_profiles": ["AMD-first ML teams", "Cost-sensitive inference providers", "Teams optimizing memory-bound models"],
       "typical_workloads": ["Large-model inference", "ROCm-native training", "High-batch serving pipelines"]
+    },
+    "comparison_taxonomy": {
+      "business_model_class": "Asset-heavy orchestrator",
+      "pricing_tier": "bronze",
+      "contract_flexibility": "weekly",
+      "orchestration": {
+        "k8s": true,
+        "slurm": true,
+        "co_scheduling": false,
+        "co_scheduler_type": "None",
+        "maturity": "Production-capable K8s and Slurm, optimized for AMD/ROCm workflows rather than integrated SonK co-scheduling."
+      },
+      "egress": {
+        "policy": "metered",
+        "detail": "Standard transfer billing posture; transparency claims are provider-specific."
+      },
+      "region_presence": {
+        "north_america": true,
+        "europe": false,
+        "apac": false,
+        "geography_list": "US (Pittsburgh, Miami, Arizona)"
+      },
+      "buyer_tags": ["AMD First", "Inference First", "Cost Sensitive"],
+      "confidence": {
+        "level": "medium",
+        "note": "Bronze cohort placement is supported in attached analysis; some maturity language remains inferential and should be periodically revalidated."
+      }
     }
   },
   {
@@ -792,6 +1143,33 @@
     "customer_segmentation": {
       "target_buyer_profiles": ["Sovereign government buyers", "Regulated enterprises", "Risk-averse AI infrastructure teams"],
       "typical_workloads": ["Compliance-sensitive training", "Long-running distributed HPC", "Sovereign AI platform hosting"]
+    },
+    "comparison_taxonomy": {
+      "business_model_class": "Colocate/operator",
+      "pricing_tier": "bronze",
+      "contract_flexibility": "fixed-term",
+      "orchestration": {
+        "k8s": true,
+        "slurm": true,
+        "co_scheduling": false,
+        "co_scheduler_type": "None",
+        "maturity": "Managed Kubernetes and managed Slurm are offered as distinct operating environments without a unified co-scheduler."
+      },
+      "egress": {
+        "policy": "conditional",
+        "detail": "Enterprise and sovereign contracts drive custom network/data-transfer terms."
+      },
+      "region_presence": {
+        "north_america": true,
+        "europe": true,
+        "apac": false,
+        "geography_list": "Canada, Sweden"
+      },
+      "buyer_tags": ["Sovereign", "Regulated", "Enterprise"],
+      "confidence": {
+        "level": "medium",
+        "note": "Bronze-tier interpretation is consistent with attached Bronze analysis; specific benchmarking claims should be rechecked against future ClusterMAX updates."
+      }
     }
   },
   {
@@ -845,6 +1223,33 @@
     "customer_segmentation": {
       "target_buyer_profiles": ["Enterprise developers", "Healthcare and finance AI teams", "Workflow-focused application builders"],
       "typical_workloads": ["RAG pipelines", "Inference-first app deployment", "Autonomous agent workflows"]
+    },
+    "comparison_taxonomy": {
+      "business_model_class": "Asset-light aggregator",
+      "pricing_tier": "bronze",
+      "contract_flexibility": "hourly",
+      "orchestration": {
+        "k8s": true,
+        "slurm": false,
+        "co_scheduling": false,
+        "co_scheduler_type": "None",
+        "maturity": "Platform supports Kubernetes-centric workflows and software-layer orchestration; no evidence of integrated Slurm+K8s co-scheduling."
+      },
+      "egress": {
+        "policy": "metered",
+        "detail": "Network transfer economics depend on underlying partner infrastructure path."
+      },
+      "region_presence": {
+        "north_america": true,
+        "europe": true,
+        "apac": true,
+        "geography_list": "Global"
+      },
+      "buyer_tags": ["Enterprise", "Developers", "Workflow Focused"],
+      "confidence": {
+        "level": "medium",
+        "note": "Bronze-tier and value-chain profile align with attached reports; orchestration specifics should be treated as platform-level synthesis."
+      }
     }
   },
   {
