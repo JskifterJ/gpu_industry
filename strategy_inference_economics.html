@@ -1697,12 +1697,12 @@ footer {
 // a CPU + PCIe switch. Actual usable bandwidth vs theoretical:
 // NVLink: near-linear — purpose-built for GPU-GPU comms
 // PCIe: degrades badly at scale — lanes shared, IOMMU overhead, CPU bottleneck
-const IC_EFFICIENCY = {
+let IC_EFFICIENCY = {
   nvlink: { 1:1.00, 2:0.95, 4:0.92, 8:0.90, 16:0.87 },
   pcie:   { 1:1.00, 2:0.55, 4:0.30, 8:0.18, 16:0.10 }
 };
 
-const GPUS = {
+let GPUS = {
   // Ordered by release date (oldest → newest); same year sorted by bandwidth ascending
   'V100 SXM2 32GB': {
     vram: 32, bandwidth: 900, tflops: 112, tdp: 300,
@@ -1800,7 +1800,7 @@ function getOrderedGpuEntries(opts = {}) {
     .sort((a, b) => (b.g.bandwidth - a.g.bandwidth) || (b.genYear - a.genYear) || (b.g.vram - a.g.vram));
 }
 
-const MODELS = {
+let MODELS = {
   '7B':   { params: 7,   hidden: 4096,  layers: 32,  kv_heads: 32, ex: 'Llama 3.1 8B · Mistral 7B · Gemma 2 9B · Claude Haiku-class · GPT-4o-mini-class' },
   '13B':  { params: 13,  hidden: 5120,  layers: 40,  kv_heads: 40, ex: 'Llama 2 13B · Phi-3 Medium · Gemma 2 12B' },
   '34B':  { params: 34,  hidden: 7168,  layers: 48,  kv_heads: 8,  ex: 'CodeLlama 34B · Yi-34B · Gemma 2 27B · Phi-3 large-class' },
@@ -1824,7 +1824,7 @@ const MODEL_PRESETS = [
   { name: 'Qwen 2.5 72B', maker: 'Alibaba (Open)', size: '70B', prec: 'INT4', note: 'Available quantised. INT4 fits on 2× H100 or 4× A100.', color: '#fb923c' },
 ];
 
-const BPP = { FP32: 4, BF16: 2, FP16: 2, INT8: 1, INT4: 0.5 };
+let BPP = { FP32: 4, BF16: 2, FP16: 2, INT8: 1, INT4: 0.5 };
 
 const PRECISION_INFO = [
   { p:'FP32', mult:4, quality:'Full precision', quality_loss:'Baseline', note:'Training only — too expensive for inference' },
@@ -1837,6 +1837,70 @@ let selectedModel = '70B';
 let selectedPrecision = 'BF16';
 let penaltyChart = null;
 let costChart = null;
+
+async function loadCanonicalEconomicsSpec() {
+  try {
+    const res = await fetch('data_files/gpu_economics_canonical_spec_v1.json', { cache: 'no-store' });
+    if (!res.ok) return;
+    const spec = await res.json();
+
+    if (spec.interconnect_efficiency) {
+      IC_EFFICIENCY = {
+        ...IC_EFFICIENCY,
+        ...spec.interconnect_efficiency
+      };
+    }
+
+    if (spec.precision_bytes_per_param) {
+      BPP = {
+        ...BPP,
+        ...spec.precision_bytes_per_param
+      };
+    }
+
+    const tiers = spec.model_tiers || {};
+    const nextModels = {};
+    Object.entries(tiers).forEach(([k, v]) => {
+      nextModels[k] = {
+        ...(MODELS[k] || {}),
+        params: v.params_b,
+        hidden: v.hidden,
+        layers: v.layers,
+        kv_heads: v.kv_heads,
+        ex: (MODELS[k] && MODELS[k].ex) || ''
+      };
+    });
+    if (Object.keys(nextModels).length) MODELS = nextModels;
+
+    const cat = spec.gpu_catalog || {};
+    const nextGpus = {};
+    Object.entries(cat).forEach(([name, g]) => {
+      nextGpus[name] = {
+        ...(GPUS[name] || {}),
+        vram: g.vram_gb,
+        bandwidth: g.bandwidth_gbps,
+        tflops: g.tflops,
+        tdp: g.tdp_w,
+        interconnect: g.interconnect,
+        ic_bw: g.ic_bw_gbps,
+        ic_lat: g.ic_lat_us,
+        ic_type: g.interconnect_type,
+        price_spot: g.hourly_price_usd,
+        sustained_eff: g.sustained_efficiency,
+        chassis_u: g.chassis_u,
+        gpu_per_chassis: g.gpu_per_chassis,
+        ecc: g.ecc,
+        datacenter: g.datacenter,
+        gen: (GPUS[name] && GPUS[name].gen) || '',
+        color: (GPUS[name] && GPUS[name].color) || '#94a3b8',
+        note: (GPUS[name] && GPUS[name].note) || ''
+      };
+    });
+    if (Object.keys(nextGpus).length) GPUS = nextGpus;
+  } catch (e) {
+    console.warn('Canonical economics spec load failed; using in-file defaults.', e);
+  }
+}
 
 // ══════════════════════════════════════════════════════════════════
 // CALCULATION ENGINE
@@ -3136,6 +3200,15 @@ document.addEventListener('DOMContentLoaded', () => {
   updateTokens();
   updateLatencyCompare();
   updatePenaltyChart();
+  loadCanonicalEconomicsSpec().then(() => {
+    buildCompareSelects();
+    buildModelPresets();
+    updateTokens();
+    updateModelMemory();
+    updateLatencyCompare();
+    updatePenaltyChart();
+    updateEcon();
+  });
 });
 </script>
 </body>

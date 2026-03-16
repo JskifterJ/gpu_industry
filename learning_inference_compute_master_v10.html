@@ -4924,6 +4924,59 @@ var ECONX_SCENARIOS = {
 };
 var ECONX_ACTIVE_SCENARIO = '';
 
+function loadCanonicalEconomicsSpecV10(){
+  return fetch('data_files/gpu_economics_canonical_spec_v1.json', { cache: 'no-store' })
+    .then(function(res){ if(!res.ok) return null; return res.json(); })
+    .then(function(spec){
+      if(!spec) return;
+      if(spec.interconnect_efficiency){
+        ECONX_IC_EFF = Object.assign({}, ECONX_IC_EFF, spec.interconnect_efficiency);
+      }
+      if(spec.precision_bytes_per_param){
+        ECONX_BPP = Object.assign({}, ECONX_BPP, spec.precision_bytes_per_param);
+      }
+
+      var tiers = spec.model_tiers || {};
+      var nextModels = {};
+      Object.keys(tiers).forEach(function(k){
+        var t = tiers[k];
+        nextModels[k] = {
+          params: t.params_b,
+          hidden: t.hidden,
+          layers: t.layers,
+          kv_heads: t.kv_heads
+        };
+      });
+      if(Object.keys(nextModels).length) ECONX_MODELS = nextModels;
+
+      var cat = spec.gpu_catalog || {};
+      var nextGpus = {};
+      Object.keys(cat).forEach(function(name){
+        var g = cat[name];
+        nextGpus[name] = {
+          vram: g.vram_gb,
+          bandwidth: g.bandwidth_gbps,
+          tflops: g.tflops,
+          tdp: g.tdp_w,
+          interconnect: g.interconnect,
+          ic_bw: g.ic_bw_gbps,
+          ic_lat: g.ic_lat_us,
+          ic_type: g.interconnect_type,
+          price: g.hourly_price_usd,
+          sustained: g.sustained_efficiency,
+          chassis_u: g.chassis_u,
+          gpu_per_chassis: g.gpu_per_chassis,
+          ecc: g.ecc,
+          color: (ECONX_GPUS[name] && ECONX_GPUS[name].color) || '#94a3b8'
+        };
+      });
+      if(Object.keys(nextGpus).length) ECONX_GPUS = nextGpus;
+    })
+    .catch(function(err){
+      console.warn('Canonical economics spec load failed; using v10 defaults.', err);
+    });
+}
+
 function econxKeys(){
   return Object.keys(ECONX_GPUS).sort(function(a,b){
     return ECONX_GPUS[b].bandwidth - ECONX_GPUS[a].bandwidth;
@@ -5545,6 +5598,16 @@ document.addEventListener('DOMContentLoaded', function(){
   // speed slider label
   var sp = document.getElementById('tl-speed');
   if(sp) sp.addEventListener('input', function(){ var l = document.getElementById('tl-speed-lbl'); if(l) l.textContent = (900/parseInt(this.value)).toFixed(1)+'\u00d7'; });
+
+  loadCanonicalEconomicsSpecV10().then(function(){
+    econxPopulateGpuSelects();
+    econxBuildInterconnectBars();
+    if(ECONX_ACTIVE_SCENARIO){
+      econxApplyScenario(ECONX_ACTIVE_SCENARIO);
+    } else {
+      econxApplyScenario('claude_rag');
+    }
+  });
 });
 </script>
 

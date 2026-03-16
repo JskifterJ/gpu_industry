@@ -8,28 +8,30 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
 <style>
 :root {
-  --bg: #06101c;
-  --bg-2: #0b1729;
-  --bg-3: #10223a;
-  --panel: #11243d;
-  --panel-2: #162f4e;
-  --line: #29466b;
-  --line-soft: #1f3959;
-  --text: #e8f1ff;
-  --muted: #9cb2d1;
-  --muted-2: #7d93b5;
-  --brand: #28c7b7;
-  --brand-soft: rgba(40,199,183,0.15);
-  --accent: #f7b045;
-  --accent-soft: rgba(247,176,69,0.16);
-  --good: #58d48a;
-  --good-soft: rgba(88,212,138,0.14);
-  --warn: #f4c95d;
-  --warn-soft: rgba(244,201,93,0.16);
-  --bad: #f27373;
-  --bad-soft: rgba(242,115,115,0.16);
+  --bg: #f7f4ee;
+  --bg-2: #fbf8f3;
+  --bg-3: #f1ece3;
+  --panel: #ffffff;
+  --panel-2: #f8f3ea;
+  --line: #d8cfc0;
+  --line-soft: #e8e0d3;
+  --text: #1f2a33;
+  --muted: #556270;
+  --muted-2: #6d7a88;
+  --brand: #0f7f78;
+  --brand-soft: rgba(15,127,120,0.10);
+  --accent: #a15a1d;
+  --accent-soft: rgba(161,90,29,0.10);
+  --good: #197a50;
+  --good-soft: rgba(25,122,80,0.10);
+  --warn: #9b7711;
+  --warn-soft: rgba(155,119,17,0.10);
+  --bad: #b84d4d;
+  --bad-soft: rgba(184,77,77,0.10);
   --mono: 'IBM Plex Mono', monospace;
   --sans: 'Space Grotesk', sans-serif;
 }
@@ -38,8 +40,8 @@
 html, body { width: 100%; height: 100%; overflow: hidden; }
 body {
   background:
-    radial-gradient(circle at 80% -10%, rgba(40,199,183,0.12), transparent 36%),
-    radial-gradient(circle at 0% 110%, rgba(247,176,69,0.10), transparent 32%),
+    radial-gradient(circle at 80% -10%, rgba(15,127,120,0.10), transparent 38%),
+    radial-gradient(circle at 0% 110%, rgba(161,90,29,0.10), transparent 34%),
     var(--bg);
   color: var(--text);
   font-family: var(--sans);
@@ -70,6 +72,47 @@ body {
 
 .slide.prev { transform: translateX(-4%); }
 
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.slide.active .slide-title,
+.slide.active .slide-sub,
+.slide.active .eyebrow,
+.slide.active .card,
+.slide.active .work-card,
+.slide.active .pipe,
+.slide.active .matrix,
+.slide.active .highlight-box,
+.slide.active .store-col,
+.slide.active .compare-card,
+.slide.active .big-meter,
+.slide.active .topo,
+.slide.active .kpi,
+.slide.active .bar-box,
+.slide.active .note {
+  animation: riseIn .45s ease both;
+}
+
+.slide.active .slide-title { animation-delay: .03s; }
+.slide.active .slide-sub { animation-delay: .08s; }
+.slide.active .card:nth-of-type(1),
+.slide.active .work-card:nth-of-type(1),
+.slide.active .pipe:nth-of-type(1),
+.slide.active .store-col:nth-of-type(1),
+.slide.active .compare-card:nth-of-type(1) { animation-delay: .12s; }
+.slide.active .card:nth-of-type(2),
+.slide.active .work-card:nth-of-type(2),
+.slide.active .pipe:nth-of-type(2),
+.slide.active .store-col:nth-of-type(2),
+.slide.active .compare-card:nth-of-type(2) { animation-delay: .18s; }
+.slide.active .card:nth-of-type(3),
+.slide.active .work-card:nth-of-type(3),
+.slide.active .pipe:nth-of-type(3),
+.slide.active .store-col:nth-of-type(3),
+.slide.active .compare-card:nth-of-type(3) { animation-delay: .24s; }
+
 .chrome {
   position: fixed;
   top: 0;
@@ -81,7 +124,7 @@ body {
   justify-content: space-between;
   padding: 0 24px;
   border-bottom: 1px solid var(--line-soft);
-  background: rgba(6,16,28,0.84);
+  background: rgba(247,244,238,0.92);
   backdrop-filter: blur(10px);
   z-index: 220;
 }
@@ -163,7 +206,7 @@ h1, h2, h3 { font-weight: 600; line-height: 1.08; }
   font-family: var(--mono);
   font-size: 10px;
   color: var(--muted);
-  background: rgba(255,255,255,0.02);
+  background: rgba(255,255,255,0.9);
 }
 
 .pill.brand { border-color: rgba(40,199,183,.5); color: var(--brand); background: var(--brand-soft); }
@@ -185,7 +228,7 @@ h1, h2, h3 { font-weight: 600; line-height: 1.08; }
 }
 
 .card {
-  background: linear-gradient(180deg, rgba(22,47,78,0.8), rgba(17,36,61,0.9));
+  background: linear-gradient(180deg, #ffffff, #faf6ef);
   border: 1px solid var(--line);
   border-radius: 10px;
   padding: 16px 18px;
@@ -244,7 +287,7 @@ h1, h2, h3 { font-weight: 600; line-height: 1.08; }
 .work-card {
   border: 1px solid var(--line);
   border-radius: 10px;
-  background: rgba(17,36,61,0.75);
+  background: #ffffff;
   padding: 12px;
 }
 
@@ -292,7 +335,7 @@ h1, h2, h3 { font-weight: 600; line-height: 1.08; }
   border-radius: 4px;
   padding: 3px 6px;
   color: var(--muted);
-  background: rgba(255,255,255,0.01);
+  background: #fff;
 }
 
 .pipe-wrap {
@@ -300,7 +343,7 @@ h1, h2, h3 { font-weight: 600; line-height: 1.08; }
   border: 1px solid var(--line);
   border-radius: 10px;
   padding: 12px;
-  background: rgba(16,34,58,0.62);
+  background: #f6f1e8;
 }
 
 .pipeline {
@@ -313,7 +356,7 @@ h1, h2, h3 { font-weight: 600; line-height: 1.08; }
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 9px;
-  background: rgba(17,36,61,.75);
+  background: #fff;
   min-height: 115px;
 }
 
@@ -369,13 +412,64 @@ h1, h2, h3 { font-weight: 600; line-height: 1.08; }
   border-radius: 2px;
 }
 
+.mermaid-wrap {
+  margin-top: 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px;
+  background: linear-gradient(180deg, #ffffff, #faf6ef);
+}
+
+.mermaid-pane {
+  border: 1px solid var(--line-soft);
+  border-radius: 8px;
+  background: #fff;
+  min-height: 380px;
+  max-height: 430px;
+  overflow: auto;
+  padding: 6px;
+}
+
+.mermaid-pane .mermaid {
+  min-width: 1380px;
+}
+
+.flow-meta {
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.flow-meta-item {
+  border: 1px solid var(--line-soft);
+  border-radius: 7px;
+  background: #fff;
+  padding: 8px;
+}
+
+.flow-meta-k {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--muted-2);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: 4px;
+}
+
+.flow-meta-v {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
 .highlight-box {
   margin-top: 10px;
   border: 1px solid rgba(242,115,115,0.35);
   background: var(--bad-soft);
   border-radius: 8px;
   padding: 10px 12px;
-  color: #f2d9d9;
+  color: #6d2f2f;
   font-size: 13px;
   line-height: 1.45;
 }
@@ -390,7 +484,7 @@ h1, h2, h3 { font-weight: 600; line-height: 1.08; }
 
 .controls {
   border: 1px solid var(--line);
-  background: rgba(17,36,61,.72);
+  background: #fff;
   border-radius: 10px;
   padding: 12px;
   overflow: auto;
@@ -412,7 +506,7 @@ select, input[type="range"] {
 }
 
 select {
-  background: var(--bg-3);
+  background: #fff;
   color: var(--text);
   border: 1px solid var(--line);
   border-radius: 6px;
@@ -435,7 +529,7 @@ input[type="range"] {
 
 .q-btn {
   border: 1px solid var(--line);
-  background: var(--bg-3);
+  background: #fff;
   color: var(--muted);
   border-radius: 999px;
   padding: 4px 8px;
@@ -448,6 +542,14 @@ input[type="range"] {
   border-color: var(--accent);
   color: var(--accent);
   background: var(--accent-soft);
+}
+
+.ctl-helper {
+  margin-top: -2px;
+  margin-bottom: 8px;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--muted-2);
 }
 
 .results {
@@ -467,7 +569,7 @@ input[type="range"] {
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 10px;
-  background: rgba(17,36,61,0.75);
+  background: #fff;
 }
 
 .kpi-lbl {
@@ -498,7 +600,7 @@ input[type="range"] {
 .bar-box {
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: rgba(17,36,61,0.75);
+  background: #fff;
   padding: 10px;
 }
 
@@ -520,7 +622,7 @@ input[type="range"] {
   height: 12px;
   border-radius: 4px;
   overflow: hidden;
-  background: #0f1f35;
+  background: #efe8dc;
   border: 1px solid var(--line-soft);
 }
 
@@ -551,7 +653,7 @@ input[type="range"] {
   font-size: 12px;
   line-height: 1.45;
   color: var(--muted);
-  background: rgba(17,36,61,0.75);
+  background: #fff;
 }
 
 .mfu-scene {
@@ -564,7 +666,7 @@ input[type="range"] {
 .big-meter {
   border: 1px solid var(--line);
   border-radius: 10px;
-  background: rgba(17,36,61,0.78);
+  background: #fff;
   padding: 14px;
 }
 
@@ -596,7 +698,7 @@ input[type="range"] {
 .impact {
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: rgba(17,36,61,.75);
+  background: #fff;
   padding: 9px 10px;
   display: grid;
   grid-template-columns: 1fr 90px;
@@ -617,7 +719,7 @@ input[type="range"] {
 .topo {
   border: 1px solid var(--line);
   border-radius: 10px;
-  background: rgba(17,36,61,.75);
+  background: #fff;
   padding: 12px;
 }
 
@@ -642,7 +744,7 @@ input[type="range"] {
   border: 1px solid var(--line);
   border-radius: 6px;
   padding: 8px;
-  background: var(--bg-3);
+  background: #f7f2e9;
 }
 
 .node h4 { font-size: 12px; margin-bottom: 3px; }
@@ -677,7 +779,7 @@ input[type="range"] {
 .row:last-child > div { border-bottom: none; }
 
 .row.head > div {
-  background: var(--bg-3);
+  background: #f7f2e9;
   font-family: var(--mono);
   font-size: 10px;
   color: var(--muted);
@@ -695,7 +797,7 @@ input[type="range"] {
 .store-col {
   border: 1px solid var(--line);
   border-radius: 10px;
-  background: rgba(17,36,61,.76);
+  background: #fff;
   padding: 12px;
 }
 
@@ -713,7 +815,7 @@ input[type="range"] {
   border-radius: 7px;
   padding: 8px;
   margin-bottom: 8px;
-  background: rgba(255,255,255,0.02);
+  background: #fcfaf6;
 }
 
 .store-item strong { font-size: 12px; display: block; margin-bottom: 4px; }
@@ -729,7 +831,7 @@ input[type="range"] {
 .compare-card {
   border: 1px solid var(--line);
   border-radius: 10px;
-  background: rgba(17,36,61,.78);
+  background: #fff;
   padding: 12px;
 }
 
@@ -744,6 +846,311 @@ input[type="range"] {
 
 .compare-card p { color: var(--muted); font-size: 12px; line-height: 1.45; }
 
+.econx-wrap {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 12px;
+}
+
+.econx-controls {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  padding: 12px;
+}
+
+.econx-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.econx-card {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  padding: 11px;
+}
+
+.econx-title {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--muted-2);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: 7px;
+}
+
+.econx-kpi {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.econx-kpi-box {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 9px;
+  background: #fff;
+}
+
+.econx-kpi-l {
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--muted-2);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: 4px;
+}
+
+.econx-kpi-v {
+  font-family: var(--mono);
+  font-size: 18px;
+  line-height: 1;
+}
+
+.econx-chart {
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #fff;
+  padding: 8px;
+  height: 230px;
+}
+
+.econx-chart canvas { width: 100% !important; height: 100% !important; }
+
+.econx-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.econx-nodegrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.econx-nodecard {
+  border: 1px solid var(--line-soft);
+  border-radius: 8px;
+  background: #fff;
+  padding: 8px;
+}
+
+.econx-nodehead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.econx-nodehead strong {
+  font-size: 11px;
+}
+
+.econx-nodehead span {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--muted);
+}
+
+.econx-nodestrip {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 3px;
+}
+
+.econx-dot {
+  height: 8px;
+  border-radius: 3px;
+  background: #e9e2d7;
+  border: 1px solid var(--line-soft);
+}
+
+.econx-dot.on {
+  background: rgba(15,127,120,0.45);
+  border-color: rgba(15,127,120,0.6);
+}
+
+.econx-nodefoot {
+  margin-top: 6px;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--muted);
+}
+
+.econx-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--mono);
+  font-size: 10px;
+}
+
+.econx-table th,
+.econx-table td {
+  border-bottom: 1px solid var(--line-soft);
+  padding: 6px 6px;
+  text-align: left;
+}
+
+.econx-table th { color: var(--muted-2); font-weight: 500; }
+
+.econx-costbar {
+  display: flex;
+  height: 10px;
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: #f4f0e8;
+  margin: 4px 0;
+}
+
+.econx-seg { height: 100%; }
+
+.econx-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--muted);
+}
+
+.econx-legend span::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  margin-right: 4px;
+}
+
+.econx-legend .c1::before { background: #0f7f78; }
+.econx-legend .c2::before { background: #a15a1d; }
+.econx-legend .c3::before { background: #7a5f13; }
+.econx-legend .c4::before { background: #2468a5; }
+.econx-legend .c5::before { background: #b84d4d; }
+
+.econx-batches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.econx-b {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 4px 8px;
+  font-family: var(--mono);
+  font-size: 9px;
+  background: #fff;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.econx-b.sel {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.toc-grid {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.toc-item {
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #fff;
+  padding: 10px 11px;
+  cursor: pointer;
+  transition: border-color .16s ease, transform .16s ease, background .16s ease;
+}
+
+.toc-item:hover {
+  border-color: rgba(40,199,183,.6);
+  background: #fbf7f0;
+  transform: translateY(-1px);
+}
+
+.toc-item-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.toc-num {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.toc-min {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--muted-2);
+}
+
+.toc-item h4 {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.toc-item p {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.exec-kpi-row {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.exec-kpi {
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 11px;
+  background: #fff;
+}
+
+.exec-kpi .k {
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--muted-2);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: 5px;
+}
+
+.exec-kpi .v {
+  font-family: var(--mono);
+  font-size: 24px;
+  line-height: 1;
+  margin-bottom: 5px;
+}
+
+.exec-kpi .s {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
 .footer-nav {
   position: fixed;
   left: 0;
@@ -751,7 +1158,7 @@ input[type="range"] {
   bottom: 0;
   height: 64px;
   border-top: 1px solid var(--line-soft);
-  background: rgba(6,16,28,0.9);
+  background: rgba(247,244,238,0.95);
   backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
@@ -764,7 +1171,7 @@ input[type="range"] {
 
 .btn {
   border: 1px solid var(--line);
-  background: var(--bg-3);
+  background: #fff;
   color: var(--muted);
   border-radius: 6px;
   padding: 8px 12px;
@@ -804,7 +1211,7 @@ input[type="range"] {
 #tooltip {
   position: fixed;
   max-width: 330px;
-  background: #071425;
+  background: #fff;
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 10px;
@@ -846,7 +1253,10 @@ kbd {
 @media (max-width: 1100px) {
   .slide { padding: 66px 20px 86px; overflow: auto; }
   .grid-2, .fit-layout, .mfu-scene, .topo-grid, .storage-map, .compare-grid { grid-template-columns: 1fr; }
+  .econx-wrap, .econx-grid, .econx-kpi, .econx-split { grid-template-columns: 1fr; }
   .workload-grid, .pipeline, .kpi-grid, .grid-3 { grid-template-columns: 1fr 1fr; }
+  .flow-meta { grid-template-columns: 1fr 1fr; }
+  .toc-grid, .exec-kpi-row { grid-template-columns: 1fr; }
   .row { grid-template-columns: 160px repeat(3, 1fr); }
   body { overflow: auto; }
 }
@@ -857,7 +1267,7 @@ kbd {
   <div class="logo-wrap"><span class="logo-dot"></span> Inference Infrastructure Red Thread</div>
   <div class="chrome-right">
     <span>30-40 min strategic brief</span>
-    <span id="slideCount">01 / 12</span>
+    <span id="slideCount">01 / 14</span>
   </div>
 </div>
 <div class="progress" id="progress"></div>
@@ -865,8 +1275,8 @@ kbd {
 <div class="deck" id="deck">
   <section class="slide active" id="s1" data-title="Executive framing">
     <div class="eyebrow">Chapter 1 - Executive framing</div>
-    <h1 class="slide-title">From GPU Hardware to Business Outcome: One Red Thread</h1>
-    <p class="slide-sub">We align technical decisions to business value by tracking one throughline: workload shape -> system bottlenecks -> MFU -> cost and user experience.</p>
+    <h1 class="slide-title">Executive Overview: Workload, Infrastructure, MFU, and Economics</h1>
+    <p class="slide-sub">One throughline: workload shape -> bottlenecks -> MFU -> cost and user experience.</p>
     <div class="meta-row">
       <span class="pill brand">Audience: Mixed business + technical decision makers</span>
       <span class="pill accent">Focus: Inference first, with links to model customization and training paths</span>
@@ -886,18 +1296,77 @@ kbd {
       <div class="card">
         <div class="card-k">Guiding question</div>
         <h3>What are we really buying?</h3>
-        <p>You are not buying only GPUs. You are buying reliably low-latency output tokens under realistic concurrency, with safe multi-tenant isolation and predictable economics across mixed workloads.</p>
-        <div class="highlight-box" style="margin-top:12px; border-color: rgba(88,212,138,.35); background: var(--good-soft); color:#d6f5e3;">
+        <p>You are buying reliable output-token delivery under real concurrency, with isolation and predictable unit economics.</p>
+        <div class="highlight-box" style="margin-top:12px; border-color: rgba(88,212,138,.35); background: var(--good-soft); color:#1f5c40;">
           Decision quality improves when every architecture conversation ends at the same scoreboard: user latency, throughput, MFU, and cost per output token.
         </div>
       </div>
     </div>
   </section>
 
+  <section class="slide" id="s1_toc" data-title="Table of contents">
+    <div class="eyebrow">Opening - Table of contents</div>
+    <h2 class="slide-title" style="font-size:clamp(32px,4.4vw,54px)">Table of Contents</h2>
+    <p class="slide-sub">Chapter sequence and timing for the full strategic brief. Chapters 5, 6, and 10 contain the key commercial decision points.</p>
+
+    <div class="toc-grid">
+      <article class="toc-item" data-jump="s1"><div class="toc-item-top"><span class="toc-num">1</span><span class="toc-min">3-4 min</span></div><h4>Executive framing</h4><p>What changed and the red-thread metric framework.</p></article>
+      <article class="toc-item" data-jump="s2"><div class="toc-item-top"><span class="toc-num">2</span><span class="toc-min">3 min</span></div><h4>Workload gallery</h4><p>Chat, RAG, vision, image generation, speech, agents.</p></article>
+      <article class="toc-item" data-jump="s3"><div class="toc-item-top"><span class="toc-num">3</span><span class="toc-min">4 min</span></div><h4>Unified serving process</h4><p>Frameworks, model sources, orchestration, GPU, storage.</p></article>
+      <article class="toc-item" data-jump="s4"><div class="toc-item-top"><span class="toc-num">4</span><span class="toc-min">3 min</span></div><h4>Model sizing essentials</h4><p>Parameters, precision, and context implications.</p></article>
+      <article class="toc-item" data-jump="s5"><div class="toc-item-top"><span class="toc-num">5</span><span class="toc-min">7-8 min</span></div><h4>Combined fit + capacity panel</h4><p>Live scenario: fit, MFU, throughput, and token economics.</p></article>
+      <article class="toc-item" data-jump="s6"><div class="toc-item-top"><span class="toc-num">6</span><span class="toc-min">3-4 min</span></div><h4>MFU north-star</h4><p>Translate technical tuning into financial impact.</p></article>
+      <article class="toc-item" data-jump="s7"><div class="toc-item-top"><span class="toc-num">7-9</span><span class="toc-min">8-9 min</span></div><h4>Infra, security, and storage</h4><p>Interconnects, tenancy isolation, and data lifecycle routes.</p></article>
+      <article class="toc-item" data-jump="s10"><div class="toc-item-top"><span class="toc-num">10-12</span><span class="toc-min">6-7 min</span></div><h4>Economics, checklist, close</h4><p>Commercial comparison, diligence questions, action sequence.</p></article>
+    </div>
+  </section>
+
+  <section class="slide" id="s1_exec" data-title="Executive summary">
+    <div class="eyebrow">Opening - 2-minute executive summary</div>
+    <h2 class="slide-title" style="font-size:clamp(32px,4.3vw,52px)">Executive Summary: Four Decisions and Their Impact</h2>
+    <p class="slide-sub">Same GPU budget can produce very different outcomes. The spread is mostly explained by utilization quality (MFU) and communication quality (interconnect + scheduling).</p>
+
+    <div class="exec-kpi-row">
+      <div class="exec-kpi">
+        <div class="k">Primary KPI</div>
+        <div class="v good">MFU</div>
+        <div class="s">Best single proxy for unit efficiency under real demand.</div>
+      </div>
+      <div class="exec-kpi">
+        <div class="k">Cost spread driver</div>
+        <div class="v warn">Bandwidth</div>
+        <div class="s">Interconnect quality and comm overhead create most divergence.</div>
+      </div>
+      <div class="exec-kpi">
+        <div class="k">Risk control</div>
+        <div class="v bad">Isolation</div>
+        <div class="s">Multi-tenant boundaries and policy auditability are non-negotiable.</div>
+      </div>
+      <div class="exec-kpi">
+        <div class="k">Operating model</div>
+        <div class="v" style="color:var(--brand)">Mixed stack</div>
+        <div class="s">K8s + Slurm style control planes can outperform siloed approaches.</div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-top:14px;">
+      <div class="card">
+        <div class="card-k">Strategic implication</div>
+        <h3>Buy delivered performance, not headline silicon</h3>
+        <p>Procurement should be tied to workload-shaped benchmarks, MFU bands, and SLA segmentation, not synthetic peak claims.</p>
+      </div>
+      <div class="card">
+        <div class="card-k">Decision trigger</div>
+        <h3>If economics diverge, inspect utilization first</h3>
+        <p>Before changing model tier or provider, test batching policy, interconnect topology, and scheduler behavior on your workload mix.</p>
+      </div>
+    </div>
+  </section>
+
   <section class="slide" id="s2" data-title="Workload map">
     <div class="eyebrow">Chapter 2 - Workload gallery</div>
-    <h2 class="slide-title" style="font-size:clamp(30px,4vw,52px)">Real Demand Is Multi-Modal and Multi-Shape</h2>
-    <p class="slide-sub">Different workloads stress different parts of the same stack. This is why one-size GPU procurement usually underperforms.</p>
+    <h2 class="slide-title" style="font-size:clamp(30px,4vw,52px)">Workload Types and Demand Shapes</h2>
+    <p class="slide-sub">Different workloads stress different layers of the same stack, so one-size procurement usually underperforms.</p>
 
     <div class="workload-grid">
       <div class="work-card">
@@ -933,59 +1402,151 @@ kbd {
     </div>
 
     <div class="highlight-box">
-      All six workloads still funnel through the same core path: serving framework -> model runtime -> GPU cluster -> storage and retention. The winning platform is the one that handles workload diversity without collapsing MFU.
+      All workloads still funnel through one path. Winners keep MFU stable while serving diverse workload shapes.
     </div>
   </section>
 
   <section class="slide" id="s3" data-title="Unified pipeline">
     <div class="eyebrow">Chapter 3 - Unified serving process</div>
-    <h2 class="slide-title" style="font-size:clamp(30px,4vw,50px)">One Process Diagram for Business + Infra Conversations</h2>
-    <p class="slide-sub">Minimal text on purpose: use this slide as the common map for all stakeholder discussions.</p>
+    <h2 class="slide-title" style="font-size:clamp(30px,4vw,50px)">End-to-End Inference Architecture</h2>
+    <p class="slide-sub">Detailed process map: prompt origin, data origin, serving path, network bandwidth tiers, storage, and governance loops.</p>
 
-    <div class="pipe-wrap">
-      <div class="pipeline">
-        <div class="pipe">
-          <div class="pipe-title">1. Workload entry</div>
-          <div class="pipe-main">Apps, APIs, batch jobs, internal assistants</div>
-          <div class="pipe-sub">Chat, RAG, vision, speech, agents</div>
-          <div class="pipe-arrow">-> API gateway + auth</div>
-        </div>
-        <div class="pipe">
-          <div class="pipe-title">2. Serving framework</div>
-          <div class="pipe-main">vLLM, TensorRT-LLM, Ollama, custom runtimes</div>
-          <div class="pipe-sub">Routing, batching, KV cache policy</div>
-          <div class="pipe-arrow">-> model runtime</div>
-        </div>
-        <div class="pipe">
-          <div class="pipe-title">3. Model source</div>
-          <div class="pipe-main">Hugging Face, private registry, fine-tuned artifacts</div>
-          <div class="pipe-sub">Versioning, provenance, rollout control</div>
-          <div class="pipe-arrow">-> load to GPU memory</div>
-        </div>
-        <div class="pipe">
-          <div class="pipe-title">4. Orchestration</div>
-          <div class="pipe-main">Kubernetes + Slurm options</div>
-          <div class="pipe-sub">Example: CoreWeave-style SUNK approach for mixed workloads</div>
-          <div class="pipe-arrow">-> schedule + isolate</div>
-        </div>
-        <div class="pipe">
-          <div class="pipe-title">5. GPU cluster</div>
-          <div class="pipe-main">GPU choice + interconnect + network fabric</div>
-          <div class="pipe-sub">NVLink, PCIe, RDMA/InfiniBand</div>
-          <div class="pipe-arrow">-> output stream</div>
-        </div>
-        <div class="pipe">
-          <div class="pipe-title">6. Storage lifecycle</div>
-          <div class="pipe-main">Hot, warm, cold tiers; on-prem/off-prem</div>
-          <div class="pipe-sub">Context sources, output retention, audit logs</div>
-          <div class="pipe-arrow">-> governance + BI</div>
+    <div class="mermaid-wrap">
+      <div class="mermaid-pane">
+        <div class="mermaid" id="infraMermaid">
+flowchart LR
+  %% Prompt and data origins
+  subgraph U[Prompt and Request Sources]
+    U1[End User Web or App]
+    U2[Enterprise Workflow Bot]
+    U3[Batch Job or ETL Trigger]
+    U4[Partner API Client]
+  end
+
+  subgraph D[Data Sources]
+    D1[Operational DBs\nERP CRM Support]
+    D2[Data Lake and Object Store\nS3 ADLS GCS]
+    D3[Document Stores\nSharePoint Confluence]
+    D4[Streaming Events\nKafka Pulsar]
+  end
+
+  subgraph E[Edge and Control Plane]
+    E1[Global Load Balancer]
+    E2[API Gateway and WAF]
+    E3[Identity and Policy\nOIDC RBAC ABAC]
+    E4[Request Router\nTenant and SLA aware]
+  end
+
+  subgraph R[Retrieval and Feature Layer]
+    R1[Ingestion and Chunking]
+    R2[Embedding Service]
+    R3[Vector Database]
+    R4[Feature Cache\nRedis Aerospike]
+  end
+
+  subgraph S[Serving Runtime and Scheduling]
+    S1[vLLM TensorRT-LLM Ollama]
+    S2[Batching and KV Policy]
+    S3[Kubernetes and Slurm]
+    S4[Autoscaler and Queue Manager]
+  end
+
+  subgraph C[GPU and Fabric]
+    C1[GPU Node Pool A\nH100 or H200]
+    C2[GPU Node Pool B\nMI300X or L40S]
+    C3[In-node Fabric\nNVLink 600 to 900 GB/s]
+    C4[Inter-node Fabric\nIB NDR or RoCE 200 to 400 Gb/s]
+  end
+
+  subgraph T[Storage and Lifecycle]
+    T1[Hot Tier NVMe\nActive Context and KV Snapshots]
+    T2[Warm Tier Object Store\nPrompts Outputs Telemetry]
+    T3[Cold Tier Archive\nCompliance and Retention]
+  end
+
+  subgraph G[Governance and Observability]
+    G1[Metrics MFU TTFT TPS]
+    G2[Tracing and Audit Logs]
+    G3[Cost Allocation and FinOps]
+    G4[Security Events and SIEM]
+  end
+
+  U1 -- HTTPS 1 to 10 Mb/s --> E1
+  U2 -- gRPC HTTPS 5 to 20 Mb/s --> E1
+  U3 -- Async API 1 to 5 Mb/s --> E2
+  U4 -- HTTPS 1 to 50 Mb/s --> E2
+
+  E1 --> E2
+  E2 --> E3
+  E3 --> E4
+
+  D1 -- CDC and snapshots 1 to 10 GB/h --> R1
+  D2 -- Parquet JSON ingest 5 to 50 GB/h --> R1
+  D3 -- Docs and PDFs 100 MB to 5 GB/h --> R1
+  D4 -- Event feed 5k to 100k msg/s --> R1
+  R1 --> R2
+  R2 --> R3
+  R3 <--> R4
+
+  E4 -- Retrieval query --> R3
+  E4 -- Prompt and policy context --> S1
+  R3 -- Context payload 50 KB to 2 MB per request --> S1
+  R4 -- Cache hits sub 10 ms --> S1
+
+  S1 --> S2
+  S2 --> S3
+  S3 --> S4
+  S3 -- Placement and isolation --> C1
+  S3 -- Overflow and cost tier --> C2
+
+  C1 <--> C3
+  C2 <--> C4
+  C1 <--> C4
+  C2 <--> C4
+  C1 -- Model shards and activations --> S1
+  C2 -- Model shards and activations --> S1
+
+  S1 -- Prompt and response logs --> T2
+  S1 -- Short horizon state --> T1
+  T2 --> T3
+
+  S1 --> G1
+  S3 --> G1
+  C1 --> G1
+  C2 --> G1
+  E2 --> G2
+  E3 --> G2
+  T2 --> G2
+  G1 --> G3
+  G2 --> G4
+  G3 -- Budget guardrails --> S4
+  G4 -- Policy enforcement --> E3
+
+  S1 -- Final response --> E2
+  E2 -- JSON stream and SSE --> U1
+  E2 -- JSON stream and SSE --> U2
+  E2 -- Callback or webhook --> U3
+  E2 -- API response --> U4
         </div>
       </div>
 
-      <div class="legend">
-        <span class="legend-item"><span class="legend-dot" style="background:var(--accent)"></span>Cost drivers</span>
-        <span class="legend-item"><span class="legend-dot" style="background:var(--brand)"></span>Throughput drivers</span>
-        <span class="legend-item"><span class="legend-dot" style="background:var(--bad)"></span>Risk and isolation controls</span>
+      <div class="flow-meta">
+        <div class="flow-meta-item">
+          <div class="flow-meta-k">Prompt Lineage</div>
+          <div class="flow-meta-v">Request identity, tenant policy, and SLA class are attached before retrieval and scheduling.</div>
+        </div>
+        <div class="flow-meta-item">
+          <div class="flow-meta-k">Data Lineage</div>
+          <div class="flow-meta-v">Raw data becomes chunks and embeddings, then retrieval context is injected into runtime per request.</div>
+        </div>
+        <div class="flow-meta-item">
+          <div class="flow-meta-k">Bandwidth Reality</div>
+          <div class="flow-meta-v">Inter-node bandwidth drives scale quality; in-node fabric mainly controls high-tier model sharding efficiency.</div>
+        </div>
+        <div class="flow-meta-item">
+          <div class="flow-meta-k">MFU Feedback Loop</div>
+          <div class="flow-meta-v">MFU and TTFT telemetry feed autoscaling and FinOps policy, then push placement and batching changes.</div>
+        </div>
       </div>
     </div>
 
@@ -1007,8 +1568,8 @@ kbd {
 
   <section class="slide" id="s4" data-title="Model size essentials">
     <div class="eyebrow">Chapter 4 - Model sizing at high level</div>
-    <h2 class="slide-title" style="font-size:clamp(30px,4vw,50px)">Only Three Inputs Determine Most Hosting Requirements</h2>
-    <p class="slide-sub">Parameters, precision, and context length. This is enough for executive-level infra planning before deep model math.</p>
+    <h2 class="slide-title" style="font-size:clamp(30px,4vw,50px)">Model Size, Precision, and Context Requirements</h2>
+    <p class="slide-sub">For executive planning, three inputs are usually enough: parameters, precision, and context length.</p>
 
     <div class="grid-3">
       <div class="card">
@@ -1055,15 +1616,15 @@ kbd {
       </div>
     </div>
 
-    <div class="highlight-box" style="border-color: rgba(247,176,69,.4); background: var(--accent-soft); color:#f5e5c6;">
+    <div class="highlight-box" style="border-color: rgba(247,176,69,.4); background: var(--accent-soft); color:#5f3c1d;">
       Red-thread checkpoint: model size is not the endpoint. It only matters because it changes memory behavior, which changes MFU, which changes economics.
     </div>
   </section>
 
   <section class="slide" id="s5" data-title="Combined planner">
     <div class="eyebrow">Chapter 5 - Combined model fit + capacity planner</div>
-    <h2 class="slide-title" style="font-size:clamp(28px,3.7vw,46px)">Single Interactive Panel: Fit, Concurrency, MFU, and Cost</h2>
-    <p class="slide-sub">This combines “build your model” and “memory/capacity calculator” into one operational decision surface.</p>
+    <h2 class="slide-title" style="font-size:clamp(28px,3.7vw,46px)">Model Fit, Capacity, MFU, and Unit Cost Calculator</h2>
+    <p class="slide-sub">One panel combining model fit, capacity planning, MFU, and economics.</p>
 
     <div class="fit-layout">
       <aside class="controls">
@@ -1086,6 +1647,12 @@ kbd {
           <label class="ctl-lbl"><span>Interconnect profile</span><span id="icLbl"></span></label>
           <select id="icSel"></select>
         </div>
+
+        <div class="ctl-row">
+          <label class="ctl-lbl"><span>SLA priority</span><span id="slaLbl"></span></label>
+          <select id="slaSel"></select>
+        </div>
+        <div class="ctl-helper">Latency keeps TTFT lower. Throughput raises MFU and lowers token cost.</div>
 
         <div class="ctl-row">
           <label class="ctl-lbl"><span>Prompt + context tokens</span><span id="inTokLbl">12000</span></label>
@@ -1147,8 +1714,8 @@ kbd {
 
   <section class="slide" id="s6" data-title="MFU thread">
     <div class="eyebrow">Chapter 6 - MFU as north-star</div>
-    <h2 class="slide-title" style="font-size:clamp(30px,4vw,50px)">MFU Is the Bridge Between Technical Choices and Financial Outcome</h2>
-    <p class="slide-sub">MFU answers one practical question: how much of paid GPU capability is doing useful model work right now.</p>
+    <h2 class="slide-title" style="font-size:clamp(30px,4vw,50px)">MFU Impact on Cost and SLA</h2>
+    <p class="slide-sub">MFU shows how much paid GPU capability is doing useful model work right now.</p>
 
     <div class="mfu-scene">
       <div class="big-meter">
@@ -1173,8 +1740,8 @@ kbd {
         <div class="bar-row"><div class="bar-lbl">35-55% high performing</div><div class="track"><div class="fill" style="width:55%; background:var(--good)"></div></div><div class="bar-val good">Strong production target zone</div></div>
         <div class="bar-row"><div class="bar-lbl">55%+ world-class</div><div class="track"><div class="fill" style="width:68%; background:linear-gradient(90deg,var(--good),#b3f7cc)"></div></div><div class="bar-val good">Requires tuned workload + infra</div></div>
 
-        <div class="highlight-box" style="margin-top:10px; border-color:rgba(40,199,183,.5); background:var(--brand-soft); color:#d4f4ef;">
-          Suggested commercial guardrail: include an MFU benchmark gate in enterprise deals for realistic workload profiles, not synthetic single-request tests.
+        <div class="highlight-box" style="margin-top:10px; border-color:rgba(40,199,183,.5); background:var(--brand-soft); color:#14524d;">
+          Commercial guardrail: include an MFU benchmark gate in enterprise deals for realistic workload profiles, not synthetic single-request tests.
         </div>
       </div>
     </div>
@@ -1182,8 +1749,8 @@ kbd {
 
   <section class="slide" id="s7" data-title="Interconnect and topology">
     <div class="eyebrow">Chapter 7 - Infrastructure levers</div>
-    <h2 class="slide-title" style="font-size:clamp(30px,4vw,50px)">Interconnect and Scheduling Choices Decide Scaling Quality</h2>
-    <p class="slide-sub">When models span GPUs, communication quality drives the spread between headline and delivered economics.</p>
+    <h2 class="slide-title" style="font-size:clamp(30px,4vw,50px)">Interconnect, Topology, and Scheduling Trade-offs</h2>
+    <p class="slide-sub">When models span GPUs, communication quality drives the gap between headline and delivered economics.</p>
 
     <div class="topo-grid">
       <div class="topo">
@@ -1242,8 +1809,8 @@ kbd {
 
   <section class="slide" id="s8" data-title="Security and tenancy">
     <div class="eyebrow">Chapter 8 - Security, isolation, and governance</div>
-    <h2 class="slide-title" style="font-size:clamp(30px,4vw,50px)">Multi-Tenant Trust Is a Product Requirement</h2>
-    <p class="slide-sub">For buyers, this is not “extra architecture.” It is part of core service quality and procurement confidence.</p>
+    <h2 class="slide-title" style="font-size:clamp(30px,4vw,50px)">Security, Isolation, and Governance Requirements</h2>
+    <p class="slide-sub">For buyers, this is core product quality, not extra architecture.</p>
 
     <div class="grid-3">
       <div class="card">
@@ -1293,8 +1860,8 @@ kbd {
 
   <section class="slide" id="s9" data-title="Storage lifecycle">
     <div class="eyebrow">Chapter 9 - Storage lifecycle map</div>
-    <h2 class="slide-title" style="font-size:clamp(30px,4vw,50px)">Where Context Comes From and Where Outputs Go</h2>
-    <p class="slide-sub">Storage is not a side note. It shapes latency, compliance posture, and long-term operating cost.</p>
+    <h2 class="slide-title" style="font-size:clamp(30px,4vw,50px)">Storage and Retention Architecture</h2>
+    <p class="slide-sub">Storage shape directly influences latency, compliance posture, and long-term cost.</p>
 
     <div class="storage-map">
       <div class="store-col">
@@ -1332,31 +1899,67 @@ kbd {
       </div>
     </div>
 
-    <div class="highlight-box" style="margin-top:10px; border-color: rgba(40,199,183,.45); background:var(--brand-soft); color:#d4f4ef;">
+    <div class="highlight-box" style="margin-top:10px; border-color: rgba(40,199,183,.45); background:var(--brand-soft); color:#14524d;">
       Process reminder: context retrieval path and output retention path should be explicitly shown in architecture reviews. Hidden storage assumptions become hidden costs.
     </div>
   </section>
 
   <section class="slide" id="s10" data-title="Economics with MFU">
     <div class="eyebrow">Chapter 10 - Economics and capacity</div>
-    <h2 class="slide-title" style="font-size:clamp(30px,4vw,50px)">Economics Diverges Mainly Through Bandwidth and Utilization</h2>
-    <p class="slide-sub">Same nominal hardware spend can produce very different cost per output token depending on MFU and communication overhead.</p>
+    <h2 class="slide-title" style="font-size:clamp(30px,4vw,50px)">Cross-GPU Economics, Nodes Required, and Scaling by Batch Size</h2>
+    <p class="slide-sub">Cost, time, GPUs, nodes, and MFU are shown together for workload-specific planning.</p>
 
-    <div class="compare-grid" id="scenarioCompare"></div>
+    <div class="econx-wrap">
+      <aside class="econx-controls">
+        <div class="card-k" style="margin-bottom:8px;">Economics configurator</div>
+        <div class="ctl-row">
+          <label class="ctl-lbl"><span>Workload profile</span><span id="econWorkloadLbl"></span></label>
+          <select id="econWorkload"></select>
+        </div>
+        <div class="ctl-row">
+          <label class="ctl-lbl"><span>Model tier</span><span id="econModelLbl"></span></label>
+          <select id="econModel"></select>
+        </div>
+        <div class="ctl-row">
+          <label class="ctl-lbl"><span>Precision</span><span id="econPrecLbl"></span></label>
+          <select id="econPrec"></select>
+        </div>
+        <div class="ctl-row">
+          <label class="ctl-lbl"><span>Scale GPU (for curve)</span><span id="scaleGpuLbl"></span></label>
+          <select id="scaleGpu"></select>
+        </div>
+        <div class="ctl-row" style="margin-bottom:0;">
+          <label class="ctl-lbl"><span>Batch sizes (curve)</span><span id="batchLbl">1, 8, 32, 64, 128</span></label>
+          <div class="econx-batches" id="econBatches"></div>
+        </div>
+      </aside>
 
-    <div class="bar-box" style="margin-top:10px;">
-      <div class="card-k" style="margin-bottom:8px;">What widens the cost spread</div>
-      <div class="bar-row"><div class="bar-lbl">Interconnect bottleneck</div><div class="track"><div class="fill" style="width:78%; background: linear-gradient(90deg,var(--bad),#f7b2b2)"></div></div><div class="bar-val bad">Primary divergence driver</div></div>
-      <div class="bar-row"><div class="bar-lbl">Low concurrency policy</div><div class="track"><div class="fill" style="width:62%; background: linear-gradient(90deg,var(--warn),#f8dd97)"></div></div><div class="bar-val warn">High idle share</div></div>
-      <div class="bar-row"><div class="bar-lbl">Context inflation without guardrails</div><div class="track"><div class="fill" style="width:56%; background: linear-gradient(90deg,var(--accent),#ffd99b)"></div></div><div class="bar-val">Prefill drag</div></div>
-      <div class="bar-row"><div class="bar-lbl">Unoptimized precision policy</div><div class="track"><div class="fill" style="width:44%; background: linear-gradient(90deg,var(--brand),#97ece3)"></div></div><div class="bar-val">Fit inefficiency</div></div>
+      <div>
+        <div class="econx-kpi" id="econTopKpis"></div>
+        <div class="econx-grid">
+          <div class="econx-chart"><canvas id="costTimeChart"></canvas></div>
+          <div class="econx-chart"><canvas id="tpsScaleChart"></canvas></div>
+        </div>
+        <div class="econx-split">
+          <div class="econx-card">
+            <div class="econx-title">GPU and node requirement by card and configuration</div>
+            <div id="econNodePlan"></div>
+            <div class="econx-title" style="margin-top:8px;">Cross-GPU comparison with cost granularity</div>
+            <div id="econGpuCards"></div>
+          </div>
+          <div class="econx-card">
+            <div class="econx-title">MFU matrix by GPU and batch size (recommended scale)</div>
+            <div id="mfuMatrix"></div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
   <section class="slide" id="s11" data-title="Buyer checklist">
     <div class="eyebrow">Chapter 11 - Commercial checklist</div>
-    <h2 class="slide-title" style="font-size:clamp(30px,4vw,50px)">Procurement Checklist: Questions That Protect Value</h2>
-    <p class="slide-sub">Use this as a due-diligence baseline in platform evaluations and vendor negotiations.</p>
+    <h2 class="slide-title" style="font-size:clamp(30px,4vw,50px)">Enterprise Procurement Checklist</h2>
+    <p class="slide-sub">Due-diligence checklist for platform evaluations and vendor negotiations.</p>
 
     <div class="matrix">
       <div class="row head">
@@ -1391,14 +1994,14 @@ kbd {
       </div>
     </div>
 
-    <div class="highlight-box" style="margin-top:12px; border-color:rgba(247,176,69,.5); background:var(--accent-soft); color:#f7e6c8;">
+    <div class="highlight-box" style="margin-top:12px; border-color:rgba(247,176,69,.5); background:var(--accent-soft); color:#5f3c1d;">
       Negotiation tip: ask for an MFU-backed price curve under your expected concurrency bands instead of a single flat token price.
     </div>
   </section>
 
   <section class="slide" id="s12" data-title="Close">
     <div class="eyebrow">Chapter 12 - Close and action plan</div>
-    <h2 class="slide-title" style="font-size:clamp(34px,5vw,58px)">Decision Sequence for High-Confidence Inference Strategy</h2>
+    <h2 class="slide-title" style="font-size:clamp(34px,5vw,58px)">Decision Sequence and Operating Plan</h2>
     <p class="slide-sub">Keep the red thread intact from architecture to commercial outcomes.</p>
 
     <div class="grid-3" style="margin-top:22px;">
@@ -1434,14 +2037,13 @@ kbd {
       </div>
     </div>
 
-    <div class="highlight-box" style="margin-top:16px; border-color:rgba(88,212,138,.5); background:var(--good-soft); color:#d4f5df;">
-      Final message: the platform with the strongest red thread from workload to MFU to economics will outperform in both margin and customer experience.
+    <div class="highlight-box" style="margin-top:16px; border-color:rgba(88,212,138,.5); background:var(--good-soft); color:#1f5c40;">
+      The platform with the strongest red thread from workload to MFU to economics will outperform in both margin and customer experience.
     </div>
 
     <div class="meta-row" style="margin-top:16px;">
-      <span class="pill">Navigate with <kbd>Left</kbd> / <kbd>Right</kbd></span>
-      <span class="pill">Use Chapter 5 as the live discussion anchor</span>
-      <span class="pill">Keep technical depth in tooltips during executive flow</span>
+      <span class="pill">Chapters 5, 6, and 10 are the primary commercial levers</span>
+      <span class="pill">Technical depth remains available in tooltips</span>
     </div>
   </section>
 </div>
@@ -1450,7 +2052,7 @@ kbd {
   <div class="nav-left">
     <button class="btn" id="prevBtn">Prev</button>
     <button class="btn" id="nextBtn">Next</button>
-    <span style="font-family:var(--mono);font-size:10px;color:var(--muted);">Keyboard: left/right arrows</span>
+    <span style="font-family:var(--mono);font-size:10px;color:var(--muted);">Inference Infrastructure Red Thread</span>
   </div>
   <div class="dots" id="dots"></div>
 </div>
@@ -1467,6 +2069,8 @@ const progress = document.getElementById('progress');
 const slideCount = document.getElementById('slideCount');
 const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
+
+const slideIdToIndex = Object.fromEntries(slides.map((s, i) => [s.id, i]));
 
 slides.forEach((_, i) => {
   const d = document.createElement('button');
@@ -1495,7 +2099,14 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'ArrowLeft' || e.key === 'PageUp') go(idx - 1);
 });
 
-const MODELS = {
+document.querySelectorAll('.toc-item[data-jump]').forEach(el => {
+  el.addEventListener('click', () => {
+    const target = el.getAttribute('data-jump');
+    if (target && target in slideIdToIndex) go(slideIdToIndex[target]);
+  });
+});
+
+let MODELS = {
   '7B':  { paramsB: 7,   layers: 32,  hidden: 4096, baseTps: 220 },
   '13B': { paramsB: 13,  layers: 40,  hidden: 5120, baseTps: 145 },
   '34B': { paramsB: 34,  layers: 60,  hidden: 8192, baseTps: 72 },
@@ -1503,26 +2114,32 @@ const MODELS = {
   '405B':{ paramsB: 405, layers: 128, hidden: 16384, baseTps: 7 }
 };
 
-const PREC = {
+let PREC = {
   'BF16': { bytes: 2, speed: 1.0, qual: 'high' },
   'FP16': { bytes: 2, speed: 0.98, qual: 'high' },
   'INT8': { bytes: 1, speed: 1.22, qual: 'medium-high' },
   'INT4': { bytes: 0.5, speed: 1.43, qual: 'medium' }
 };
 
-const GPUS = {
+let GPUS = {
   'H100 SXM 80GB': { vram: 80, perf: 1.0, hr: 3.25 },
   'H200 SXM 141GB': { vram: 141, perf: 1.15, hr: 4.15 },
   'MI300X 192GB': { vram: 192, perf: 1.03, hr: 3.65 },
   'L40S 48GB': { vram: 48, perf: 0.63, hr: 1.55 }
 };
 
-const INTERCONNECT = {
+let INTERCONNECT = {
   'NVLink 5 / in-node': { eff: 0.95, latency: 0.9, penalty: 0.10 },
   'NVLink 4 / in-node': { eff: 0.88, latency: 1.2, penalty: 0.16 },
   'InfiniBand NDR': { eff: 0.78, latency: 1.9, penalty: 0.24 },
   'RoCEv2 RDMA': { eff: 0.69, latency: 2.5, penalty: 0.30 },
   'PCIe-only shared': { eff: 0.52, latency: 4.7, penalty: 0.42 }
+};
+
+const SLA_PROFILES = {
+  'Latency-priority': { mfuAdj: -0.08, tpsAdj: -0.10, ttftAdj: -0.24, cpmAdj: 0.08 },
+  'Balanced': { mfuAdj: 0.00, tpsAdj: 0.00, ttftAdj: 0.00, cpmAdj: 0.00 },
+  'Throughput-priority': { mfuAdj: 0.11, tpsAdj: 0.12, ttftAdj: 0.22, cpmAdj: -0.09 }
 };
 
 const WORKLOADS = {
@@ -1538,6 +2155,7 @@ const modelSel = document.getElementById('modelSel');
 const precSel = document.getElementById('precSel');
 const gpuSel = document.getElementById('gpuSel');
 const icSel = document.getElementById('icSel');
+const slaSel = document.getElementById('slaSel');
 const inTok = document.getElementById('inTok');
 const outTok = document.getElementById('outTok');
 const conc = document.getElementById('conc');
@@ -1548,6 +2166,7 @@ for (const k of Object.keys(MODELS)) modelSel.innerHTML += `<option value="${k}"
 for (const k of Object.keys(PREC)) precSel.innerHTML += `<option value="${k}">${k}</option>`;
 for (const k of Object.keys(GPUS)) gpuSel.innerHTML += `<option value="${k}">${k}</option>`;
 for (const k of Object.keys(INTERCONNECT)) icSel.innerHTML += `<option value="${k}">${k}</option>`;
+for (const k of Object.keys(SLA_PROFILES)) slaSel.innerHTML += `<option value="${k}">${k}</option>`;
 
 Object.entries(WORKLOADS).forEach(([k, v], i) => {
   const b = document.createElement('button');
@@ -1568,6 +2187,7 @@ modelSel.value = '70B';
 precSel.value = 'BF16';
 gpuSel.value = 'H100 SXM 80GB';
 icSel.value = 'NVLink 4 / in-node';
+slaSel.value = 'Balanced';
 
 function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 
@@ -1576,6 +2196,7 @@ function updateCalc() {
   const prec = PREC[precSel.value];
   const gpu = GPUS[gpuSel.value];
   const ic = INTERCONNECT[icSel.value];
+  const sla = SLA_PROFILES[slaSel.value];
 
   const inputT = Number(inTok.value);
   const outputT = Number(outTok.value);
@@ -1587,6 +2208,7 @@ function updateCalc() {
   document.getElementById('precLbl').textContent = precSel.value;
   document.getElementById('gpuLbl').textContent = gpuSel.value.split(' ')[0];
   document.getElementById('icLbl').textContent = icSel.value.split('/')[0].trim();
+  document.getElementById('slaLbl').textContent = slaSel.value.split('-')[0];
 
   document.getElementById('inTokLbl').textContent = inputT.toLocaleString();
   document.getElementById('outTokLbl').textContent = outputT.toLocaleString();
@@ -1596,7 +2218,7 @@ function updateCalc() {
   const weightsGb = model.paramsB * prec.bytes * 1.07;
   const kvPer1kGb = (2 * model.layers * model.hidden * 1000 * 2) / 1e9;
   const kvGb = kvPer1kGb * (seq / 1000) * c;
-  const runtimeGb = Math.max(8, model.paramsB * 0.07 + g * 0.6);
+  const runtimeGb = Math.max(10, model.paramsB * 0.09 + g * 0.8);
   const totalNeedGb = weightsGb + kvGb + runtimeGb;
   const totalAvailGb = g * gpu.vram * 0.9;
   const fitRatio = totalNeedGb / Math.max(1, totalAvailGb);
@@ -1606,6 +2228,7 @@ function updateCalc() {
   let mfu = 0.05 + 0.58 * (1 - Math.exp(-c / 25));
   mfu *= (0.82 + 0.35 * ic.eff);
   mfu *= (0.9 + 0.16 * prec.speed);
+  mfu *= (1 + sla.mfuAdj);
   mfu *= Math.pow(70 / model.paramsB, 0.06);
   mfu *= (0.96 - clamp((inputT - 12000) / 220000, 0, 0.22));
   mfu *= (g > gpusMin ? 0.94 : 1.02);
@@ -1620,18 +2243,18 @@ function updateCalc() {
     (0.5 + mfu) *
     (1 - 0.45 * commPenalty) *
     (1 - 0.18 * prefillLoad)
-  );
+  ) * (1 + sla.tpsAdj);
 
   const ttftMs = Math.max(180,
     120 +
     Math.pow(inputT, 0.75) * 0.55 +
     ic.latency * 20 +
     commPenalty * 220
-  );
+  ) * (1 + sla.ttftAdj);
 
-  const hourly = g * gpu.hr + g * 0.19 + Math.max(0.12, g * 0.03);
+  const hourly = g * gpu.hr + g * 0.24 + Math.max(0.16, g * 0.04);
   const outTokPerHour = tps * 3600;
-  const cpm = (hourly / Math.max(1, outTokPerHour)) * 1_000_000;
+  const cpm = (hourly / Math.max(1, outTokPerHour)) * 1_000_000 * (1 + sla.cpmAdj);
 
   const fitStatus = document.getElementById('fitStatus');
   const fitSub = document.getElementById('fitSub');
@@ -1672,7 +2295,7 @@ function updateCalc() {
 
   document.getElementById('insightA').textContent =
     `Primary pressure: ${kvGb > weightsGb ? 'KV cache (context + concurrency)' : 'model weights'}. ` +
-    `A ${precSel.value} policy with ${c} concurrent requests on ${g} GPUs yields ${Math.round(mfu * 100)}% MFU.`;
+    `${slaSel.value} mode with ${c} concurrent requests on ${g} GPUs yields ${Math.round(mfu * 100)}% MFU.`;
 
   document.getElementById('insightB').textContent =
     `Interconnect impact: ${Math.round(commPenalty * 100)}% comm penalty share. ` +
@@ -1685,51 +2308,405 @@ function updateCalc() {
   document.getElementById('impIc').textContent = Math.round(commPenalty * 100) + '% penalty';
   document.getElementById('impMem').textContent = (weightsGb + kvGb).toFixed(0) + ' GB active';
 
-  renderScenarioCards({ mfu, cpm, ttftMs, tps, commPenalty });
+  updateEconomicsExplorer();
 }
 
-function renderScenarioCards(base) {
-  const compare = document.getElementById('scenarioCompare');
+let GPU_PROFILE = {
+  'H100 SXM 80GB': { nodeGpus: 8, ic: 'NVLink 4 / in-node', powerKw: 0.70, rackPerNodeHr: 1.20, platformPerNodeHr: 0.70 },
+  'H200 SXM 141GB': { nodeGpus: 8, ic: 'NVLink 4 / in-node', powerKw: 0.75, rackPerNodeHr: 1.28, platformPerNodeHr: 0.72 },
+  'MI300X 192GB': { nodeGpus: 8, ic: 'InfiniBand NDR', powerKw: 0.78, rackPerNodeHr: 1.25, platformPerNodeHr: 0.68 },
+  'L40S 48GB': { nodeGpus: 8, ic: 'PCIe-only shared', powerKw: 0.35, rackPerNodeHr: 0.92, platformPerNodeHr: 0.55 }
+};
 
-  const rows = [
-    {
-      title: 'Scenario A: Optimized lane',
-      mfu: clamp(base.mfu + 0.13, 0.08, 0.72),
-      cpm: Math.max(10, base.cpm * 0.68),
-      ttft: Math.max(120, base.ttftMs * 0.8),
-      tone: 'good',
-      note: 'Strong batching + high-quality interconnect + policy-aware scheduling.'
-    },
-    {
-      title: 'Scenario B: Current lane',
-      mfu: base.mfu,
-      cpm: base.cpm,
-      ttft: base.ttftMs,
-      tone: 'warn',
-      note: 'Baseline operating point from current chapter controls.'
-    },
-    {
-      title: 'Scenario C: Degraded lane',
-      mfu: clamp(base.mfu - 0.16, 0.04, 0.72),
-      cpm: base.cpm * 1.65,
-      ttft: base.ttftMs * 1.58,
-      tone: 'bad',
-      note: 'Weak interconnect + poor queue policy + excess context inflation.'
+let WORKLOAD_TARGET_S = {
+  chat: 10,
+  rag: 16,
+  vision: 14,
+  imagegen: 20,
+  speech: 12,
+  agents: 22
+};
+
+const BATCH_OPTIONS = [1, 8, 32, 64, 128, 256];
+let selectedBatches = new Set([1, 8, 32, 64, 128]);
+let costTimeChart = null;
+let tpsScaleChart = null;
+
+function shortGpuName(name) {
+  return name.replace(' SXM', '').replace('GB', '').trim();
+}
+
+function econEstimate(gpuKey, modelKey, precKey, workloadKey, batch, gpuCount) {
+  const model = MODELS[modelKey];
+  const prec = PREC[precKey];
+  const gpu = GPUS[gpuKey];
+  const workload = WORKLOADS[workloadKey];
+  const profile = GPU_PROFILE[gpuKey];
+  const ic = INTERCONNECT[profile.ic];
+
+  const inputT = workload.input;
+  const outputT = workload.output;
+  const seq = inputT + outputT;
+
+  const weightsGb = model.paramsB * prec.bytes * 1.07;
+  const kvPer1kGb = (2 * model.layers * model.hidden * 1000 * 2) / 1e9;
+  const kvGb = kvPer1kGb * (seq / 1000) * batch;
+  const runtimeGb = Math.max(8, model.paramsB * 0.08 + gpuCount * 0.6);
+  const fitMin = Math.ceil((weightsGb + kvGb + runtimeGb) / (gpu.vram * 0.9));
+
+  const commPenalty = clamp(ic.penalty * Math.log2(Math.max(1, gpuCount)), 0.04, 0.85);
+  const prefillLoad = clamp((inputT / Math.max(1, outputT)) * 0.08, 0.05, 0.65);
+  const fitGap = fitMin / Math.max(1, gpuCount);
+  const underfitPenalty = fitGap > 1 ? clamp((fitGap - 1) * 0.82, 0, 0.92) : 0;
+
+  let mfu = 0.05 + 0.58 * (1 - Math.exp(-batch / 22));
+  mfu *= (0.82 + 0.35 * ic.eff);
+  mfu *= (0.9 + 0.16 * prec.speed);
+  mfu *= Math.pow(70 / model.paramsB, 0.06);
+  mfu *= (0.96 - clamp((inputT - 12000) / 220000, 0, 0.22));
+  mfu *= (1 - 0.52 * commPenalty);
+  mfu *= (1 - underfitPenalty);
+  mfu *= (gpuCount > fitMin ? 0.97 : 1.00);
+  mfu = clamp(mfu, 0.03, 0.62);
+
+  const tps = Math.max(0.5,
+    model.baseTps * gpu.perf * prec.speed *
+    Math.pow(gpuCount, 0.86) *
+    (0.5 + mfu) *
+    (1 - 0.45 * commPenalty) *
+    (1 - 0.18 * prefillLoad) *
+    (1 - underfitPenalty)
+  );
+
+  const ttftMs = Math.max(180,
+    120 +
+    Math.pow(inputT, 0.75) * 0.55 +
+    ic.latency * 20 +
+    commPenalty * 220
+  );
+
+  const hourlyCompute = gpuCount * gpu.hr;
+  const hourlyPower = gpuCount * profile.powerKw * 0.14;
+  const nodes = Math.ceil(gpuCount / profile.nodeGpus);
+  const hourlyRack = nodes * profile.rackPerNodeHr;
+  const hourlyPlatform = nodes * profile.platformPerNodeHr;
+  const hourlyNetwork = Math.max(0.12, hourlyCompute * commPenalty * 0.11);
+  const hourlyTotal = hourlyCompute + hourlyPower + hourlyRack + hourlyPlatform + hourlyNetwork;
+  const effectiveComputeHourly = hourlyCompute / clamp(mfu, 0.06, 0.95);
+
+  const timeHoursPer1M = 1_000_000 / Math.max(1, tps * 3600);
+  const costPer1M = hourlyTotal * timeHoursPer1M;
+
+  return {
+    workload, model, prec, gpu, ic, fitMin, nodes, batch,
+    mfu, tps, ttftMs, costPer1M, timeHoursPer1M,
+    hourly: {
+      compute: hourlyCompute,
+      power: hourlyPower,
+      rack: hourlyRack,
+      platform: hourlyPlatform,
+      network: hourlyNetwork,
+      total: hourlyTotal,
+      effectiveCompute: effectiveComputeHourly
     }
-  ];
-
-  compare.innerHTML = rows.map(r => `
-    <div class="compare-card">
-      <h3>${r.title}</h3>
-      <div class="big ${r.tone}">${Math.round(r.mfu * 100)}% MFU</div>
-      <p><strong style="color:var(--text)">$${Math.round(r.cpm).toLocaleString()}</strong> per 1M output tokens</p>
-      <p><strong style="color:var(--text)">${Math.round(r.ttft)} ms</strong> estimated first-token latency</p>
-      <p style="margin-top:8px;">${r.note}</p>
-    </div>
-  `).join('');
+  };
 }
 
-[inTok, outTok, conc, gpuCount, modelSel, precSel, gpuSel, icSel].forEach(el => {
+function recommendGpuCount(gpuKey, modelKey, precKey, workloadKey, batch) {
+  const model = MODELS[modelKey];
+  const prec = PREC[precKey];
+  const gpu = GPUS[gpuKey];
+  const workload = WORKLOADS[workloadKey];
+  const ic = INTERCONNECT[GPU_PROFILE[gpuKey].ic];
+  const targetS = WORKLOAD_TARGET_S[workloadKey] || 16;
+  const targetTps = (workload.conc * workload.output) / targetS;
+
+  let perGpuTps = model.baseTps * gpu.perf * prec.speed;
+  perGpuTps *= (0.35 + 0.75 * (1 - Math.exp(-batch / 22)));
+  perGpuTps *= (0.86 + 0.2 * ic.eff);
+
+  const seq = workload.input + workload.output;
+  const weightsGb = model.paramsB * prec.bytes * 1.07;
+  const kvPer1kGb = (2 * model.layers * model.hidden * 1000 * 2) / 1e9;
+  const kvGb = kvPer1kGb * (seq / 1000) * batch;
+  const fitMin = Math.ceil((weightsGb + kvGb + Math.max(8, model.paramsB * 0.08)) / (gpu.vram * 0.9));
+
+  const throughputNeed = Math.max(1, Math.ceil(targetTps / Math.max(1, perGpuTps)));
+  return Math.max(fitMin, throughputNeed);
+}
+
+function formatTimePer1M(hours) {
+  const min = hours * 60;
+  if (min < 60) return `${Math.round(min)} min`;
+  return `${hours.toFixed(1)} h`;
+}
+
+async function loadCanonicalEconomicsSpec() {
+  try {
+    const res = await fetch('data_files/gpu_economics_canonical_spec_v1.json', { cache: 'no-store' });
+    if (!res.ok) return;
+    const spec = await res.json();
+
+    const tiers = spec.model_tiers || {};
+    Object.keys(MODELS).forEach(k => {
+      const t = tiers[k];
+      if (!t) return;
+      MODELS[k] = {
+        ...MODELS[k],
+        paramsB: t.params_b,
+        layers: t.layers,
+        hidden: t.hidden
+      };
+    });
+
+    const bpp = spec.precision_bytes_per_param || {};
+    Object.keys(PREC).forEach(k => {
+      if (typeof bpp[k] === 'number') {
+        PREC[k] = { ...PREC[k], bytes: bpp[k] };
+      }
+    });
+
+    const cat = spec.gpu_catalog || {};
+    const map = {
+      'H100 SXM 80GB': 'H100 SXM5',
+      'H200 SXM 141GB': 'H200 SXM5',
+      'L40S 48GB': 'L40S 48GB'
+    };
+    Object.entries(map).forEach(([localKey, specKey]) => {
+      const s = cat[specKey];
+      if (!s || !GPUS[localKey]) return;
+      GPUS[localKey] = {
+        ...GPUS[localKey],
+        vram: s.vram_gb,
+        hr: s.hourly_price_usd
+      };
+      if (GPU_PROFILE[localKey]) {
+        GPU_PROFILE[localKey] = {
+          ...GPU_PROFILE[localKey],
+          nodeGpus: s.gpu_per_chassis || GPU_PROFILE[localKey].nodeGpus
+        };
+      }
+    });
+  } catch (e) {
+    console.warn('Canonical economics spec load failed; using in-file defaults.', e);
+  }
+}
+
+function initEconomicsExplorer() {
+  const econWorkload = document.getElementById('econWorkload');
+  const econModel = document.getElementById('econModel');
+  const econPrec = document.getElementById('econPrec');
+  const scaleGpu = document.getElementById('scaleGpu');
+  const econBatches = document.getElementById('econBatches');
+
+  if (!econWorkload || !econModel || !econPrec || !scaleGpu || !econBatches) return;
+
+  Object.entries(WORKLOADS).forEach(([k, v]) => {
+    econWorkload.innerHTML += `<option value="${k}">${v.label}</option>`;
+  });
+  Object.keys(MODELS).forEach(k => econModel.innerHTML += `<option value="${k}">${k}</option>`);
+  Object.keys(PREC).forEach(k => econPrec.innerHTML += `<option value="${k}">${k}</option>`);
+  Object.keys(GPUS).forEach(k => scaleGpu.innerHTML += `<option value="${k}">${k}</option>`);
+
+  econWorkload.value = 'chat';
+  econModel.value = '70B';
+  econPrec.value = 'BF16';
+  scaleGpu.value = 'H100 SXM 80GB';
+
+  BATCH_OPTIONS.forEach(b => {
+    const el = document.createElement('button');
+    el.className = 'econx-b' + (selectedBatches.has(b) ? ' sel' : '');
+    el.textContent = `B=${b}`;
+    el.addEventListener('click', () => {
+      if (selectedBatches.has(b) && selectedBatches.size > 1) selectedBatches.delete(b);
+      else selectedBatches.add(b);
+      el.classList.toggle('sel', selectedBatches.has(b));
+      updateEconomicsExplorer();
+    });
+    econBatches.appendChild(el);
+  });
+
+  [econWorkload, econModel, econPrec, scaleGpu].forEach(el => {
+    el.addEventListener('input', updateEconomicsExplorer);
+    el.addEventListener('change', updateEconomicsExplorer);
+  });
+}
+
+function updateEconomicsExplorer() {
+  const econWorkload = document.getElementById('econWorkload');
+  const econModel = document.getElementById('econModel');
+  const econPrec = document.getElementById('econPrec');
+  const scaleGpu = document.getElementById('scaleGpu');
+  if (!econWorkload || !econModel || !econPrec || !scaleGpu) return;
+
+  const workloadKey = econWorkload.value;
+  const modelKey = econModel.value;
+  const precKey = econPrec.value;
+  const scaleGpuKey = scaleGpu.value;
+  const batches = Array.from(selectedBatches).sort((a, b) => a - b);
+  const primaryBatch = batches.includes(32) ? 32 : batches[0];
+
+  document.getElementById('econWorkloadLbl').textContent = WORKLOADS[workloadKey].label;
+  document.getElementById('econModelLbl').textContent = modelKey;
+  document.getElementById('econPrecLbl').textContent = precKey;
+  document.getElementById('scaleGpuLbl').textContent = shortGpuName(scaleGpuKey);
+  document.getElementById('batchLbl').textContent = batches.join(', ');
+
+  const gpuRows = Object.keys(GPUS).map(gpuKey => {
+    const recGpus = recommendGpuCount(gpuKey, modelKey, precKey, workloadKey, primaryBatch);
+    const metrics = econEstimate(gpuKey, modelKey, precKey, workloadKey, primaryBatch, recGpus);
+    return { gpuKey, recGpus, ...metrics };
+  });
+
+  const nodePlanHtml = gpuRows.map(r => {
+    const nodeGpus = GPU_PROFILE[r.gpuKey].nodeGpus;
+    const lanes = Array.from({ length: r.nodes }, (_, i) => {
+      const used = Math.max(0, Math.min(nodeGpus, r.recGpus - i * nodeGpus));
+      const dots = Array.from({ length: nodeGpus }, (_, d) => `<span class="econx-dot${d < used ? ' on' : ''}"></span>`).join('');
+      return `<div style="margin-top:4px;"><div class="econx-nodestrip">${dots}</div></div>`;
+    }).join('');
+
+    return `
+      <div class="econx-nodecard">
+        <div class="econx-nodehead">
+          <strong>${shortGpuName(r.gpuKey)}</strong>
+          <span>${r.recGpus} GPU / ${r.nodes} node</span>
+        </div>
+        ${lanes}
+        <div class="econx-nodefoot">Recommended for B=${primaryBatch}: fit min ${r.fitMin}, MFU ${Math.round(r.mfu * 100)}%</div>
+      </div>
+    `;
+  }).join('');
+  document.getElementById('econNodePlan').innerHTML = `<div class="econx-nodegrid">${nodePlanHtml}</div>`;
+
+  const bestCost = gpuRows.reduce((a, b) => a.costPer1M < b.costPer1M ? a : b);
+  const bestTime = gpuRows.reduce((a, b) => a.timeHoursPer1M < b.timeHoursPer1M ? a : b);
+  const highestMfu = gpuRows.reduce((a, b) => a.mfu > b.mfu ? a : b);
+  const lowestNodes = gpuRows.reduce((a, b) => a.nodes < b.nodes ? a : b);
+
+  document.getElementById('econTopKpis').innerHTML = `
+    <div class="econx-kpi-box"><div class="econx-kpi-l">Best cost / 1M out</div><div class="econx-kpi-v good">$${Math.round(bestCost.costPer1M).toLocaleString()}</div><div class="kpi-sub">${shortGpuName(bestCost.gpuKey)}</div></div>
+    <div class="econx-kpi-box"><div class="econx-kpi-l">Fastest time / 1M out</div><div class="econx-kpi-v" style="color:var(--brand)">${formatTimePer1M(bestTime.timeHoursPer1M)}</div><div class="kpi-sub">${shortGpuName(bestTime.gpuKey)}</div></div>
+    <div class="econx-kpi-box"><div class="econx-kpi-l">Highest MFU</div><div class="econx-kpi-v warn">${Math.round(highestMfu.mfu * 100)}%</div><div class="kpi-sub">${shortGpuName(highestMfu.gpuKey)}</div></div>
+    <div class="econx-kpi-box"><div class="econx-kpi-l">Lowest node count</div><div class="econx-kpi-v">${lowestNodes.nodes}</div><div class="kpi-sub">${shortGpuName(lowestNodes.gpuKey)}</div></div>
+  `;
+
+  const costMax = Math.max(...gpuRows.map(r => r.costPer1M));
+  const cardsHtml = gpuRows.map(r => {
+    const seg1 = (r.hourly.compute / r.hourly.total) * 100;
+    const seg2 = (r.hourly.power / r.hourly.total) * 100;
+    const seg3 = (r.hourly.rack / r.hourly.total) * 100;
+    const seg4 = (r.hourly.platform / r.hourly.total) * 100;
+    const seg5 = (r.hourly.network / r.hourly.total) * 100;
+    const tone = r.costPer1M === bestCost.costPer1M ? 'good' : (r.costPer1M > costMax * 0.8 ? 'bad' : 'warn');
+    return `
+      <div style="border:1px solid var(--line);border-radius:8px;padding:8px;margin-bottom:8px;background:#fff;">
+        <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:4px;">
+          <strong style="font-size:12px;">${shortGpuName(r.gpuKey)}</strong>
+          <span class="${tone}" style="font-family:var(--mono);font-size:10px;">$${Math.round(r.costPer1M).toLocaleString()} / 1M</span>
+        </div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--muted);display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;">
+          <span>GPUs: <strong style="color:var(--text)">${r.recGpus}</strong></span>
+          <span>Nodes: <strong style="color:var(--text)">${r.nodes}</strong></span>
+          <span>MFU: <strong style="color:var(--text)">${Math.round(r.mfu * 100)}%</strong></span>
+        </div>
+        <div class="econx-costbar"><span class="econx-seg" style="width:${seg1}%;background:#0f7f78"></span><span class="econx-seg" style="width:${seg2}%;background:#a15a1d"></span><span class="econx-seg" style="width:${seg3}%;background:#7a5f13"></span><span class="econx-seg" style="width:${seg4}%;background:#2468a5"></span><span class="econx-seg" style="width:${seg5}%;background:#b84d4d"></span></div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--muted);">Compute ${r.hourly.compute.toFixed(2)}/h at MFU ${Math.round(r.mfu * 100)}% => effective ${r.hourly.effectiveCompute.toFixed(2)}/h</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--muted);">Time per 1M out: <strong style="color:var(--text)">${formatTimePer1M(r.timeHoursPer1M)}</strong> | TTFT: <strong style="color:var(--text)">${Math.round(r.ttftMs)} ms</strong></div>
+      </div>
+    `;
+  }).join('') + `<div class="econx-legend"><span class="c1">Compute</span><span class="c2">Electricity</span><span class="c3">Rack space</span><span class="c4">Platform</span><span class="c5">Network</span></div>`;
+  document.getElementById('econGpuCards').innerHTML = cardsHtml;
+
+  const mfuTableHead = batches.map(b => `<th>B=${b}</th>`).join('');
+  const mfuRows = Object.keys(GPUS).map(gpuKey => {
+    const tds = batches.map(b => {
+      const rec = recommendGpuCount(gpuKey, modelKey, precKey, workloadKey, b);
+      const m = econEstimate(gpuKey, modelKey, precKey, workloadKey, b, rec).mfu;
+      return `<td>${Math.round(m * 100)}%</td>`;
+    }).join('');
+    return `<tr><td>${shortGpuName(gpuKey)}</td>${tds}</tr>`;
+  }).join('');
+  document.getElementById('mfuMatrix').innerHTML = `
+    <table class="econx-table">
+      <thead><tr><th>GPU</th>${mfuTableHead}</tr></thead>
+      <tbody>${mfuRows}</tbody>
+    </table>
+  `;
+
+  const labels = gpuRows.map(r => shortGpuName(r.gpuKey));
+  const costVals = gpuRows.map(r => Math.round(r.costPer1M));
+  const timeVals = gpuRows.map(r => +(r.timeHoursPer1M * 60).toFixed(1));
+  if (costTimeChart) costTimeChart.destroy();
+  costTimeChart = new Chart(document.getElementById('costTimeChart'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Cost / 1M output tokens ($)', data: costVals, backgroundColor: 'rgba(15,127,120,0.72)', borderColor: '#0f7f78', borderWidth: 1, yAxisID: 'y' },
+        { label: 'Time / 1M output tokens (min)', data: timeVals, type: 'line', borderColor: '#a15a1d', backgroundColor: 'rgba(161,90,29,0.2)', borderWidth: 2, yAxisID: 'y1', tension: 0.25 }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: '#556270', boxWidth: 12 } } },
+      scales: {
+        x: { ticks: { color: '#556270' }, grid: { color: '#eee6d8' } },
+        y: { ticks: { color: '#556270' }, grid: { color: '#eee6d8' }, title: { display: true, text: 'USD / 1M', color: '#556270' } },
+        y1: { position: 'right', ticks: { color: '#556270' }, grid: { drawOnChartArea: false }, title: { display: true, text: 'minutes / 1M', color: '#556270' } }
+      }
+    }
+  });
+
+  const scaleCounts = [1, 2, 4, 8, 16, 32];
+  const scaleDatasets = batches.map((b, i) => {
+    const colorSet = ['#0f7f78', '#a15a1d', '#197a50', '#b84d4d', '#6d5a1a', '#2468a5'];
+    const color = colorSet[i % colorSet.length];
+    const points = scaleCounts.map(gc => {
+      return econEstimate(scaleGpuKey, modelKey, precKey, workloadKey, b, gc);
+    });
+    return {
+      label: `B=${b}`,
+      data: points.map(p => +p.tps.toFixed(1)),
+      mfu: points.map(p => Math.round(p.mfu * 100)),
+      fitMin: points.map(p => p.fitMin),
+      borderColor: color,
+      backgroundColor: color,
+      tension: 0.25,
+      borderWidth: 2,
+      pointRadius: 2
+    };
+  });
+
+  if (tpsScaleChart) tpsScaleChart.destroy();
+  tpsScaleChart = new Chart(document.getElementById('tpsScaleChart'), {
+    type: 'line',
+    data: { labels: scaleCounts, datasets: scaleDatasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { labels: { color: '#556270', boxWidth: 12 } },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) {
+              const mfu = ctx.dataset.mfu?.[ctx.dataIndex];
+              const fitMin = ctx.dataset.fitMin?.[ctx.dataIndex];
+              return `${ctx.dataset.label}: ${ctx.parsed.y} tok/s (MFU ${mfu}%, fit min ${fitMin} GPU)`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: { title: { display: true, text: 'GPU count', color: '#556270' }, ticks: { color: '#556270' }, grid: { color: '#eee6d8' } },
+        y: { title: { display: true, text: 'tokens/sec', color: '#556270' }, ticks: { color: '#556270' }, grid: { color: '#eee6d8' } }
+      }
+    }
+  });
+}
+
+[inTok, outTok, conc, gpuCount, modelSel, precSel, gpuSel, icSel, slaSel].forEach(el => {
   el.addEventListener('input', updateCalc);
   el.addEventListener('change', updateCalc);
 });
@@ -1753,8 +2730,39 @@ document.querySelectorAll('.tip').forEach(el => {
   });
 });
 
+if (window.mermaid) {
+  mermaid.initialize({
+    startOnLoad: true,
+    securityLevel: 'loose',
+    theme: 'base',
+    themeVariables: {
+      primaryColor: '#f9f4ea',
+      primaryTextColor: '#1f2a33',
+      primaryBorderColor: '#d8cfc0',
+      lineColor: '#6d7a88',
+      secondaryColor: '#eef7f6',
+      tertiaryColor: '#f6efe4',
+      clusterBkg: '#ffffff',
+      clusterBorder: '#d8cfc0',
+      fontFamily: 'Space Grotesk',
+      edgeLabelBackground: '#fbf8f3'
+    },
+    flowchart: {
+      curve: 'basis',
+      nodeSpacing: 30,
+      rankSpacing: 50,
+      htmlLabels: false,
+      useMaxWidth: false
+    }
+  });
+}
+
 go(0);
+initEconomicsExplorer();
 updateCalc();
+loadCanonicalEconomicsSpec().then(() => {
+  updateCalc();
+});
 </script>
 </body>
 </html>

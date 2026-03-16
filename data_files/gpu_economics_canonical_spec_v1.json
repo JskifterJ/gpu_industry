@@ -1,0 +1,394 @@
+{
+  "spec_name": "gpu_economics_canonical_spec",
+  "version": "1.0.0",
+  "updated_utc": "2026-03-16T00:00:00Z",
+  "purpose": "Single source of truth for GPU inference economics constants, formulas, chart templates, and rendering instructions across HTML decks.",
+  "sources": [
+    {
+      "file": "learning_inference_compute_master_v10.html",
+      "section": "Integrated economics (ECONX_*)",
+      "notes": "Primary canonical math source for model memory, KV cache, topology penalties, decode/TTFT, and cost translation."
+    },
+    {
+      "file": "strategy_inference_economics.html",
+      "section": "DATA + Calc engine",
+      "notes": "Secondary source for GPU catalog, tooltip-defined assumptions, and cost decomposition patterns."
+    },
+    {
+      "file": "learning_inference_business_red_thread_v1.html",
+      "section": "Chapter 10 economics explorer",
+      "notes": "Presentation-oriented implementation target; should consume this spec to remain consistent."
+    }
+  ],
+  "units": {
+    "memory": "GB",
+    "bandwidth": "GB/s",
+    "latency": "microseconds",
+    "power": "kW",
+    "currency": "USD",
+    "time": "ms",
+    "throughput": "tokens/s"
+  },
+  "precision_bytes_per_param": {
+    "FP32": 4,
+    "BF16": 2,
+    "FP16": 2,
+    "INT8": 1,
+    "INT4": 0.5
+  },
+  "interconnect_efficiency": {
+    "nvlink": { "1": 1.0, "2": 0.95, "4": 0.92, "8": 0.9, "16": 0.87, "32": 0.84 },
+    "pcie": { "1": 1.0, "2": 0.55, "4": 0.3, "8": 0.18, "16": 0.1, "32": 0.07 },
+    "roce": { "1": 1.0, "2": 0.8, "4": 0.72, "8": 0.62, "16": 0.52, "32": 0.42 },
+    "ib": { "1": 1.0, "2": 0.9, "4": 0.84, "8": 0.78, "16": 0.7, "32": 0.62 }
+  },
+  "gpu_catalog": {
+    "V100 SXM2 32GB": {
+      "vram_gb": 32,
+      "bandwidth_gbps": 900,
+      "tflops": 112,
+      "tdp_w": 300,
+      "interconnect": "NVLink 2.0",
+      "interconnect_type": "nvlink",
+      "ic_bw_gbps": 300,
+      "ic_lat_us": 2.5,
+      "hourly_price_usd": 2.96,
+      "sustained_efficiency": 0.94,
+      "chassis_u": 3,
+      "gpu_per_chassis": 8,
+      "ecc": true,
+      "datacenter": true
+    },
+    "A100 PCIe 40GB": {
+      "vram_gb": 40,
+      "bandwidth_gbps": 1555,
+      "tflops": 312,
+      "tdp_w": 250,
+      "interconnect": "PCIe 4.0",
+      "interconnect_type": "pcie",
+      "ic_bw_gbps": 32,
+      "ic_lat_us": 6,
+      "hourly_price_usd": 2.65,
+      "sustained_efficiency": 0.95,
+      "chassis_u": 4,
+      "gpu_per_chassis": 4,
+      "ecc": true,
+      "datacenter": true
+    },
+    "A40": {
+      "vram_gb": 48,
+      "bandwidth_gbps": 696,
+      "tflops": 149,
+      "tdp_w": 300,
+      "interconnect": "PCIe 4.0",
+      "interconnect_type": "pcie",
+      "ic_bw_gbps": 32,
+      "ic_lat_us": 6,
+      "hourly_price_usd": 1.32,
+      "sustained_efficiency": 0.94,
+      "chassis_u": 2,
+      "gpu_per_chassis": 4,
+      "ecc": true,
+      "datacenter": true
+    },
+    "L40S 48GB": {
+      "vram_gb": 48,
+      "bandwidth_gbps": 864,
+      "tflops": 733,
+      "tdp_w": 350,
+      "interconnect": "PCIe 5.0",
+      "interconnect_type": "pcie",
+      "ic_bw_gbps": 64,
+      "ic_lat_us": 5,
+      "hourly_price_usd": 1.88,
+      "sustained_efficiency": 0.95,
+      "chassis_u": 4,
+      "gpu_per_chassis": 8,
+      "ecc": true,
+      "datacenter": true
+    },
+    "A100 SXM4 80GB": {
+      "vram_gb": 80,
+      "bandwidth_gbps": 2000,
+      "tflops": 312,
+      "tdp_w": 400,
+      "interconnect": "NVLink 3.0",
+      "interconnect_type": "nvlink",
+      "ic_bw_gbps": 600,
+      "ic_lat_us": 1.2,
+      "hourly_price_usd": 1.87,
+      "sustained_efficiency": 0.96,
+      "chassis_u": 6,
+      "gpu_per_chassis": 8,
+      "ecc": true,
+      "datacenter": true
+    },
+    "H100 PCIe": {
+      "vram_gb": 80,
+      "bandwidth_gbps": 2000,
+      "tflops": 756,
+      "tdp_w": 350,
+      "interconnect": "PCIe 5.0",
+      "interconnect_type": "pcie",
+      "ic_bw_gbps": 64,
+      "ic_lat_us": 5,
+      "hourly_price_usd": 3.33,
+      "sustained_efficiency": 0.96,
+      "chassis_u": 4,
+      "gpu_per_chassis": 4,
+      "ecc": true,
+      "datacenter": true
+    },
+    "H100 SXM5": {
+      "vram_gb": 80,
+      "bandwidth_gbps": 3350,
+      "tflops": 989,
+      "tdp_w": 700,
+      "interconnect": "NVLink 4.0",
+      "interconnect_type": "nvlink",
+      "ic_bw_gbps": 900,
+      "ic_lat_us": 0.8,
+      "hourly_price_usd": 2.99,
+      "sustained_efficiency": 0.97,
+      "chassis_u": 10,
+      "gpu_per_chassis": 8,
+      "ecc": true,
+      "datacenter": true
+    },
+    "H200 SXM5": {
+      "vram_gb": 141,
+      "bandwidth_gbps": 4800,
+      "tflops": 1979,
+      "tdp_w": 700,
+      "interconnect": "NVLink 4.0",
+      "interconnect_type": "nvlink",
+      "ic_bw_gbps": 900,
+      "ic_lat_us": 0.8,
+      "hourly_price_usd": 4.23,
+      "sustained_efficiency": 0.97,
+      "chassis_u": 10,
+      "gpu_per_chassis": 8,
+      "ecc": true,
+      "datacenter": true
+    },
+    "B200 SXM": {
+      "vram_gb": 192,
+      "bandwidth_gbps": 8000,
+      "tflops": 4500,
+      "tdp_w": 1000,
+      "interconnect": "NVLink 5.0",
+      "interconnect_type": "nvlink",
+      "ic_bw_gbps": 1800,
+      "ic_lat_us": 0.5,
+      "hourly_price_usd": 3.94,
+      "sustained_efficiency": 0.97,
+      "chassis_u": 10,
+      "gpu_per_chassis": 8,
+      "ecc": true,
+      "datacenter": true
+    },
+    "RTX 4090": {
+      "vram_gb": 24,
+      "bandwidth_gbps": 1008,
+      "tflops": 165,
+      "tdp_w": 450,
+      "interconnect": "PCIe 4.0",
+      "interconnect_type": "pcie",
+      "ic_bw_gbps": 32,
+      "ic_lat_us": 7,
+      "hourly_price_usd": 0.29,
+      "sustained_efficiency": 0.76,
+      "chassis_u": 4,
+      "gpu_per_chassis": 4,
+      "ecc": false,
+      "datacenter": false
+    }
+  },
+  "model_tiers": {
+    "7B": { "params_b": 7, "hidden": 4096, "layers": 32, "kv_heads": 32 },
+    "13B": { "params_b": 13, "hidden": 5120, "layers": 40, "kv_heads": 40 },
+    "34B": { "params_b": 34, "hidden": 7168, "layers": 48, "kv_heads": 8 },
+    "70B": { "params_b": 70, "hidden": 8192, "layers": 80, "kv_heads": 8 },
+    "405B": { "params_b": 405, "hidden": 16384, "layers": 126, "kv_heads": 16 }
+  },
+  "defaults": {
+    "precision": "BF16",
+    "input_tokens": 4096,
+    "output_tokens": 900,
+    "batch": 50,
+    "cards_per_node": 8,
+    "pue": 1.4,
+    "electricity_usd_per_kwh": 0.1,
+    "rack_usd_per_u_month": 150,
+    "vram_headroom_multiplier": 1.1,
+    "x_axis_gpu_counts": [1, 2, 4, 8, 16, 32]
+  },
+  "formulas": {
+    "model_memory_gb": "(params_b * 1e9 * bytes_per_param) / 1e9",
+    "kv_cache_gb": "(2 * layers * kv_heads * 128 * seq_len * batch * 2) / 1e9",
+    "total_memory_gb": "model_memory_gb + kv_cache_gb + (model_memory_gb * vram_headroom_multiplier_minus_one)",
+    "gpus_needed_pow2": "ceil_to_next_power_set( ceil(total_memory_gb / gpu_vram_gb), [1,2,4,8,16,32] )",
+    "node_topology": {
+      "nodes": "ceil(gpus / cards_per_node)",
+      "extra_node_hops": "max(0, nodes - 1)",
+      "bw_penalty": "1 + (extra_node_hops * 0.45)",
+      "latency_penalty": "1 + (extra_node_hops * 0.80)"
+    },
+    "decode_ms_per_token": {
+      "read_ms": "(model_memory_gb / gpus * 1000) / hbm_bandwidth_gbps",
+      "allreduce_bytes": "2 * hidden * 2",
+      "allreduce_count": "2 * layers",
+      "effective_ic_bw": "ic_bw_gbps * ic_efficiency(interconnect_type, gpus)",
+      "bw_ms": "(2 * (gpus - 1) / gpus * allreduce_bytes * allreduce_count) / (effective_ic_bw * 1e9) * 1000",
+      "lat_ms": "allreduce_count * ic_lat_us / 1000",
+      "comms_ms": "(bw_ms * bw_penalty) + (lat_ms * latency_penalty)",
+      "total_ms": "(read_ms + comms_ms) / sustained_efficiency"
+    },
+    "ttft_ms": {
+      "flops": "2 * input_tokens * params_b * 1e9",
+      "compute_ms": "flops / (gpus * tflops * 1e12) * 1000",
+      "prefill_allreduce_bytes": "2 * hidden * input_tokens * 2",
+      "prefill_allreduce_count": "2 * layers",
+      "bw_ms": "(2 * (gpus - 1) / gpus * prefill_allreduce_bytes * prefill_allreduce_count) / (effective_ic_bw * 1e9) * 1000 * bw_penalty",
+      "lat_ms": "(prefill_allreduce_count * ic_lat_us / 1000) * latency_penalty",
+      "total_ms": "(compute_ms + bw_ms + lat_ms) / sustained_efficiency"
+    },
+    "response_time_ms": "ttft_ms + (output_tokens * decode_ms_per_token / batch)",
+    "tokens_per_second": "(output_tokens * batch) / (response_time_ms / 1000)",
+    "cost_components_per_response": {
+      "compute": "gpu_hours * hourly_price_usd",
+      "electricity": "energy_kwh * electricity_usd_per_kwh",
+      "rack_space": "(rack_u_total * rack_usd_per_u_month / (30*24)) * wallclock_hours",
+      "platform": "optional fixed or per-node overhead",
+      "network": "optional inter-node or egress overhead",
+      "reliability_overhead": "(compute + electricity + rack_space + platform + network) * (reliability_multiplier - 1)",
+      "total": "sum(all components)"
+    },
+    "cost_per_1m_output_tokens": "(total_cost_per_response / output_tokens) * 1e6",
+    "time_for_1m_output_tokens_seconds": "1e6 / tokens_per_second"
+  },
+  "reliability_policy": {
+    "datacenter_gpu_multiplier": 1.02,
+    "consumer_gpu_multiplier": 1.15,
+    "logic": "if datacenter=true use datacenter multiplier else consumer multiplier"
+  },
+  "mfu_guidance": {
+    "enabled": true,
+    "description": "MFU is optional in v10/strategy core formulas but can be layered as an efficiency-normalization metric for business views.",
+    "display_bands": [
+      { "min": 0, "max": 15, "label": "Low utilization" },
+      { "min": 15, "max": 35, "label": "Baseline" },
+      { "min": 35, "max": 55, "label": "Strong" },
+      { "min": 55, "max": 100, "label": "World-class" }
+    ],
+    "compute_effective_cost_annotation": "effective_compute_hourly = compute_hourly / max(mfu, 0.06)"
+  },
+  "templates": {
+    "gpu_required_node_split": {
+      "goal": "Render required GPUs as nodes with per-node card slots.",
+      "inputs": ["required_gpus", "cards_per_node", "max_slot_display"],
+      "algorithm": [
+        "nodes = ceil(required_gpus / cards_per_node)",
+        "for each node i: used = clamp(required_gpus - i*cards_per_node, 0, cards_per_node)",
+        "render used filled slots and remaining empty slots",
+        "label each node as Node {i+1} ({used}/{cards_per_node})"
+      ],
+      "output_shape": {
+        "nodes": [
+          {
+            "node_index": 1,
+            "used_slots": 8,
+            "total_slots": 8,
+            "slots": ["on", "on", "on", "on", "on", "on", "on", "on"]
+          }
+        ]
+      }
+    },
+    "tokens_per_second_scale_chart": {
+      "goal": "Plot tokens/sec against actual GPU count for each batch size.",
+      "important_rule": "Do not clamp x-axis count to recommended_gpus. Evaluate each point at actual x-axis n.",
+      "x_axis": "x_axis_gpu_counts",
+      "series": "batch_sizes",
+      "point_eval": "econ_full_for_n(gpu, model, precision, input, output, batch, elec, rack, pue, n, cards_per_node)",
+      "null_point_rule": "If memory does not fit for n, plot null and show tooltip: model does not fit.",
+      "tooltip_fields": ["tokens_per_second", "ttft_ms", "decode_ms_per_token", "nodes", "fit_status"]
+    },
+    "stacked_cost_chart_per_1m_output": {
+      "goal": "Stack cost components per 1M output tokens and optionally overlay time curve.",
+      "bars": ["compute", "electricity", "rack_space", "platform", "network", "reliability_overhead"],
+      "optional_line": "time_for_1m_output_tokens_hours",
+      "normalization": "component_per_1m = cost_per_1m_output_tokens * (component_cost / total_cost)",
+      "annotation": "append MFU note near compute if available: compute at MFU x%"
+    },
+    "cross_gpu_comparison_card": {
+      "required_fields": [
+        "gpu_name",
+        "required_gpus",
+        "required_nodes",
+        "ttft_ms",
+        "decode_ms_per_token",
+        "tokens_per_second",
+        "cost_per_1m_output_tokens",
+        "time_for_1m_output_tokens"
+      ],
+      "optional_fields": ["mfu_percent", "effective_compute_hourly", "interconnect_type", "ic_efficiency"]
+    }
+  },
+  "integration_instructions": {
+    "browser_loader": [
+      "Fetch this JSON at startup in every deck: fetch('data_files/gpu_economics_canonical_spec_v1.json')",
+      "Use gpu_catalog + model_tiers + formulas, not hardcoded duplicates",
+      "Keep local overrides in a separate object and log them visibly"
+    ],
+    "consistency_strategy": [
+      "Always compute with one function family (econ_full, econ_full_for_n)",
+      "Never duplicate constants in slide-local files",
+      "Version-lock spec file and include spec version in chart subtitles"
+    ]
+  },
+  "consistency_checks": {
+    "checks": [
+      {
+        "id": "tps_scale_non_flat",
+        "description": "For valid points in a series, tokens/sec should not be constant across all x-axis values unless deliberately capped.",
+        "rule": "count_unique(valid_y_values) > 1"
+      },
+      {
+        "id": "fit_gate",
+        "description": "If n * vram < total_memory then point is invalid.",
+        "rule": "plot null and set fit_status='no-fit'"
+      },
+      {
+        "id": "cost_decomposition_sum",
+        "description": "Cost components must sum to total within tolerance.",
+        "rule": "abs(sum(components)-total) <= 0.5% of total"
+      },
+      {
+        "id": "node_math",
+        "description": "Node count must match GPU requirement and cards/node.",
+        "rule": "nodes == ceil(required_gpus/cards_per_node)"
+      },
+      {
+        "id": "l40s_sanity",
+        "description": "At high GPU counts on PCIe, MFU should not rise unrealistically without communication penalties.",
+        "rule": "if interconnect_type='pcie' and gpus>=16 then enforce stronger comm penalty profile"
+      }
+    ]
+  },
+  "output_contract": {
+    "required_metrics": [
+      "model_memory_gb",
+      "kv_cache_gb",
+      "total_memory_gb",
+      "required_gpus",
+      "required_nodes",
+      "ttft_ms",
+      "decode_ms_per_token",
+      "tokens_per_second",
+      "cost_per_1m_output_tokens",
+      "time_for_1m_output_tokens_seconds"
+    ],
+    "required_cost_splits": ["compute", "electricity", "rack_space", "reliability_overhead"],
+    "recommended_cost_splits": ["compute", "electricity", "rack_space", "platform", "network", "reliability_overhead"]
+  }
+}
