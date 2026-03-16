@@ -1,3 +1,6 @@
+# **Notes (14/03)**
+- SLUNK/Soperator only relevant for large-scale MLops/training workloads across thousands of GPUs across several days/weeks 
+
 # **Notes (04/03)**
 
 - Specialized brokerage; information assymmetry and connections \-\> could be a viable option but would require better people on the market-making/deal side  
