@@ -1,0 +1,1760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inference Infrastructure Red Thread - Business Deck</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #06101c;
+  --bg-2: #0b1729;
+  --bg-3: #10223a;
+  --panel: #11243d;
+  --panel-2: #162f4e;
+  --line: #29466b;
+  --line-soft: #1f3959;
+  --text: #e8f1ff;
+  --muted: #9cb2d1;
+  --muted-2: #7d93b5;
+  --brand: #28c7b7;
+  --brand-soft: rgba(40,199,183,0.15);
+  --accent: #f7b045;
+  --accent-soft: rgba(247,176,69,0.16);
+  --good: #58d48a;
+  --good-soft: rgba(88,212,138,0.14);
+  --warn: #f4c95d;
+  --warn-soft: rgba(244,201,93,0.16);
+  --bad: #f27373;
+  --bad-soft: rgba(242,115,115,0.16);
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'Space Grotesk', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; overflow: hidden; }
+body {
+  background:
+    radial-gradient(circle at 80% -10%, rgba(40,199,183,0.12), transparent 36%),
+    radial-gradient(circle at 0% 110%, rgba(247,176,69,0.10), transparent 32%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+}
+
+.deck {
+  position: fixed;
+  inset: 0;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transform: translateX(6%);
+  transition: transform .45s ease, opacity .45s ease;
+  pointer-events: none;
+  padding: 66px 52px 92px;
+}
+
+.slide.active {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+.slide.prev { transform: translateX(-4%); }
+
+.chrome {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  border-bottom: 1px solid var(--line-soft);
+  background: rgba(6,16,28,0.84);
+  backdrop-filter: blur(10px);
+  z-index: 220;
+}
+
+.logo-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.logo-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+  background: linear-gradient(140deg, var(--brand), var(--accent));
+}
+
+.chrome-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted-2);
+}
+
+.progress {
+  position: fixed;
+  top: 51px;
+  left: 0;
+  height: 2px;
+  width: 8%;
+  background: linear-gradient(90deg, var(--brand), var(--accent));
+  z-index: 220;
+  transition: width .35s ease;
+}
+
+h1, h2, h3 { font-weight: 600; line-height: 1.08; }
+
+.eyebrow {
+  font-family: var(--mono);
+  color: var(--accent);
+  font-size: 10px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.slide-title {
+  font-size: clamp(34px, 5vw, 62px);
+  max-width: 980px;
+  letter-spacing: -0.02em;
+}
+
+.slide-sub {
+  margin-top: 16px;
+  color: var(--muted);
+  font-size: clamp(15px, 1.7vw, 20px);
+  max-width: 900px;
+  line-height: 1.45;
+}
+
+.meta-row {
+  margin-top: 30px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pill {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  background: rgba(255,255,255,0.02);
+}
+
+.pill.brand { border-color: rgba(40,199,183,.5); color: var(--brand); background: var(--brand-soft); }
+.pill.accent { border-color: rgba(247,176,69,.5); color: var(--accent); background: var(--accent-soft); }
+
+.grid-2 {
+  margin-top: 26px;
+  display: grid;
+  grid-template-columns: 1.15fr .85fr;
+  gap: 18px;
+  min-height: 0;
+}
+
+.grid-3 {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.card {
+  background: linear-gradient(180deg, rgba(22,47,78,0.8), rgba(17,36,61,0.9));
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 16px 18px;
+}
+
+.card h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.card p {
+  color: var(--muted);
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+.card-k {
+  font-family: var(--mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--muted-2);
+  margin-bottom: 7px;
+}
+
+.list {
+  margin-top: 10px;
+  display: grid;
+  gap: 8px;
+}
+
+.list-item {
+  display: flex;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-top: 7px;
+  background: var(--brand);
+  flex-shrink: 0;
+}
+
+.workload-grid {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 11px;
+}
+
+.work-card {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(17,36,61,0.75);
+  padding: 12px;
+}
+
+.work-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.work-name {
+  font-size: 16px;
+  line-height: 1.1;
+}
+
+.work-tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--brand);
+  border: 1px solid rgba(40,199,183,.5);
+  border-radius: 999px;
+  padding: 2px 8px;
+  background: var(--brand-soft);
+  height: fit-content;
+  white-space: nowrap;
+}
+
+.work-card p {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.metric-strip {
+  margin-top: 10px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.metric-chip {
+  font-family: var(--mono);
+  font-size: 9px;
+  border: 1px solid var(--line-soft);
+  border-radius: 4px;
+  padding: 3px 6px;
+  color: var(--muted);
+  background: rgba(255,255,255,0.01);
+}
+
+.pipe-wrap {
+  margin-top: 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px;
+  background: rgba(16,34,58,0.62);
+}
+
+.pipeline {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(120px, 1fr));
+  gap: 8px;
+}
+
+.pipe {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 9px;
+  background: rgba(17,36,61,.75);
+  min-height: 115px;
+}
+
+.pipe-title {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--accent);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.pipe-main {
+  font-size: 12px;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.pipe-sub {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.pipe-arrow {
+  font-family: var(--mono);
+  color: var(--muted-2);
+  font-size: 11px;
+  text-align: center;
+  margin-top: 5px;
+}
+
+.legend {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 9px;
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+
+.highlight-box {
+  margin-top: 10px;
+  border: 1px solid rgba(242,115,115,0.35);
+  background: var(--bad-soft);
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: #f2d9d9;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.fit-layout {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 14px;
+  min-height: 0;
+}
+
+.controls {
+  border: 1px solid var(--line);
+  background: rgba(17,36,61,.72);
+  border-radius: 10px;
+  padding: 12px;
+  overflow: auto;
+}
+
+.ctl-row { margin-bottom: 10px; }
+
+.ctl-lbl {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+}
+
+select, input[type="range"] {
+  width: 100%;
+}
+
+select {
+  background: var(--bg-3);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 8px 9px;
+  font-family: var(--mono);
+  font-size: 11px;
+}
+
+input[type="range"] {
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.quick-presets {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.q-btn {
+  border: 1px solid var(--line);
+  background: var(--bg-3);
+  color: var(--muted);
+  border-radius: 999px;
+  padding: 4px 8px;
+  font-family: var(--mono);
+  font-size: 9px;
+  cursor: pointer;
+}
+
+.q-btn:hover, .q-btn.sel {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.results {
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  gap: 10px;
+  min-height: 0;
+}
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.kpi {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+  background: rgba(17,36,61,0.75);
+}
+
+.kpi-lbl {
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--muted-2);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: 4px;
+}
+
+.kpi-val {
+  font-family: var(--mono);
+  font-size: 20px;
+  line-height: 1;
+}
+
+.kpi-sub {
+  margin-top: 5px;
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.good { color: var(--good); }
+.warn { color: var(--warn); }
+.bad { color: var(--bad); }
+
+.bar-box {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(17,36,61,0.75);
+  padding: 10px;
+}
+
+.bar-row {
+  display: grid;
+  grid-template-columns: 185px 1fr 70px;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 8px;
+}
+
+.bar-lbl {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.track {
+  height: 12px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #0f1f35;
+  border: 1px solid var(--line-soft);
+}
+
+.fill {
+  height: 100%;
+  width: 0;
+  border-radius: 4px;
+  transition: width .35s ease;
+}
+
+.bar-val {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  text-align: right;
+}
+
+.note-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.note {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--muted);
+  background: rgba(17,36,61,0.75);
+}
+
+.mfu-scene {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.big-meter {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(17,36,61,0.78);
+  padding: 14px;
+}
+
+.meter-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+
+.meter-num {
+  font-family: var(--mono);
+  font-size: 42px;
+  line-height: 1;
+}
+
+.meter-small {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.impact-list {
+  margin-top: 10px;
+  display: grid;
+  gap: 8px;
+}
+
+.impact {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(17,36,61,.75);
+  padding: 9px 10px;
+  display: grid;
+  grid-template-columns: 1fr 90px;
+  gap: 8px;
+  align-items: center;
+}
+
+.impact span:first-child { color: var(--muted); font-size: 12px; }
+.impact span:last-child { font-family: var(--mono); text-align: right; }
+
+.topo-grid {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.topo {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(17,36,61,.75);
+  padding: 12px;
+}
+
+.topo-title {
+  font-family: var(--mono);
+  color: var(--accent);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: 8px;
+}
+
+.node-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 7px;
+}
+
+.node {
+  flex: 1;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 8px;
+  background: var(--bg-3);
+}
+
+.node h4 { font-size: 12px; margin-bottom: 3px; }
+.node p { font-size: 11px; color: var(--muted); }
+
+.arrow {
+  font-family: var(--mono);
+  color: var(--muted-2);
+  font-size: 10px;
+}
+
+.matrix {
+  margin-top: 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 220px repeat(3, 1fr);
+}
+
+.row > div {
+  padding: 10px 11px;
+  border-bottom: 1px solid var(--line-soft);
+  border-right: 1px solid var(--line-soft);
+  font-size: 12px;
+}
+
+.row > div:last-child { border-right: none; }
+.row:last-child > div { border-bottom: none; }
+
+.row.head > div {
+  background: var(--bg-3);
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+.storage-map {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+
+.store-col {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(17,36,61,.76);
+  padding: 12px;
+}
+
+.store-h {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.store-item {
+  border: 1px solid var(--line-soft);
+  border-radius: 7px;
+  padding: 8px;
+  margin-bottom: 8px;
+  background: rgba(255,255,255,0.02);
+}
+
+.store-item strong { font-size: 12px; display: block; margin-bottom: 4px; }
+.store-item p { color: var(--muted); font-size: 11px; line-height: 1.4; }
+
+.compare-grid {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.compare-card {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(17,36,61,.78);
+  padding: 12px;
+}
+
+.compare-card h3 { font-size: 17px; margin-bottom: 8px; }
+
+.compare-card .big {
+  font-family: var(--mono);
+  font-size: 30px;
+  line-height: 1;
+  margin-bottom: 7px;
+}
+
+.compare-card p { color: var(--muted); font-size: 12px; line-height: 1.45; }
+
+.footer-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 64px;
+  border-top: 1px solid var(--line-soft);
+  background: rgba(6,16,28,0.9);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 22px;
+  z-index: 220;
+}
+
+.nav-left { display: flex; gap: 10px; align-items: center; }
+
+.btn {
+  border: 1px solid var(--line);
+  background: var(--bg-3);
+  color: var(--muted);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-family: var(--mono);
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.btn:hover { border-color: var(--accent); color: var(--accent); }
+.btn:disabled { opacity: .35; cursor: default; }
+
+.dots {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.dot-nav {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--line);
+  cursor: pointer;
+}
+
+.dot-nav.active {
+  width: 18px;
+  border-radius: 6px;
+  background: var(--text);
+}
+
+.tip {
+  border-bottom: 1px dotted rgba(156,178,209,.7);
+  cursor: help;
+}
+
+#tooltip {
+  position: fixed;
+  max-width: 330px;
+  background: #071425;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity .12s ease, transform .12s ease;
+  z-index: 999;
+}
+
+#tooltip strong {
+  color: var(--brand);
+  display: block;
+  margin-bottom: 4px;
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+#tooltip.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+kbd {
+  font-family: var(--mono);
+  font-size: 9px;
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  padding: 2px 6px;
+  color: var(--muted);
+}
+
+@media (max-width: 1100px) {
+  .slide { padding: 66px 20px 86px; overflow: auto; }
+  .grid-2, .fit-layout, .mfu-scene, .topo-grid, .storage-map, .compare-grid { grid-template-columns: 1fr; }
+  .workload-grid, .pipeline, .kpi-grid, .grid-3 { grid-template-columns: 1fr 1fr; }
+  .row { grid-template-columns: 160px repeat(3, 1fr); }
+  body { overflow: auto; }
+}
+</style>
+</head>
+<body>
+<div class="chrome">
+  <div class="logo-wrap"><span class="logo-dot"></span> Inference Infrastructure Red Thread</div>
+  <div class="chrome-right">
+    <span>30-40 min strategic brief</span>
+    <span id="slideCount">01 / 12</span>
+  </div>
+</div>
+<div class="progress" id="progress"></div>
+
+<div class="deck" id="deck">
+  <section class="slide active" id="s1" data-title="Executive framing">
+    <div class="eyebrow">Chapter 1 - Executive framing</div>
+    <h1 class="slide-title">From GPU Hardware to Business Outcome: One Red Thread</h1>
+    <p class="slide-sub">We align technical decisions to business value by tracking one throughline: workload shape -> system bottlenecks -> MFU -> cost and user experience.</p>
+    <div class="meta-row">
+      <span class="pill brand">Audience: Mixed business + technical decision makers</span>
+      <span class="pill accent">Focus: Inference first, with links to model customization and training paths</span>
+      <span class="pill">Core metric: MFU (Model FLOPs Utilization)</span>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-k">What changed from v10</div>
+        <h3>More business-relatable, less model math</h3>
+        <div class="list">
+          <div class="list-item"><span class="dot"></span><span>Chat is one workload, not the workload. We include image, speech, RAG, and agents.</span></div>
+          <div class="list-item"><span class="dot"></span><span>Model internals are compressed to only what drives infrastructure and cost.</span></div>
+          <div class="list-item"><span class="dot"></span><span>Model fit + concurrency planning are now one combined decision panel.</span></div>
+          <div class="list-item"><span class="dot"></span><span>Security and multi-tenant isolation are explicit in the architecture, not assumed.</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-k">Guiding question</div>
+        <h3>What are we really buying?</h3>
+        <p>You are not buying only GPUs. You are buying reliably low-latency output tokens under realistic concurrency, with safe multi-tenant isolation and predictable economics across mixed workloads.</p>
+        <div class="highlight-box" style="margin-top:12px; border-color: rgba(88,212,138,.35); background: var(--good-soft); color:#d6f5e3;">
+          Decision quality improves when every architecture conversation ends at the same scoreboard: user latency, throughput, MFU, and cost per output token.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" id="s2" data-title="Workload map">
+    <div class="eyebrow">Chapter 2 - Workload gallery</div>
+    <h2 class="slide-title" style="font-size:clamp(30px,4vw,52px)">Real Demand Is Multi-Modal and Multi-Shape</h2>
+    <p class="slide-sub">Different workloads stress different parts of the same stack. This is why one-size GPU procurement usually underperforms.</p>
+
+    <div class="workload-grid">
+      <div class="work-card">
+        <div class="work-top"><div class="work-name">Enterprise chat</div><span class="work-tag">Latency-critical</span></div>
+        <p>Short prompts, steady decode, strict first-token SLA.</p>
+        <div class="metric-strip"><span class="metric-chip">Input: low-med</span><span class="metric-chip">Concurrency: high</span></div>
+      </div>
+      <div class="work-card">
+        <div class="work-top"><div class="work-name">RAG / doc intelligence</div><span class="work-tag">Context-heavy</span></div>
+        <p>Large retrieved context, prefill-heavy, storage + retrieval bottlenecks.</p>
+        <div class="metric-strip"><span class="metric-chip">Input: very high</span><span class="metric-chip">TTFT sensitive</span></div>
+      </div>
+      <div class="work-card">
+        <div class="work-top"><div class="work-name">Image analysis</div><span class="work-tag">Vision</span></div>
+        <p>Multi-modal tokens, larger memory footprints, throughput matters.</p>
+        <div class="metric-strip"><span class="metric-chip">Input: mixed</span><span class="metric-chip">GPU mem pressure</span></div>
+      </div>
+      <div class="work-card">
+        <div class="work-top"><div class="work-name">Image generation</div><span class="work-tag">Bursty</span></div>
+        <p>Diffusion-style serving patterns, queueing + batch strategy dominates.</p>
+        <div class="metric-strip"><span class="metric-chip">Batch economics</span><span class="metric-chip">Queue control</span></div>
+      </div>
+      <div class="work-card">
+        <div class="work-top"><div class="work-name">Speech transcription</div><span class="work-tag">Streaming</span></div>
+        <p>Continuous stream handling with tight operational consistency requirements.</p>
+        <div class="metric-strip"><span class="metric-chip">Realtime SLA</span><span class="metric-chip">I/O heavy</span></div>
+      </div>
+      <div class="work-card">
+        <div class="work-top"><div class="work-name">Agent workflows</div><span class="work-tag">Tool chain</span></div>
+        <p>Long outputs plus repeated retrieval/tool calls increase context carry-over.</p>
+        <div class="metric-strip"><span class="metric-chip">Output high</span><span class="metric-chip">KV growth</span></div>
+      </div>
+    </div>
+
+    <div class="highlight-box">
+      All six workloads still funnel through the same core path: serving framework -> model runtime -> GPU cluster -> storage and retention. The winning platform is the one that handles workload diversity without collapsing MFU.
+    </div>
+  </section>
+
+  <section class="slide" id="s3" data-title="Unified pipeline">
+    <div class="eyebrow">Chapter 3 - Unified serving process</div>
+    <h2 class="slide-title" style="font-size:clamp(30px,4vw,50px)">One Process Diagram for Business + Infra Conversations</h2>
+    <p class="slide-sub">Minimal text on purpose: use this slide as the common map for all stakeholder discussions.</p>
+
+    <div class="pipe-wrap">
+      <div class="pipeline">
+        <div class="pipe">
+          <div class="pipe-title">1. Workload entry</div>
+          <div class="pipe-main">Apps, APIs, batch jobs, internal assistants</div>
+          <div class="pipe-sub">Chat, RAG, vision, speech, agents</div>
+          <div class="pipe-arrow">-> API gateway + auth</div>
+        </div>
+        <div class="pipe">
+          <div class="pipe-title">2. Serving framework</div>
+          <div class="pipe-main">vLLM, TensorRT-LLM, Ollama, custom runtimes</div>
+          <div class="pipe-sub">Routing, batching, KV cache policy</div>
+          <div class="pipe-arrow">-> model runtime</div>
+        </div>
+        <div class="pipe">
+          <div class="pipe-title">3. Model source</div>
+          <div class="pipe-main">Hugging Face, private registry, fine-tuned artifacts</div>
+          <div class="pipe-sub">Versioning, provenance, rollout control</div>
+          <div class="pipe-arrow">-> load to GPU memory</div>
+        </div>
+        <div class="pipe">
+          <div class="pipe-title">4. Orchestration</div>
+          <div class="pipe-main">Kubernetes + Slurm options</div>
+          <div class="pipe-sub">Example: CoreWeave-style SUNK approach for mixed workloads</div>
+          <div class="pipe-arrow">-> schedule + isolate</div>
+        </div>
+        <div class="pipe">
+          <div class="pipe-title">5. GPU cluster</div>
+          <div class="pipe-main">GPU choice + interconnect + network fabric</div>
+          <div class="pipe-sub">NVLink, PCIe, RDMA/InfiniBand</div>
+          <div class="pipe-arrow">-> output stream</div>
+        </div>
+        <div class="pipe">
+          <div class="pipe-title">6. Storage lifecycle</div>
+          <div class="pipe-main">Hot, warm, cold tiers; on-prem/off-prem</div>
+          <div class="pipe-sub">Context sources, output retention, audit logs</div>
+          <div class="pipe-arrow">-> governance + BI</div>
+        </div>
+      </div>
+
+      <div class="legend">
+        <span class="legend-item"><span class="legend-dot" style="background:var(--accent)"></span>Cost drivers</span>
+        <span class="legend-item"><span class="legend-dot" style="background:var(--brand)"></span>Throughput drivers</span>
+        <span class="legend-item"><span class="legend-dot" style="background:var(--bad)"></span>Risk and isolation controls</span>
+      </div>
+    </div>
+
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-k">Security and tenancy</div>
+        <p><span class="tip" data-tip-title="Tenant isolation" data-tip="Separation between customers so one tenant cannot access another tenant's data, compute, or model state.">Isolation boundaries</span>, policy enforcement, and network segmentation are first-class controls, not optional add-ons.</p>
+      </div>
+      <div class="card">
+        <div class="card-k">Network reality</div>
+        <p>InfiniBand is not always required. High-quality RDMA over Ethernet can be sufficient for many inference patterns if topology and workload are matched.</p>
+      </div>
+      <div class="card">
+        <div class="card-k">Business implication</div>
+        <p>Commercial differentiation comes from reliability under mixed demand, not from theoretical peak FLOPs.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" id="s4" data-title="Model size essentials">
+    <div class="eyebrow">Chapter 4 - Model sizing at high level</div>
+    <h2 class="slide-title" style="font-size:clamp(30px,4vw,50px)">Only Three Inputs Determine Most Hosting Requirements</h2>
+    <p class="slide-sub">Parameters, precision, and context length. This is enough for executive-level infra planning before deep model math.</p>
+
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-k">Input 1</div>
+        <h3>Model parameters</h3>
+        <p>Bigger models generally need more memory and more distributed execution. This pushes you toward stronger interconnects and scheduler discipline.</p>
+      </div>
+      <div class="card">
+        <div class="card-k">Input 2</div>
+        <h3>Precision / quantization</h3>
+        <p>Lower precision reduces memory pressure and can raise throughput, but may impact quality for some workloads. It is a business trade-off, not just a technical tweak.</p>
+      </div>
+      <div class="card">
+        <div class="card-k">Input 3</div>
+        <h3>Context and output length</h3>
+        <p>Long prompts and long outputs inflate memory traffic and queue times. This directly shapes user-perceived latency and cost per response.</p>
+      </div>
+    </div>
+
+    <div class="matrix" style="margin-top:14px;">
+      <div class="row head">
+        <div>Model tier</div>
+        <div>Typical memory pressure</div>
+        <div>Interconnect sensitivity</div>
+        <div>Business fit</div>
+      </div>
+      <div class="row">
+        <div>7B-13B</div>
+        <div>Low to medium</div>
+        <div>Moderate</div>
+        <div>High-volume assistant features</div>
+      </div>
+      <div class="row">
+        <div>34B-70B</div>
+        <div>High</div>
+        <div>High</div>
+        <div>Premium quality + complex enterprise use</div>
+      </div>
+      <div class="row">
+        <div>100B+</div>
+        <div>Very high</div>
+        <div>Critical</div>
+        <div>Strategic flagship workloads</div>
+      </div>
+    </div>
+
+    <div class="highlight-box" style="border-color: rgba(247,176,69,.4); background: var(--accent-soft); color:#f5e5c6;">
+      Red-thread checkpoint: model size is not the endpoint. It only matters because it changes memory behavior, which changes MFU, which changes economics.
+    </div>
+  </section>
+
+  <section class="slide" id="s5" data-title="Combined planner">
+    <div class="eyebrow">Chapter 5 - Combined model fit + capacity planner</div>
+    <h2 class="slide-title" style="font-size:clamp(28px,3.7vw,46px)">Single Interactive Panel: Fit, Concurrency, MFU, and Cost</h2>
+    <p class="slide-sub">This combines “build your model” and “memory/capacity calculator” into one operational decision surface.</p>
+
+    <div class="fit-layout">
+      <aside class="controls">
+        <div class="card-k" style="margin-bottom:8px;">Workload preset</div>
+        <div class="quick-presets" id="workloadPresets"></div>
+
+        <div class="ctl-row">
+          <label class="ctl-lbl"><span>Model tier</span><span id="modelLbl"></span></label>
+          <select id="modelSel"></select>
+        </div>
+        <div class="ctl-row">
+          <label class="ctl-lbl"><span>Precision</span><span id="precLbl"></span></label>
+          <select id="precSel"></select>
+        </div>
+        <div class="ctl-row">
+          <label class="ctl-lbl"><span>GPU type</span><span id="gpuLbl"></span></label>
+          <select id="gpuSel"></select>
+        </div>
+        <div class="ctl-row">
+          <label class="ctl-lbl"><span>Interconnect profile</span><span id="icLbl"></span></label>
+          <select id="icSel"></select>
+        </div>
+
+        <div class="ctl-row">
+          <label class="ctl-lbl"><span>Prompt + context tokens</span><span id="inTokLbl">12000</span></label>
+          <input type="range" id="inTok" min="512" max="131072" step="256" value="12000">
+        </div>
+        <div class="ctl-row">
+          <label class="ctl-lbl"><span>Output tokens / request</span><span id="outTokLbl">800</span></label>
+          <input type="range" id="outTok" min="64" max="8192" step="32" value="800">
+        </div>
+        <div class="ctl-row">
+          <label class="ctl-lbl"><span>Concurrent active requests</span><span id="concLbl">24</span></label>
+          <input type="range" id="conc" min="1" max="256" step="1" value="24">
+        </div>
+        <div class="ctl-row" style="margin-bottom:0;">
+          <label class="ctl-lbl"><span>Target GPUs in cluster</span><span id="gpuCountLbl">8</span></label>
+          <input type="range" id="gpuCount" min="1" max="128" step="1" value="8">
+        </div>
+      </aside>
+
+      <div class="results">
+        <div class="kpi-grid">
+          <div class="kpi">
+            <div class="kpi-lbl">Fit status</div>
+            <div class="kpi-val" id="fitStatus">--</div>
+            <div class="kpi-sub" id="fitSub">--</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-lbl">Estimated MFU</div>
+            <div class="kpi-val" id="mfuVal">--</div>
+            <div class="kpi-sub" id="mfuClass">--</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-lbl">Cluster output tokens/sec</div>
+            <div class="kpi-val" id="tpsVal">--</div>
+            <div class="kpi-sub" id="ttftVal">--</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-lbl">Cost per 1M output tokens</div>
+            <div class="kpi-val" id="cpmVal">--</div>
+            <div class="kpi-sub" id="hourlyVal">--</div>
+          </div>
+        </div>
+
+        <div class="bar-box">
+          <div class="card-k" style="margin-bottom:8px;">Memory and bottleneck composition</div>
+          <div class="bar-row"><div class="bar-lbl">Weights footprint</div><div class="track"><div class="fill" id="barWeights" style="background: linear-gradient(90deg,var(--accent),#ffd08a)"></div></div><div class="bar-val" id="barWeightsVal"></div></div>
+          <div class="bar-row"><div class="bar-lbl">KV cache footprint</div><div class="track"><div class="fill" id="barKV" style="background: linear-gradient(90deg,var(--brand),#73e6da)"></div></div><div class="bar-val" id="barKVVal"></div></div>
+          <div class="bar-row"><div class="bar-lbl">Comm penalty share</div><div class="track"><div class="fill" id="barComm" style="background: linear-gradient(90deg,var(--bad),#f6adad)"></div></div><div class="bar-val" id="barCommVal"></div></div>
+          <div class="bar-row"><div class="bar-lbl">MFU efficiency zone</div><div class="track"><div class="fill" id="barMFU" style="background: linear-gradient(90deg,var(--good),#9ff0bb)"></div></div><div class="bar-val" id="barMFUVal"></div></div>
+        </div>
+
+        <div class="note-grid">
+          <div class="note" id="insightA"></div>
+          <div class="note" id="insightB"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" id="s6" data-title="MFU thread">
+    <div class="eyebrow">Chapter 6 - MFU as north-star</div>
+    <h2 class="slide-title" style="font-size:clamp(30px,4vw,50px)">MFU Is the Bridge Between Technical Choices and Financial Outcome</h2>
+    <p class="slide-sub">MFU answers one practical question: how much of paid GPU capability is doing useful model work right now.</p>
+
+    <div class="mfu-scene">
+      <div class="big-meter">
+        <div class="meter-top">
+          <div class="meter-small">Current scenario MFU</div>
+          <div class="meter-small">Based on Chapter 5 controls</div>
+        </div>
+        <div class="meter-num" id="mfuBig">0%</div>
+        <div class="track" style="margin-top:8px; height:16px;"><div class="fill" id="mfuBigBar" style="background:linear-gradient(90deg,var(--bad),var(--warn),var(--good));"></div></div>
+        <div class="impact-list">
+          <div class="impact"><span>Cost per output token moves inversely with MFU</span><span id="impCost">--</span></div>
+          <div class="impact"><span>Concurrency without batching hurts user SLA</span><span id="impSla">--</span></div>
+          <div class="impact"><span>Weak interconnect drags distributed inference efficiency</span><span id="impIc">--</span></div>
+          <div class="impact"><span>Long context can shift to memory-bound behavior</span><span id="impMem">--</span></div>
+        </div>
+      </div>
+
+      <div class="big-meter">
+        <div class="card-k">MFU interpretation bands</div>
+        <div class="bar-row"><div class="bar-lbl">0-15% low utilization</div><div class="track"><div class="fill" style="width:15%; background:var(--bad)"></div></div><div class="bar-val bad">Overprovisioned or poorly batched</div></div>
+        <div class="bar-row"><div class="bar-lbl">15-35% stable baseline</div><div class="track"><div class="fill" style="width:35%; background:var(--warn)"></div></div><div class="bar-val warn">Common in conservative deployments</div></div>
+        <div class="bar-row"><div class="bar-lbl">35-55% high performing</div><div class="track"><div class="fill" style="width:55%; background:var(--good)"></div></div><div class="bar-val good">Strong production target zone</div></div>
+        <div class="bar-row"><div class="bar-lbl">55%+ world-class</div><div class="track"><div class="fill" style="width:68%; background:linear-gradient(90deg,var(--good),#b3f7cc)"></div></div><div class="bar-val good">Requires tuned workload + infra</div></div>
+
+        <div class="highlight-box" style="margin-top:10px; border-color:rgba(40,199,183,.5); background:var(--brand-soft); color:#d4f4ef;">
+          Suggested commercial guardrail: include an MFU benchmark gate in enterprise deals for realistic workload profiles, not synthetic single-request tests.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" id="s7" data-title="Interconnect and topology">
+    <div class="eyebrow">Chapter 7 - Infrastructure levers</div>
+    <h2 class="slide-title" style="font-size:clamp(30px,4vw,50px)">Interconnect and Scheduling Choices Decide Scaling Quality</h2>
+    <p class="slide-sub">When models span GPUs, communication quality drives the spread between headline and delivered economics.</p>
+
+    <div class="topo-grid">
+      <div class="topo">
+        <div class="topo-title">Single-node, high-bandwidth fabric</div>
+        <div class="node-row">
+          <div class="node"><h4>8x SXM GPUs</h4><p>Strong local fabric, low synchronization drag</p></div>
+          <div class="arrow">=> MFU stable</div>
+        </div>
+        <div class="node-row">
+          <div class="node"><h4>Best for</h4><p>Latency-sensitive premium serving and steady concurrency</p></div>
+        </div>
+      </div>
+      <div class="topo">
+        <div class="topo-title">Multi-node, network-dependent fabric</div>
+        <div class="node-row">
+          <div class="node"><h4>Distributed GPU pools</h4><p>More elastic capacity, but comm overhead can rise fast</p></div>
+          <div class="arrow">=> MFU variable</div>
+        </div>
+        <div class="node-row">
+          <div class="node"><h4>Best for</h4><p>Mixed workload fleet with strong queue and placement discipline</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="matrix">
+      <div class="row head">
+        <div>Lever</div>
+        <div>Business upside</div>
+        <div>Operational risk</div>
+        <div>Mitigation</div>
+      </div>
+      <div class="row">
+        <div>Quantization</div>
+        <div>Lower cost and better fit</div>
+        <div>Potential quality drift</div>
+        <div>Use workload-specific quality gates</div>
+      </div>
+      <div class="row">
+        <div>Continuous batching</div>
+        <div>Higher MFU, better unit economics</div>
+        <div>Tail latency if queue policy is weak</div>
+        <div>SLA-aware queue classes</div>
+      </div>
+      <div class="row">
+        <div>Kubernetes + Slurm (SUNK style)</div>
+        <div>Unified control over services and HPC jobs</div>
+        <div>Control-plane complexity</div>
+        <div>Clear ownership + policy automation</div>
+      </div>
+    </div>
+
+    <div class="highlight-box" style="margin-top:10px;">
+      Competitor example: CoreWeave-style mixed orchestration patterns show that schedule quality, not just silicon quality, drives delivered throughput under real enterprise demand.
+    </div>
+  </section>
+
+  <section class="slide" id="s8" data-title="Security and tenancy">
+    <div class="eyebrow">Chapter 8 - Security, isolation, and governance</div>
+    <h2 class="slide-title" style="font-size:clamp(30px,4vw,50px)">Multi-Tenant Trust Is a Product Requirement</h2>
+    <p class="slide-sub">For buyers, this is not “extra architecture.” It is part of core service quality and procurement confidence.</p>
+
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-k">Isolation plane</div>
+        <h3>Compute boundaries</h3>
+        <p>Per-tenant quotas, GPU partitioning, network policy, and namespace-level controls prevent noisy neighbors and data crossover.</p>
+      </div>
+      <div class="card">
+        <div class="card-k">Data plane</div>
+        <h3>Retention + residency</h3>
+        <p>Prompt and output retention policy by tier and region. Clear on-prem/off-prem routes for regulated workloads.</p>
+      </div>
+      <div class="card">
+        <div class="card-k">Control plane</div>
+        <h3>Auditability</h3>
+        <p>Model version traceability, access logs, and policy change history make enterprise sign-off possible.</p>
+      </div>
+    </div>
+
+    <div class="matrix" style="margin-top:14px;">
+      <div class="row head">
+        <div>Buyer concern</div>
+        <div>What to ask vendors</div>
+        <div>Evidence artifact</div>
+        <div>Business impact</div>
+      </div>
+      <div class="row">
+        <div>Cross-tenant leakage</div>
+        <div>How is tenant isolation enforced at runtime?</div>
+        <div>Policy diagrams + penetration reports</div>
+        <div>Risk containment</div>
+      </div>
+      <div class="row">
+        <div>Data sovereignty</div>
+        <div>Where can prompts/outputs be stored?</div>
+        <div>Storage routing policy + region mapping</div>
+        <div>Regulatory compliance</div>
+      </div>
+      <div class="row">
+        <div>SLA predictability</div>
+        <div>What queue classes support premium traffic?</div>
+        <div>SLO dashboards segmented by class</div>
+        <div>Revenue protection</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" id="s9" data-title="Storage lifecycle">
+    <div class="eyebrow">Chapter 9 - Storage lifecycle map</div>
+    <h2 class="slide-title" style="font-size:clamp(30px,4vw,50px)">Where Context Comes From and Where Outputs Go</h2>
+    <p class="slide-sub">Storage is not a side note. It shapes latency, compliance posture, and long-term operating cost.</p>
+
+    <div class="storage-map">
+      <div class="store-col">
+        <div class="store-h">Hot tier (ms-seconds)</div>
+        <div class="store-item">
+          <strong>Online vector + cache</strong>
+          <p>RAG retrieval fragments, session memory, active feature stores.</p>
+        </div>
+        <div class="store-item">
+          <strong>Model-serving cache</strong>
+          <p>Frequently loaded model artifacts and tokenizer assets.</p>
+        </div>
+      </div>
+      <div class="store-col">
+        <div class="store-h">Warm tier (seconds-minutes)</div>
+        <div class="store-item">
+          <strong>Object/block storage</strong>
+          <p>Recent prompts, outputs, and application traces for replay and QA.</p>
+        </div>
+        <div class="store-item">
+          <strong>Operational logs</strong>
+          <p>Usage, billing events, and policy decisions for governance.</p>
+        </div>
+      </div>
+      <div class="store-col">
+        <div class="store-h">Cold tier (hours-days+)</div>
+        <div class="store-item">
+          <strong>Archive (on-prem or off-prem)</strong>
+          <p>Compliance retention, legal hold, model lineage snapshots.</p>
+        </div>
+        <div class="store-item">
+          <strong>Analytics lake</strong>
+          <p>Long-horizon demand and quality analysis for roadmap and pricing.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight-box" style="margin-top:10px; border-color: rgba(40,199,183,.45); background:var(--brand-soft); color:#d4f4ef;">
+      Process reminder: context retrieval path and output retention path should be explicitly shown in architecture reviews. Hidden storage assumptions become hidden costs.
+    </div>
+  </section>
+
+  <section class="slide" id="s10" data-title="Economics with MFU">
+    <div class="eyebrow">Chapter 10 - Economics and capacity</div>
+    <h2 class="slide-title" style="font-size:clamp(30px,4vw,50px)">Economics Diverges Mainly Through Bandwidth and Utilization</h2>
+    <p class="slide-sub">Same nominal hardware spend can produce very different cost per output token depending on MFU and communication overhead.</p>
+
+    <div class="compare-grid" id="scenarioCompare"></div>
+
+    <div class="bar-box" style="margin-top:10px;">
+      <div class="card-k" style="margin-bottom:8px;">What widens the cost spread</div>
+      <div class="bar-row"><div class="bar-lbl">Interconnect bottleneck</div><div class="track"><div class="fill" style="width:78%; background: linear-gradient(90deg,var(--bad),#f7b2b2)"></div></div><div class="bar-val bad">Primary divergence driver</div></div>
+      <div class="bar-row"><div class="bar-lbl">Low concurrency policy</div><div class="track"><div class="fill" style="width:62%; background: linear-gradient(90deg,var(--warn),#f8dd97)"></div></div><div class="bar-val warn">High idle share</div></div>
+      <div class="bar-row"><div class="bar-lbl">Context inflation without guardrails</div><div class="track"><div class="fill" style="width:56%; background: linear-gradient(90deg,var(--accent),#ffd99b)"></div></div><div class="bar-val">Prefill drag</div></div>
+      <div class="bar-row"><div class="bar-lbl">Unoptimized precision policy</div><div class="track"><div class="fill" style="width:44%; background: linear-gradient(90deg,var(--brand),#97ece3)"></div></div><div class="bar-val">Fit inefficiency</div></div>
+    </div>
+  </section>
+
+  <section class="slide" id="s11" data-title="Buyer checklist">
+    <div class="eyebrow">Chapter 11 - Commercial checklist</div>
+    <h2 class="slide-title" style="font-size:clamp(30px,4vw,50px)">Procurement Checklist: Questions That Protect Value</h2>
+    <p class="slide-sub">Use this as a due-diligence baseline in platform evaluations and vendor negotiations.</p>
+
+    <div class="matrix">
+      <div class="row head">
+        <div>Question</div>
+        <div>Why it matters</div>
+        <div>Minimum acceptable answer</div>
+        <div>Red flag answer</div>
+      </div>
+      <div class="row">
+        <div>What MFU is achieved on our workload profile?</div>
+        <div>Directly tied to effective cost and scaling</div>
+        <div>Segmented MFU by workload class</div>
+        <div>Single synthetic benchmark only</div>
+      </div>
+      <div class="row">
+        <div>How are tenants isolated?</div>
+        <div>Compliance and trust requirements</div>
+        <div>Runtime + network + storage controls documented</div>
+        <div>"Shared cluster but trust us"</div>
+      </div>
+      <div class="row">
+        <div>How is orchestration split (K8s/Slurm)?</div>
+        <div>Predictability under mixed demand</div>
+        <div>Clear scheduling ownership and policy model</div>
+        <div>Ad-hoc manual placement</div>
+      </div>
+      <div class="row">
+        <div>Where do prompts/outputs reside by default?</div>
+        <div>Data governance and legal risk</div>
+        <div>Explicit retention routing per tenant</div>
+        <div>Unspecified storage path</div>
+      </div>
+    </div>
+
+    <div class="highlight-box" style="margin-top:12px; border-color:rgba(247,176,69,.5); background:var(--accent-soft); color:#f7e6c8;">
+      Negotiation tip: ask for an MFU-backed price curve under your expected concurrency bands instead of a single flat token price.
+    </div>
+  </section>
+
+  <section class="slide" id="s12" data-title="Close">
+    <div class="eyebrow">Chapter 12 - Close and action plan</div>
+    <h2 class="slide-title" style="font-size:clamp(34px,5vw,58px)">Decision Sequence for High-Confidence Inference Strategy</h2>
+    <p class="slide-sub">Keep the red thread intact from architecture to commercial outcomes.</p>
+
+    <div class="grid-3" style="margin-top:22px;">
+      <div class="card">
+        <div class="card-k">Step 1</div>
+        <h3>Segment workload demand</h3>
+        <p>Build demand tiers by latency, context size, and concurrency pattern.</p>
+      </div>
+      <div class="card">
+        <div class="card-k">Step 2</div>
+        <h3>Size model and precision</h3>
+        <p>Select quality envelope first, then fit and batch for practical throughput.</p>
+      </div>
+      <div class="card">
+        <div class="card-k">Step 3</div>
+        <h3>Design for MFU stability</h3>
+        <p>Batch policy + interconnect + scheduling should be treated as one system.</p>
+      </div>
+      <div class="card">
+        <div class="card-k">Step 4</div>
+        <h3>Embed isolation and governance</h3>
+        <p>Trust and compliance controls are mandatory for enterprise scale.</p>
+      </div>
+      <div class="card">
+        <div class="card-k">Step 5</div>
+        <h3>Benchmark economics in context</h3>
+        <p>Measure cost by delivered output quality and SLA, not by token list price alone.</p>
+      </div>
+      <div class="card">
+        <div class="card-k">Step 6</div>
+        <h3>Operationalize as a living loop</h3>
+        <p>Continuously recalibrate workload mix, model routing, and capacity allocation.</p>
+      </div>
+    </div>
+
+    <div class="highlight-box" style="margin-top:16px; border-color:rgba(88,212,138,.5); background:var(--good-soft); color:#d4f5df;">
+      Final message: the platform with the strongest red thread from workload to MFU to economics will outperform in both margin and customer experience.
+    </div>
+
+    <div class="meta-row" style="margin-top:16px;">
+      <span class="pill">Navigate with <kbd>Left</kbd> / <kbd>Right</kbd></span>
+      <span class="pill">Use Chapter 5 as the live discussion anchor</span>
+      <span class="pill">Keep technical depth in tooltips during executive flow</span>
+    </div>
+  </section>
+</div>
+
+<div class="footer-nav">
+  <div class="nav-left">
+    <button class="btn" id="prevBtn">Prev</button>
+    <button class="btn" id="nextBtn">Next</button>
+    <span style="font-family:var(--mono);font-size:10px;color:var(--muted);">Keyboard: left/right arrows</span>
+  </div>
+  <div class="dots" id="dots"></div>
+</div>
+
+<div id="tooltip"></div>
+
+<script>
+const slides = Array.from(document.querySelectorAll('.slide'));
+const total = slides.length;
+let idx = 0;
+
+const dotsEl = document.getElementById('dots');
+const progress = document.getElementById('progress');
+const slideCount = document.getElementById('slideCount');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+
+slides.forEach((_, i) => {
+  const d = document.createElement('button');
+  d.className = 'dot-nav' + (i === 0 ? ' active' : '');
+  d.addEventListener('click', () => go(i));
+  dotsEl.appendChild(d);
+});
+
+function go(n) {
+  idx = Math.max(0, Math.min(total - 1, n));
+  slides.forEach((s, i) => {
+    s.classList.toggle('active', i === idx);
+    s.classList.toggle('prev', i < idx);
+  });
+  [...dotsEl.children].forEach((d, i) => d.classList.toggle('active', i === idx));
+  progress.style.width = (((idx + 1) / total) * 100) + '%';
+  slideCount.textContent = String(idx + 1).padStart(2, '0') + ' / ' + String(total).padStart(2, '0');
+  prevBtn.disabled = idx === 0;
+  nextBtn.disabled = idx === total - 1;
+}
+
+prevBtn.addEventListener('click', () => go(idx - 1));
+nextBtn.addEventListener('click', () => go(idx + 1));
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === 'PageDown') go(idx + 1);
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') go(idx - 1);
+});
+
+const MODELS = {
+  '7B':  { paramsB: 7,   layers: 32,  hidden: 4096, baseTps: 220 },
+  '13B': { paramsB: 13,  layers: 40,  hidden: 5120, baseTps: 145 },
+  '34B': { paramsB: 34,  layers: 60,  hidden: 8192, baseTps: 72 },
+  '70B': { paramsB: 70,  layers: 80,  hidden: 8192, baseTps: 41 },
+  '405B':{ paramsB: 405, layers: 128, hidden: 16384, baseTps: 7 }
+};
+
+const PREC = {
+  'BF16': { bytes: 2, speed: 1.0, qual: 'high' },
+  'FP16': { bytes: 2, speed: 0.98, qual: 'high' },
+  'INT8': { bytes: 1, speed: 1.22, qual: 'medium-high' },
+  'INT4': { bytes: 0.5, speed: 1.43, qual: 'medium' }
+};
+
+const GPUS = {
+  'H100 SXM 80GB': { vram: 80, perf: 1.0, hr: 3.25 },
+  'H200 SXM 141GB': { vram: 141, perf: 1.15, hr: 4.15 },
+  'MI300X 192GB': { vram: 192, perf: 1.03, hr: 3.65 },
+  'L40S 48GB': { vram: 48, perf: 0.63, hr: 1.55 }
+};
+
+const INTERCONNECT = {
+  'NVLink 5 / in-node': { eff: 0.95, latency: 0.9, penalty: 0.10 },
+  'NVLink 4 / in-node': { eff: 0.88, latency: 1.2, penalty: 0.16 },
+  'InfiniBand NDR': { eff: 0.78, latency: 1.9, penalty: 0.24 },
+  'RoCEv2 RDMA': { eff: 0.69, latency: 2.5, penalty: 0.30 },
+  'PCIe-only shared': { eff: 0.52, latency: 4.7, penalty: 0.42 }
+};
+
+const WORKLOADS = {
+  chat: { label: 'Enterprise chat', input: 3500, output: 600, conc: 56 },
+  rag: { label: 'RAG document', input: 24000, output: 700, conc: 20 },
+  vision: { label: 'Image analysis', input: 12000, output: 420, conc: 28 },
+  imagegen: { label: 'Image generation', input: 1800, output: 200, conc: 18 },
+  speech: { label: 'Transcription', input: 9000, output: 1000, conc: 26 },
+  agents: { label: 'Agent workflows', input: 15000, output: 1800, conc: 16 }
+};
+
+const modelSel = document.getElementById('modelSel');
+const precSel = document.getElementById('precSel');
+const gpuSel = document.getElementById('gpuSel');
+const icSel = document.getElementById('icSel');
+const inTok = document.getElementById('inTok');
+const outTok = document.getElementById('outTok');
+const conc = document.getElementById('conc');
+const gpuCount = document.getElementById('gpuCount');
+const workloadPresets = document.getElementById('workloadPresets');
+
+for (const k of Object.keys(MODELS)) modelSel.innerHTML += `<option value="${k}">${k}</option>`;
+for (const k of Object.keys(PREC)) precSel.innerHTML += `<option value="${k}">${k}</option>`;
+for (const k of Object.keys(GPUS)) gpuSel.innerHTML += `<option value="${k}">${k}</option>`;
+for (const k of Object.keys(INTERCONNECT)) icSel.innerHTML += `<option value="${k}">${k}</option>`;
+
+Object.entries(WORKLOADS).forEach(([k, v], i) => {
+  const b = document.createElement('button');
+  b.className = 'q-btn' + (i === 0 ? ' sel' : '');
+  b.textContent = v.label;
+  b.addEventListener('click', () => {
+    [...workloadPresets.children].forEach(x => x.classList.remove('sel'));
+    b.classList.add('sel');
+    inTok.value = v.input;
+    outTok.value = v.output;
+    conc.value = v.conc;
+    updateCalc();
+  });
+  workloadPresets.appendChild(b);
+});
+
+modelSel.value = '70B';
+precSel.value = 'BF16';
+gpuSel.value = 'H100 SXM 80GB';
+icSel.value = 'NVLink 4 / in-node';
+
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+function updateCalc() {
+  const model = MODELS[modelSel.value];
+  const prec = PREC[precSel.value];
+  const gpu = GPUS[gpuSel.value];
+  const ic = INTERCONNECT[icSel.value];
+
+  const inputT = Number(inTok.value);
+  const outputT = Number(outTok.value);
+  const c = Number(conc.value);
+  const g = Number(gpuCount.value);
+  const seq = inputT + outputT;
+
+  document.getElementById('modelLbl').textContent = modelSel.value;
+  document.getElementById('precLbl').textContent = precSel.value;
+  document.getElementById('gpuLbl').textContent = gpuSel.value.split(' ')[0];
+  document.getElementById('icLbl').textContent = icSel.value.split('/')[0].trim();
+
+  document.getElementById('inTokLbl').textContent = inputT.toLocaleString();
+  document.getElementById('outTokLbl').textContent = outputT.toLocaleString();
+  document.getElementById('concLbl').textContent = c.toLocaleString();
+  document.getElementById('gpuCountLbl').textContent = g;
+
+  const weightsGb = model.paramsB * prec.bytes * 1.07;
+  const kvPer1kGb = (2 * model.layers * model.hidden * 1000 * 2) / 1e9;
+  const kvGb = kvPer1kGb * (seq / 1000) * c;
+  const runtimeGb = Math.max(8, model.paramsB * 0.07 + g * 0.6);
+  const totalNeedGb = weightsGb + kvGb + runtimeGb;
+  const totalAvailGb = g * gpu.vram * 0.9;
+  const fitRatio = totalNeedGb / Math.max(1, totalAvailGb);
+
+  const gpusMin = Math.ceil(totalNeedGb / (gpu.vram * 0.9));
+
+  let mfu = 0.05 + 0.58 * (1 - Math.exp(-c / 25));
+  mfu *= (0.82 + 0.35 * ic.eff);
+  mfu *= (0.9 + 0.16 * prec.speed);
+  mfu *= Math.pow(70 / model.paramsB, 0.06);
+  mfu *= (0.96 - clamp((inputT - 12000) / 220000, 0, 0.22));
+  mfu *= (g > gpusMin ? 0.94 : 1.02);
+  mfu = clamp(mfu, 0.04, 0.68);
+
+  const commPenalty = clamp(ic.penalty * Math.log2(Math.max(1, g)), 0.05, 0.72);
+  const prefillLoad = clamp((inputT / Math.max(1, outputT)) * 0.08, 0.06, 0.62);
+
+  const tps = Math.max(0.5,
+    model.baseTps * gpu.perf * prec.speed *
+    Math.pow(g, 0.86) *
+    (0.5 + mfu) *
+    (1 - 0.45 * commPenalty) *
+    (1 - 0.18 * prefillLoad)
+  );
+
+  const ttftMs = Math.max(180,
+    120 +
+    Math.pow(inputT, 0.75) * 0.55 +
+    ic.latency * 20 +
+    commPenalty * 220
+  );
+
+  const hourly = g * gpu.hr + g * 0.19 + Math.max(0.12, g * 0.03);
+  const outTokPerHour = tps * 3600;
+  const cpm = (hourly / Math.max(1, outTokPerHour)) * 1_000_000;
+
+  const fitStatus = document.getElementById('fitStatus');
+  const fitSub = document.getElementById('fitSub');
+  if (fitRatio <= 0.85) {
+    fitStatus.textContent = 'FIT';
+    fitStatus.className = 'kpi-val good';
+    fitSub.textContent = `${gpusMin} GPU min fit | ${Math.round((1 - fitRatio) * 100)}% headroom`;
+  } else if (fitRatio <= 1.0) {
+    fitStatus.textContent = 'TIGHT';
+    fitStatus.className = 'kpi-val warn';
+    fitSub.textContent = `${gpusMin} GPU min fit | limited burst headroom`;
+  } else {
+    fitStatus.textContent = 'NO FIT';
+    fitStatus.className = 'kpi-val bad';
+    fitSub.textContent = `${gpusMin} GPU required at minimum`;
+  }
+
+  document.getElementById('mfuVal').textContent = Math.round(mfu * 100) + '%';
+  const mfuClass = document.getElementById('mfuClass');
+  mfuClass.textContent = mfu < 0.15 ? 'Low utilization' : (mfu < 0.35 ? 'Baseline zone' : (mfu < 0.55 ? 'Strong zone' : 'World-class zone'));
+
+  document.getElementById('tpsVal').textContent = Math.round(tps).toLocaleString();
+  document.getElementById('ttftVal').textContent = `TTFT ~ ${Math.round(ttftMs)} ms`;
+
+  document.getElementById('cpmVal').textContent = '$' + Math.round(cpm).toLocaleString();
+  document.getElementById('hourlyVal').textContent = '$' + hourly.toFixed(2) + '/hour cluster';
+
+  const capPct = (v, m) => clamp((v / m) * 100, 2, 100);
+  document.getElementById('barWeights').style.width = capPct(weightsGb, totalNeedGb) + '%';
+  document.getElementById('barKV').style.width = capPct(kvGb, totalNeedGb) + '%';
+  document.getElementById('barComm').style.width = (commPenalty * 100).toFixed(1) + '%';
+  document.getElementById('barMFU').style.width = (mfu * 100).toFixed(1) + '%';
+
+  document.getElementById('barWeightsVal').textContent = weightsGb.toFixed(1) + ' GB';
+  document.getElementById('barKVVal').textContent = kvGb.toFixed(1) + ' GB';
+  document.getElementById('barCommVal').textContent = Math.round(commPenalty * 100) + '%';
+  document.getElementById('barMFUVal').textContent = Math.round(mfu * 100) + '%';
+
+  document.getElementById('insightA').textContent =
+    `Primary pressure: ${kvGb > weightsGb ? 'KV cache (context + concurrency)' : 'model weights'}. ` +
+    `A ${precSel.value} policy with ${c} concurrent requests on ${g} GPUs yields ${Math.round(mfu * 100)}% MFU.`;
+
+  document.getElementById('insightB').textContent =
+    `Interconnect impact: ${Math.round(commPenalty * 100)}% comm penalty share. ` +
+    `${icSel.value.split('/')[0].trim()} can shift cost per 1M output tokens materially at this model size.`;
+
+  document.getElementById('mfuBig').textContent = Math.round(mfu * 100) + '%';
+  document.getElementById('mfuBigBar').style.width = (mfu * 100).toFixed(1) + '%';
+  document.getElementById('impCost').textContent = '$' + Math.round(cpm).toLocaleString() + '/1M out tok';
+  document.getElementById('impSla').textContent = 'TTFT ' + Math.round(ttftMs) + ' ms';
+  document.getElementById('impIc').textContent = Math.round(commPenalty * 100) + '% penalty';
+  document.getElementById('impMem').textContent = (weightsGb + kvGb).toFixed(0) + ' GB active';
+
+  renderScenarioCards({ mfu, cpm, ttftMs, tps, commPenalty });
+}
+
+function renderScenarioCards(base) {
+  const compare = document.getElementById('scenarioCompare');
+
+  const rows = [
+    {
+      title: 'Scenario A: Optimized lane',
+      mfu: clamp(base.mfu + 0.13, 0.08, 0.72),
+      cpm: Math.max(10, base.cpm * 0.68),
+      ttft: Math.max(120, base.ttftMs * 0.8),
+      tone: 'good',
+      note: 'Strong batching + high-quality interconnect + policy-aware scheduling.'
+    },
+    {
+      title: 'Scenario B: Current lane',
+      mfu: base.mfu,
+      cpm: base.cpm,
+      ttft: base.ttftMs,
+      tone: 'warn',
+      note: 'Baseline operating point from current chapter controls.'
+    },
+    {
+      title: 'Scenario C: Degraded lane',
+      mfu: clamp(base.mfu - 0.16, 0.04, 0.72),
+      cpm: base.cpm * 1.65,
+      ttft: base.ttftMs * 1.58,
+      tone: 'bad',
+      note: 'Weak interconnect + poor queue policy + excess context inflation.'
+    }
+  ];
+
+  compare.innerHTML = rows.map(r => `
+    <div class="compare-card">
+      <h3>${r.title}</h3>
+      <div class="big ${r.tone}">${Math.round(r.mfu * 100)}% MFU</div>
+      <p><strong style="color:var(--text)">$${Math.round(r.cpm).toLocaleString()}</strong> per 1M output tokens</p>
+      <p><strong style="color:var(--text)">${Math.round(r.ttft)} ms</strong> estimated first-token latency</p>
+      <p style="margin-top:8px;">${r.note}</p>
+    </div>
+  `).join('');
+}
+
+[inTok, outTok, conc, gpuCount, modelSel, precSel, gpuSel, icSel].forEach(el => {
+  el.addEventListener('input', updateCalc);
+  el.addEventListener('change', updateCalc);
+});
+
+const tooltip = document.getElementById('tooltip');
+document.querySelectorAll('.tip').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    const title = el.dataset.tipTitle || 'Definition';
+    const body = el.dataset.tip || '';
+    tooltip.innerHTML = `<strong>${title}</strong>${body}`;
+    tooltip.classList.add('show');
+  });
+  el.addEventListener('mousemove', (e) => {
+    const x = e.clientX + 12;
+    const y = e.clientY + 12;
+    tooltip.style.left = x + 'px';
+    tooltip.style.top = y + 'px';
+  });
+  el.addEventListener('mouseleave', () => {
+    tooltip.classList.remove('show');
+  });
+});
+
+go(0);
+updateCalc();
+</script>
+</body>
+</html>

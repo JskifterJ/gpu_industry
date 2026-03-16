@@ -1,0 +1,22 @@
+Comments from reviewer 1:
+Inference isnt just about text. It can be many other things from audio transcription to image analysis.
+
+There is no mention of security and isolation. You are just focusing on a single LLM use case and missed that what many customers want is a GPU or group of GPU's.
+
+There is no mention of network requirements. Infiniband isnt the only answer and isnt needed if you have RDMA support.
+
+What about storage? Where do you store the output's where do you get the models from. How do you deal with customers who want a customised model. How do you do training? Inference isnt the only use case.
+
+I am concerned you have focused just on how to make a chat interface work here and not the rest of the workloads that are put on GPU's and the rest of the surrounding infrastructure.
+
+Two customers we are currently working with are both doing things with images. One is generating new images another is doing analysis of images.
+
+The loading of models is key to GPU efficency. What you have described here is how to make a single large ChatGPT/Claude replacement and not how customers are buying or using GPU's. Look at coreweave and look at the options you have to buy GPU's from them.
+
+You have focused very heavily on chat inference use case and am concerned that if someone goes through this presentation then they are going to go away with is we just need to provision a load of GPU's and we sell a chat bot. How do you isolate multiple customers across multiple gpus across multiple servers.
+
+You havent touched on things like MFU https://www.linkedin.com/posts/semianalysis_everyone-likes-to-compare-chips-using-peak-activity-7404912882762571776-n4ej/ which is someone like Meta come to a cluster they run an MFU benchmark and if its not good enough they walk to the next cluster.
+
+You also have not touched on the various frameworks for running LLM's (vLLM, Ollama etc etc) or model repositories like huggingface.
+
+I think you have gone into far too much detail at this stage in the learning journey and for many people this will go straight over there heads and will distill down that we just need to have a bunch of GPU's all connected and running a single model.
