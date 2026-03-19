@@ -47,6 +47,17 @@ body {
   font-family: var(--sans);
 }
 
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: radial-gradient(rgba(31,42,51,0.06) 1px, transparent 1px);
+  background-size: 32px 32px;
+  opacity: 0.32;
+}
+
 .deck {
   position: fixed;
   inset: 0;
@@ -388,6 +399,160 @@ h1, h2, h3 { font-weight: 600; line-height: 1.08; }
   font-size: 11px;
   text-align: center;
   margin-top: 5px;
+}
+
+.step-badge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.step-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  flex-shrink: 0;
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 600;
+  border: 2px solid var(--accent);
+  color: var(--accent);
+  background: rgba(255,255,255,0.92);
+}
+
+.step-text {
+  min-width: 0;
+}
+
+.step-label {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: var(--text);
+}
+
+.step-sub {
+  font-family: var(--mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--muted-2);
+  margin-top: 2px;
+}
+
+.flow-strip {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(120px, 1fr));
+  gap: 8px;
+}
+
+.flow-stage {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  padding: 9px 10px;
+  position: relative;
+}
+
+.flow-stage::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: 8px 8px 0 0;
+  background: linear-gradient(90deg, var(--brand), var(--accent));
+}
+
+.flow-stage h4 {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--accent);
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+.flow-stage p {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.flow-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  color: var(--muted-2);
+  font-size: 11px;
+}
+
+.chassis-mini {
+  margin-top: 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 11px;
+  background: #fff;
+}
+
+.chassis-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.chassis-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.chip-mini {
+  border: 1px solid var(--line-soft);
+  border-radius: 7px;
+  background: #faf7f1;
+  padding: 8px;
+}
+
+.chip-mini strong {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--accent);
+  display: block;
+  margin-bottom: 5px;
+}
+
+.chip-mini p {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.hbm-row {
+  margin-top: 5px;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 3px;
+}
+
+.hbm-s {
+  height: 6px;
+  border-radius: 2px;
+  background: rgba(15,127,120,0.28);
+  border: 1px solid rgba(15,127,120,0.4);
 }
 
 .legend {
@@ -1255,6 +1420,7 @@ kbd {
   .grid-2, .fit-layout, .mfu-scene, .topo-grid, .storage-map, .compare-grid { grid-template-columns: 1fr; }
   .econx-wrap, .econx-grid, .econx-kpi, .econx-split { grid-template-columns: 1fr; }
   .workload-grid, .pipeline, .kpi-grid, .grid-3 { grid-template-columns: 1fr 1fr; }
+  .flow-strip, .chassis-grid { grid-template-columns: 1fr 1fr; }
   .flow-meta { grid-template-columns: 1fr 1fr; }
   .toc-grid, .exec-kpi-row { grid-template-columns: 1fr; }
   .row { grid-template-columns: 160px repeat(3, 1fr); }
@@ -1447,6 +1613,24 @@ kbd {
     <div class="eyebrow">Chapter 3 - Unified serving process</div>
     <h2 class="slide-title" style="font-size:clamp(30px,4vw,50px)">End-to-End Inference Architecture</h2>
     <p class="slide-sub">Detailed process map: prompt origin, data origin, serving path, network bandwidth tiers, storage, and governance loops.</p>
+
+    <div class="step-badge">
+      <div class="step-num">3</div>
+      <div class="step-text">
+        <div class="step-label">Business pipeline view before technical detail</div>
+        <div class="step-sub">request to answer in four stages</div>
+      </div>
+    </div>
+
+    <div class="flow-strip" style="grid-template-columns: 1fr 26px 1fr 26px 1fr 26px 1fr;">
+      <div class="flow-stage"><h4>Intake</h4><p>API gateway, identity, and policy tagging.</p></div>
+      <div class="flow-arrow">-&gt;</div>
+      <div class="flow-stage"><h4>Context</h4><p>Retrieval, embedding, and cache lookup.</p></div>
+      <div class="flow-arrow">-&gt;</div>
+      <div class="flow-stage"><h4>Runtime</h4><p>Batching, scheduling, and GPU placement.</p></div>
+      <div class="flow-arrow">-&gt;</div>
+      <div class="flow-stage"><h4>Govern</h4><p>Telemetry, FinOps, and policy enforcement.</p></div>
+    </div>
 
     <div class="mermaid-wrap">
       <div class="mermaid-pane">
@@ -1789,6 +1973,24 @@ flowchart LR
     <h2 class="slide-title" style="font-size:clamp(30px,4vw,50px)">Interconnect, Topology, and Scheduling Trade-offs</h2>
     <p class="slide-sub">When models span GPUs, communication quality drives the gap between headline and delivered economics.</p>
 
+    <div class="step-badge">
+      <div class="step-num">7</div>
+      <div class="step-text">
+        <div class="step-label">Treat the node like a designed machine, not a GPU list</div>
+        <div class="step-sub">local fabric, memory behavior, queue discipline</div>
+      </div>
+    </div>
+
+    <div class="chassis-mini">
+      <div class="chassis-title">Node chassis snapshot</div>
+      <div class="chassis-grid">
+        <div class="chip-mini"><strong>GPU 1-2</strong><p>Latency class</p><div class="hbm-row"><span class="hbm-s"></span><span class="hbm-s"></span><span class="hbm-s"></span><span class="hbm-s"></span><span class="hbm-s"></span><span class="hbm-s"></span></div></div>
+        <div class="chip-mini"><strong>GPU 3-4</strong><p>Balanced class</p><div class="hbm-row"><span class="hbm-s"></span><span class="hbm-s"></span><span class="hbm-s"></span><span class="hbm-s"></span><span class="hbm-s"></span><span class="hbm-s"></span></div></div>
+        <div class="chip-mini"><strong>GPU 5-6</strong><p>Throughput class</p><div class="hbm-row"><span class="hbm-s"></span><span class="hbm-s"></span><span class="hbm-s"></span><span class="hbm-s"></span><span class="hbm-s"></span><span class="hbm-s"></span></div></div>
+        <div class="chip-mini"><strong>GPU 7-8</strong><p>Overflow class</p><div class="hbm-row"><span class="hbm-s"></span><span class="hbm-s"></span><span class="hbm-s"></span><span class="hbm-s"></span><span class="hbm-s"></span><span class="hbm-s"></span></div></div>
+      </div>
+    </div>
+
     <div class="topo-grid">
       <div class="topo">
         <div class="topo-title">Single-node, high-bandwidth fabric</div>
@@ -1849,6 +2051,14 @@ flowchart LR
     <h2 class="slide-title" style="font-size:clamp(30px,4vw,50px)">Security, Isolation, and Governance Requirements</h2>
     <p class="slide-sub">For buyers, this is core product quality, not extra architecture.</p>
 
+    <div class="step-badge">
+      <div class="step-num">8</div>
+      <div class="step-text">
+        <div class="step-label">Three control planes that should be reviewed together</div>
+        <div class="step-sub">compute boundary, data boundary, policy boundary</div>
+      </div>
+    </div>
+
     <div class="grid-3">
       <div class="card">
         <div class="card-k">Isolation plane</div>
@@ -1899,6 +2109,14 @@ flowchart LR
     <div class="eyebrow">Chapter 9 - Storage lifecycle map</div>
     <h2 class="slide-title" style="font-size:clamp(30px,4vw,50px)">Storage and Retention Architecture</h2>
     <p class="slide-sub">Storage shape directly influences latency, compliance posture, and long-term cost.</p>
+
+    <div class="flow-strip" style="grid-template-columns: 1fr 20px 1fr 20px 1fr; margin-bottom: 8px;">
+      <div class="flow-stage"><h4>Hot</h4><p>Active context and low-latency retrieval.</p></div>
+      <div class="flow-arrow">-&gt;</div>
+      <div class="flow-stage"><h4>Warm</h4><p>Operational history for replay and billing.</p></div>
+      <div class="flow-arrow">-&gt;</div>
+      <div class="flow-stage"><h4>Cold</h4><p>Retention and governance-grade archive.</p></div>
+    </div>
 
     <div class="storage-map">
       <div class="store-col">
@@ -2040,6 +2258,15 @@ flowchart LR
     <div class="eyebrow">Chapter 12 - Close and action plan</div>
     <h2 class="slide-title" style="font-size:clamp(34px,5vw,58px)">Decision Sequence and Operating Plan</h2>
     <p class="slide-sub">Keep the red thread intact from architecture to commercial outcomes.</p>
+
+    <div class="flow-strip" style="grid-template-columns: repeat(6, 1fr); margin-top: 14px;">
+      <div class="flow-stage"><h4>1</h4><p>Segment demand</p></div>
+      <div class="flow-stage"><h4>2</h4><p>Pick model/precision</p></div>
+      <div class="flow-stage"><h4>3</h4><p>Tune MFU system</p></div>
+      <div class="flow-stage"><h4>4</h4><p>Enforce isolation</p></div>
+      <div class="flow-stage"><h4>5</h4><p>Benchmark economics</p></div>
+      <div class="flow-stage"><h4>6</h4><p>Run as a loop</p></div>
+    </div>
 
     <div class="grid-3" style="margin-top:22px;">
       <div class="card">
@@ -2369,6 +2596,17 @@ let selectedBatches = new Set([1, 8, 32, 64, 128]);
 let costTimeChart = null;
 let tpsScaleChart = null;
 
+function chartLibraryReady() {
+  return typeof Chart !== 'undefined';
+}
+
+function renderChartFallback(canvasId, message) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas || !canvas.parentElement) return;
+  const host = canvas.parentElement;
+  host.innerHTML = `<div style="height:100%;display:flex;align-items:center;justify-content:center;text-align:center;padding:10px;font-family:var(--mono);font-size:10px;color:var(--muted);border:1px dashed var(--line);border-radius:8px;background:#fff;">${message}</div>`;
+}
+
 function shortGpuName(name) {
   return name.replace(' SXM', '').replace('GB', '').trim();
 }
@@ -2674,6 +2912,12 @@ function updateEconomicsExplorer() {
   const labels = gpuRows.map(r => shortGpuName(r.gpuKey));
   const costVals = gpuRows.map(r => Math.round(r.costPer1M));
   const timeVals = gpuRows.map(r => +(r.timeHoursPer1M * 60).toFixed(1));
+  if (!chartLibraryReady()) {
+    renderChartFallback('costTimeChart', 'Chart.js failed to load. Economics visuals are unavailable, but table and KPI outputs remain active.');
+    renderChartFallback('tpsScaleChart', 'Chart.js failed to load. Scaling curve is unavailable, but numeric planning outputs remain active.');
+    return;
+  }
+
   if (costTimeChart) costTimeChart.destroy();
   costTimeChart = new Chart(document.getElementById('costTimeChart'), {
     type: 'bar',
