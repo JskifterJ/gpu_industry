@@ -1907,6 +1907,115 @@ Fuse softmax + matmul into single CUDA kernel per tile:
 
       <p>The most defensible long-term position is one that <strong>owns a meaningful chunk of the inference engine layer while building adjacent data infrastructure</strong> — because that combination sits directly between hardware commoditization (threatening CoreWeave-style plays) and application-layer fragmentation (threatening orchestration plays). The data infrastructure angle is explored in the next section.</p>
     </div>
+
+    <div class="callout yellow">
+      <div class="callout-label">ClusterMAX Bronze Cohort Snapshot</div>
+      <p>To keep this brief aligned with the competitor intelligence tables, the Bronze cohort from the current research base is explicitly mapped below: <strong>DataCrunch (Verda), TensorWave, BUZZ High Performance Computing, and Qubrid AI</strong>. Bronze tier description is kept identical: <strong>Meets minimum viable bar but shows material operating gaps versus upper tiers.</strong></p>
+    </div>
+
+    <div class="competitor-grid">
+
+      <div class="comp-card">
+        <div class="comp-card-accent" style="background: linear-gradient(90deg, #d97706, #9a5a00)"></div>
+        <div class="comp-card-head">
+          <div class="comp-name">DataCrunch (Verda)</div>
+          <div class="comp-tagline">Bronze Tier · Neocloud Model · EU Sovereign (Finland/Iceland)</div>
+        </div>
+        <div class="comp-card-body">
+          <div class="comp-row">
+            <div class="comp-row-label">Stack Position</div>
+            <div class="comp-stack-indicator">
+              <span class="stack-badge" style="background:rgba(217,119,6,0.15);color:#d97706;border:1px solid rgba(217,119,6,0.3)">Model · Neocloud</span>
+              <span class="stack-badge" style="background:rgba(217,119,6,0.12);color:var(--text-muted);border:1px solid var(--border)">Primary Layers · 0-1 Infrastructure</span>
+            </div>
+          </div>
+          <div class="comp-row">
+            <div class="comp-row-label">Positioning</div>
+            <div class="comp-row-value">Bronze-tier EU sovereign operator with renewable-power positioning, dynamic exchange-style pricing, and premium NVIDIA hardware concentrated in Finland and Iceland.</div>
+          </div>
+          <div class="comp-row">
+            <div class="comp-row-label">Watchpoint</div>
+            <div class="comp-row-value">Regional concentration limits global latency-sensitive deployment; monitoring depth remains below upper-tier providers; partnership depth trails Gold-tier peers.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-card-accent" style="background: linear-gradient(90deg, #d97706, #b45309)"></div>
+        <div class="comp-card-head">
+          <div class="comp-name">TensorWave</div>
+          <div class="comp-tagline">Bronze Tier · Neocloud Model · AMD-First</div>
+        </div>
+        <div class="comp-card-body">
+          <div class="comp-row">
+            <div class="comp-row-label">Stack Position</div>
+            <div class="comp-stack-indicator">
+              <span class="stack-badge" style="background:rgba(217,119,6,0.15);color:#d97706;border:1px solid rgba(217,119,6,0.3)">Model · Neocloud</span>
+              <span class="stack-badge" style="background:rgba(217,119,6,0.12);color:var(--text-muted);border:1px solid var(--border)">Primary Layers · 0-1 Infrastructure</span>
+            </div>
+          </div>
+          <div class="comp-row">
+            <div class="comp-row-label">Positioning</div>
+            <div class="comp-row-value">Bronze-tier AMD-first cloud focused on memory-heavy inference economics and ROCm-native workloads, with improving orchestration but meaningful migration and reliability risk.</div>
+          </div>
+          <div class="comp-row">
+            <div class="comp-row-label">Watchpoint</div>
+            <div class="comp-row-value">CUDA migration overhead for mainstream teams; reliability maturity below Silver leaders; monitoring and health-check depth still early-stage.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-card-accent" style="background: linear-gradient(90deg, #d97706, #92400e)"></div>
+        <div class="comp-card-head">
+          <div class="comp-name">BUZZ High Performance Computing</div>
+          <div class="comp-tagline">Bronze Tier · Neocloud Model · Sovereign/Regulated</div>
+        </div>
+        <div class="comp-card-body">
+          <div class="comp-row">
+            <div class="comp-row-label">Stack Position</div>
+            <div class="comp-stack-indicator">
+              <span class="stack-badge" style="background:rgba(217,119,6,0.15);color:#d97706;border:1px solid rgba(217,119,6,0.3)">Model · Neocloud</span>
+              <span class="stack-badge" style="background:rgba(217,119,6,0.12);color:var(--text-muted);border:1px solid var(--border)">Primary Layers · 0-1 Infrastructure</span>
+            </div>
+          </div>
+          <div class="comp-row">
+            <div class="comp-row-label">Positioning</div>
+            <div class="comp-row-value">Bronze-tier sovereign-leaning operator with compliance-forward execution and renewable-power alignment across Canada and Sweden.</div>
+          </div>
+          <div class="comp-row">
+            <div class="comp-row-label">Watchpoint</div>
+            <div class="comp-row-value">Conservative expansion can limit hyper-growth capture; monitoring maturity below Gold/Silver top quartile; lower ecosystem signal than top neocloud brands.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-card-accent" style="background: linear-gradient(90deg, #d97706, #7c2d12)"></div>
+        <div class="comp-card-head">
+          <div class="comp-name">Qubrid AI</div>
+          <div class="comp-tagline">Bronze Tier · Aggregator Model · Workflow-Centric</div>
+        </div>
+        <div class="comp-card-body">
+          <div class="comp-row">
+            <div class="comp-row-label">Stack Position</div>
+            <div class="comp-stack-indicator">
+              <span class="stack-badge" style="background:rgba(217,119,6,0.12);color:var(--text-muted);border:1px solid var(--border)">Model · Aggregator</span>
+              <span class="stack-badge" style="background:rgba(217,119,6,0.15);color:#d97706;border:1px solid rgba(217,119,6,0.3)">Primary Layers · 5-7 Workflow/Application</span>
+            </div>
+          </div>
+          <div class="comp-row">
+            <div class="comp-row-label">Positioning</div>
+            <div class="comp-row-value">Bronze-tier workflow-centric aggregator prioritizing end-to-end AI pipeline abstraction (RAG/fine-tuning/deployment) over direct infrastructure ownership.</div>
+          </div>
+          <div class="comp-row">
+            <div class="comp-row-label">Watchpoint</div>
+            <div class="comp-row-value">Limited infra ownership reduces leverage at ultra-scale; no managed Slurm path narrows HPC buyer fit; core reliability depends on partner infrastructure path.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </section>
 
   <!-- SECTION: OBJECT STORAGE INTEGRATION -->
