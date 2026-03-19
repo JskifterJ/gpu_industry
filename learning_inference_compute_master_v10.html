@@ -480,9 +480,33 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
   border-radius:50%;background:var(--amber);cursor:pointer;border:2px solid var(--panel);}
 input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
   background:var(--amber);cursor:pointer;border:2px solid var(--panel);}
+
+.back-nav-link {
+  position: fixed;
+  top: 10px;
+  right: 14px;
+  z-index: 4000;
+  text-decoration: none;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  color: #eef4ff;
+  background: rgba(15, 30, 48, 0.9);
+  border: 1px solid rgba(29, 54, 84, 0.35);
+  border-radius: 8px;
+  padding: 7px 11px;
+  box-shadow: 0 8px 20px rgba(19, 45, 78, 0.2);
+  backdrop-filter: blur(6px);
+}
+
+.back-nav-link:hover {
+  border-color: rgba(183, 116, 18, 0.55);
+  color: var(--amber);
+}
 </style>
 </head>
 <body>
+<a class="back-nav-link" href="index.html">Back to navigation menu</a>
 <div class="page">
 
 <header class="hdr">

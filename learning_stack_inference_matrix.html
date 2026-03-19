@@ -315,9 +315,33 @@ h1{font-family:'Syne',sans-serif;font-size:clamp(18px,2.2vw,30px);font-weight:70
 .gc-skip{font-size:10.5px;color:var(--muted);cursor:pointer;font-family:'DM Mono',monospace;
   background:none;border:none;text-decoration:underline;}
 .gc-skip:hover{color:var(--ink);}
+
+.back-nav-link {
+  position: fixed;
+  top: 10px;
+  right: 14px;
+  z-index: 4000;
+  text-decoration: none;
+  font-family: 'DM Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1.5px solid var(--rule2);
+  border-radius: 8px;
+  padding: 6px 10px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(4px);
+}
+
+.back-nav-link:hover {
+  border-color: var(--ink);
+}
 </style>
 </head>
 <body>
+
+<a class="back-nav-link" href="index.html">Back to navigation menu</a>
 
 <!-- ── INTRO GUIDE ── -->
 <div id="guide">

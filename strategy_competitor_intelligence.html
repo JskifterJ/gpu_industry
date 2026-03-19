@@ -458,9 +458,32 @@ table.stk td.grp-border-l{border-left:2px solid var(--border-ll)!important;}
 ::-webkit-scrollbar-track{background:var(--bg-s);}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
 ::-webkit-scrollbar-thumb:hover{background:var(--border-l);}
+
+.back-nav-link {
+  position: fixed;
+  top: 10px;
+  right: 14px;
+  z-index: 4000;
+  text-decoration: none;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--text);
+  background: var(--surf);
+  border: 1px solid var(--border-l);
+  border-radius: 8px;
+  padding: 6px 10px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18);
+}
+
+.back-nav-link:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
 </style>
 </head>
 <body>
+<a class="back-nav-link" href="index.html">Back to navigation menu</a>
 <header class="hdr">
   <div class="hdr-l">
     <div class="hdr-title">GPU Cloud <em>Intelligence</em></div>

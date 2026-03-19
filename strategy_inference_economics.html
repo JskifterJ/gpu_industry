@@ -869,9 +869,35 @@ footer {
 }
 .footer-note { font-size: 12px; color: var(--text3); line-height: 1.8; max-width: 700px; }
 .footer-note a { color: var(--text2); }
+
+.back-nav-link {
+  position: fixed;
+  top: 10px;
+  right: 14px;
+  z-index: 4000;
+  text-decoration: none;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text);
+  background: rgba(12, 17, 24, 0.9);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 6px 10px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(6px);
+}
+
+.back-nav-link:hover {
+  border-color: var(--amber);
+  color: var(--amber);
+}
 </style>
 </head>
 <body>
+
+<a class="back-nav-link" href="index.html">Back to navigation menu</a>
 
 <!-- GLOBAL TOOLTIP -->
 <div id="gtooltip"><div class="gt-title" id="gt-title"></div><div id="gt-body"></div></div>

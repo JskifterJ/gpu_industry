@@ -512,12 +512,37 @@
     gap: 14px;
   }
 
+  .back-nav-link {
+    position: fixed;
+    top: 10px;
+    right: 14px;
+    z-index: 4000;
+    text-decoration: none;
+    font-family: 'DM Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink);
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 6px 10px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    backdrop-filter: blur(4px);
+  }
+
+  .back-nav-link:hover {
+    border-color: var(--ink);
+  }
+
   @media (max-width: 900px) {
     body { padding: 24px 16px 60px; }
   }
 </style>
 </head>
 <body>
+
+<a class="back-nav-link" href="index.html">Back to navigation menu</a>
 
 <div class="header">
   <div class="header-left">

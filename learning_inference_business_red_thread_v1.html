@@ -1260,9 +1260,33 @@ kbd {
   .row { grid-template-columns: 160px repeat(3, 1fr); }
   body { overflow: auto; }
 }
+
+.back-nav-link {
+  position: fixed;
+  top: 10px;
+  right: 14px;
+  z-index: 4000;
+  text-decoration: none;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+  background: rgba(247, 244, 238, 0.94);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 6px 10px;
+  backdrop-filter: blur(8px);
+}
+
+.back-nav-link:hover {
+  color: var(--text);
+  border-color: var(--accent);
+}
 </style>
 </head>
 <body>
+<a class="back-nav-link" href="index.html">Back to navigation menu</a>
 <div class="chrome">
   <div class="logo-wrap"><span class="logo-dot"></span> Inference Infrastructure Red Thread</div>
   <div class="chrome-right">

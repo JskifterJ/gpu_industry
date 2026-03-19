@@ -671,9 +671,33 @@ h1 {
   .main-layout { grid-template-columns: 1fr; }
   .side-panel { position: static; }
 }
+
+.back-nav-link {
+  position: fixed;
+  top: 10px;
+  right: 14px;
+  z-index: 4000;
+  text-decoration: none;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: #f5f7fb;
+  background: rgba(8, 12, 20, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 7px 11px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(6px);
+}
+
+.back-nav-link:hover {
+  border-color: rgba(245, 166, 35, 0.6);
+  color: #f5a623;
+}
 </style>
 </head>
 <body>
+<a class="back-nav-link" href="index.html">Back to navigation menu</a>
 <div class="page">
 
   <div class="eyebrow">GPU Cluster · Inference Walkthrough</div>
