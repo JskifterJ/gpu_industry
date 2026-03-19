@@ -651,33 +651,42 @@ html.light #s1 .bg-grid {
   #s2 .force-cards { flex-direction: column; padding: 0 24px; }
 }
 
-.back-nav-link {
+.back-nav-strip {
   position: fixed;
-  top: 10px;
-  right: 14px;
-  z-index: 4000;
-  text-decoration: none;
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--muted);
-  background: var(--chrome-bg);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 6px 10px;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 24px;
+  z-index: 5000;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  background: rgba(12, 17, 24, 0.94);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
   backdrop-filter: blur(8px);
 }
 
+.back-nav-link {
+  text-decoration: none;
+  font-family: 'JetBrains Mono', 'IBM Plex Mono', 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #e6edf8;
+}
+
 .back-nav-link:hover {
-  color: var(--text);
-  border-color: var(--dim2);
+  color: #f5a623;
+}
+
+.progress {
+  top: 24px;
 }
 </style>
 </head>
 <body>
 
-<a class="back-nav-link" href="index.html">Back to navigation menu</a>
+<div class="back-nav-strip"><a class="back-nav-link" href="index.html">Back to navigation menu</a></div>
 
 <!-- PROGRESS BAR -->
 <div class="progress" id="progress" style="width:8.33%"></div>
@@ -919,8 +928,36 @@ html.light #s1 .bg-grid {
       </div>
     </div>
 
+    <!-- Interconnect bandwidth timeline -->
+    <div class="anim anim-3" style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:12px 14px;">
+      <div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:8px;">Interconnect Bandwidth Timeline · A100 → Rubin</div>
+      <div style="display:grid;grid-template-columns:130px repeat(5,1fr);gap:6px;align-items:center;">
+        <div></div>
+        <div style="font-family:var(--mono);font-size:8px;color:var(--dim);letter-spacing:0.06em;text-transform:uppercase;text-align:center;">A100</div>
+        <div style="font-family:var(--mono);font-size:8px;color:var(--dim);letter-spacing:0.06em;text-transform:uppercase;text-align:center;">H100</div>
+        <div style="font-family:var(--mono);font-size:8px;color:var(--dim);letter-spacing:0.06em;text-transform:uppercase;text-align:center;">H200</div>
+        <div style="font-family:var(--mono);font-size:8px;color:var(--dim);letter-spacing:0.06em;text-transform:uppercase;text-align:center;">B200</div>
+        <div style="font-family:var(--mono);font-size:8px;color:var(--dim);letter-spacing:0.06em;text-transform:uppercase;text-align:center;">Rubin</div>
+
+        <div style="font-family:var(--mono);font-size:8.5px;color:var(--hw);letter-spacing:0.10em;text-transform:uppercase;">Inter-GPU (NVLink, per GPU)</div>
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:5px 6px;"><div style="height:5px;width:17%;background:rgba(192,132,252,0.55);border-radius:2px;margin-bottom:4px;"></div><div style="font-family:var(--mono);font-size:8px;color:var(--muted);">600 GB/s</div></div>
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:5px 6px;"><div style="height:5px;width:25%;background:rgba(192,132,252,0.7);border-radius:2px;margin-bottom:4px;"></div><div style="font-family:var(--mono);font-size:8px;color:var(--muted);">900 GB/s</div></div>
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:5px 6px;"><div style="height:5px;width:25%;background:rgba(192,132,252,0.75);border-radius:2px;margin-bottom:4px;"></div><div style="font-family:var(--mono);font-size:8px;color:var(--muted);">900 GB/s</div></div>
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:5px 6px;"><div style="height:5px;width:50%;background:var(--hw);border-radius:2px;margin-bottom:4px;"></div><div style="font-family:var(--mono);font-size:8px;color:var(--muted);">1,800 GB/s</div></div>
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:5px 6px;"><div style="height:5px;width:100%;background:rgba(192,132,252,0.45);border:1px dashed rgba(192,132,252,0.6);border-radius:2px;margin-bottom:4px;"></div><div style="font-family:var(--mono);font-size:8px;color:var(--muted);">3,600 GB/s est.</div></div>
+
+        <div style="font-family:var(--mono);font-size:8.5px;color:var(--sw);letter-spacing:0.10em;text-transform:uppercase;">Inter-node (NIC per GPU lane)</div>
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:5px 6px;"><div style="height:5px;width:13%;background:rgba(45,212,191,0.5);border-radius:2px;margin-bottom:4px;"></div><div style="font-family:var(--mono);font-size:8px;color:var(--muted);">200 Gb/s</div></div>
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:5px 6px;"><div style="height:5px;width:25%;background:rgba(45,212,191,0.7);border-radius:2px;margin-bottom:4px;"></div><div style="font-family:var(--mono);font-size:8px;color:var(--muted);">400 Gb/s</div></div>
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:5px 6px;"><div style="height:5px;width:25%;background:rgba(45,212,191,0.75);border-radius:2px;margin-bottom:4px;"></div><div style="font-family:var(--mono);font-size:8px;color:var(--muted);">400 Gb/s</div></div>
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:5px 6px;"><div style="height:5px;width:50%;background:var(--sw);border-radius:2px;margin-bottom:4px;"></div><div style="font-family:var(--mono);font-size:8px;color:var(--muted);">800 Gb/s</div></div>
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:5px 6px;"><div style="height:5px;width:100%;background:rgba(45,212,191,0.4);border:1px dashed rgba(45,212,191,0.6);border-radius:2px;margin-bottom:4px;"></div><div style="font-family:var(--mono);font-size:8px;color:var(--muted);">1.6 Tb/s est.</div></div>
+      </div>
+      <div style="font-family:var(--mono);font-size:7.5px;color:var(--dim);letter-spacing:0.05em;line-height:1.5;margin-top:7px;">Directional planning values for Rubin are estimated. Core message: HBM, inter-GPU fabric, and inter-node fabric are scaling together, and cluster design must match all three.</div>
+    </div>
+
     <!-- HBM chart + model capacity -->
-    <div style="display:grid;grid-template-columns:1fr 1.5fr;gap:14px;" class="anim anim-3">
+    <div style="display:grid;grid-template-columns:1fr 1.5fr;gap:14px;" class="anim anim-4">
       <div class="hbm-chart">
         <div class="hbm-chart-title">HBM Capacity (GB per GPU)</div>
         <div class="hbm-row"><div class="hbm-label">A100</div><div class="hbm-bar-track"><div class="hbm-bar-fill" style="--bw:42%;background:rgba(192,132,252,0.35);animation-delay:0.3s"></div></div><div class="hbm-val">80 GB</div></div>
@@ -973,22 +1010,6 @@ html.light #s1 .bg-grid {
       </div>
     </div>
 
-    <!-- Supply chain constraint strip -->
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;" class="anim anim-4">
-      <div style="background:var(--hw-dim);border:1px solid var(--hw-mid);border-radius:4px;padding:12px 14px;border-left:3px solid var(--hw)">
-        <div style="font-family:var(--mono);font-size:8.5px;color:var(--hw);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:6px;">① ASML — The First Chokepoint</div>
-        <div style="font-size:11.5px;color:var(--muted);line-height:1.6;font-weight:300;">ASML ships <strong style="color:var(--text)">~50–55 High-NA EUV machines per year</strong> globally — there is no other supplier. Each machine costs ~$380M and requires 12–18 months of lead time. Sub-3nm lithography capacity is therefore physically capped, and cannot be scaled in any window shorter than a decade.</div>
-      </div>
-      <div style="background:var(--hw-dim);border:1px solid var(--hw-mid);border-radius:4px;padding:12px 14px;border-left:3px solid var(--hw)">
-        <div style="font-family:var(--mono);font-size:8.5px;color:var(--hw);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:6px;">② TSMC — The Second Chokepoint</div>
-        <div style="font-size:11.5px;color:var(--muted);line-height:1.6;font-weight:300;">TSMC is the <strong style="color:var(--text)">sole sub-3nm GPU foundry</strong> in production. H100/H200/B200 — all fabbed at TSMC on 4N/3NP nodes. Foundry expansion (CoWoS packaging for HBM) has a multi-year ramp. No competitor has reached equivalent yield at these nodes. Even NVIDIA is capacity-constrained by what TSMC can produce.</div>
-      </div>
-      <div style="background:var(--hw-dim);border:1px solid var(--hw-mid);border-radius:4px;padding:12px 14px;border-left:3px solid var(--hw)">
-        <div style="font-family:var(--mono);font-size:8.5px;color:var(--hw);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:6px;">③ NVIDIA — Allocation Dynamics</div>
-        <div style="font-size:11.5px;color:var(--muted);line-height:1.6;font-weight:300;"><strong style="color:var(--text)">Priority allocation</strong> flows to hyperscalers (AWS, Azure, GCP) and select government partners first — through NVIDIA Preferred Partner (NPN) agreements and direct government deals. <span style="color:var(--text)">Every new GPU generation is supply-constrained for 18–24 months post-launch</span> — structurally, not accidentally. Smaller operators and new geographies wait.</div>
-      </div>
-    </div>
-
     <!-- Epoch AI data callout -->
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;" class="anim anim-5">
       <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:9px 12px;border-top:2px solid var(--hw);">
@@ -1006,6 +1027,25 @@ html.light #s1 .bg-grid {
       <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:9px 12px;border-top:2px solid var(--llm);">
         <div style="font-family:var(--display);font-size:22px;color:var(--llm);line-height:1;">2e29</div>
         <div style="font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;line-height:1.4;margin-top:3px;">FLOP training runs<br>likely feasible by 2030<br><span style="color:var(--dim);font-size:7px;">Epoch AI · Aug 2024</span></div>
+      </div>
+    </div>
+
+    <!-- Supply chain constraints -->
+    <div class="anim anim-6" style="display:flex;flex-direction:column;gap:8px;">
+      <div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:0.18em;text-transform:uppercase;">Structural Supply Constraints</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+      <div style="background:var(--hw-dim);border:1px solid var(--hw-mid);border-radius:4px;padding:12px 14px;border-left:3px solid var(--hw)">
+        <div style="font-family:var(--mono);font-size:8.5px;color:var(--hw);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:6px;">① ASML — The First Chokepoint</div>
+        <div style="font-size:11.5px;color:var(--muted);line-height:1.6;font-weight:300;">ASML ships <strong style="color:var(--text)">~50–55 High-NA EUV machines per year</strong> globally — there is no other supplier. Each machine costs ~$380M and requires 12–18 months of lead time. Sub-3nm lithography capacity is therefore physically capped, and cannot be scaled in any window shorter than a decade.</div>
+      </div>
+      <div style="background:var(--hw-dim);border:1px solid var(--hw-mid);border-radius:4px;padding:12px 14px;border-left:3px solid var(--hw)">
+        <div style="font-family:var(--mono);font-size:8.5px;color:var(--hw);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:6px;">② TSMC — The Second Chokepoint</div>
+        <div style="font-size:11.5px;color:var(--muted);line-height:1.6;font-weight:300;">TSMC is the <strong style="color:var(--text)">sole sub-3nm GPU foundry</strong> in production. H100/H200/B200 — all fabbed at TSMC on 4N/3NP nodes. Foundry expansion (CoWoS packaging for HBM) has a multi-year ramp. No competitor has reached equivalent yield at these nodes. Even NVIDIA is capacity-constrained by what TSMC can produce.</div>
+      </div>
+      <div style="background:var(--hw-dim);border:1px solid var(--hw-mid);border-radius:4px;padding:12px 14px;border-left:3px solid var(--hw)">
+        <div style="font-family:var(--mono);font-size:8.5px;color:var(--hw);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:6px;">③ NVIDIA — Allocation Dynamics</div>
+        <div style="font-size:11.5px;color:var(--muted);line-height:1.6;font-weight:300;"><strong style="color:var(--text)">Priority allocation</strong> flows to hyperscalers (AWS, Azure, GCP) and select government partners first — through NVIDIA Preferred Partner (NPN) agreements and direct government deals. <span style="color:var(--text)">Every new GPU generation is supply-constrained for 18–24 months post-launch</span> — structurally, not accidentally. Smaller operators and new geographies wait.</div>
+      </div>
       </div>
     </div>
   </div>
@@ -2127,7 +2167,7 @@ html.light #s1 .bg-grid {
 // Theme toggle — matches intelligence brief pattern
 (function() {
   const saved = localStorage.getItem('deckTheme');
-  if (saved === 'light') {
+  if (saved !== 'dark') {
     document.documentElement.classList.add('light');
   }
 })();

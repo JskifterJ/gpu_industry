@@ -316,32 +316,38 @@ h1{font-family:'Syne',sans-serif;font-size:clamp(18px,2.2vw,30px);font-weight:70
   background:none;border:none;text-decoration:underline;}
 .gc-skip:hover{color:var(--ink);}
 
-.back-nav-link {
+.back-nav-strip {
   position: fixed;
-  top: 10px;
-  right: 14px;
-  z-index: 4000;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 24px;
+  z-index: 5000;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  background: rgba(12, 17, 24, 0.94);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(8px);
+}
+
+.back-nav-link {
   text-decoration: none;
-  font-family: 'DM Mono', monospace;
-  font-size: 10.5px;
-  letter-spacing: 0.04em;
-  color: var(--ink);
-  background: rgba(255, 255, 255, 0.9);
-  border: 1.5px solid var(--rule2);
-  border-radius: 8px;
-  padding: 6px 10px;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
-  backdrop-filter: blur(4px);
+  font-family: 'JetBrains Mono', 'IBM Plex Mono', 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #e6edf8;
 }
 
 .back-nav-link:hover {
-  border-color: var(--ink);
+  color: #f5a623;
 }
 </style>
 </head>
 <body>
 
-<a class="back-nav-link" href="index.html">Back to navigation menu</a>
+<div class="back-nav-strip"><a class="back-nav-link" href="index.html">Back to navigation menu</a></div>
 
 <!-- ── INTRO GUIDE ── -->
 <div id="guide">

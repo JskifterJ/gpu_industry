@@ -94,6 +94,18 @@ body.light .theme-toggle-thumb{transform:translateX(16px);}
 .cmp-stack-btn.active{border-color:rgba(56,189,248,.35);background:rgba(56,189,248,.1);color:var(--accent);}
 .cmp-clear-btn{font-family:'JetBrains Mono',monospace;font-size:10px;padding:8px 10px;border-radius:6px;border:1px solid var(--border);background:var(--surf);color:var(--muted);cursor:pointer;white-space:nowrap;}
 .cmp-clear-btn:hover{color:var(--text);border-color:var(--border-l);}
+.cmp-usp-section{display:grid;grid-template-columns:repeat(2,minmax(280px,1fr));gap:10px;margin:0 0 14px;}
+.cmp-usp-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;}
+.cmp-usp-card h4{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--text);margin:0 0 8px;}
+.cmp-usp-card ul{margin:0;padding-left:16px;display:flex;flex-direction:column;gap:6px;}
+.cmp-usp-card li{font-size:11.5px;line-height:1.5;color:var(--sub);}
+.cmp-usp-card li strong{color:var(--text);font-weight:600;}
+.cmp-usp-chip{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:8.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px;}
+.cmp-usp-chip::before{content:'';width:8px;height:8px;border-radius:2px;background:var(--accent);opacity:.75;}
+.cmp-usp-summary{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin:0 0 12px;}
+.cmp-usp-summary h4{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--text);margin:0 0 8px;}
+.cmp-usp-summary ul{margin:0;padding-left:16px;display:flex;flex-direction:column;gap:6px;}
+.cmp-usp-summary li{font-size:11.5px;line-height:1.5;color:var(--sub);}
 .cmp-stack-cells{display:grid;grid-template-columns:repeat(9,minmax(24px,1fr));gap:4px;min-width:264px;}
 .cmp-stack-cell{height:22px;border-radius:4px;border:1px solid rgba(255,255,255,.18);font-family:'JetBrains Mono',monospace;font-size:8px;display:flex;align-items:center;justify-content:center;font-weight:700;}
 .cmp-tr-main{border-bottom:1px solid var(--border);}
@@ -142,6 +154,7 @@ body.light .theme-toggle-thumb{transform:translateX(16px);}
 @media (max-width: 1400px){
   .cmp-controls{grid-template-columns:1fr 1fr;}
   .cmp-detail-wrap{grid-template-columns:1fr;}
+  .cmp-usp-section{grid-template-columns:1fr;}
 }
 
 /* ── TIER SECTION ── */
@@ -459,31 +472,41 @@ table.stk td.grp-border-l{border-left:2px solid var(--border-ll)!important;}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
 ::-webkit-scrollbar-thumb:hover{background:var(--border-l);}
 
-.back-nav-link {
+.back-nav-strip {
   position: fixed;
-  top: 10px;
-  right: 14px;
-  z-index: 4000;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 24px;
+  z-index: 5000;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  background: rgba(12, 17, 24, 0.94);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(8px);
+}
+
+.back-nav-link {
   text-decoration: none;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'JetBrains Mono', 'IBM Plex Mono', 'DM Mono', monospace;
   font-size: 10px;
-  letter-spacing: 0.04em;
-  color: var(--text);
-  background: var(--surf);
-  border: 1px solid var(--border-l);
-  border-radius: 8px;
-  padding: 6px 10px;
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #e6edf8;
 }
 
 .back-nav-link:hover {
-  border-color: var(--accent);
-  color: var(--accent);
+  color: #f5a623;
+}
+
+.hdr {
+  top: 24px;
 }
 </style>
 </head>
 <body>
-<a class="back-nav-link" href="index.html">Back to navigation menu</a>
+<div class="back-nav-strip"><a class="back-nav-link" href="index.html">Back to navigation menu</a></div>
 <header class="hdr">
   <div class="hdr-l">
     <div class="hdr-title">GPU Cloud <em>Intelligence</em></div>
@@ -516,11 +539,74 @@ table.stk td.grp-border-l{border-left:2px solid var(--border-ll)!important;}
 <div id="tab-comparison" class="panel">
   <div class="cmp-header" style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:24px;">
     <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;margin-bottom:8px;">GPU Compute Business Models: Strategic Comparison</div>
-    <div style="font-size:13px;color:var(--sub);line-height:1.6;margin-bottom:12px;">
-      Streamlined side-by-side comparison across business model, pricing, geography, orchestration depth, and stack presence. Expand any row to inspect differentiators, software posture, workloads, and risk gaps without losing table-level scanability.
-    </div>
-    <div style="font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace;">📊 Last updated: March 2026 · Data: ClusterMAX 2.0 + Saturn Cloud Dec 2025 + Thunder Compute Feb 2026 + online research</div>
+    <ul style="margin:0 0 10px;padding-left:16px;display:flex;flex-direction:column;gap:5px;">
+      <li style="font-size:12px;color:var(--sub);line-height:1.5;">Side-by-side comparison across <strong>USP</strong>, <strong>business model</strong>, <strong>pricing</strong>, <strong>orchestration depth</strong>, <strong>stack presence</strong>, and <strong>buyer fit</strong>.</li>
+      <li style="font-size:12px;color:var(--sub);line-height:1.5;">Row expansion exposes <strong>differentiators</strong>, <strong>software posture</strong>, <strong>workload alignment</strong>, and <strong>risk gaps</strong> without losing table scanability.</li>
+      <li style="font-size:12px;color:var(--sub);line-height:1.5;">Read this USP section first, then apply filters to isolate substitutes by region, pricing model, and required stack layers.</li>
+    </ul>
+    <ul style="margin:0;padding-left:16px;display:flex;flex-direction:column;gap:4px;">
+      <li style="font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;">Updated: March 2026</li>
+      <li style="font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;">Sources: ClusterMAX 2.0, Saturn Cloud (Dec 2025), Thunder Compute (Feb 2026), provider disclosures</li>
+    </ul>
   </div>
+
+  <div class="cmp-usp-summary">
+    <h4>Key Differentiating Factors (Bullet-Only)</h4>
+    <ul>
+      <li><strong>Execution moat:</strong> CoreWeave and Nebius lead on production training execution via mature Slurm-on-Kubernetes patterns (SUNK/Soperator), with CoreWeave strongest on reliability and Nebius strongest on spot flexibility.</li>
+      <li><strong>Hyperscaler split:</strong> Azure differentiates via FedRAMP/DoD + InfiniBand SHARP, Oracle via AGI-neutral supply posture and Stargate scale, GCP via strongest Kubernetes batch stack, AWS via ecosystem lock-in and custom silicon breadth.</li>
+      <li><strong>Price floor pressure:</strong> Voltage Park, Hyperbolic, Vast.ai and similar marketplaces set low-price references, but often trade off deterministic reliability, compliance depth, and advanced orchestration.</li>
+      <li><strong>Software-led edge:</strong> Together.ai and CoreWeave show that kernel/runtime and orchestration quality can sustain premium positioning even when raw GPU pricing commoditizes.</li>
+      <li><strong>Sovereignty/compliance wedge:</strong> Nebius (EU sovereignty), Azure (defense compliance), Oracle (global neutral hosting posture) win regulated and politically constrained workloads.</li>
+    </ul>
+  </div>
+
+  <div class="cmp-usp-section">
+    <div class="cmp-usp-card">
+      <div class="cmp-usp-chip">Premium Training Operators</div>
+      <h4>Why They Win</h4>
+      <ul>
+        <li><strong>CoreWeave:</strong> SUNK maturity, BlueField isolation, and deep reliability tooling support multi-thousand GPU runs with fewer interruptions.</li>
+        <li><strong>Nebius:</strong> closest operational substitute to CoreWeave with transparent pricing and preemptible/spot optionality.</li>
+        <li><strong>FluidStack:</strong> operator-heavy model can deliver Gold-tier outcomes without owning hardware; strong for bespoke enterprise execution.</li>
+        <li><strong>Lambda:</strong> frequent on-demand capacity depth and strong hardware operations for teams prioritizing fast access over platform breadth.</li>
+      </ul>
+    </div>
+
+    <div class="cmp-usp-card">
+      <div class="cmp-usp-chip">Hyperscaler Positioning</div>
+      <h4>How They Differentiate</h4>
+      <ul>
+        <li><strong>Azure:</strong> strongest regulated-enterprise posture; differentiated by FedRAMP/DoD and SHARP-capable InfiniBand footprint.</li>
+        <li><strong>Oracle:</strong> AGI-neutral supplier positioning plus Stargate relevance and fast infrastructure deployment cadence.</li>
+        <li><strong>GCP:</strong> highest-quality managed Kubernetes workflow for AI batch and straggler handling; excellent for platform teams.</li>
+        <li><strong>AWS:</strong> largest adjacent services ecosystem and strongest installed-base lock-in; best fit when data and ops already live in AWS.</li>
+      </ul>
+    </div>
+
+    <div class="cmp-usp-card">
+      <div class="cmp-usp-chip">Price-Led & Marketplace Plays</div>
+      <h4>Where They Fit</h4>
+      <ul>
+        <li><strong>Voltage Park / value players:</strong> useful when lowest $/GPU-hour dominates and strict uptime/compliance is secondary.</li>
+        <li><strong>Vast.ai / Hyperbolic style marketplaces:</strong> maximize price arbitrage and supply access, but infrastructure consistency varies widely.</li>
+        <li><strong>Crusoe:</strong> sustainability and power-sourcing story can be a board-level differentiator for ESG-sensitive procurement.</li>
+        <li><strong>Decision rule:</strong> as pricing falls, software quality, support responsiveness, and workload-tailored orchestration become the durable moat.</li>
+      </ul>
+    </div>
+
+    <div class="cmp-usp-card">
+      <div class="cmp-usp-chip">Buyer-Fit Heuristics</div>
+      <h4>Quick Matching Bullets</h4>
+      <ul>
+        <li><strong>Frontier labs:</strong> prioritize deterministic supply + reliability + large-cluster scheduling depth over headline hourly price.</li>
+        <li><strong>Enterprise regulated:</strong> prioritize compliance boundary, contractual support model, and data residency above benchmark speed.</li>
+        <li><strong>Startup research:</strong> prioritize on-demand access, spot economics, and minimal sales friction for faster iteration loops.</li>
+        <li><strong>Platform teams:</strong> prioritize K8s/Slurm integration quality, observability, and failure automation over pure hardware specs.</li>
+      </ul>
+    </div>
+  </div>
+
   <div class="cmp-controls">
     <input id="cmp-filter-query" class="cmp-input" type="text" placeholder="Filter across provider, USP, model, software, buyer..."/>
     <select id="cmp-filter-tier" class="cmp-select">
