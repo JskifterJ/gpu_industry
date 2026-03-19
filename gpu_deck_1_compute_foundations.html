@@ -1,0 +1,2998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GPU Foundations: How AI Inference Works</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f3f7fc;
+  --bg2: #ffffff;
+  --bg3: #ebf1f8;
+  --card: #ffffff;
+  --line: rgba(29, 54, 84, 0.18);
+  --text: #142233;
+  --muted: #5f7288;
+  --dim: #7b8da2;
+
+  --gpu: #c084fc;
+  --sys: #22d3ee;
+  --llm: #fbbf24;
+  --ok: #34d399;
+  --warn: #f87171;
+
+  --lneg1: #fce2e2;
+  --l0: #fdeede;
+  --l1: #fff8d6;
+  --l2: #e2f0fd;
+  --l3: #e5f5e7;
+  --l4: #ebf2ff;
+  --l5: #e0f7fa;
+  --l6: #fff3e0;
+  --l7: #f3e5f5;
+
+  --chrome-bg: rgba(248, 251, 255, 0.95);
+  --nav-bg: rgba(247, 250, 255, 0.97);
+
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Barlow', sans-serif;
+  --display: 'Bebas Neue', sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg); color: var(--text); }
+
+.deck {
+  position: fixed;
+  inset: 24px 0 0 0;
+  font-family: var(--sans);
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  opacity: 0;
+  overflow: hidden;
+  background: var(--bg);
+  transition: transform 0.7s cubic-bezier(0.76, 0, 0.24, 1), opacity 0.4s ease;
+}
+
+.slide.active {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.slide.prev {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.slide.active .anim { animation: fadeUp 0.5s ease both; }
+.slide.active .a1 { animation-delay: 0.05s; }
+.slide.active .a2 { animation-delay: 0.15s; }
+.slide.active .a3 { animation-delay: 0.25s; }
+.slide.active .a4 { animation-delay: 0.35s; }
+
+.back-nav-strip {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 24px;
+  z-index: 6000;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  background: var(--chrome-bg);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(8px);
+}
+
+.back-nav-link {
+  text-decoration: none;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.back-nav-link:hover {
+  color: var(--text);
+}
+
+.hardware-scene {
+  display: grid;
+  grid-template-columns: 0.95fr 1.35fr;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.rack-illustration {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: linear-gradient(180deg, #f9fcff 0%, #edf3fa 100%);
+  padding: 10px;
+}
+
+.rack-title {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.rack-shell {
+  border: 2px solid #2e4f73;
+  border-radius: 8px;
+  background: #1f3349;
+  padding: 8px;
+}
+
+.rack-slot {
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 5px;
+  background: rgba(255,255,255,0.08);
+  color: #e8f3ff;
+  padding: 7px;
+  margin-bottom: 6px;
+  font-size: 11px;
+  line-height: 1.3;
+}
+
+.rack-slot:last-child { margin-bottom: 0; }
+
+.rack-slot.highlight {
+  background: rgba(34,211,238,0.2);
+  border-color: rgba(34,211,238,0.7);
+}
+
+.rack-slot strong {
+  display: block;
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+
+.rack-note {
+  margin-top: 8px;
+  border: 1px dashed rgba(29,54,84,0.3);
+  border-radius: 6px;
+  padding: 7px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.gpu-blowout-wrap {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: linear-gradient(180deg, #f8fbff 0%, #eef4fb 100%);
+  padding: 10px;
+}
+
+.gpu-blowout-wrap svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.gpu-part {
+  transition: transform 180ms ease, filter 180ms ease, stroke-width 180ms ease;
+}
+
+.trace-line {
+  stroke: #89a4bf;
+  stroke-width: 2;
+  stroke-dasharray: 4 4;
+  transition: stroke 180ms ease, stroke-width 180ms ease;
+}
+
+.gpu-part.active {
+  filter: drop-shadow(0 0 10px rgba(34,211,238,0.35));
+  stroke-width: 2.8;
+}
+
+.trace-line.active {
+  stroke: #0f8fc7;
+  stroke-width: 3;
+}
+
+.part-cards {
+  margin-top: 9px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.part-chip {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fff;
+  padding: 7px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.part-chip strong {
+  display: block;
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+  color: var(--text);
+}
+
+.part-chip span {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.part-chip.active {
+  border-color: #0f8fc7;
+  background: #ebf9ff;
+}
+
+.blowout-controls {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.blowout-btn {
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: #ffffff;
+  color: var(--text);
+  padding: 5px 9px;
+  font-family: var(--mono);
+  font-size: 8.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.blowout-btn.on {
+  border-color: #0f8fc7;
+  color: #0f8fc7;
+  background: #e8f6ff;
+}
+
+.blowout-status {
+  font-family: var(--mono);
+  font-size: 8.5px;
+  color: var(--dim);
+}
+
+.llm-red-thread {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: 12px;
+}
+
+.red-thread-steps {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg2);
+  padding: 10px;
+}
+
+.rt-step {
+  display: grid;
+  grid-template-columns: 26px 1fr;
+  gap: 8px;
+  align-items: start;
+  margin-bottom: 8px;
+  border-bottom: 1px dashed rgba(29,54,84,0.15);
+  padding-bottom: 8px;
+}
+
+.rt-step:last-child {
+  margin-bottom: 0;
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.rt-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--bg3);
+  font-family: var(--mono);
+  font-size: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rt-step strong {
+  display: block;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+
+.rt-step span {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.latency-breakdown {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg3);
+  padding: 10px;
+}
+
+.lat-pill {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid rgba(29,54,84,0.18);
+  border-radius: 5px;
+  padding: 6px 8px;
+  margin-bottom: 6px;
+  background: #fff;
+}
+
+.lat-pill:last-child { margin-bottom: 0; }
+
+.lat-pill label {
+  font-family: var(--mono);
+  font-size: 8.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.lat-pill strong {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text);
+}
+
+.capital-walkthrough {
+  margin-top: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg2);
+  padding: 10px;
+}
+
+.cw-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.cw-prompt {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+}
+
+.cw-controls {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.cw-btn {
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--text);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.cw-btn.on {
+  background: #ebf8ff;
+  border-color: #0f8fc7;
+  color: #0f8fc7;
+}
+
+.cw-track {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 5px;
+  margin-bottom: 8px;
+}
+
+.cw-dot {
+  height: 20px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--bg3);
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.cw-dot.active {
+  background: #e8f6ff;
+  border-color: #0f8fc7;
+  color: #0f8fc7;
+}
+
+.cw-stage {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 10px;
+}
+
+.cw-pane {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--bg3);
+  padding: 9px;
+}
+
+.cw-pane-title {
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.cw-stage-name {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.cw-copy {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.cw-list {
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--dim);
+}
+
+.weights-growth {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg2);
+  padding: 10px;
+}
+
+.weights-axis {
+  margin-top: 6px;
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 7px;
+  color: var(--dim);
+  letter-spacing: 0.04em;
+}
+
+.weights-chart {
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wc-row {
+  display: grid;
+  grid-template-columns: 54px 1fr 60px;
+  align-items: center;
+  gap: 8px;
+}
+
+.wc-model {
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.wc-track {
+  height: 14px;
+  background: linear-gradient(90deg, #f0f5fb 0%, #e8f0f9 100%);
+  border: 1px solid rgba(29,54,84,0.16);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.wc-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #7cc0ff 0%, #4c88c9 100%);
+}
+
+.wc-fill.m2 { background: linear-gradient(90deg, #80dcec 0%, #3ab2c8 100%); }
+.wc-fill.m3 { background: linear-gradient(90deg, #f3d27f 0%, #e0a93a 100%); }
+.wc-fill.m4 { background: linear-gradient(90deg, #c9a8f6 0%, #9a68d6 100%); }
+.wc-fill.m5 { background: linear-gradient(90deg, #f39eb1 0%, #d5627b 100%); }
+
+.wc-val {
+  font-family: var(--mono);
+  font-size: 8.5px;
+  color: var(--text);
+  text-align: right;
+}
+
+.weights-note {
+  margin-top: 6px;
+  font-family: var(--mono);
+  font-size: 7.5px;
+  color: var(--dim);
+}
+
+.node-spread {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg2);
+  padding: 10px;
+}
+
+.node-grid {
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 7px;
+}
+
+.node-gpu {
+  border: 1px solid rgba(29,54,84,0.22);
+  border-radius: 6px;
+  background: var(--bg3);
+  padding: 6px;
+}
+
+.node-gpu .name {
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--muted);
+  margin-bottom: 3px;
+}
+
+.node-gpu .seg {
+  height: 12px;
+  border-radius: 3px;
+  overflow: hidden;
+  display: flex;
+  border: 1px solid rgba(29,54,84,0.14);
+}
+
+.node-gpu .w { background: #8f6ad7; }
+.node-gpu .kv { background: #2cc7df; }
+.node-gpu .free { background: #cfdcea; }
+
+.node-spread-legend {
+  margin-top: 8px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--muted);
+}
+
+.node-spread-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.sw {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.sw-w { background: #8f6ad7; }
+.sw-kv { background: #2cc7df; }
+.sw-f { background: #cfdcea; }
+
+.hw-stats-grid {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.hw-stat-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg2);
+  padding: 10px;
+}
+
+.hw-stat-card h4 {
+  font-family: var(--display);
+  font-size: 28px;
+  line-height: 0.9;
+  margin-bottom: 6px;
+}
+
+.hw-stat-card ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hw-stat-card li {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--muted);
+}
+
+.hw-stat-card li strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.gen-chart {
+  margin-top: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg2);
+  padding: 10px;
+}
+
+.gen-axis {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--dim);
+  margin-bottom: 8px;
+}
+
+.gen-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.gen-row {
+  display: grid;
+  grid-template-columns: 74px 1fr 76px;
+  gap: 8px;
+  align-items: center;
+}
+
+.gen-label {
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--muted);
+}
+
+.gen-track {
+  height: 14px;
+  border-radius: 999px;
+  background: #eef3f9;
+  border: 1px solid rgba(29,54,84,0.14);
+  overflow: hidden;
+}
+
+.gen-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #87cffc 0%, #3e8dc8 100%);
+}
+
+.gen-fill.g2 { background: linear-gradient(90deg, #a6d99d 0%, #4da85a 100%); }
+.gen-fill.g3 { background: linear-gradient(90deg, #7ad8e7 0%, #2aa6bb 100%); }
+.gen-fill.g4 { background: linear-gradient(90deg, #f4d07f 0%, #dcaa38 100%); }
+
+.gen-value {
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--text);
+  text-align: right;
+}
+
+.interconnect-grid {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.ic-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg2);
+  padding: 10px;
+}
+
+.ic-list {
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ic-row {
+  display: grid;
+  grid-template-columns: 66px 1fr 56px;
+  gap: 8px;
+  align-items: center;
+}
+
+.ic-name {
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--muted);
+}
+
+.ic-track {
+  height: 10px;
+  border-radius: 999px;
+  background: #ecf2f8;
+  border: 1px solid rgba(29,54,84,0.12);
+  overflow: hidden;
+}
+
+.ic-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #c79cff 0%, #8f61d5 100%); }
+.ic-fill.pcie { background: linear-gradient(90deg, #9fd9ef 0%, #3da4c5 100%); }
+
+.ic-val {
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--text);
+  text-align: right;
+}
+
+.constraint-map {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.constraint-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg2);
+  padding: 10px;
+}
+
+.constraint-card h5 {
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.constraint-card p {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.constraint-shift {
+  margin-top: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg2);
+  padding: 10px;
+}
+
+.shift-caption {
+  margin-top: 6px;
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--dim);
+  line-height: 1.45;
+}
+
+.gpu-config-wrap {
+  margin-top: 12px;
+}
+
+.gpu-hw-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.gpu-hw-buttons {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.cfg-gpu-btn {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+.cfg-gpu-btn.active {
+  border-color: #0f8fc7;
+  color: #0f8fc7;
+  background: #e8f6ff;
+}
+
+.gpu-hw-note {
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--dim);
+}
+
+.gpu-config-grid {
+  margin-top: 9px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.gpu-kpi-mini {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.gpu-kpi-item {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fff;
+  padding: 7px;
+}
+
+.gpu-kpi-item .k {
+  font-family: var(--mono);
+  font-size: 7px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.gpu-kpi-item .v {
+  margin-top: 4px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text);
+}
+
+.gpu-cards-grid {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.gpu-card {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--bg3);
+  padding: 7px;
+}
+
+.gpu-card-label {
+  font-family: var(--mono);
+  font-size: 7.5px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.gpu-card-bar {
+  height: 11px;
+  border: 1px solid rgba(29,54,84,0.18);
+  border-radius: 3px;
+  overflow: hidden;
+  display: flex;
+}
+
+.gpu-card-w { background: #8f6ad7; }
+.gpu-card-kv { background: #2cc7df; }
+.gpu-card-f { background: #cfdcea; }
+
+.gpu-card-meta {
+  margin-top: 4px;
+  font-family: var(--mono);
+  font-size: 7px;
+  color: var(--dim);
+}
+
+.slide-chrome {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 44px;
+  z-index: 10;
+  background: var(--chrome-bg);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(10px);
+}
+
+.chrome-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chrome-logo {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  padding: 3px 8px;
+  border-radius: 2px;
+}
+
+.chrome-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.chrome-right {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--dim);
+  letter-spacing: 0.07em;
+}
+
+.slide-body {
+  flex: 1;
+  padding: 14px 44px 64px;
+  overflow: auto;
+}
+
+.progress {
+  position: fixed;
+  top: 24px;
+  left: 0;
+  height: 2px;
+  width: 10%;
+  background: var(--gpu);
+  z-index: 700;
+  transition: width 0.35s ease;
+}
+
+.nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: var(--nav-bg);
+  border-top: 1px solid var(--line);
+  padding: 12px 44px 16px;
+}
+
+.nav-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.nav-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.3); }
+.nav-btn:disabled { opacity: 0.25; cursor: default; }
+
+.nav-dots { display: flex; gap: 6px; }
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #9fb0c3;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dot.active {
+  width: 18px;
+  border-radius: 3px;
+  background: var(--text);
+}
+
+.slide-counter {
+  position: fixed;
+  left: 44px;
+  bottom: 14px;
+  z-index: 700;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--dim);
+  letter-spacing: 0.08em;
+}
+
+.counter-cur { color: var(--text); }
+
+.key-hint {
+  position: fixed;
+  right: 44px;
+  bottom: 14px;
+  z-index: 700;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--dim);
+  letter-spacing: 0.08em;
+}
+
+.sec-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+h1, h2, h3 { font-weight: 400; }
+
+.hero-title {
+  font-family: var(--display);
+  font-size: clamp(52px, 8vw, 92px);
+  line-height: 0.9;
+  letter-spacing: 0.03em;
+}
+
+.hero-sub {
+  margin-top: 16px;
+  font-size: 17px;
+  color: var(--muted);
+  max-width: 720px;
+  line-height: 1.55;
+}
+
+.highlight-gpu { color: var(--gpu); }
+.highlight-sys { color: var(--sys); }
+.highlight-llm { color: var(--llm); }
+
+.meta-row {
+  margin-top: 26px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pill {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 4px 10px;
+  color: var(--muted);
+  background: rgba(29, 54, 84, 0.04);
+}
+
+.source-tag {
+  display: inline-block;
+  margin-top: 6px;
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--dim);
+  letter-spacing: 0.06em;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.card {
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+
+.card-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.card p {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.workload-track {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.work-row {
+  display: grid;
+  grid-template-columns: 130px 1fr 80px;
+  align-items: center;
+  gap: 10px;
+}
+
+.work-name {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.work-bar {
+  height: 16px;
+  border-radius: 3px;
+  background: var(--bg3);
+  overflow: hidden;
+}
+
+.work-fill {
+  height: 100%;
+  border-radius: 3px;
+}
+
+.work-val {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.workload-cards-grid {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.workload-card {
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--bg3);
+  padding: 9px;
+}
+
+.workload-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.workload-ico {
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  background: rgba(29,54,84,0.08);
+}
+
+.workload-name {
+  font-family: var(--mono);
+  font-size: 8.5px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text);
+  line-height: 1.35;
+}
+
+.workload-share {
+  font-family: var(--mono);
+  font-size: 8.5px;
+  color: var(--dim);
+}
+
+.workload-meta {
+  margin-top: 7px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.workload-badge {
+  font-family: var(--mono);
+  font-size: 7.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 1px solid rgba(29,54,84,0.24);
+  border-radius: 999px;
+  padding: 2px 6px;
+  color: var(--muted);
+  background: rgba(29,54,84,0.04);
+}
+
+.term {
+  border-bottom: 1px dashed rgba(29,54,84,0.45);
+  cursor: help;
+}
+
+.term-tip {
+  position: fixed;
+  left: 0;
+  top: 0;
+  max-width: 320px;
+  background: #f9fcff;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-family: var(--sans);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text);
+  box-shadow: 0 8px 18px rgba(20,34,51,0.14);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.12s ease, transform 0.12s ease;
+  z-index: 9000;
+}
+
+.term-tip.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.system-diagram {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 12px;
+}
+
+.system-left {
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+}
+
+.flow-row {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.flow-box {
+  flex: 1;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--bg3);
+  padding: 10px;
+}
+
+.flow-box strong {
+  display: block;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.flow-box span {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.arrow {
+  width: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 12px;
+}
+
+.rack {
+  background: linear-gradient(180deg, #f6f9fe 0%, #eaf1fa 100%);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.rack-title {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.rack-unit {
+  border: 1px solid rgba(29,54,84,0.18);
+  border-radius: 5px;
+  background: rgba(29,54,84,0.03);
+  padding: 8px;
+  margin-bottom: 6px;
+}
+
+.rack-unit:last-child { margin-bottom: 0; }
+
+.rack-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr 1fr;
+  gap: 6px;
+}
+
+.chip {
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 6px;
+  background: var(--bg3);
+}
+
+.chip strong {
+  display: block;
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+
+.chip span {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.llm-line {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.llm-step {
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 10px;
+}
+
+.llm-step strong {
+  display: block;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.llm-step span {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.bar-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.simple-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--mono);
+  font-size: 10px;
+}
+
+.simple-table th,
+.simple-table td {
+  border: 1px solid var(--line);
+  padding: 7px 8px;
+  text-align: left;
+}
+
+.simple-table th {
+  color: var(--muted);
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: var(--bg3);
+}
+
+.simple-table td { color: var(--text); }
+
+.metric-big {
+  font-family: var(--display);
+  font-size: 52px;
+  line-height: 0.9;
+  color: var(--ok);
+}
+
+.sim-row {
+  display: grid;
+  grid-template-columns: 150px 1fr 70px;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.sim-row label {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: #c084fc;
+}
+
+.sim-value {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text);
+  text-align: right;
+}
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.kpi {
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--bg3);
+  padding: 10px;
+}
+
+.kpi .k {
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.kpi .v {
+  margin-top: 5px;
+  font-family: var(--display);
+  font-size: 28px;
+  line-height: 0.9;
+}
+
+.kpi .d {
+  margin-top: 5px;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.timeline {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.t-node {
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.t-node h3 {
+  font-family: var(--display);
+  font-size: 26px;
+  color: var(--gpu);
+  line-height: 0.9;
+}
+
+.t-node p {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.learn-links {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.learn-link {
+  display: block;
+  text-decoration: none;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg2);
+  padding: 12px;
+  color: var(--text);
+}
+
+.learn-link:hover { border-color: rgba(255,255,255,0.35); }
+
+.learn-link:hover { border-color: rgba(29,54,84,0.4); }
+
+.value-stack {
+  margin-top: 12px;
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.value-stack-title {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.value-stack-grid {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 5px;
+}
+
+.value-cell {
+  border: 1px solid rgba(29,54,84,0.2);
+  border-radius: 6px;
+  padding: 8px 6px;
+  min-height: 70px;
+}
+
+.value-cell .id {
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--dim);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.value-cell .name {
+  margin-top: 3px;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+.value-cell .role {
+  margin-top: 4px;
+  font-size: 10px;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.v-n1 { background: var(--lneg1); }
+.v-0 { background: var(--l0); }
+.v-1 { background: var(--l1); }
+.v-2 { background: var(--l2); }
+.v-3 { background: var(--l3); }
+.v-4 { background: var(--l4); }
+.v-5 { background: var(--l5); }
+.v-6 { background: var(--l6); }
+.v-7 { background: var(--l7); }
+
+.sys-stack {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+
+.sys-node {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--bg3);
+  padding: 8px;
+}
+
+.sys-node strong {
+  display: block;
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--text);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+
+.sys-node span {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.memory-split {
+  margin-top: 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  overflow: hidden;
+  height: 16px;
+  display: flex;
+}
+
+.memory-seg { height: 100%; }
+
+.bottleneck-bars {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bn-row {
+  display: grid;
+  grid-template-columns: 120px 1fr 70px;
+  align-items: center;
+  gap: 10px;
+}
+
+.bn-row label {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.bn-track {
+  height: 12px;
+  background: #dfe8f3;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.bn-fill {
+  height: 100%;
+  border-radius: 4px;
+}
+
+.bn-val {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text);
+  text-align: right;
+}
+
+.learn-link strong {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.learn-link span {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+@media (max-width: 980px) {
+  .slide-body { padding: 12px 20px 70px; }
+  .slide-chrome { padding: 12px 20px; }
+  .slide-counter { left: 20px; }
+  .key-hint { right: 20px; }
+  .grid-2, .grid-3, .system-diagram, .bar-compare, .timeline, .learn-links, .kpi-grid { grid-template-columns: 1fr; }
+  .hardware-scene { grid-template-columns: 1fr; }
+  .llm-red-thread { grid-template-columns: 1fr; }
+  .cw-stage { grid-template-columns: 1fr; }
+  .cw-track { grid-template-columns: repeat(5, 1fr); }
+  .gpu-config-grid { grid-template-columns: 1fr; }
+  .gpu-kpi-mini { grid-template-columns: 1fr 1fr; }
+  .gpu-cards-grid { grid-template-columns: 1fr 1fr; }
+  .llm-line { grid-template-columns: 1fr 1fr; }
+  .work-row { grid-template-columns: 1fr; }
+  .part-cards { grid-template-columns: 1fr 1fr; }
+  .node-grid { grid-template-columns: 1fr 1fr; }
+  .wc-row { grid-template-columns: 46px 1fr 50px; gap: 6px; }
+  .gen-row { grid-template-columns: 96px 1fr 78px; }
+  .interconnect-grid { grid-template-columns: 1fr; }
+  .ic-row { grid-template-columns: 110px 1fr 76px; }
+  .constraint-map { grid-template-columns: 1fr; }
+  .constraint-shift svg { height: 220px; }
+  .hw-stats-grid { grid-template-columns: 1fr; }
+  .workload-cards-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="back-nav-strip"><a class="back-nav-link" href="index.html">Back to navigation menu</a></div>
+<div class="progress" id="progress"></div>
+<div class="slide-counter"><span class="counter-cur" id="counter-cur">01</span> / 10</div>
+<div class="key-hint">Use left and right arrow keys</div>
+
+<nav class="nav">
+  <button class="nav-btn" id="btn-prev" onclick="goSlide(currentSlide - 1)" disabled>&larr;</button>
+  <div class="nav-dots" id="dots"></div>
+  <button class="nav-btn" id="btn-next" onclick="goSlide(currentSlide + 1)">&rarr;</button>
+</nav>
+
+<main class="deck">
+  <section class="slide active" data-slide="0" id="s1">
+    <div class="slide-body" style="display:flex;align-items:center;">
+      <div>
+        <div class="sec-label anim a1">Deck 1 · GPU foundations for AI inference</div>
+        <h1 class="hero-title anim a2">AI IS EVERYWHERE.<br>WHAT ACTUALLY POWERS IT?</h1>
+        <p class="hero-sub anim a3">
+          We use AI for search, writing, coding, support, planning, and media every day. This deck explains, in plain language,
+          what happens from your prompt to the model answer, why <span class="highlight-gpu">GPUs</span> became central, and what
+          physical limits matter for cost and user experience.
+        </p>
+        <div class="meta-row anim a4">
+          <span class="pill">10 slides</span>
+          <span class="pill">Simple language</span>
+          <span class="pill">Inference first</span>
+          <span class="pill">Visual walkthrough</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-slide="1" id="s2">
+    <div class="slide-chrome">
+      <div class="chrome-left"><div class="chrome-logo">GPU Foundations</div><div class="chrome-title">Where GPUs sit in cloud workloads</div></div>
+      <div class="chrome-right">02 / 10</div>
+    </div>
+    <div class="slide-body">
+      <div class="sec-label anim a1">Big picture first</div>
+      <div class="grid-2">
+        <div class="card anim a2">
+          <div class="card-title">Cloud AI work is not one thing</div>
+          <p>
+            GPUs are used across multiple workloads. <strong>Inference</strong> is what most people feel directly because it powers
+            live responses in apps. But non-LLM workloads also consume large GPU capacity in many cloud products.
+          </p>
+
+          <div class="workload-cards-grid">
+            <div class="workload-card">
+              <div class="workload-top">
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <span class="workload-ico">💬</span>
+                  <span class="workload-name">LLM Chat / Agents</span>
+                </div>
+                <span class="workload-share">High</span>
+              </div>
+              <div class="workload-meta"><span class="workload-badge">Low latency</span><span class="workload-badge">KV cache heavy</span></div>
+            </div>
+
+            <div class="workload-card">
+              <div class="workload-top">
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <span class="workload-ico">🖼️</span>
+                  <span class="workload-name">Image generation</span>
+                </div>
+                <span class="workload-share">Medium</span>
+              </div>
+              <div class="workload-meta"><span class="workload-badge">Burst traffic</span><span class="workload-badge">VRAM heavy</span></div>
+            </div>
+
+            <div class="workload-card">
+              <div class="workload-top">
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <span class="workload-ico">🎞️</span>
+                  <span class="workload-name">Video generation / editing</span>
+                </div>
+                <span class="workload-share">Rising</span>
+              </div>
+              <div class="workload-meta"><span class="workload-badge">Very compute heavy</span><span class="workload-badge">Long runtimes</span></div>
+            </div>
+
+            <div class="workload-card">
+              <div class="workload-top">
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <span class="workload-ico">🎙️</span>
+                  <span class="workload-name">Speech (ASR / TTS)</span>
+                </div>
+                <span class="workload-share">Medium</span>
+              </div>
+              <div class="workload-meta"><span class="workload-badge">Streaming</span><span class="workload-badge">Real-time</span></div>
+            </div>
+
+            <div class="workload-card">
+              <div class="workload-top">
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <span class="workload-ico">🔎</span>
+                  <span class="workload-name">Retrieval / ranking</span>
+                </div>
+                <span class="workload-share">High</span>
+              </div>
+              <div class="workload-meta"><span class="workload-badge">High QPS</span><span class="workload-badge">Batch friendly</span></div>
+            </div>
+
+            <div class="workload-card">
+              <div class="workload-top">
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <span class="workload-ico">🧪</span>
+                  <span class="workload-name">Training / fine-tuning</span>
+                </div>
+                <span class="workload-share">Lower share</span>
+              </div>
+              <div class="workload-meta"><span class="workload-badge">Long jobs</span><span class="workload-badge">Interconnect heavy</span></div>
+            </div>
+          </div>
+
+          <div class="bottleneck-bars" style="margin-top:10px;">
+            <div class="bn-row"><label>LLM inference share</label><div class="bn-track"><div class="bn-fill" style="width:52%;background:var(--llm);"></div></div><div class="bn-val">52%</div></div>
+            <div class="bn-row"><label>Other inference share</label><div class="bn-track"><div class="bn-fill" style="width:30%;background:var(--sys);"></div></div><div class="bn-val">30%</div></div>
+            <div class="bn-row"><label>Train + fine-tune</label><div class="bn-track"><div class="bn-fill" style="width:18%;background:var(--gpu);"></div></div><div class="bn-val">18%</div></div>
+          </div>
+          <span class="source-tag">Source tag: internal framing based on current workload mix in this workspace</span>
+        </div>
+
+        <div class="card anim a3">
+          <div class="card-title">What changes by workload</div>
+          <p>
+            <span class="term" data-def="Model training means updating model weights from data. It is compute-heavy and long-running.">Training</span>
+            needs long runs and very high inter-GPU communication.
+            <span class="term" data-def="Fine-tuning means adapting an existing model to a specific domain with smaller training jobs.">Fine-tuning</span>
+            is smaller but still needs reliable memory and bandwidth.
+            <span class="term" data-def="Inference means running a trained model to generate outputs for users.">Inference</span>
+            needs low latency, high throughput, and strong serving software.
+          </p>
+          <div class="card" style="margin-top:12px;background:var(--bg3);">
+            <div class="card-title">Takeaway</div>
+            <p>
+              If your goal is user experience and unit economics, optimize inference first. That is where latency, cost per answer,
+              and reliability directly hit product value.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="value-stack anim a4">
+        <div class="value-stack-title">Value chain lens (-1 to 7) and where inference lives</div>
+        <div class="value-stack-grid">
+          <div class="value-cell v-n1"><div class="id">Layer -1</div><div class="name">Energy input</div><div class="role">Grid power and cooling feed all compute.</div></div>
+          <div class="value-cell v-0"><div class="id">Layer 0</div><div class="name">Physical infra</div><div class="role">Sites, data halls, racks, power systems.</div></div>
+          <div class="value-cell v-1"><div class="id">Layer 1</div><div class="name">Silicon</div><div class="role">GPU and CPU chips.</div></div>
+          <div class="value-cell v-2"><div class="id">Layer 2</div><div class="name">Hardware systems</div><div class="role">Servers, tray designs, interconnect boards.</div></div>
+          <div class="value-cell v-3"><div class="id">Layer 3</div><div class="name">Cloud infra</div><div class="role">Clusters and scheduling fabric.</div></div>
+          <div class="value-cell v-4"><div class="id">Layer 4</div><div class="name">Inference platform</div><div class="role">Model serving and runtime layer.</div></div>
+          <div class="value-cell v-5"><div class="id">Layer 5</div><div class="name">Model API</div><div class="role">Gateway and productized model access.</div></div>
+          <div class="value-cell v-6"><div class="id">Layer 6</div><div class="name">Workflow apps</div><div class="role">Chat, copilots, enterprise agents.</div></div>
+          <div class="value-cell v-7"><div class="id">Layer 7</div><div class="name">Business outcomes</div><div class="role">Revenue, productivity, customer value.</div></div>
+        </div>
+        <span class="source-tag">Source tag: layer naming aligned to strategy_value_chain_master.html</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-slide="2" id="s3">
+    <div class="slide-chrome">
+      <div class="chrome-left"><div class="chrome-logo">GPU Foundations</div><div class="chrome-title">How a computer handles AI requests</div></div>
+      <div class="chrome-right">03 / 10</div>
+    </div>
+    <div class="slide-body">
+      <div class="sec-label anim a1">From language to bits to answer</div>
+      <div class="system-diagram anim a2">
+        <div class="system-left">
+          <div class="flow-row">
+            <div class="flow-box"><strong>Input</strong><span>Human language, image, audio, or API call.</span></div>
+            <div class="arrow">&rarr;</div>
+            <div class="flow-box"><strong>Encoding</strong><span>System turns input into numbers (tokens / tensors).</span></div>
+          </div>
+          <div class="flow-row">
+            <div class="flow-box"><strong>CPU + RAM</strong><span>Coordinates work, networking, file I/O, and scheduling.</span></div>
+            <div class="arrow">&rarr;</div>
+            <div class="flow-box"><strong>GPU + HBM</strong><span>Runs matrix math at high parallel speed.</span></div>
+          </div>
+          <div class="flow-row">
+            <div class="flow-box"><strong>Interconnect</strong><span>PCIe / NVLink / NIC fabric moves data between chips and nodes.</span></div>
+            <div class="arrow">&rarr;</div>
+            <div class="flow-box"><strong>Output</strong><span>Decoded text, image, audio, or tool action.</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Why GPUs became central</div>
+          <p>
+            GPUs started in graphics (many pixels in parallel). AI inference also needs large parallel math, so GPUs fit naturally.
+            The key value is not only raw compute, but also memory bandwidth and software stack maturity.
+          </p>
+          <div class="card" style="margin-top:12px;background:var(--bg3);">
+            <div class="card-title">Simple definition</div>
+            <p>
+              <span class="term" data-def="Bandwidth is how much data can move per second.">Bandwidth</span> is the speed of data movement.
+              <span class="term" data-def="Latency is time delay from request to first result.">Latency</span> is delay.
+              <span class="term" data-def="Throughput is how much total work completes in a time window.">Throughput</span> is total output.
+            </p>
+          </div>
+
+          <div class="sys-stack">
+            <div class="sys-node"><strong>CPU</strong><span>Task control and orchestration.</span></div>
+            <div class="sys-node"><strong>RAM</strong><span>Fast temporary workspace.</span></div>
+            <div class="sys-node"><strong>GPU</strong><span>Parallel tensor math engine.</span></div>
+            <div class="sys-node"><strong>HBM</strong><span>High-speed local model memory.</span></div>
+            <div class="sys-node"><strong>Network</strong><span>Moves state across nodes.</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card anim a3" style="margin-top:12px;">
+        <div class="card-title">Simple system sketch</div>
+        <svg viewBox="0 0 940 170" style="width:100%;height:auto;display:block;">
+          <rect x="10" y="35" width="160" height="96" rx="8" fill="#e2f0fd" stroke="#5aace8"/>
+          <text x="90" y="74" text-anchor="middle" style="font-family:var(--mono);font-size:11px;fill:#1d2b3a;">Input</text>
+          <text x="90" y="92" text-anchor="middle" style="font-family:var(--mono);font-size:10px;fill:#5f7288;">text / image / audio</text>
+
+          <rect x="210" y="35" width="180" height="96" rx="8" fill="#fff8d6" stroke="#e8c840"/>
+          <text x="300" y="74" text-anchor="middle" style="font-family:var(--mono);font-size:11px;fill:#1d2b3a;">CPU + RAM</text>
+          <text x="300" y="92" text-anchor="middle" style="font-family:var(--mono);font-size:10px;fill:#5f7288;">scheduling + prep</text>
+
+          <rect x="430" y="20" width="200" height="56" rx="8" fill="#f3e5f5" stroke="#9333ea"/>
+          <text x="530" y="52" text-anchor="middle" style="font-family:var(--mono);font-size:11px;fill:#1d2b3a;">GPU cores</text>
+
+          <rect x="430" y="86" width="200" height="45" rx="8" fill="#ebf2ff" stroke="#2563eb"/>
+          <text x="530" y="114" text-anchor="middle" style="font-family:var(--mono);font-size:11px;fill:#1d2b3a;">HBM memory</text>
+
+          <rect x="670" y="35" width="130" height="96" rx="8" fill="#e5f5e7" stroke="#5ab86a"/>
+          <text x="735" y="74" text-anchor="middle" style="font-family:var(--mono);font-size:11px;fill:#1d2b3a;">Network</text>
+          <text x="735" y="92" text-anchor="middle" style="font-family:var(--mono);font-size:10px;fill:#5f7288;">NVLink + NIC</text>
+
+          <rect x="830" y="35" width="100" height="96" rx="8" fill="#fdeede" stroke="#e8985a"/>
+          <text x="880" y="74" text-anchor="middle" style="font-family:var(--mono);font-size:11px;fill:#1d2b3a;">Output</text>
+          <text x="880" y="92" text-anchor="middle" style="font-family:var(--mono);font-size:10px;fill:#5f7288;">answer / action</text>
+
+          <line x1="170" y1="83" x2="210" y2="83" stroke="#7b8da2" stroke-width="2"/>
+          <line x1="390" y1="83" x2="430" y2="83" stroke="#7b8da2" stroke-width="2"/>
+          <line x1="630" y1="83" x2="670" y2="83" stroke="#7b8da2" stroke-width="2"/>
+          <line x1="800" y1="83" x2="830" y2="83" stroke="#7b8da2" stroke-width="2"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-slide="3" id="s4">
+    <div class="slide-chrome">
+      <div class="chrome-left"><div class="chrome-logo">GPU Foundations</div><div class="chrome-title">Server rack and GPU blowout</div></div>
+      <div class="chrome-right">04 / 10</div>
+    </div>
+    <div class="slide-body">
+      <div class="sec-label anim a1">Visual hardware map</div>
+      <div class="hardware-scene anim a2" id="gpu-blowout">
+        <div class="rack-illustration">
+          <div class="rack-title">Rack view (simplified)</div>
+          <div class="rack-shell">
+            <div class="rack-slot"><strong>Top of rack</strong>Switch + network uplinks</div>
+            <div class="rack-slot"><strong>Compute shelf</strong>CPU nodes + RAM + local SSD</div>
+            <div class="rack-slot highlight"><strong>GPU shelf</strong>16-GPU tray pair (active inference node)</div>
+            <div class="rack-slot"><strong>Power shelf</strong>PSU conversion + distribution bus</div>
+            <div class="rack-slot"><strong>Cooling path</strong>Front-to-back airflow + liquid loop plate</div>
+          </div>
+          <div class="rack-note">
+            The highlighted shelf is where the exploded GPU on the right sits. In production, many of these shelves run in parallel.
+          </div>
+          <span class="source-tag">Source tag: architecture framing inspired by learning_inference_compute_master_v10.html</span>
+        </div>
+
+        <div class="gpu-blowout-wrap">
+          <div class="card-title" style="margin-bottom:8px;">GPU blowout (hover or click a part)</div>
+          <svg viewBox="0 0 760 360" aria-label="Exploded GPU component diagram">
+            <defs>
+              <linearGradient id="boardGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#c7d8ea"/>
+                <stop offset="100%" stop-color="#9bb4cd"/>
+              </linearGradient>
+            </defs>
+
+            <rect x="240" y="95" width="280" height="170" rx="14" fill="url(#boardGrad)" stroke="#4c6e91" stroke-width="2" class="gpu-part" data-part="board"/>
+            <text x="380" y="184" text-anchor="middle" style="font-family:var(--mono);font-size:11px;fill:#23374f;">GPU BOARD</text>
+
+            <rect x="335" y="132" width="90" height="70" rx="8" fill="#7f57c2" stroke="#56358f" stroke-width="2" class="gpu-part" data-part="tensor"/>
+            <text x="380" y="172" text-anchor="middle" style="font-family:var(--mono);font-size:10px;fill:#ffffff;">Tensor die</text>
+
+            <rect x="268" y="122" width="48" height="32" rx="5" fill="#21b8d6" stroke="#0f7d95" stroke-width="2" class="gpu-part" data-part="hbm"/>
+            <rect x="444" y="122" width="48" height="32" rx="5" fill="#21b8d6" stroke="#0f7d95" stroke-width="2" class="gpu-part" data-part="hbm"/>
+            <rect x="268" y="182" width="48" height="32" rx="5" fill="#21b8d6" stroke="#0f7d95" stroke-width="2" class="gpu-part" data-part="hbm"/>
+            <rect x="444" y="182" width="48" height="32" rx="5" fill="#21b8d6" stroke="#0f7d95" stroke-width="2" class="gpu-part" data-part="hbm"/>
+
+            <rect x="322" y="80" width="116" height="20" rx="4" fill="#f4bf3f" stroke="#bf8a0c" stroke-width="2" class="gpu-part" data-part="nvlink"/>
+            <text x="380" y="93" text-anchor="middle" style="font-family:var(--mono);font-size:9px;fill:#3d300e;">NVLink bridge</text>
+
+            <rect x="278" y="272" width="204" height="16" rx="4" fill="#5a6f84" stroke="#32485e" stroke-width="2" class="gpu-part" data-part="pcie"/>
+
+            <rect x="506" y="120" width="18" height="100" rx="4" fill="#ef8d5d" stroke="#b65b2f" stroke-width="2" class="gpu-part" data-part="vrm"/>
+
+            <rect x="120" y="30" width="120" height="48" rx="8" fill="#ece7ff" stroke="#7f57c2" stroke-width="2" class="gpu-part" data-part="tensor"/>
+            <text x="180" y="59" text-anchor="middle" style="font-family:var(--mono);font-size:10px;fill:#3e2a69;">Tensor cores</text>
+
+            <rect x="44" y="106" width="170" height="48" rx="8" fill="#dff8fd" stroke="#0f7d95" stroke-width="2" class="gpu-part" data-part="hbm"/>
+            <text x="129" y="135" text-anchor="middle" style="font-family:var(--mono);font-size:10px;fill:#0f5f72;">HBM stacks</text>
+
+            <rect x="554" y="30" width="154" height="48" rx="8" fill="#fff3d8" stroke="#bf8a0c" stroke-width="2" class="gpu-part" data-part="nvlink"/>
+            <text x="631" y="59" text-anchor="middle" style="font-family:var(--mono);font-size:10px;fill:#5a460f;">NVLink fabric</text>
+
+            <rect x="548" y="106" width="166" height="48" rx="8" fill="#ffe7db" stroke="#b65b2f" stroke-width="2" class="gpu-part" data-part="vrm"/>
+            <text x="631" y="135" text-anchor="middle" style="font-family:var(--mono);font-size:10px;fill:#6d351d;">Power phases (VRM)</text>
+
+            <rect x="548" y="182" width="166" height="48" rx="8" fill="#e7f0ff" stroke="#42678f" stroke-width="2" class="gpu-part" data-part="pcie"/>
+            <text x="631" y="211" text-anchor="middle" style="font-family:var(--mono);font-size:10px;fill:#294666;">PCIe edge + I/O</text>
+
+            <rect x="70" y="262" width="170" height="56" rx="8" fill="#ecf6ef" stroke="#2f855a" stroke-width="2" class="gpu-part" data-part="cooling"/>
+            <text x="155" y="295" text-anchor="middle" style="font-family:var(--mono);font-size:10px;fill:#255f43;">Cold plate + fins</text>
+
+            <line x1="240" y1="54" x2="347" y2="146" class="trace-line" data-part="tensor"/>
+            <line x1="214" y1="130" x2="292" y2="168" class="trace-line" data-part="hbm"/>
+            <line x1="554" y1="54" x2="380" y2="90" class="trace-line" data-part="nvlink"/>
+            <line x1="548" y1="130" x2="515" y2="150" class="trace-line" data-part="vrm"/>
+            <line x1="548" y1="206" x2="450" y2="279" class="trace-line" data-part="pcie"/>
+            <line x1="240" y1="290" x2="312" y2="224" class="trace-line" data-part="cooling"/>
+          </svg>
+
+          <div class="part-cards" role="list" aria-label="GPU component list">
+            <button class="part-chip active" type="button" data-part="tensor"><strong>Tensor cores</strong><span>Main matrix math path for AI.</span></button>
+            <button class="part-chip" type="button" data-part="hbm"><strong>HBM memory</strong><span>Feeds the die with high bandwidth.</span></button>
+            <button class="part-chip" type="button" data-part="nvlink"><strong>NVLink</strong><span>Fast GPU-to-GPU data exchange.</span></button>
+            <button class="part-chip" type="button" data-part="vrm"><strong>Power delivery</strong><span>Stabilizes current at high load.</span></button>
+            <button class="part-chip" type="button" data-part="pcie"><strong>PCIe + I/O</strong><span>Host link and external connectivity.</span></button>
+            <button class="part-chip" type="button" data-part="cooling"><strong>Cooling</strong><span>Keeps clocks high under sustained runs.</span></button>
+          </div>
+          <div class="blowout-controls">
+            <button class="blowout-btn" type="button" id="blowout-play">Start guided mode</button>
+            <button class="blowout-btn" type="button" id="blowout-stop">Stop</button>
+            <span class="blowout-status" id="blowout-status">Guide: stopped</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card anim a3" style="margin-top:10px;">
+        <div class="card-title">System takeaway</div>
+        <p>
+          GPU performance is the result of balance across compute, memory, power, and cooling. If one element is constrained,
+          end-user latency and cost per request both degrade.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-slide="4" id="s5">
+    <div class="slide-chrome">
+      <div class="chrome-left"><div class="chrome-logo">GPU Foundations</div><div class="chrome-title">LLM inference at a glance</div></div>
+      <div class="chrome-right">05 / 10</div>
+    </div>
+    <div class="slide-body">
+      <div class="sec-label anim a1">From prompt to first token to full answer</div>
+      <div class="llm-red-thread anim a2">
+        <div class="red-thread-steps">
+          <div class="card-title">Step-by-step inference flow (from v10)</div>
+          <div class="rt-step">
+            <div class="rt-num">1</div>
+            <div><strong>Tokenize input</strong><span>Text is split into token IDs from a vocabulary of about 128,256 entries.</span></div>
+          </div>
+          <div class="rt-step">
+            <div class="rt-num">2</div>
+            <div><strong>Prefill pass</strong><span>All prompt tokens run through the model in parallel. This phase dominates <span class="term" data-def="TTFT means Time To First Token: delay from send to first visible output token.">TTFT</span> for long prompts.</span></div>
+          </div>
+          <div class="rt-step">
+            <div class="rt-num">3</div>
+            <div><strong>Decode loop</strong><span>One token is generated at a time, then appended to context. The model runs all layers again for each new token.</span></div>
+          </div>
+          <div class="rt-step">
+            <div class="rt-num">4</div>
+            <div><strong>KV cache growth</strong><span>Past key/value tensors are stored so decode does not recompute history. v10 framing: roughly 0.3 MB per token for 70B-class with GQA.</span></div>
+          </div>
+          <div class="rt-step">
+            <div class="rt-num">5</div>
+            <div><strong>Return stream</strong><span>Tokens stream back continuously. A 50-word response is around 67 token passes through model layers.</span></div>
+          </div>
+          <span class="source-tag">Source tag: learning_inference_compute_master_v10.html (prefill/decode, KV, token loop)</span>
+        </div>
+
+        <div class="latency-breakdown">
+          <div class="card-title">Where the time and data movement go</div>
+          <div class="lat-pill"><label>Network + routing</label><strong>~20 ms baseline</strong></div>
+          <div class="lat-pill"><label>Prefill</label><strong>Scales with prompt length</strong></div>
+          <div class="lat-pill"><label>Decode</label><strong>One token per full layer pass</strong></div>
+          <div class="lat-pill"><label>Memory stream</label><strong>~9.4 TB moved for a 50-word answer on 70B BF16 framing</strong></div>
+          <div class="lat-pill"><label>Bottleneck</label><strong>HBM bandwidth often matters more than peak TFLOPS</strong></div>
+
+          <div class="card" style="margin-top:10px;background:var(--bg2);">
+            <div class="card-title">Red thread takeaway</div>
+            <p>
+              Long prompts increase prefill and cache pressure. Long outputs multiply decode passes. That is why latency and cost are mostly a memory+bandwidth story, then a compute story.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="capital-walkthrough anim a3" id="capital-walkthrough">
+        <div class="cw-top">
+          <div>
+            <div class="card-title" style="margin-bottom:4px;">Interactive walkthrough from v10 framing</div>
+            <div class="cw-prompt">Follow: "The capital of France is" through all 10 stages</div>
+          </div>
+          <div class="cw-controls">
+            <button class="cw-btn" type="button" id="cw-prev">Prev</button>
+            <button class="cw-btn" type="button" id="cw-play">Play</button>
+            <button class="cw-btn" type="button" id="cw-next">Next</button>
+          </div>
+        </div>
+
+        <div class="cw-track" id="cw-track"></div>
+
+        <div class="cw-stage">
+          <div class="cw-pane">
+            <div class="cw-pane-title">Pipeline stage</div>
+            <div class="cw-stage-name" id="cw-stage-name">1. Input token IDs</div>
+            <div class="cw-copy" id="cw-stage-copy">Tokenizer turns text into IDs.</div>
+          </div>
+          <div class="cw-pane">
+            <div class="cw-pane-title">What changes in this stage</div>
+            <div class="cw-copy" id="cw-plain">Token IDs become vectors and pass through model layers.</div>
+            <div class="cw-list" id="cw-list"></div>
+          </div>
+        </div>
+
+        <span class="source-tag">Source tag: learning_inference_compute_master_v10.html (interactive pipeline for "The capital of France is")</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-slide="5" id="s6">
+    <div class="slide-chrome">
+      <div class="chrome-left"><div class="chrome-logo">GPU Foundations</div><div class="chrome-title">Memory, bandwidth, and quantization</div></div>
+      <div class="chrome-right">06 / 10</div>
+    </div>
+    <div class="slide-body">
+      <div class="sec-label anim a1">Step 1: model growth. Step 2: memory split. Step 3: interconnect pressure.</div>
+      <div class="bar-compare anim a2">
+        <div class="weights-growth">
+          <div class="card-title">Model weight growth at FP16 (illustrative ladder)</div>
+          <div class="weights-axis"><span>0 GB</span><span>200 GB</span><span>400 GB</span><span>600 GB</span><span>810 GB</span></div>
+          <div class="weights-chart" aria-label="Model weight growth chart">
+            <div class="wc-row"><div class="wc-model">7B</div><div class="wc-track"><div class="wc-fill m1" style="width:1.7%;"></div></div><div class="wc-val">14 GB</div></div>
+            <div class="wc-row"><div class="wc-model">13B</div><div class="wc-track"><div class="wc-fill m2" style="width:3.2%;"></div></div><div class="wc-val">26 GB</div></div>
+            <div class="wc-row"><div class="wc-model">34B</div><div class="wc-track"><div class="wc-fill m3" style="width:8.4%;"></div></div><div class="wc-val">68 GB</div></div>
+            <div class="wc-row"><div class="wc-model">70B</div><div class="wc-track"><div class="wc-fill m4" style="width:17.3%;"></div></div><div class="wc-val">140 GB</div></div>
+            <div class="wc-row"><div class="wc-model">405B</div><div class="wc-track"><div class="wc-fill m5" style="width:100%;"></div></div><div class="wc-val">810 GB</div></div>
+          </div>
+          <div class="weights-note">Scale is linear to 810 GB (405B FP16). Smaller models are intentionally shown at true proportion.</div>
+          <p style="margin-top:8px;">
+            <span class="term" data-def="Quantization stores weights with fewer bits (for example FP16 to INT8 or INT4).">Quantization</span>
+            can cut this sharply. Example: 70B goes from ~140 GB (FP16) to ~70 GB (INT8) to ~35 GB (INT4), with quality trade-offs.
+          </p>
+          <span class="source-tag">Source tag: learning_inference_compute_master_v10.html + canonical model tiers</span>
+        </div>
+
+        <div class="node-spread">
+          <div class="card-title">How weights + context spread across 8 GPUs in one node</div>
+          <div class="node-grid">
+            <div class="node-gpu"><div class="name">GPU 0</div><div class="seg"><div class="w" style="width:22%;"></div><div class="kv" style="width:8%;"></div><div class="free" style="width:70%;"></div></div></div>
+            <div class="node-gpu"><div class="name">GPU 1</div><div class="seg"><div class="w" style="width:22%;"></div><div class="kv" style="width:8%;"></div><div class="free" style="width:70%;"></div></div></div>
+            <div class="node-gpu"><div class="name">GPU 2</div><div class="seg"><div class="w" style="width:22%;"></div><div class="kv" style="width:8%;"></div><div class="free" style="width:70%;"></div></div></div>
+            <div class="node-gpu"><div class="name">GPU 3</div><div class="seg"><div class="w" style="width:22%;"></div><div class="kv" style="width:8%;"></div><div class="free" style="width:70%;"></div></div></div>
+            <div class="node-gpu"><div class="name">GPU 4</div><div class="seg"><div class="w" style="width:22%;"></div><div class="kv" style="width:8%;"></div><div class="free" style="width:70%;"></div></div></div>
+            <div class="node-gpu"><div class="name">GPU 5</div><div class="seg"><div class="w" style="width:22%;"></div><div class="kv" style="width:8%;"></div><div class="free" style="width:70%;"></div></div></div>
+            <div class="node-gpu"><div class="name">GPU 6</div><div class="seg"><div class="w" style="width:22%;"></div><div class="kv" style="width:8%;"></div><div class="free" style="width:70%;"></div></div></div>
+            <div class="node-gpu"><div class="name">GPU 7</div><div class="seg"><div class="w" style="width:22%;"></div><div class="kv" style="width:8%;"></div><div class="free" style="width:70%;"></div></div></div>
+          </div>
+          <div class="node-spread-legend">
+            <span><i class="sw sw-w"></i>Weights shard (~1/8 each)</span>
+            <span><i class="sw sw-kv"></i>KV cache slice (grows with output/context)</span>
+            <span><i class="sw sw-f"></i>Free HBM headroom</span>
+          </div>
+          <div class="bottleneck-bars" style="margin-top:10px;">
+            <div class="bn-row"><label>HBM bandwidth load</label><div class="bn-track"><div class="bn-fill" style="width:89%;background:#22d3ee;"></div></div><div class="bn-val">89%</div></div>
+            <div class="bn-row"><label>NVLink sync load</label><div class="bn-track"><div class="bn-fill" style="width:64%;background:#fbbf24;"></div></div><div class="bn-val">64%</div></div>
+            <div class="bn-row"><label>PCIe fallback risk</label><div class="bn-track"><div class="bn-fill" style="width:82%;background:#f87171;"></div></div><div class="bn-val">High</div></div>
+          </div>
+          <span class="source-tag">Source tag: learning_inference_compute_master_v10.html (DGX H100 section, NVLink 900 GB/s framing)</span>
+        </div>
+      </div>
+
+      <div class="card gpu-config-wrap anim a3">
+        <div class="card-title">GPU card configuration (v10-style), merged with simulator logic</div>
+        <div class="gpu-hw-row">
+          <div class="gpu-hw-buttons" id="cfgGpuButtons">
+            <button type="button" class="cfg-gpu-btn" data-gpu="H100">H100 SXM5</button>
+            <button type="button" class="cfg-gpu-btn active" data-gpu="H200">H200 SXM5</button>
+            <button type="button" class="cfg-gpu-btn" data-gpu="B200">B200 SXM</button>
+            <button type="button" class="cfg-gpu-btn" data-gpu="L40S">L40S PCIe</button>
+          </div>
+          <div class="gpu-hw-note" id="cfgHwNote">H200 SXM5 · 141 GB HBM per GPU · 8-GPU node</div>
+        </div>
+
+        <div class="gpu-config-grid">
+          <div>
+            <div class="sim-row"><label for="cfgContext">Context tokens</label><input id="cfgContext" type="range" min="1000" max="128000" step="1000" value="16000"><div class="sim-value" id="cfgContextVal">16k</div></div>
+            <div class="sim-row"><label for="cfgBatch">Batch size</label><input id="cfgBatch" type="range" min="1" max="256" step="1" value="32"><div class="sim-value" id="cfgBatchVal">32</div></div>
+            <div class="sim-row"><label for="cfgParams">Model params (B)</label><input id="cfgParams" type="range" min="7" max="400" step="1" value="70"><div class="sim-value" id="cfgParamsVal">70B</div></div>
+            <div class="sim-row"><label for="cfgBits">Precision (bits)</label><input id="cfgBits" type="range" min="4" max="16" step="4" value="8"><div class="sim-value" id="cfgBitsVal">8-bit</div></div>
+          </div>
+
+          <div>
+            <div class="gpu-kpi-mini">
+              <div class="gpu-kpi-item"><div class="k">Weight memory</div><div class="v" id="cfgKWeight">70.0 GB</div></div>
+              <div class="gpu-kpi-item"><div class="k">KV cache</div><div class="v" id="cfgKKv">6.4 GB</div></div>
+              <div class="gpu-kpi-item"><div class="k">Node HBM load</div><div class="v" id="cfgKHbm">7%</div></div>
+              <div class="gpu-kpi-item"><div class="k">Risk</div><div class="v" id="cfgKRisk">Low</div></div>
+            </div>
+            <div class="card" style="margin-top:8px;background:var(--bg3);">
+              <div class="card-title">Interpretation</div>
+              <p id="cfgExplain">Per-GPU memory stays moderate at this setup. Capacity remains for more concurrent users.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="gpu-cards-grid" id="cfgGpuGrid"></div>
+        <span class="source-tag">Source tag: learning_inference_compute_master_v10.html (GPU array pattern) + data_files/gpu_economics_canonical_spec_v1.json</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-slide="6" id="s7">
+    <div class="slide-chrome">
+      <div class="chrome-left"><div class="chrome-logo">GPU Foundations</div><div class="chrome-title">MFU, parallelism, and interconnect limits</div></div>
+      <div class="chrome-right">07 / 09</div>
+    </div>
+    <div class="slide-body">
+      <div class="sec-label anim a1">How to fill GPUs efficiently</div>
+      <div class="grid-2 anim a2">
+        <div class="card">
+          <div class="card-title">MFU spelled out</div>
+          <div class="metric-big">MFU</div>
+          <p>
+            <strong>MFU = Model FLOPs Utilization.</strong> It means: the share of a GPU's theoretical math capacity that is actually doing useful model work.
+            In short: <strong>higher MFU = less idle silicon + lower cost per token.</strong>
+          </p>
+          <div class="card" style="margin-top:10px;background:var(--bg3);">
+            <div class="card-title">Why MFU drops</div>
+            <p>
+              MFU falls when bandwidth friction is high: large weight streaming pressure, KV-cache growth, small batches, or slow cross-GPU sync.
+              The GPU waits for data instead of doing math.
+            </p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Bandwidth friction vs MFU (concept graph)</div>
+          <svg viewBox="0 0 560 220" style="width:100%;height:auto;display:block;">
+            <rect x="40" y="20" width="490" height="170" fill="#f8fbff" stroke="#d7e2ef"/>
+            <line x1="55" y1="170" x2="510" y2="170" stroke="#7b8da2" stroke-width="1.5"/>
+            <line x1="55" y1="30" x2="55" y2="170" stroke="#7b8da2" stroke-width="1.5"/>
+            <text x="510" y="188" text-anchor="end" style="font-family:var(--mono);font-size:9px;fill:#5f7288;">Bandwidth friction (higher is worse)</text>
+            <text x="18" y="35" style="font-family:var(--mono);font-size:9px;fill:#5f7288;">MFU %</text>
+
+            <polyline points="60,55 150,78 240,104 330,127 420,146 500,160" fill="none" stroke="#c084fc" stroke-width="3"/>
+
+            <circle cx="120" cy="68" r="5" fill="#34d399"/>
+            <text x="128" y="64" style="font-family:var(--mono);font-size:8px;fill:#1f4d39;">A: Right-sized weights + good batch + fast NVLink</text>
+            <text x="128" y="75" style="font-family:var(--mono);font-size:8px;fill:#5f7288;">High MFU zone</text>
+
+            <circle cx="280" cy="114" r="5" fill="#fbbf24"/>
+            <text x="288" y="110" style="font-family:var(--mono);font-size:8px;fill:#7a5a11;">B: Medium friction</text>
+            <text x="288" y="121" style="font-family:var(--mono);font-size:8px;fill:#5f7288;">Balanced but sensitive</text>
+
+            <circle cx="455" cy="151" r="5" fill="#f87171"/>
+            <text x="463" y="147" style="font-family:var(--mono);font-size:8px;fill:#7b2d2d;">C: Heavy weights + small batch + slow interconnect</text>
+            <text x="463" y="158" style="font-family:var(--mono);font-size:8px;fill:#5f7288;">Low MFU zone</text>
+          </svg>
+
+          <div class="bottleneck-bars" style="margin-top:8px;">
+            <div class="bn-row"><label>Weight streaming fit</label><div class="bn-track"><div class="bn-fill" style="width:72%;background:#8f6ad7;"></div></div><div class="bn-val">72%</div></div>
+            <div class="bn-row"><label>Batch effectiveness</label><div class="bn-track"><div class="bn-fill" style="width:64%;background:#34d399;"></div></div><div class="bn-val">64%</div></div>
+            <div class="bn-row"><label>Interconnect headroom</label><div class="bn-track"><div class="bn-fill" style="width:58%;background:#22d3ee;"></div></div><div class="bn-val">58%</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-slide="7" id="s8">
+    <div class="slide-chrome">
+      <div class="chrome-left"><div class="chrome-logo">GPU Foundations</div><div class="chrome-title">Latest hardware and platform shifts</div></div>
+      <div class="chrome-right">08 / 09</div>
+    </div>
+    <div class="slide-body">
+      <div class="sec-label anim a1">A100 to B200: hardware ramps and where constraints move</div>
+
+      <div class="gen-chart anim a2">
+        <div class="card-title">Generation trend (HBM bandwidth per GPU)</div>
+        <div class="gen-axis"><span>0</span><span>2 TB/s</span><span>4 TB/s</span><span>6 TB/s</span><span>8 TB/s</span></div>
+        <div class="gen-rows">
+          <div class="gen-row"><div class="gen-label">A100 SXM4</div><div class="gen-track"><div class="gen-fill g1" style="width:25%;"></div></div><div class="gen-value">2,000 GB/s</div></div>
+          <div class="gen-row"><div class="gen-label">H100 SXM5</div><div class="gen-track"><div class="gen-fill g2" style="width:41.9%;"></div></div><div class="gen-value">3,350 GB/s</div></div>
+          <div class="gen-row"><div class="gen-label">H200 SXM5</div><div class="gen-track"><div class="gen-fill g3" style="width:60%;"></div></div><div class="gen-value">4,800 GB/s</div></div>
+          <div class="gen-row"><div class="gen-label">B200 SXM</div><div class="gen-track"><div class="gen-fill g4" style="width:100%;"></div></div><div class="gen-value">8,000 GB/s</div></div>
+        </div>
+        <span class="source-tag">A100/H100/H200/B200 from canonical spec; focus metric is memory bandwidth because inference is often memory-bound.</span>
+      </div>
+
+      <div class="interconnect-grid anim a3">
+        <div class="ic-card">
+          <div class="card-title">NVLink development (intra-node GPU fabric)</div>
+          <div class="ic-list">
+            <div class="ic-row"><div class="ic-name">A100</div><div class="ic-track"><div class="ic-fill" style="width:33.3%;"></div></div><div class="ic-val">600 GB/s</div></div>
+            <div class="ic-row"><div class="ic-name">H100/H200</div><div class="ic-track"><div class="ic-fill" style="width:50%;"></div></div><div class="ic-val">900 GB/s</div></div>
+            <div class="ic-row"><div class="ic-name">B200</div><div class="ic-track"><div class="ic-fill" style="width:100%;"></div></div><div class="ic-val">1,800 GB/s</div></div>
+          </div>
+          <p style="margin-top:8px;">Constraint relief: better model sharding and faster all-reduce sync inside one node.</p>
+        </div>
+
+        <div class="ic-card">
+          <div class="card-title">PCIe development (host and general expansion path)</div>
+          <div class="ic-list">
+            <div class="ic-row"><div class="ic-name">PCIe 4.0 x16</div><div class="ic-track"><div class="ic-fill pcie" style="width:25%;"></div></div><div class="ic-val">~32 GB/s</div></div>
+            <div class="ic-row"><div class="ic-name">PCIe 5.0 x16</div><div class="ic-track"><div class="ic-fill pcie" style="width:50%;"></div></div><div class="ic-val">~64 GB/s</div></div>
+            <div class="ic-row"><div class="ic-name">PCIe 6.0 x16</div><div class="ic-track"><div class="ic-fill pcie" style="width:100%;"></div></div><div class="ic-val">~128 GB/s</div></div>
+          </div>
+          <p style="margin-top:8px;">Constraint remains: PCIe is still far below NVLink for GPU-to-GPU collective workloads.</p>
+        </div>
+      </div>
+
+      <div class="constraint-map anim a4">
+        <div class="constraint-card">
+          <h5>A100 era</h5>
+          <p>Primary constraint: memory capacity and bandwidth for larger models. Multi-GPU helped, but context-heavy inference still hit HBM limits quickly.</p>
+        </div>
+        <div class="constraint-card">
+          <h5>H100/H200 era</h5>
+          <p>Constraint moved to orchestration quality: batching, scheduler policy, and communication overhead now decide whether hardware gains convert to real throughput.</p>
+        </div>
+        <div class="constraint-card">
+          <h5>B200 and beyond</h5>
+          <p>Compute and memory jump again, so bottlenecks shift outward: inter-node network fabric, storage/feed pipeline, and software stack efficiency become dominant.</p>
+        </div>
+      </div>
+
+      <div class="constraint-shift anim a4">
+        <div class="card-title">Constraint shift over time (dominant friction)</div>
+        <svg viewBox="0 0 980 180" style="width:100%;height:auto;display:block;" aria-label="Constraint shift from memory bound to system bound">
+          <line x1="90" y1="20" x2="90" y2="145" stroke="#9ab0c6" stroke-width="1.5"/>
+          <line x1="90" y1="145" x2="930" y2="145" stroke="#9ab0c6" stroke-width="1.5"/>
+
+          <text x="56" y="38" text-anchor="middle" style="font-family:var(--mono);font-size:8px;fill:#6b7f95;">High</text>
+          <text x="56" y="148" text-anchor="middle" style="font-family:var(--mono);font-size:8px;fill:#6b7f95;">Low</text>
+
+          <line x1="130" y1="38" x2="290" y2="122" stroke="#3da4c5" stroke-width="4" fill="none"/>
+          <circle cx="130" cy="38" r="5" fill="#3da4c5"/>
+          <circle cx="290" cy="122" r="5" fill="#3da4c5"/>
+          <text x="210" y="30" text-anchor="middle" style="font-family:var(--mono);font-size:8px;fill:#3d6d8a;">Memory bandwidth friction</text>
+
+          <line x1="300" y1="118" x2="550" y2="66" stroke="#8f61d5" stroke-width="4" fill="none"/>
+          <circle cx="420" cy="93" r="5" fill="#8f61d5"/>
+          <text x="428" y="84" style="font-family:var(--mono);font-size:8px;fill:#6f4caf;">Interconnect sync friction</text>
+
+          <line x1="560" y1="70" x2="820" y2="44" stroke="#dcaa38" stroke-width="4" fill="none"/>
+          <circle cx="690" cy="57" r="5" fill="#dcaa38"/>
+          <text x="700" y="48" style="font-family:var(--mono);font-size:8px;fill:#9a7420;">System orchestration friction</text>
+
+          <line x1="290" y1="145" x2="290" y2="150" stroke="#9ab0c6" stroke-width="1.5"/>
+          <line x1="550" y1="145" x2="550" y2="150" stroke="#9ab0c6" stroke-width="1.5"/>
+          <line x1="820" y1="145" x2="820" y2="150" stroke="#9ab0c6" stroke-width="1.5"/>
+
+          <text x="290" y="165" text-anchor="middle" style="font-family:var(--mono);font-size:8px;fill:#6b7f95;">A100 era</text>
+          <text x="550" y="165" text-anchor="middle" style="font-family:var(--mono);font-size:8px;fill:#6b7f95;">H100/H200 era</text>
+          <text x="820" y="165" text-anchor="middle" style="font-family:var(--mono);font-size:8px;fill:#6b7f95;">B200+ era</text>
+        </svg>
+        <div class="shift-caption">Interpretation: memory friction decreases per token with newer HBM systems, but interconnect and then full-platform scheduling/storage become the dominant constraints at cluster scale.</div>
+      </div>
+
+      <span class="source-tag">Source tag: data_files/gpu_economics_canonical_spec_v1.json + learning_inference_compute_master_v10.html + PCIe generation throughput conventions.</span>
+    </div>
+  </section>
+
+  <section class="slide" data-slide="8" id="s9">
+    <div class="slide-chrome">
+      <div class="chrome-left"><div class="chrome-logo">GPU Foundations</div><div class="chrome-title">Where to learn more in this workspace</div></div>
+      <div class="chrome-right">09 / 09</div>
+    </div>
+    <div class="slide-body">
+      <div class="sec-label anim a1">Next reading path</div>
+      <div class="learn-links anim a2">
+        <a class="learn-link" href="learning_inference_compute_master_v10.html" target="_blank">
+          <strong>Deep technical walkthrough</strong>
+          <span>Detailed compute, memory math, and pipeline internals.</span>
+        </a>
+        <a class="learn-link" href="learning_stack_inference_matrix.html" target="_blank">
+          <strong>Stack x inference matrix</strong>
+          <span>Map of stack layers against inference stages.</span>
+        </a>
+        <a class="learn-link" href="strategy_inference_economics.html" target="_blank">
+          <strong>Economics explorer</strong>
+          <span>Interactive cost and latency trade-off analysis.</span>
+        </a>
+        <a class="learn-link" href="strategy_value_chain_master.html" target="_blank">
+          <strong>Value chain map</strong>
+          <span>Ownership by layer from -1 to layer 7.</span>
+        </a>
+      </div>
+
+      <div class="card anim a3" style="margin-top:12px;">
+        <div class="card-title">Straight summary</div>
+        <p>
+          AI products are now core daily tools. Under the hood, inference quality and cost are controlled by a practical triangle:
+          model design, memory and bandwidth constraints, and serving software quality. Teams that understand all three can ship faster,
+          serve more users, and spend less.
+        </p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+const TOTAL = 9;
+let currentSlide = 0;
+
+const slides = document.querySelectorAll('.slide');
+const dotsEl = document.getElementById('dots');
+const progressEl = document.getElementById('progress');
+const btnPrev = document.getElementById('btn-prev');
+const btnNext = document.getElementById('btn-next');
+const counterCur = document.getElementById('counter-cur');
+
+const progressColors = ['#c084fc', '#22d3ee', '#22d3ee', '#c084fc', '#fbbf24', '#fbbf24', '#34d399', '#22d3ee', '#fbbf24'];
+
+for (let i = 0; i < TOTAL; i++) {
+  const dot = document.createElement('div');
+  dot.className = 'dot' + (i === 0 ? ' active' : '');
+  dot.addEventListener('click', () => goSlide(i));
+  dotsEl.appendChild(dot);
+}
+
+function updateNavState() {
+  btnPrev.disabled = currentSlide === 0;
+  btnNext.disabled = currentSlide === TOTAL - 1;
+  counterCur.textContent = String(currentSlide + 1).padStart(2, '0');
+  progressEl.style.width = ((currentSlide + 1) / TOTAL * 100) + '%';
+  progressEl.style.background = progressColors[currentSlide] || '#c084fc';
+  document.querySelectorAll('.dot').forEach((dot, i) => dot.classList.toggle('active', i === currentSlide));
+}
+
+function goSlide(index) {
+  if (index < 0 || index >= TOTAL || index === currentSlide) return;
+  const oldIndex = currentSlide;
+  currentSlide = index;
+
+  slides[oldIndex].classList.remove('active');
+  slides[oldIndex].classList.add('prev');
+  const prevSlide = slides[oldIndex];
+  setTimeout(() => prevSlide.classList.remove('prev'), 700);
+
+  slides[currentSlide].classList.add('active');
+  updateNavState();
+}
+
+btnPrev.addEventListener('click', () => goSlide(currentSlide - 1));
+btnNext.addEventListener('click', () => goSlide(currentSlide + 1));
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+    e.preventDefault();
+    goSlide(currentSlide + 1);
+  } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    goSlide(currentSlide - 1);
+  } else if (e.key === 'Home') {
+    goSlide(0);
+  } else if (e.key === 'End') {
+    goSlide(TOTAL - 1);
+  }
+});
+
+let touchStartX = 0;
+document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
+document.addEventListener('touchend', (e) => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (Math.abs(dx) > 50) {
+    goSlide(dx < 0 ? currentSlide + 1 : currentSlide - 1);
+  }
+});
+
+function formatK(v) {
+  if (v >= 1000) return Math.round(v / 1000) + 'k';
+  return String(v);
+}
+
+const GPU_PROFILES = {
+  H100: { label: 'H100 SXM5', vram: 80, bw: '3,350 GB/s HBM', link: 'NVLink 900 GB/s' },
+  H200: { label: 'H200 SXM5', vram: 141, bw: '4,800 GB/s HBM', link: 'NVLink 900 GB/s' },
+  B200: { label: 'B200 SXM', vram: 192, bw: '8,000 GB/s HBM', link: 'NVLink 1,800 GB/s' },
+  L40S: { label: 'L40S PCIe', vram: 48, bw: '864 GB/s GDDR', link: 'PCIe 64 GB/s' }
+};
+
+const simState = {
+  context: 16000,
+  batch: 32,
+  paramsB: 70,
+  bits: 8,
+  gpu: 'H200'
+};
+
+function setText(id, text) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = text;
+}
+
+function setRange(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.value = value;
+}
+
+function updateSimulator() {
+  const hw = GPU_PROFILES[simState.gpu] || GPU_PROFILES.H200;
+  const context = simState.context;
+  const batch = simState.batch;
+  const paramsB = simState.paramsB;
+  const bits = simState.bits;
+
+  setRange('simContext', context);
+  setRange('cfgContext', context);
+  setRange('simBatch', batch);
+  setRange('cfgBatch', batch);
+  setRange('simParams', paramsB);
+  setRange('cfgParams', paramsB);
+  setRange('simBits', bits);
+  setRange('cfgBits', bits);
+
+  setText('simContextVal', formatK(context));
+  setText('cfgContextVal', formatK(context));
+  setText('simBatchVal', String(batch));
+  setText('cfgBatchVal', String(batch));
+  setText('simParamsVal', paramsB + 'B');
+  setText('cfgParamsVal', paramsB + 'B');
+  setText('simBitsVal', bits + '-bit');
+  setText('cfgBitsVal', bits + '-bit');
+
+  const weightGB = Math.max(1, (paramsB * bits) / 8);
+  const kvGB = (context * batch * 0.0000125);
+  const nodeHbm = hw.vram * 8;
+  const hbmLoad = Math.min(180, ((weightGB + kvGB) / nodeHbm) * 100);
+
+  let risk = 'Low';
+  let explanation = 'Current setup is efficient for stable throughput and low queueing risk.';
+
+  if (hbmLoad > 95) {
+    risk = 'Critical';
+    explanation = 'Memory pressure is very high. You will likely see queueing, fallback, or sharding overhead. Reduce precision, reduce batch, or increase GPU count.';
+  } else if (hbmLoad > 75) {
+    risk = 'High';
+    explanation = 'You are near memory limits. Performance can still be good, but tail latency risk rises under bursts.';
+  } else if (hbmLoad > 55) {
+    risk = 'Medium';
+    explanation = 'This is a workable zone for many inference APIs. Continue tuning scheduler and batch policy.';
+  }
+
+  setText('kWeight', weightGB.toFixed(1) + ' GB');
+  setText('kKv', kvGB.toFixed(1) + ' GB');
+  setText('kHbm', Math.round(Math.min(999, hbmLoad)) + '%');
+  setText('kRisk', risk);
+  setText('simExplain', explanation);
+
+  setText('cfgKWeight', weightGB.toFixed(1) + ' GB');
+  setText('cfgKKv', kvGB.toFixed(1) + ' GB');
+  setText('cfgKHbm', Math.round(Math.min(999, hbmLoad)) + '%');
+  setText('cfgKRisk', risk);
+  setText('cfgExplain', explanation);
+  setText('cfgHwNote', hw.label + ' · ' + hw.vram + ' GB per GPU · ' + hw.bw + ' · ' + hw.link);
+
+  document.querySelectorAll('.cfg-gpu-btn').forEach((btn) => {
+    btn.classList.toggle('active', btn.dataset.gpu === simState.gpu);
+  });
+
+  const grid = document.getElementById('cfgGpuGrid');
+  if (grid) {
+    const wPct = Math.min(100, ((weightGB / 8) / hw.vram) * 100);
+    const kvPct = Math.min(100 - wPct, ((kvGB / 8) / hw.vram) * 100);
+    const freePct = Math.max(0, 100 - wPct - kvPct);
+    grid.innerHTML = '';
+    for (let i = 0; i < 8; i += 1) {
+      const card = document.createElement('div');
+      card.className = 'gpu-card';
+      card.innerHTML = '<div class="gpu-card-label">' + hw.label + ' G' + i + '</div>' +
+        '<div class="gpu-card-bar">' +
+        '<div class="gpu-card-w" style="width:' + wPct.toFixed(1) + '%"></div>' +
+        '<div class="gpu-card-kv" style="width:' + kvPct.toFixed(1) + '%"></div>' +
+        '<div class="gpu-card-f" style="width:' + freePct.toFixed(1) + '%"></div>' +
+        '</div>' +
+        '<div class="gpu-card-meta">W ' + wPct.toFixed(1) + '% · KV ' + kvPct.toFixed(1) + '% · Free ' + freePct.toFixed(1) + '%</div>';
+      grid.appendChild(card);
+    }
+  }
+}
+
+function initUnifiedSimulatorControls() {
+  const rangeMap = [
+    { ids: ['simContext', 'cfgContext'], key: 'context' },
+    { ids: ['simBatch', 'cfgBatch'], key: 'batch' },
+    { ids: ['simParams', 'cfgParams'], key: 'paramsB' },
+    { ids: ['simBits', 'cfgBits'], key: 'bits' }
+  ];
+
+  rangeMap.forEach((item) => {
+    item.ids.forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('input', () => {
+        simState[item.key] = Number(el.value);
+        updateSimulator();
+      });
+    });
+  });
+
+  document.querySelectorAll('.cfg-gpu-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      simState.gpu = btn.dataset.gpu;
+      updateSimulator();
+    });
+  });
+}
+
+function initTermTooltips() {
+  const terms = Array.from(document.querySelectorAll('.term[data-def]'));
+  if (!terms.length) return;
+
+  const tip = document.createElement('div');
+  tip.className = 'term-tip';
+  document.body.appendChild(tip);
+
+  let active = null;
+
+  function place(el) {
+    const margin = 8;
+    tip.style.visibility = 'hidden';
+    tip.classList.add('show');
+    const rect = el.getBoundingClientRect();
+    const tipRect = tip.getBoundingClientRect();
+
+    let left = rect.left + rect.width / 2 - tipRect.width / 2;
+    left = Math.max(margin, Math.min(left, window.innerWidth - tipRect.width - margin));
+
+    let top = rect.top - tipRect.height - 10;
+    if (top < margin) top = rect.bottom + 10;
+    top = Math.max(margin, Math.min(top, window.innerHeight - tipRect.height - margin));
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.visibility = 'visible';
+  }
+
+  function show(el) {
+    active = el;
+    tip.textContent = el.dataset.def || '';
+    place(el);
+  }
+
+  function hide() {
+    active = null;
+    tip.classList.remove('show');
+  }
+
+  terms.forEach((el) => {
+    el.addEventListener('mouseenter', () => show(el));
+    el.addEventListener('focus', () => show(el));
+    el.addEventListener('mouseleave', hide);
+    el.addEventListener('blur', hide);
+  });
+
+  window.addEventListener('resize', () => {
+    if (active) place(active);
+  });
+}
+
+function initGpuBlowout() {
+  const scene = document.getElementById('gpu-blowout');
+  if (!scene) return;
+
+  const chips = Array.from(scene.querySelectorAll('.part-chip'));
+  const parts = Array.from(scene.querySelectorAll('.gpu-part, .trace-line'));
+  const playBtn = document.getElementById('blowout-play');
+  const stopBtn = document.getElementById('blowout-stop');
+  const status = document.getElementById('blowout-status');
+  const sequence = ['tensor', 'hbm', 'nvlink', 'vrm', 'pcie', 'cooling'];
+  let timer = null;
+  let step = 0;
+
+  function setGuideState(running) {
+    if (playBtn) playBtn.classList.toggle('on', running);
+    if (stopBtn) stopBtn.classList.toggle('on', !running);
+  }
+
+  function stopGuide() {
+    if (timer) {
+      clearInterval(timer);
+      timer = null;
+    }
+    setGuideState(false);
+    if (status) status.textContent = 'Guide: stopped';
+  }
+
+  function activate(part) {
+    chips.forEach((chip) => chip.classList.toggle('active', chip.dataset.part === part));
+    parts.forEach((el) => el.classList.toggle('active', el.dataset.part === part));
+    if (status) {
+      const label = part ? part.toUpperCase() : 'NONE';
+      status.textContent = 'Guide focus: ' + label;
+    }
+  }
+
+  function startGuide() {
+    stopGuide();
+    setGuideState(true);
+    activate(sequence[step % sequence.length]);
+    timer = setInterval(() => {
+      step += 1;
+      activate(sequence[step % sequence.length]);
+    }, 1300);
+  }
+
+  chips.forEach((chip) => {
+    chip.addEventListener('click', () => {
+      stopGuide();
+      activate(chip.dataset.part);
+    });
+    chip.addEventListener('mouseenter', () => {
+      stopGuide();
+      activate(chip.dataset.part);
+    });
+    chip.addEventListener('focus', () => activate(chip.dataset.part));
+  });
+
+  scene.querySelectorAll('.gpu-part').forEach((partEl) => {
+    partEl.addEventListener('mouseenter', () => {
+      stopGuide();
+      activate(partEl.dataset.part);
+    });
+  });
+
+  if (playBtn) {
+    playBtn.addEventListener('click', () => {
+      step = 0;
+      startGuide();
+    });
+  }
+
+  if (stopBtn) {
+    stopBtn.addEventListener('click', () => stopGuide());
+  }
+
+  activate('tensor');
+  setGuideState(false);
+}
+
+function initCapitalWalkthrough() {
+  const root = document.getElementById('capital-walkthrough');
+  if (!root) return;
+
+  const track = document.getElementById('cw-track');
+  const stageName = document.getElementById('cw-stage-name');
+  const stageCopy = document.getElementById('cw-stage-copy');
+  const plain = document.getElementById('cw-plain');
+  const list = document.getElementById('cw-list');
+  const prev = document.getElementById('cw-prev');
+  const next = document.getElementById('cw-next');
+  const play = document.getElementById('cw-play');
+
+  const stages = [
+    {
+      name: '1. Input token IDs',
+      copy: 'Tokenizer output for 5 positions.',
+      plain: 'The text is chunked into tokens and mapped to IDs.',
+      lines: ['"The" -> 791', '" capital" -> 3361', '" of" -> 315', '" France" -> 9822', '" is" -> 374']
+    },
+    {
+      name: '2. Embedding lookup',
+      copy: 'Each ID becomes a learned vector.',
+      plain: 'IDs are looked up in an embedding table to produce 8,192-value vectors.',
+      lines: ['Shape: 5 x 8,192', 'Now in model space', 'Semantic distances become usable']
+    },
+    {
+      name: '3. Positional encoding',
+      copy: 'Order information is added.',
+      plain: 'The model marks where each token sits in sequence, so order is not lost.',
+      lines: ['Token position 1..5', 'Order-sensitive attention', 'Different from bag-of-words']
+    },
+    {
+      name: '4. Layer stack begins',
+      copy: 'Transformer pass starts.',
+      plain: 'Early layers establish grammar and local phrase structure.',
+      lines: ['Layer 1-16 emphasis', 'Syntax + placement', 'Residual stream starts accumulating']
+    },
+    {
+      name: '5. Attention routing',
+      copy: 'Model focuses on important context.',
+      plain: 'Attention gives higher weight to "capital" and "France" than filler words.',
+      lines: ['Strong links: capital <-> France', 'Weak links: filler tokens', 'Context relevance rises']
+    },
+    {
+      name: '6. FFN feature edits',
+      copy: 'Token representation is refined.',
+      plain: 'FFN transforms and filters features for the next residual update.',
+      lines: ['8,192 -> 28,672 -> 8,192', 'Boost relevant concepts', 'Suppress noise']
+    },
+    {
+      name: '7. Late-layer facts',
+      copy: 'Fact-level relations become dominant.',
+      plain: 'Later layers reinforce country-to-capital relation geometry in hidden space.',
+      lines: ['Layer 61-80 emphasis', 'Country -> capital relation', 'Fact grounding improves']
+    },
+    {
+      name: '8. Vocab scoring (logits)',
+      copy: 'Hidden vector is projected to vocabulary.',
+      plain: 'The final state is compared to all vocabulary token directions.',
+      lines: ['~128,256 token scores', 'Higher logit = more likely token', 'Candidate ranking formed']
+    },
+    {
+      name: '9. Token selection',
+      copy: 'Top candidates are filtered and sampled.',
+      plain: 'Typical top result here is " Paris", then punctuation candidates.',
+      lines: ['Paris: high probability', 'Sampling policy applies', 'One token is chosen']
+    },
+    {
+      name: '10. Decode + loop',
+      copy: 'Chosen token is emitted and process repeats.',
+      plain: 'The token is converted to text, appended to context, and next-token decode starts.',
+      lines: ['Output token: " Paris"', 'KV cache grows', 'Next pass begins']
+    }
+  ];
+
+  let idx = 0;
+  let timer = null;
+
+  function stop() {
+    if (timer) {
+      clearInterval(timer);
+      timer = null;
+    }
+    if (play) {
+      play.textContent = 'Play';
+      play.classList.remove('on');
+    }
+  }
+
+  function render() {
+    const stage = stages[idx];
+    stageName.textContent = stage.name;
+    stageCopy.textContent = stage.copy;
+    plain.textContent = stage.plain;
+    list.innerHTML = '';
+    stage.lines.forEach((line) => {
+      const row = document.createElement('div');
+      row.textContent = line;
+      list.appendChild(row);
+    });
+
+    track.querySelectorAll('.cw-dot').forEach((dot, i) => {
+      dot.classList.toggle('active', i === idx);
+    });
+  }
+
+  stages.forEach((_, i) => {
+    const dot = document.createElement('button');
+    dot.type = 'button';
+    dot.className = 'cw-dot';
+    dot.textContent = String(i + 1);
+    dot.addEventListener('click', () => {
+      stop();
+      idx = i;
+      render();
+    });
+    track.appendChild(dot);
+  });
+
+  if (prev) {
+    prev.addEventListener('click', () => {
+      stop();
+      idx = (idx - 1 + stages.length) % stages.length;
+      render();
+    });
+  }
+
+  if (next) {
+    next.addEventListener('click', () => {
+      stop();
+      idx = (idx + 1) % stages.length;
+      render();
+    });
+  }
+
+  if (play) {
+    play.addEventListener('click', () => {
+      if (timer) {
+        stop();
+        return;
+      }
+      play.textContent = 'Stop';
+      play.classList.add('on');
+      timer = setInterval(() => {
+        idx = (idx + 1) % stages.length;
+        render();
+      }, 1600);
+    });
+  }
+
+  render();
+}
+
+updateNavState();
+initUnifiedSimulatorControls();
+updateSimulator();
+initGpuBlowout();
+initCapitalWalkthrough();
+initTermTooltips();
+</script>
+</body>
+</html>

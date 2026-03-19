@@ -5,4 +5,4 @@
 5. Macro-trend: is specialization of the TPU cores that e.g. Google are heavily pursuing, seeking further lock-in through proprietary hardware which requires a matching proprietary software stack on top → good for optimization but hurts versatility; not something open-source community is a fan of, probably.  
 6. Macro-trend: LLM usage and the shift toward agentic workloads with its agentic subworkloads within it; assuming this trend continues and more agentic adoption increases as both personal and enterprise guardrails are put in place, this will require massive compute to match demand.  
 7. As the generative AI market matures, the primary revenue battleground is shifting rapidly from raw hardware aggregation to inference efficiency. Providers that have successfully architected proprietary L5 model serving platforms will capture the durable, sticky operational expenditures of the global enterprise market.
-
+8. more fine-tuning done by knowledge-intensive firms who will start hiring more AI researchers from frontier labs/research to setup their own proprietary models to train on propritary data, using open-weight models as a baseline. (Lex Friedman podcast)

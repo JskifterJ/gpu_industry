@@ -165,6 +165,7 @@ body.light .theme-toggle-thumb{transform:translateX(16px);}
 .tier-badge.platinum{background:rgba(245,215,139,.1);color:var(--plat);border:1px solid rgba(245,215,139,.25);}
 .tier-badge.gold{background:rgba(245,158,11,.1);color:var(--gold);border:1px solid rgba(245,158,11,.25);}
 .tier-badge.silver{background:rgba(148,163,184,.07);color:var(--silv);border:1px solid rgba(148,163,184,.18);}
+.tier-badge.bronze{background:rgba(217,119,6,.1);color:#d97706;border:1px solid rgba(217,119,6,.25);}
 .tier-name{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;}
 .tier-desc{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);}
 
@@ -178,6 +179,7 @@ body.light .theme-toggle-thumb{transform:translateX(16px);}
 .pcard.platinum .pcard-top::before{background:linear-gradient(90deg,transparent,var(--plat),transparent);}
 .pcard.gold .pcard-top::before{background:linear-gradient(90deg,transparent,var(--gold),transparent);}
 .pcard.silver .pcard-top::before{background:linear-gradient(90deg,transparent,var(--silv),transparent);}
+.pcard.bronze .pcard-top::before{background:linear-gradient(90deg,transparent,#d97706,transparent);}
 .pcard-main{padding:18px 20px 14px;}
 .pcard-row1{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:5px;}
 .pcard-name{font-family:'Syne',sans-serif;font-size:17px;font-weight:800;}
@@ -253,6 +255,7 @@ body.light .theme-toggle-thumb{transform:translateX(16px);}
 .f-chip.active.platinum{background:rgba(245,215,139,.1);color:var(--plat);border-color:rgba(245,215,139,.3);}
 .f-chip.active.gold{background:rgba(245,158,11,.1);color:var(--gold);border-color:rgba(245,158,11,.3);}
 .f-chip.active.silver{background:rgba(148,163,184,.1);color:var(--silv);border-color:rgba(148,163,184,.2);}
+.f-chip.active.bronze{background:rgba(217,119,6,.1);color:#d97706;border-color:rgba(217,119,6,.3);}
 .tog{display:flex;background:var(--surf);border:1px solid var(--border);border-radius:5px;overflow:hidden;}
 .tog-btn{font-family:'JetBrains Mono',monospace;font-size:10.5px;padding:6px 14px;cursor:pointer;color:var(--muted);background:transparent;border:none;transition:all .15s;}
 .tog-btn.active{background:rgba(56,189,248,.1);color:var(--accent);}
@@ -274,6 +277,7 @@ table.mtx tbody td:first-child{text-align:left;padding-left:18px;}
 .tier-dot.platinum{background:var(--plat);}
 .tier-dot.gold{background:var(--gold);}
 .tier-dot.silver{background:var(--silv);}
+.tier-dot.bronze{background:#d97706;}
 .pcell-name{font-family:'Syne',sans-serif;font-size:12.5px;font-weight:700;}
 .sq{display:inline-block;padding:3px 7px;border-radius:4px;font-size:9px;font-family:'JetBrains Mono',monospace;font-weight:600;white-space:nowrap;}
 .sq.s5{background:rgba(34,197,94,.14);color:var(--s5);}
@@ -329,9 +333,11 @@ body.light .choose-card{background:var(--card2);}
 body.light .tier-badge.platinum{background:rgba(176,125,16,.1);border-color:rgba(176,125,16,.25);}
 body.light .tier-badge.gold{background:rgba(180,83,9,.1);border-color:rgba(180,83,9,.25);}
 body.light .tier-badge.silver{background:rgba(71,85,105,.07);border-color:rgba(71,85,105,.18);}
+body.light .tier-badge.bronze{background:rgba(180,83,9,.08);border-color:rgba(180,83,9,.24);}
 body.light .h2hc.platinum::before{background:var(--plat);}
 body.light .h2hc.gold::before{background:var(--gold);}
 body.light .h2hc.silver::before{background:var(--silv);}
+body.light .h2hc.bronze::before{background:#d97706;}
 .crit-pop-box{background:var(--card);border:1px solid var(--border-l);border-radius:12px;padding:28px;max-width:680px;width:90%;max-height:80vh;overflow-y:auto;position:relative;}
 .cpb-close{position:absolute;top:16px;right:16px;background:transparent;border:none;color:var(--muted);font-size:20px;cursor:pointer;transition:color .15s;}
 .cpb-close:hover{color:var(--text);}
@@ -390,11 +396,13 @@ table.stk td.grp-border-l{border-left:2px solid var(--border-ll)!important;}
 .h2hc.platinum::before{background:var(--plat);}
 .h2hc.gold::before{background:var(--gold);}
 .h2hc.silver::before{background:var(--silv);}
+.h2hc.bronze::before{background:#d97706;}
 .h2hc-name{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:4px;}
 .h2hc-tier{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;padding:3px 9px;border-radius:3px;text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;}
 .h2hc-tier.platinum{background:rgba(245,215,139,.12);color:var(--plat);}
 .h2hc-tier.gold{background:rgba(245,158,11,.12);color:var(--gold);}
 .h2hc-tier.silver{background:rgba(148,163,184,.08);color:var(--silv);}
+.h2hc-tier.bronze{background:rgba(217,119,6,.12);color:#d97706;}
 .h2hc-hl{font-size:12.5px;color:var(--sub);line-height:1.6;margin-bottom:14px;}
 .h2hc-layers{display:flex;gap:4px;flex-wrap:wrap;}
 
@@ -693,6 +701,7 @@ table.stk td.grp-border-l{border-left:2px solid var(--border-ll)!important;}
       <button class="f-chip active platinum" onclick="toggleFilter('platinum',this)">Platinum</button>
       <button class="f-chip active gold" onclick="toggleFilter('gold',this)">Gold</button>
       <button class="f-chip active silver" onclick="toggleFilter('silver',this)">Silver</button>
+      <button class="f-chip active bronze" onclick="toggleFilter('bronze',this)">Bronze</button>
       <span style="margin-left:6px;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--muted);">↑ Click a criteria header to see what it entails</span>
     </div>
     <div style="display:flex;align-items:center;gap:8px;">
@@ -1105,22 +1114,72 @@ const PROVIDERS = [
     uniqueTags:['Cheapest H100 in market']
   },
   {
-    id:'tensorwave', name:'TensorWave', tier:'silver', model:'Neocloud',
-    headline:'AMD-only (8,192 MI325X, Tucson AZ). $100M Series A from AMD Ventures. 7 outages in 2-month testing window. No DCGM equivalent for AMD (RDC-based monitoring absent). Team is responsive but ops maturity is early.',
-    scores:{Security:3,Lifecycle:2,Orchestration:2,Storage:3,Networking:3,Reliability:1,Monitoring:1,Pricing:3,Partnerships:4,Availability:2},
-    stack:['partner','none','full','partial','limited','partial','partner','limited','none'],
+    id:'datacrunch', name:'DataCrunch (Verda)', tier:'bronze', model:'Neocloud',
+    headline:'Bronze-tier EU sovereign operator with renewable-power positioning, dynamic exchange-style pricing, and premium NVIDIA hardware concentrated in Finland and Iceland.',
+    scores:{Security:3,Lifecycle:3,Orchestration:3,Storage:2,Networking:3,Reliability:3,Monitoring:2,Pricing:4,Partnerships:2,Availability:2},
+    stack:['none','none','full','partial','full','partial','partial','limited','none'],
     unique:[
-      'AMD-exclusive at scale: 8,192 MI325X in a single facility — the largest pure AMD GPU cluster operated by any neocloud; critical for AMD ecosystem validation workloads',
-      '$100M AMD Ventures backing: AMD\'s strategic investment signals TensorWave is AMD\'s preferred cloud partner — preferential hardware access and roadmap insight for MI400',
-      'AMD xGMI fabric expertise: Building operational knowledge of ROCm+RCCL+xGMI that almost no other team has — this technical depth will be valuable as AMD market share grows',
-      'Open benchmarking collaboration: Provides GPU access to SemiAnalysis beyond ClusterMAX scope — transparent about performance characteristics, unusual for an early-stage cloud'
+      'Dynamic exchange pricing model for GPU capacity, including spot-style procurement paths.',
+      'EU-first sovereignty posture centered on Nordic data center footprint.',
+      'Broad premium NVIDIA catalog for a Bronze cohort provider (A100, H100, H200, B200, GB200 NVL72).'
     ],
-    strengths:['Largest pure AMD MI325X cluster in any cloud','AMD Ventures backing gives hardware roadmap advantage','Weka storage partnership provides enterprise-grade POSIX filesystem'],
-    weaknesses:['7 outages in 2 months — reliability is the #1 problem','No DCGM equivalent for AMD (RDC) configured for health checks','RKE2 Kubernetes + Longhorn storage stack immature for AI','Slinky SonK broken — required escalation to sudo for basic kubectl'],
-    tags:['AMD MI325X only','AMD Ventures $100M','8,192 GPU cluster','RKE2 Kubernetes','Weka storage'],
-    hiTags:['AMD MI325X only','AMD Ventures $100M'],
-    warnTags:['7 outages in testing','No health checks'],
-    uniqueTags:['Largest AMD-only cluster']
+    strengths:['Cost-competitive for EU-resident workloads','Practical Slurm + Kubernetes availability','Clear sovereignty-first value proposition'],
+    weaknesses:['Regional concentration limits global latency-sensitive deployment','Monitoring depth remains below upper-tier providers','Partnership depth trails Gold-tier peers'],
+    tags:['EU sovereign','Dynamic pricing','K8s + Slurm','Renewable alignment','Bronze tier'],
+    hiTags:['EU sovereign','Dynamic pricing'],
+    warnTags:['Regional concentration','Monitoring depth'],
+    uniqueTags:['Bronze with premium NVIDIA breadth']
+  },
+  {
+    id:'tensorwave', name:'TensorWave', tier:'bronze', model:'Neocloud',
+    headline:'Bronze-tier AMD-first cloud focused on memory-heavy inference economics and ROCm-native workloads, with improving orchestration but meaningful migration and reliability risk.',
+    scores:{Security:3,Lifecycle:2,Orchestration:3,Storage:2,Networking:3,Reliability:2,Monitoring:2,Pricing:3,Partnerships:4,Availability:2},
+    stack:['none','none','full','partial','full','partial','partial','limited','none'],
+    unique:[
+      'Pure AMD-first production positioning (MI300X, MI325X, MI350X) versus mixed-vendor peers.',
+      'ROCm/ScalarLM-centric optimization path for memory-bound model economics.',
+      'Weekly contract flexibility uncommon among infrastructure-heavy operators.'
+    ],
+    strengths:['Differentiated AMD roadmap alignment','Good fit for memory-bound inference','Clear alternative to CUDA-first procurement'],
+    weaknesses:['CUDA migration overhead for mainstream teams','Reliability maturity below Silver leaders','Monitoring and health-check depth still early-stage'],
+    tags:['AMD first','ROCm native','Weekly terms','Inference first','Bronze tier'],
+    hiTags:['AMD first','ROCm native'],
+    warnTags:['CUDA friction','Reliability maturity'],
+    uniqueTags:['AMD-first cloud model']
+  },
+  {
+    id:'buzz', name:'BUZZ High Performance Computing', tier:'bronze', model:'Neocloud',
+    headline:'Bronze-tier sovereign-leaning operator with compliance-forward execution and renewable-power alignment across Canada and Sweden.',
+    scores:{Security:3,Lifecycle:3,Orchestration:3,Storage:3,Networking:3,Reliability:3,Monitoring:2,Pricing:3,Partnerships:3,Availability:2},
+    stack:['none','none','full','partial','full','partial','partial','limited','none'],
+    unique:[
+      'Sovereign/regulatory orientation spanning Canada and Sweden geographies.',
+      'VAST-integrated storage posture and compliance-first operations narrative.',
+      'Balanced enterprise profile with controlled scaling strategy.'
+    ],
+    strengths:['Fit for regulated and sovereign buyers','Stable baseline across infra and orchestration controls','Hardware mix supports training and inference deployments'],
+    weaknesses:['Conservative expansion can limit hyper-growth capture','Monitoring maturity below Gold/Silver top quartile','Lower ecosystem signal than top neocloud brands'],
+    tags:['Sovereign focus','Regulated buyers','VAST aligned','K8s + Slurm','Bronze tier'],
+    hiTags:['Sovereign focus','Regulated buyers'],
+    warnTags:['Expansion pace','Monitoring maturity'],
+    uniqueTags:['Canada + Sweden sovereign profile']
+  },
+  {
+    id:'qubrid', name:'Qubrid AI', tier:'bronze', model:'Aggregator',
+    headline:'Bronze-tier workflow-centric aggregator prioritizing end-to-end AI pipeline abstraction (RAG/fine-tuning/deployment) over direct infrastructure ownership.',
+    scores:{Security:3,Lifecycle:3,Orchestration:2,Storage:2,Networking:2,Reliability:2,Monitoring:2,Pricing:3,Partnerships:2,Availability:3},
+    stack:['none','none','limited','limited','partial','full','full','partial','partial'],
+    unique:[
+      'Enterprise workflow abstraction focus rather than raw infrastructure depth.',
+      'Partner-backed global footprint orientation across NA/EU/APAC.',
+      'Integrated RAG and deployment workflow narrative targeted at application teams.'
+    ],
+    strengths:['Low-friction onboarding for app teams','Layer 5-7 abstraction strength versus infra-heavy peers','Global routing optionality through partner model'],
+    weaknesses:['Limited infra ownership reduces leverage at ultra-scale','No managed Slurm path narrows HPC buyer fit','Core reliability depends on partner infrastructure path'],
+    tags:['Workflow focused','Aggregator model','RAG pipelines','Global partner footprint','Bronze tier'],
+    hiTags:['Workflow focused','Aggregator model'],
+    warnTags:['Low infra ownership','No Slurm'],
+    uniqueTags:['Layer 5-7 abstraction play']
   }
 ];
 
@@ -1249,7 +1308,10 @@ const STACKS = {
   gcore:     ['partner','partial','none','partial','partner','partial','partial','partial','limited','full','limited','partial','partial','partial','none','partner','partner','none','none','none','none','full','limited','none','none','none'],
   vultr:     ['partner','partial','none','partial','partial','partial','partial','partial','limited','partial','limited','partial','partial','none','none','partial','partial','none','none','none','none','partial','limited','none','none','none'],
   voltagep:  ['none','none','none','partial','partial','partial','partial','partial','partial','partial','partial','partial','partial','none','none','partial','partial','none','none','none','none','partial','limited','none','none','none'],
-  tensorwave:['partner','none','none','partial','partner','partial','partial','partial','limited','limited','limited','none','partial','partial','none','partner','partner','none','none','none','none','partial','limited','none','none','none'],
+  datacrunch:['none','none','none','full','limited','partial','partial','partial','partial','partial','none','partial','partial','partial','partial','limited','none','none','partial','limited','limited','partial','limited','none','none','none'],
+  tensorwave:['none','none','none','partial','limited','partial','partial','partial','partial','partial','none','none','partial','partial','partial','none','none','none','partial','limited','limited','partial','limited','none','none','none'],
+  buzz:      ['none','none','none','full','partner','partial','partial','partial','partial','partial','none','none','partial','partial','partial','partner','partner','none','partial','limited','limited','partial','limited','none','none','none'],
+  qubrid:    ['none','none','none','limited','limited','limited','limited','limited','none','partial','none','none','none','full','partial','partial','partial','none','full','partial','limited','partial','partial','full','partial','partial'],
 };
 
 // H2H Analysis pairs
@@ -1415,7 +1477,7 @@ const H2H = {
 //  STATE
 // ═══════════════════════════════════════════════════════
 let displayMode='qual';
-let activeFilters={platinum:true,gold:true,silver:true};
+let activeFilters={platinum:true,gold:true,silver:true,bronze:true};
 let spaceMode='2d';
 
 const SPACE_AXIS_DEFS = [
@@ -1440,7 +1502,8 @@ const SPACE_STACK_BLOCK_SCORE = {none:-1, limited:0, partner:1, partial:2, full:
 const SPACE_TIER_COLOR = {
   platinum:'#f5d78b',
   gold:'#f59e0b',
-  silver:'#94a3b8'
+  silver:'#94a3b8',
+  bronze:'#d97706'
 };
 
 const ARCHETYPES = [
@@ -1557,9 +1620,9 @@ function renderArchetypes(){
 //  OVERVIEW
 // ═══════════════════════════════════════════════════════
 function renderOverview(){
-  const tierMeta={platinum:{label:'Platinum',desc:'Industry benchmark. Commands pricing premium. Sets bar others follow.'},gold:{label:'Gold',desc:'Strong across all criteria with minor gaps. Win most competitive evaluations.'},silver:{label:'Silver',desc:'Adequate offerings with notable gaps. Often price-competitive. Growing rapidly.'}};
+  const tierMeta={platinum:{label:'Platinum',desc:'Industry benchmark. Commands pricing premium. Sets bar others follow.'},gold:{label:'Gold',desc:'Strong across all criteria with minor gaps. Win most competitive evaluations.'},silver:{label:'Silver',desc:'Adequate offerings with notable gaps. Often price-competitive. Growing rapidly.'},bronze:{label:'Bronze',desc:'Meets minimum viable bar but shows material operating gaps versus upper tiers.'}};
   const el=document.getElementById('tab-overview'); el.innerHTML='';
-  ['platinum','gold','silver'].forEach(tier=>{
+  ['platinum','gold','silver','bronze'].forEach(tier=>{
     const ps=PROVIDERS.filter(p=>p.tier===tier);
     const sec=document.createElement('div'); sec.className='tier-sect';
     const tm=tierMeta[tier];
@@ -1898,7 +1961,7 @@ function providerLogoBadge(provider){
   const hardcoded = {
     coreweave:'CW', nebius:'NB', oracle:'OR', azure:'AZ', fluidstack:'FS', crusoe:'CR',
     gcp:'GCP', aws:'AWS', together:'TG', lambda:'LM', scaleway:'SC', gcore:'GC',
-    vultr:'VU', voltagep:'VP', tensorwave:'TW'
+    vultr:'VU', voltagep:'VP', tensorwave:'TW', datacrunch:'DC', buzz:'BZ', qubrid:'QB'
   };
   if(hardcoded[provider.id]) return hardcoded[provider.id];
   return provider.name.split(/\s+/).map(w=>w[0]||'').join('').slice(0,3).toUpperCase();
@@ -2047,7 +2110,7 @@ function renderSpacePlot(){
   if(spaceMode==='2d'){
     const block = build2DBlockPoints(xAxis, yAxis);
     const yStep = spaceAxisStep(yAxis);
-    const tiers = ['platinum','gold','silver'];
+    const tiers = ['platinum','gold','silver','bronze'];
     tiers.forEach(tier=>{
       const pts = block.points.filter(p=>p.provider.tier===tier);
       if(pts.length===0) return;
