@@ -161,7 +161,6 @@ body.light .scoring .score-pip{filter:brightness(0.85);}
   <button class="tab" onclick="switchPanel('neoclouds')">Asset-Heavy Neoclouds</button>
   <button class="tab" onclick="switchPanel('hyperscalers')">Hyperscalers</button>
   <button class="tab" onclick="switchPanel('aggregators')">Aggregators & Orchestrators</button>
-  <button class="tab" onclick="switchPanel('depins')">DePIN & Decentralized</button>
 </div>
 
 <!-- PANEL: All Competitors -->
@@ -317,43 +316,6 @@ body.light .scoring .score-pip{filter:brightness(0.85);}
 <td><span class="geog-badges"><span class="geog-badge">US (TX, VA, WA)</span></span></td>
 <td><strong>Free</strong></td>
 <td><span class="buyers">Price-sensitive startups, academic research teams, projects where cost dominates over features.</span></td>
-</tr>
-
-<tr>
-<td><span class="company-name">Vast.ai <span class="tier-badge tier-silver">Silver</span></span></td>
-<td><span class="usp"><em>Lowest marketplace prices</em> (~$0.75–1.50/hr H100). Web2 marketplace with 10K+ GPUs from individuals to datacenters. Supply ranges from "Tier 4 DCs" to "basement rigs." "Vast.ai Roulette": reliability only guaranteed for high-reputation datacenter providers.</span></td>
-<td><span class="biz-model">Marketplace (Asset-Light)</span></td>
-<td><span class="stack-badges"><span class="stack-badge partner">L2–L3 via hosts</span></span></td>
-<td><span class="pricing-cell"><span class="pricing-primary">$1.49–1.87/hr</span><br/><span class="pricing-secondary">Market floor; extreme variance by host.</span></span></td>
-<td><span class="stack-badges"><span class="stack-badge partner">Container / K8s (host-dependent)</span></span></td>
-<td><span class="geog-badges"><span class="geog-badge">Global P2P</span><span class="geog-badge">Unverified</span></span></td>
-<td><strong>Varies by host</strong><br/><span style="font-size:10px; color:var(--muted);">Can exceed $20/TB</span></td>
-<td><span class="buyers">Batch rendering, one-off experiments on shoestring, research acceptable of random downtime, cost-first projects.</span></td>
-</tr>
-
-<!-- DePIN / EMERGING -->
-<tr>
-<td><span class="company-name">Gensyn <span class="tier-badge" style="background:rgba(142,68,173,.15); border:1px solid rgba(142,68,173,.3); color:var(--muted);">Protocol</span></span></td>
-<td><span class="usp"><em>Solves "lazy worker" problem</em>: Probabilistic proofs for verifiable compute (cryptographically proves GPU performed work). Pre-mainnet (early 2026 launch). Unlocks enterprise-grade DePIN by eliminating spoofing risks (io.net fake GPU crisis aftermath).</span></td>
-<td><span class="biz-model">DePIN Protocol</span></td>
-<td><span class="stack-badges"><span class="stack-badge partner">L1–L3 (future P2P)</span></span></td>
-<td><span class="pricing-cell"><span class="pricing-primary">TBD (pre-launch)</span><br/><span class="pricing-secondary">Token-incentivized model TBA.</span></span></td>
-<td><span class="stack-badges"><span class="stack-badge partner">Verifiable compute</span></span></td>
-<td><span class="geog-badges"><span class="geog-badge">London, UK (team)</span><span class="geog-badge">Future decentralized</span></span></td>
-<td><strong>TBD</strong></td>
-<td><span class="buyers">Enterprise buyers post-verification, research orgs needing cryptographic proofs, risk-averse DePIN participants.</span></td>
-</tr>
-
-<tr>
-<td><span class="company-name">Akash Network <span class="tier-badge" style="background:rgba(220,38,38,.15); border:1px solid rgba(220,38,38,.3); color:var(--muted);">DePIN</span></span></td>
-<td><span class="usp"><em>Reverse-auction model</em>: Tenants post manifests; providers bid. Kubernetes-based (bare-metal deploys not viable). Highly dynamic pricing, often cheapest on market. Community-sourced supply (ex-mining rigs + Tier 3 DCs). No compliance offerings.</span></td>
-<td><span class="biz-model">DePIN Marketplace</span></td>
-<td><span class="stack-badges"><span class="stack-badge partner">L2–L3 (K8s only)</span></span></td>
-<td><span class="pricing-cell"><span class="pricing-primary">Auction-driven</span><br/><span class="pricing-secondary">Often ~$1.00/hr for A100; H100 rare.</span></span></td>
-<td><span class="stack-badges"><span class="stack-badge full">Kubernetes</span></span></td>
-<td><span class="geog-badges"><span class="geog-badge">Global P2P</span></span></td>
-<td><strong>Free</strong></td>
-<td><span class="buyers">Individual developers, academic researchers, experimental workloads accepting DePIN risks, batch inference on budget.</span></td>
 </tr>
 
 </tbody>
@@ -537,67 +499,6 @@ body.light .scoring .score-pip{filter:brightness(0.85);}
 </div>
 </div>
 
-<!-- PANEL: DePIN -->
-<div id="depins" class="panel">
-<p style="margin-bottom:16px; font-size:12px; color:var(--sub);">DePIN &amp; decentralized marketplaces (Vast.ai, Akash, Salad, Gensyn) offer radical cost reduction via consumer hardware or verifiable protocols, but sacrifice SLAs, compliance, and supply reliability. Best for non-mission-critical, experimental workloads.</p>
-<div class="table-wrap">
-<table>
-<thead>
-<tr>
-<th style="min-width:180px;">DePIN Provider</th>
-<th style="min-width:280px;">Model & Innovation</th>
-<th style="min-width:140px;">Hardware & Pricing</th>
-<th style="min-width:140px;">Compliance & SLA</th>
-<th style="min-width:150px;">Supply Reliability</th>
-<th style="min-width:120px;">Ideal Workloads</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Gensyn</strong> <span style="font-size:10px; background:rgba(142,68,173,.15); border:1px solid rgba(142,68,173,.3); color:#a78bfa; padding:2px 6px; border-radius:3px;">Protocol</span></td>
-<td>Probabilistic proofs for verifiable compute (solves "lazy worker" problem). Pre-mainnet (early 2026). Cryptographic verification of GPU execution (no re-running). Unlocks enterprise DePIN by eliminating spoofing risks (io.net fake GPU crisis aftermath).</td>
-<td>TBD (token-incentivized, pre-launch).</td>
-<td>Future certification potential; cryptographic proofs enable regulatory confidence.</td>
-<td>Network effects depend on verifier adoption; incentive design TBA.</td>
-<td>Enterprise DePIN adoption post-launch; risk-averse research; regulatory-compliant P2P compute.</td>
-</tr>
-<tr>
-<td><strong>Vast.ai</strong> <span class="tier-badge tier-silver">Silver</span></td>
-<td>Web2 marketplace with 10K+ GPUs from individuals to datacenters. Supply ranges from Tier 4 DCs to basement rigs. "Vast.ai Roulette": reliability only for high-reputation providers (manual selection required).</td>
-<td>$1.49–1.87/h H100; market floor. Varies wildly by host.</td>
-<td>None; low compliance; no SLA.</td>
-<td>Extremely variable; instances frequently vanish mid-job (especially low-rep hosts). High-rep datacenters more reliable but not guaranteed.</td>
-<td>Batch rendering, one-off experiments, research tolerating downtime, cost-first projects ($0 budget).</td>
-</tr>
-<tr>
-<td><strong>Akash Network</strong> <span style="font-size:10px; background:rgba(220,38,38,.15); border:1px solid rgba(220,38,38,.3); color:#fca5a5; padding:2px 6px; border-radius:3px;">DePIN</span></td>
-<td>Reverse-auction model: tenants post manifests, providers bid. Kubernetes-based only (bare-metal deploys not viable). Highly dynamic pricing; often cheapest on market. Community-sourced supply (ex-mining rigs + Tier 3 DCs).</td>
-<td>~$1.00/h for A100; H100 rare. Auction-driven.</td>
-<td>None; open-source protocol, no central authority SLA.</td>
-<td>Community hosts vary widely; no verification; instances can vanish if host goes offline; no automated recovery.</td>
-<td>Individual developers; academic researchers; experimental inference; batch processing; fault-tolerant applications.</td>
-</tr>
-<tr>
-<td><strong>Salad</strong> <span style="font-size:10px; background:rgba(220,38,38,.15); border:1px solid rgba(220,38,38,.3); color:#fca5a5; padding:2px 6px; border-radius:3px;">DePIN</span></td>
-<td>Legal distributed botnet: incentivizes millions of gamers to share GPU cycles via background software. Container isolated (SOC 2 certified despite consumer hardware). 400K+ active nodes. Focus on batch inference &amp; non-interactive workloads.</td>
-<td>~$0.02/h (cost floor); RTX 30/40 series consumer cards.</td>
-<td>Surprisingly: SOC 2 Type II (rare for consumer aggregator). No HIPAA/FedRAMP.</td>
-<td>Consumer hardware = unstable (upgrades, gaming load, power loss). Massive decentralization reduces single-point failure but increases variance.</td>
-<td>Batch Stable Diffusion, molecular dynamics, non-interactive rendering, research budgets $0.</td>
-</tr>
-<tr>
-<td><strong>Io.net</strong> <span style="font-size:10px; background:rgba(220,38,38,.15); border:1px solid rgba(220,38,38,.3); color:#fca5a5; padding:2px 6px; border-radius:3px;">DePIN</span></td>
-<td>Aggregates GPUs from independent DCs, crypto miners, P2P nodes. 2024–2025 plagued by "fake GPU crisis" (users spoofed H100 device IDs for reward claims). Metadata easily forged without cryptographic verification. High reputational risk.</td>
-<td>Token-incentivized (IO token); often artificial discount vs fiat clouds. Claims massive H100/A100 inventory.</td>
-<td>Low; no enterprise certifications; token volatility compounds pricing risk.</td>
-<td><strong>HIGH RISK</strong>: Fake GPU frauds unresolved. Metadata-only verification insufficient. Enterprise workloads should approach with extreme caution until Gensyn-style verification deployed.</td>
-<td>Crypto-native projects tolerating protocol risk; experimental workloads; teams aware of spoofing risks.</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-
 </div>
 
 <div class="summary">
@@ -609,9 +510,9 @@ body.light .scoring .score-pip{filter:brightness(0.85);}
 
 <p><strong>Layer 1–2 (Bare-Metal / HPC Training):</strong> Large research labs + foundation model companies source raw hardware. Differentiation: guaranteed supply (CoreWeave via NVIDIA partnership), software optimization (FluidStack's Atlas OS, Together.ai's TKC kernels), or geographic arbitrage (Nebius EU sovereign, DataCrunch renewable energy premium, Crusoe stranded gas).</p>
 
-<p><strong>Buyer Personas:</strong> <em>Researcher</em> (on-demand, spot pricing: Lambda, Vast.ai); <em>Startup AI team</em> (self-service neocloud: Nebius, Voltage Park, RunPod); <em>Enterprise</em> (compliance: Azure FedRAMP, Nebius GDPR, CoreWeave SOC 2); <em>Frontier lab</em> (wholesale bespoke: CoreWeave, FluidStack, Oracle).</p>
+<p><strong>Buyer Personas:</strong> <em>Researcher</em> (on-demand, spot pricing: Lambda, RunPod); <em>Startup AI team</em> (self-service neocloud: Nebius, Voltage Park, RunPod); <em>Enterprise</em> (compliance: Azure FedRAMP, Nebius GDPR, CoreWeave SOC 2); <em>Frontier lab</em> (wholesale bespoke: CoreWeave, FluidStack, Oracle).</p>
 
-<p><strong>Competitive Moats:</strong> Commodity pricing losers will be Vast.ai / Akash clones ($0–1/hr). Winners: (1) <em>Verification</em> (Gensyn's proofs), (2) <em>Sovereign compliance</em> (Nebius EU, Azure DoD), (3) <em>Software specialization</em> (Together.ai kernels, CoreWeave SUNK), (4) <em>Energy arbitrage</em> (Crusoe, Genesis Cloud renewable).</p>
+<p><strong>Competitive Moats:</strong> Commodity pricing pressure will continue in marketplace segments ($0–1/hr). Winners: (1) <em>Verification</em> (workload assurance and provenance), (2) <em>Sovereign compliance</em> (Nebius EU, Azure DoD), (3) <em>Software specialization</em> (Together.ai kernels, CoreWeave SUNK), (4) <em>Energy arbitrage</em> (Crusoe, Genesis Cloud renewable).</p>
 </div>
 </div>
 

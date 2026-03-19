@@ -25,7 +25,7 @@
   --text: #1A1A2E; --muted: #6B7280; --border: #D1D5DB;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'DM Sans',sans-serif;background:#EDEBE6;color:var(--text);height:100vh;overflow:hidden;display:flex;flex-direction:column;}
+body{font-family:'DM Sans',sans-serif;background:#EDEBE6;color:var(--text);height:100vh;overflow:hidden;display:flex;flex-direction:column;padding-top:24px;}
 
 /* HEADER */
 header{padding:10px 18px;background:#1A1A2E;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-shrink:0;border-bottom:1px solid #2D2D4E;}
@@ -1428,14 +1428,14 @@ body.theme-light .btn.btn-toggle-on{
       </div>
       <div class="filter-bm-list" id="filterList">
         <div class="fbm active" data-code="H" style="color:var(--c-hyp)" onclick="toggleFilter('H')"><div class="fbm-dot" style="background:var(--c-hyp)"></div><div class="fbm-name">Hyperscaler</div><div class="fbm-check">✓</div><div class="fbm-tooltip"><strong>Hyperscaler</strong> (AWS, GCP, Azure)<br>Vertically integrated across all 8 layers. Own silicon ASICs, data centers, software platform, and end-user products. Highest capex, highest coverage. The benchmark every other model is measured against.</div></div>
-        <div class="fbm active" data-code="N" style="color:var(--c-neo)" onclick="toggleFilter('N')"><div class="fbm-dot" style="background:var(--c-neo)"></div><div class="fbm-name">Neocloud</div><div class="fbm-check">✓</div><div class="fbm-tooltip"><strong>Neocloud</strong> (CoreWeave, Lambda, Vast.ai)<br>GPU-first cloud. Own hardware, lease colo, provide raw compute and APIs. Stop at L5 — no application layer. Differentiate on InfiniBand fabric quality and GPU availability.</div></div>
+        <div class="fbm active" data-code="N" style="color:var(--c-neo)" onclick="toggleFilter('N')"><div class="fbm-dot" style="background:var(--c-neo)"></div><div class="fbm-name">Neocloud</div><div class="fbm-check">✓</div><div class="fbm-tooltip"><strong>Neocloud</strong> (CoreWeave, Lambda, Nebius)<br>GPU-first cloud. Own hardware, lease colo, provide raw compute and APIs. Stop at L5 — no application layer. Differentiate on InfiniBand fabric quality and GPU availability.</div></div>
         <div class="fbm active" data-code="A" style="color:var(--c-agg)" onclick="toggleFilter('A')"><div class="fbm-dot" style="background:var(--c-agg)"></div><div class="fbm-name">Aggregator</div><div class="fbm-check">✓</div><div class="fbm-tooltip"><strong>Aggregator</strong> (FoundryML, Coreweave Spot)<br>Zero hardware ownership. Monetise excess capacity from neoclouds, enterprises, and DePIN nodes. Primary value layer is L3 (federation) and L6 (marketplace/billing). Asset-light but margin-thin.</div></div>
         <div class="fbm active" data-code="O" style="color:var(--c-orc)" onclick="toggleFilter('O')"><div class="fbm-dot" style="background:var(--c-orc)"></div><div class="fbm-name">Orchestrator</div><div class="fbm-check">✓</div><div class="fbm-tooltip"><strong>Orchestrator</strong> (Run:ai, Domino Data Lab)<br>Software-only. Hardware-agnostic GPU scheduler and ML platform. Core product is GPU utilisation and multi-cluster management. Sells to enterprises spanning on-prem and cloud burst.</div></div>
-        <div class="fbm active" data-code="D" style="color:var(--c-dep)" onclick="toggleFilter('D')"><div class="fbm-dot" style="background:var(--c-dep)"></div><div class="fbm-name">DePIN</div><div class="fbm-check">✓</div><div class="fbm-tooltip"><strong>DePIN</strong> (Akash, io.net, Nosana)<br>Decentralised peer-to-peer GPU network governed on-chain. Akash = general compute marketplace. io.net = inference-focused clusters. Lowest cost, but compliance gaps and no InfiniBand make training infeasible.</div></div>
+        <div class="fbm active" data-code="D" style="color:var(--c-dep)" onclick="toggleFilter('D')"><div class="fbm-dot" style="background:var(--c-dep)"></div><div class="fbm-name">DePIN</div><div class="fbm-check">✓</div><div class="fbm-tooltip"><strong>DePIN</strong> (decentralized GPU networks)<br>Decentralised peer-to-peer GPU network governed on-chain. Lowest cost profile, but compliance gaps and no InfiniBand make training infeasible.</div></div>
         <div class="fbm active" data-code="B" style="color:var(--c-hyb)" onclick="toggleFilter('B')"><div class="fbm-dot" style="background:var(--c-hyb)"></div><div class="fbm-name">Hybrid Enterprise</div><div class="fbm-check">✓</div><div class="fbm-tooltip"><strong>Hybrid Enterprise</strong> (on-prem + cloud burst)<br>Own on-premises GPU clusters for baseline load; burst to hyperscaler/neocloud for peaks. Data sovereignty advantage. High capex but maximum compliance control. Common in finance, healthcare, defence.</div></div>
         <div class="fbm active" data-code="I" style="color:var(--c-inf)" onclick="toggleFilter('I')"><div class="fbm-dot" style="background:var(--c-inf)"></div><div class="fbm-name">Inference API / Model</div><div class="fbm-check">✓</div><div class="fbm-tooltip"><strong>Inference API / Model Provider</strong> (OpenAI, Anthropic, Mistral, Cohere)<br>Own model weights and inference stack. Outsource L0–L1 to hyperscalers or neoclouds. Monetise via token-based API. Primary moat is model quality, RLHF data, and developer ecosystem lock-in.</div></div>
       </div>
-      <div style="margin-top:8px;font-size:8px;color:#9CA3AF;line-height:1.5;"><strong>DePIN:</strong> Akash = general compute; io.net = inference clusters</div>
+      <div style="margin-top:8px;font-size:8px;color:#9CA3AF;line-height:1.5;"><strong>DePIN:</strong> decentralized compute marketplaces and peer-hosted inference clusters</div>
     </div>
     <div class="divider"></div>
     <div class="lg-section">
@@ -1496,12 +1496,12 @@ body.theme-light .btn.btn-toggle-on{
 
     <div class="bm-guide-item" style="border-left-color:var(--c-agg);background:#FFFBEB;">
       <div class="bm-guide-name" style="color:var(--c-agg)">A · Aggregator</div>
-      <div class="bm-guide-tagline">Vast.ai · TensorDock · Lepton (NVIDIA) · spot markets</div>
+      <div class="bm-guide-tagline">TensorDock · Lepton (NVIDIA) · spot markets · broker APIs</div>
       <div class="bm-guide-desc">Zero hardware ownership. Operates a marketplace or unified API layer that routes compute requests to the cheapest available provider in real time. The value is arbitrage and convenience — the aggregator charges a spread between what capacity providers offer and what customers are willing to pay. Structurally excluded from training (requires dedicated IB fabric that aggregators can't guarantee).</div>
       <div class="bm-guide-layers"><strong>Layers:</strong> L3 (federation) · L6 (marketplace/billing) · L7 (unified API)</div>
       <div style="font-size:8px;color:#374151;margin-top:5px;line-height:1.5;"><strong>Moat:</strong> Liquidity (more supply → better prices → more demand → more supply). Network effects in the marketplace. API unification reduces switching cost from any single provider to near-zero.</div>
       <div style="font-size:8px;color:#374151;margin-top:3px;line-height:1.5;"><strong>Risk:</strong> Thin margins (spread compression as market matures). Cannot serve latency-sensitive or compliance-heavy customers. Disintermediation if providers go direct. Spot-only model means unreliable SLAs.</div>
-      <div class="bm-guide-examples">Vast.ai (P2P GPU marketplace) · TensorDock · io.net (DePIN adjacent) · NVIDIA Lepton (compute marketplace)</div>
+      <div class="bm-guide-examples">TensorDock · Multi-provider broker APIs · NVIDIA Lepton (compute marketplace) · spot market routers</div>
     </div>
 
     <div class="bm-guide-item" style="border-left-color:var(--c-orc);background:#F5F3FF;">
@@ -1516,12 +1516,12 @@ body.theme-light .btn.btn-toggle-on{
 
     <div class="bm-guide-item" style="border-left-color:var(--c-dep);background:#FEF2F2;">
       <div class="bm-guide-name" style="color:var(--c-dep)">D · DePIN</div>
-      <div class="bm-guide-tagline">io.net · Akash Network · Nosana</div>
+      <div class="bm-guide-tagline">Decentralized GPU networks · peer-hosted compute clusters</div>
       <div class="bm-guide-desc">Decentralised Physical Infrastructure Networks. Aggregate idle GPU capacity from individuals and small operators, coordinate via blockchain smart contracts, and offer compute at significant discounts (60–80% below hyperscalers). Economically viable only for workloads that tolerate latency variability and don't require InfiniBand — primarily inference and LoRA/QLoRA fine-tuning on consumer-grade GPUs (RTX 3090/4090).</div>
       <div class="bm-guide-layers"><strong>Layers:</strong> L1 (peer nodes, variable quality) · L3 (blockchain-based orchestration) · L4 (inference/FT only)</div>
       <div style="font-size:8px;color:#374151;margin-top:5px;line-height:1.5;"><strong>Moat:</strong> Price — structurally lowest cost when workload fits. Token incentive model can attract GPU supply ahead of demand. Community and Web3 ecosystem alignment.</div>
       <div style="font-size:8px;color:#374151;margin-top:3px;line-height:1.5;"><strong>Risk:</strong> Structurally excluded from training (IB required). Quality variability makes SLAs impossible. Security posture of peer nodes unverifiable — non-starter for regulated industries. Crypto payment friction for enterprise buyers.</div>
-      <div class="bm-guide-examples">io.net (Solana, $30M Series A, inference clusters) · Akash Network (Cosmos SDK, open-source) · Nosana (Solana, CI/CD GPU)</div>
+      <div class="bm-guide-examples">Permissionless peer clusters · tokenized compute markets · decentralized inference pools</div>
     </div>
 
     <div class="bm-guide-item" style="border-left-color:var(--c-hyb);background:#F8FAFC;">
@@ -2457,10 +2457,10 @@ body.theme-light .btn.btn-toggle-on{
 // ═══════════════════════════════════════════
 const BM = {
   H: { label:'Hyperscaler', color:'#2563EB', examples:'AWS, GCP, Azure' },
-  N: { label:'Neocloud',    color:'#059669', examples:'CoreWeave, Lambda, Vast.ai' },
+  N: { label:'Neocloud',    color:'#059669', examples:'CoreWeave, Lambda, Nebius' },
   A: { label:'Aggregator',  color:'#D97706', examples:'FoundryML, Coreweave Spot' },
   O: { label:'Orchestrator',color:'#7C3AED', examples:'Run:ai, Domino, Modal' },
-  D: { label:'DePIN',       color:'#DC2626', examples:'Akash, io.net, Nosana' },
+  D: { label:'DePIN',       color:'#DC2626', examples:'Decentralized GPU networks' },
   B: { label:'Hybrid Enterprise', color:'#475569', examples:'On-prem + cloud burst' },
   I: { label:'Inference API / Model Provider', color:'#0891B2', examples:'OpenAI, Anthropic, Mistral, Cohere' }
 };
@@ -2554,7 +2554,7 @@ const nodes = {
     what:'Kubernetes is the de facto container orchestration platform for cloud-native GPU workloads. NVIDIA GPU Operator automates the installation and management of GPU drivers, device plugins, DCGM exporters. MIG-aware scheduling allocates GPU slices. Topology-aware scheduling co-locates pods on same rack/node.',
     integration:'Sits above container runtime (containerd/Docker); below ML workflow engines (Argo, Airflow). Manages GPU resource allocation, scheduling policies, and health monitoring. Increasingly used even for training (via Kubeflow Training Operator) though Slurm still dominates HPC.',
     owns:['H','N','A','O','B','I'], uses:['D'],
-    bmRoles:{ H:'Runs proprietary K8s distributions (GKE, EKS, AKS) with custom GPU extensions', N:'Operates K8s clusters as the primary compute management layer; GPU Operator is standard', A:'Leverages K8s APIs of underlying providers for unified scheduling', O:'This is core USP — Run:ai/Domino build on top of K8s with advanced GPU scheduling', D:'Partial — some DePIN networks (io.net) use K8s; others use custom schedulers', B:'Runs K8s (often on-prem via Rancher or OpenShift) + GPU Operator' , I:'Kubernetes for inference serving infrastructure — autoscaling, rolling deployments, health checks; training may use Slurm or custom schedulers'}
+    bmRoles:{ H:'Runs proprietary K8s distributions (GKE, EKS, AKS) with custom GPU extensions', N:'Operates K8s clusters as the primary compute management layer; GPU Operator is standard', A:'Leverages K8s APIs of underlying providers for unified scheduling', O:'This is core USP — Run:ai/Domino build on top of K8s with advanced GPU scheduling', D:'Partial — some decentralized GPU networks use K8s; others use custom schedulers', B:'Runs K8s (often on-prem via Rancher or OpenShift) + GPU Operator' , I:'Kubernetes for inference serving infrastructure — autoscaling, rolling deployments, health checks; training may use Slurm or custom schedulers'}
   },
   capagg:{ title:'Capacity Aggregation', layer:'Layer 3 — Aggregation', s3:false,
     what:'Software layer that provides a unified view and control plane across heterogeneous GPU capacity from multiple providers, clouds, or on-prem clusters. Enables workload placement decisions across the entire pool based on price, availability, latency, and compliance.',
@@ -2747,7 +2747,7 @@ const nodes = {
     what:'AMD open-source compute stack for AI workloads: ROCm (Radeon Open Compute) platform, HIP (Heterogeneous-computing Interface for Portability) for CUDA portability. MI300X is AMD flagship AI GPU — 192GB HBM3 makes it competitive for LLM inference. ROCm ecosystem is maturing but lags CUDA in library depth.',
     integration:'HIP allows CUDA code to be ported with minimal changes — lowering the switching cost from NVIDIA. PyTorch, JAX, and TensorFlow support ROCm. However, library depth (custom kernels, FlashAttention, etc.) still trails CUDA. ROCm version pinning is similarly critical to CUDA.',
     owns:['H','B'], uses:['N','A','O','D'],
-    bmRoles:{ H:'AWS has AMD-based EC2 instances (P5 series uses NVIDIA but Trn1/Inf2 are custom); GCP offers AMD-based instances; Azure has limited AMD GPU offering; primarily use ROCm as a hedge against NVIDIA pricing', N:'Very few neoclouds offer AMD GPUs as primary SKU; Lambda Labs and Vast.ai have some MI300X availability; ROCm is secondary to CUDA focus', A:'Aggregates MI300X capacity where available; AMD GPU pricing often lower than NVIDIA — attractive for cost-sensitive inference workloads', O:'Run:ai and similar platforms add ROCm/AMD support to remain hardware-agnostic; critical for long-term multi-vendor strategy', D:'Some DePIN peer nodes contribute AMD GPUs; ROCm enables broader hardware participation but version fragmentation is worse', B:'May adopt MI300X for inference on-prem given 192GB HBM3 advantage and lower cost; ROCm maturity is the key adoption barrier' , I:'Not currently a primary stack; NVIDIA-first; AMD evaluation ongoing at some model providers'}
+    bmRoles:{ H:'AWS has AMD-based EC2 instances (P5 series uses NVIDIA but Trn1/Inf2 are custom); GCP offers AMD-based instances; Azure has limited AMD GPU offering; primarily use ROCm as a hedge against NVIDIA pricing', N:'Very few neoclouds offer AMD GPUs as primary SKU; ROCm is secondary to CUDA focus', A:'Aggregates MI300X capacity where available; AMD GPU pricing often lower than NVIDIA — attractive for cost-sensitive inference workloads', O:'Run:ai and similar platforms add ROCm/AMD support to remain hardware-agnostic; critical for long-term multi-vendor strategy', D:'Some DePIN peer nodes contribute AMD GPUs; ROCm enables broader hardware participation but version fragmentation is worse', B:'May adopt MI300X for inference on-prem given 192GB HBM3 advantage and lower cost; ROCm maturity is the key adoption barrier' , I:'Not currently a primary stack; NVIDIA-first; AMD evaluation ongoing at some model providers'}
   },
   oneapi:{ title:'oneAPI / SYCL', layer:'Layer 2 — Drivers', s3:false,
     what:'Intel open, unified programming model for heterogeneous compute: oneAPI toolkit, SYCL (cross-platform C++ abstraction), Intel Data Parallel C++. Relevant for Intel Gaudi3 AI accelerators and Intel GPU Max (Ponte Vecchio) deployments. Smaller AI market share but growing with Gaudi3 traction.',
@@ -2833,7 +2833,7 @@ const nodes = {
     what:'Software layer for managing workloads across multiple Kubernetes clusters or cloud regions: KubeFed, Liqo, Karmada, Admiralty. Enables scheduling decisions that span cloud providers, on-prem clusters, and edge locations. Provides a single control point for heterogeneous capacity.',
     integration:'Enables workload placement decisions across the full capacity footprint — choosing the cheapest/fastest/most compliant cluster for each job. Critical infrastructure for Aggregator and Orchestrator business models. Requires federation of identity, networking, and storage across clusters.',
     owns:['A','O'], uses:['H','N','B'],
-    bmRoles:{ H:'Operates multi-region federation internally but does not expose it as a customer-facing product; customers use global load balancing instead', N:'Single-cluster typically; may federate across availability zones within their own infrastructure but not across providers', A:'Federation IS the product — the ability to schedule workloads across CoreWeave, Lambda, Vast.ai, and on-prem clusters simultaneously; the technical implementation of capacity aggregation', O:'Multi-cluster scheduling is a core Run:ai and Domino enterprise feature — enterprise customers span on-prem, cloud burst, and DR clusters; federation enables unified job queue', D:'The DePIN network itself IS a form of federated scheduling — matching demand to distributed peer nodes via smart contracts; more coarse-grained than KubeFed', B:'May implement light federation between on-prem cluster and cloud burst capacity; VPN-connected multi-cluster Kubernetes is common' , I:'Not applicable — primarily single-provider or owned infrastructure; no multi-cluster federation need'}
+    bmRoles:{ H:'Operates multi-region federation internally but does not expose it as a customer-facing product; customers use global load balancing instead', N:'Single-cluster typically; may federate across availability zones within their own infrastructure but not across providers', A:'Federation IS the product — the ability to schedule workloads across CoreWeave, Lambda, and on-prem clusters simultaneously; the technical implementation of capacity aggregation', O:'Multi-cluster scheduling is a core Run:ai and Domino enterprise feature — enterprise customers span on-prem, cloud burst, and DR clusters; federation enables unified job queue', D:'The DePIN network itself IS a form of federated scheduling — matching demand to distributed peer nodes via smart contracts; more coarse-grained than KubeFed', B:'May implement light federation between on-prem cluster and cloud burst capacity; VPN-connected multi-cluster Kubernetes is common' , I:'Not applicable — primarily single-provider or owned infrastructure; no multi-cluster federation need'}
   },
   spotmgmt:{ title:'Spot / Preemptible Mgmt', layer:'Layer 3 — Aggregation', s3:false,
     what:'Management of interruptible compute capacity: AWS Spot Instances, GCP Preemptible VMs, Azure Spot VMs, neocloud preemptible. Significantly cheaper (50–90%) than on-demand. Requires checkpoint-aware workload design, automated recovery, and preemption signal handling. Critical cost optimisation tool for training.',
@@ -3517,7 +3517,7 @@ const TLDR_DATA = {
   },
   'D-N': {
     aName:'DePIN', bName:'Neocloud',
-    aSummary:'DePIN is the disruption threat to neoclouds. At L1 (physical hardware), DePIN peer nodes can match neocloud GPU specifications at lower cost — especially for inference workloads that don\'t require InfiniBand. io.net specifically targets inference cluster formation from distributed peers.',
+    aSummary:'DePIN is the disruption threat to neoclouds. At L1 (physical hardware), DePIN peer nodes can match neocloud GPU specifications at lower cost — especially for inference workloads that don\'t require InfiniBand. The model specifically targets inference cluster formation from distributed peers.',
     bSummary:'Neoclouds retain three structural advantages over DePIN: InfiniBand fabric (essential for training), compliance certifications (SOC2/ISO27001 required for enterprise), and SLA accountability (DePIN cannot guarantee uptime from peer nodes). These gaps limit DePIN to latency-tolerant, compliance-light inference and fine-tuning.',
     usp:'DePIN USP: lowest cost-per-GPU-hour for inference, no capex barrier, global geographic distribution. Neocloud USP: training-grade IB fabric, compliance, predictable SLAs. Short-term DePIN addresses the long-tail inference market; long-term convergence depends on whether DePIN can solve the compliance and fabric problems.'
   },
@@ -3804,7 +3804,7 @@ var BP_DATA=[
     {key:'l2',num:'2',name:'L2 &mdash; Drivers &amp; Libraries',color:'#E2F0FD',desc:'CUDA (the dominant GPU programming standard), drivers, NCCL (multi-GPU coordination for training), PyTorch/JAX frameworks. Version compatibility is critical.',s3:false,s3n:[],
      bms:{H:{r:'O',n:'Custom compilers (XLA, Triton) + manages CUDA fleets'},N:{r:'O',n:'Manages full CUDA and driver stack for customers'},A:{r:'U',n:'Provider handles drivers; abstracted'},O:{r:'U',n:'Provides container images with pinned CUDA stacks'},D:{r:'U',n:'Node operator responsibility; version fragmentation risk'},B:{r:'O',n:'Full CUDA/NCCL stack management on-prem'},I:{r:'O',n:'Custom kernels: FlashAttention, Triton, custom CUDA'}}},
     {key:'l3',num:'3',name:'L3 &mdash; Virtualisation &amp; Orchestration',color:'#E5F5E7',desc:'Kubernetes + GPU Operator, Slurm job scheduling, MIG partitioning (1 GPU = 7 slices), multi-cloud federation and capacity aggregation.',s3:false,s3n:[],
-     bms:{H:{r:'O',n:'Full K8s + Slurm + proprietary schedulers'},N:{r:'O',n:'K8s + bare metal scheduling is core product'},A:{r:'F',n:'Federation layer IS the core USP &mdash; multi-provider aggregation'},O:{r:'O',n:'GPU scheduler IS the product (Run:ai, Domino)'},D:{r:'U',n:'io.net custom scheduler; Akash uses Kubernetes'},B:{r:'O',n:'On-prem K8s + Slurm + GPU Operator'},I:{r:'O',n:'K8s for inference; Slurm for training clusters'}}}
+    bms:{H:{r:'O',n:'Full K8s + Slurm + proprietary schedulers'},N:{r:'O',n:'K8s + bare metal scheduling is core product'},A:{r:'F',n:'Federation layer IS the core USP &mdash; multi-provider aggregation'},O:{r:'O',n:'GPU scheduler IS the product (Run:ai, Domino)'},D:{r:'U',n:'DePIN schedulers vary by network; some use Kubernetes, others custom stacks'},B:{r:'O',n:'On-prem K8s + Slurm + GPU Operator'},I:{r:'O',n:'K8s for inference; Slurm for training clusters'}}}
   ]},
   {grp:'Layer 4 — Workload Execution',layers:[
     {key:'l4t',ch:'train',num:'4',name:'L4 — Training Execution',color:'#E8EEF8',
@@ -3814,11 +3814,11 @@ var BP_DATA=[
     {key:'l4f',ch:'ft',num:'4',name:'L4 — Fine-Tuning Execution',color:'#E8EEF8',
      desc:'Adapting a pre-trained model using LoRA, QLoRA, or RLHF. Far less GPU-intensive than training. Consumer GPU viable. This is where DePIN becomes competitive.',
      s3:true,s3n:['Adapter checkpoints','Fine-tune datasets (JSONL)'],
-     bms:{H:{r:'O',n:'Managed fine-tuning APIs (Bedrock Custom Models, Vertex AI Tuning). Highest abstraction, highest margin.'},N:{r:'F',n:'Provides compute; customer runs fine-tuning job. No managed API — just raw GPU access.'},A:{r:'-',n:'Routes compute but not in the fine-tuning execution path itself.'},O:{r:'O',n:'Fine-tuning pipeline management is a core product. Automates LoRA runs, adapter versioning, deployment.'},D:{r:'F',n:'LoRA/QLoRA on consumer RTX GPUs is the DePIN sweet spot. io.net and Akash route FT jobs to peer nodes.'},B:{r:'O',n:'Fine-tuning on proprietary internal data. The adapter is the IP.'},I:{r:'O',n:'RLHF and Constitutional AI alignment pipeline. The fine-tuning process is central to model safety and quality.'}}},
+    bms:{H:{r:'O',n:'Managed fine-tuning APIs (Bedrock Custom Models, Vertex AI Tuning). Highest abstraction, highest margin.'},N:{r:'F',n:'Provides compute; customer runs fine-tuning job. No managed API — just raw GPU access.'},A:{r:'-',n:'Routes compute but not in the fine-tuning execution path itself.'},O:{r:'O',n:'Fine-tuning pipeline management is a core product. Automates LoRA runs, adapter versioning, deployment.'},D:{r:'F',n:'LoRA/QLoRA on consumer RTX GPUs is the DePIN sweet spot; FT jobs route to peer nodes.'},B:{r:'O',n:'Fine-tuning on proprietary internal data. The adapter is the IP.'},I:{r:'O',n:'RLHF and Constitutional AI alignment pipeline. The fine-tuning process is central to model safety and quality.'}}},
     {key:'l4i',ch:'inf',num:'4',name:'L4 — Inference Execution',color:'#E8EEF8',
      desc:'Serving model responses at scale. Continuous, latency-sensitive, high-RPS workload. Revenue is generated here. Key techniques: quantisation (INT8/FP8), KV cache, continuous batching, speculative decoding.',
      s3:false,s3n:[],
-     bms:{H:{r:'O',n:'Managed inference at hyperscale (Bedrock, Vertex AI). Highest reliability, broadest model catalogue, enterprise SLAs.'},N:{r:'F',n:'Provides GPU infrastructure for inference. Customer deploys vLLM/Triton. Neocloud handles no model logic.'},A:{r:'F',n:'Routes inference requests to cheapest available provider in real-time. The arbitrage play lives here.'},O:{r:'O',n:'Inference serving optimisation — continuous batching, autoscaling, multi-model endpoints. Core Run:ai/Domino product.'},D:{r:'F',n:'io.net specifically targets inference cluster formation from distributed peers. Latency-tolerant batch inference is viable.'},B:{r:'O',n:'Internal inference endpoints. Private model serving for internal applications. No external traffic.'},I:{r:'O',n:'Inference IS the product. ChatGPT, Claude.ai, API serving hundreds of millions of requests per day.'}}}
+    bms:{H:{r:'O',n:'Managed inference at hyperscale (Bedrock, Vertex AI). Highest reliability, broadest model catalogue, enterprise SLAs.'},N:{r:'F',n:'Provides GPU infrastructure for inference. Customer deploys vLLM/Triton. Neocloud handles no model logic.'},A:{r:'F',n:'Routes inference requests to cheapest available provider in real-time. The arbitrage play lives here.'},O:{r:'O',n:'Inference serving optimisation — continuous batching, autoscaling, multi-model endpoints. Core Run:ai/Domino product.'},D:{r:'F',n:'DePIN targets inference cluster formation from distributed peers. Latency-tolerant batch inference is viable.'},B:{r:'O',n:'Internal inference endpoints. Private model serving for internal applications. No external traffic.'},I:{r:'O',n:'Inference IS the product. ChatGPT, Claude.ai, API serving hundreds of millions of requests per day.'}}}
   ]},
   {grp:'Layer 5 — Data Pipelines & Serving Infrastructure',layers:[
     {key:'l5t',ch:'train',num:'5',name:'L5 — Training Data Pipelines',color:'#E0F7FA',
@@ -3832,7 +3832,7 @@ var BP_DATA=[
     {key:'l5i',ch:'inf',num:'5',name:'L5 — Inference Serving Infrastructure',color:'#E0F7FA',
      desc:'Model endpoints (vLLM, Triton Inference Server), API gateways with rate limiting and auth, vector databases for RAG (Pinecone, Weaviate), semantic caching to eliminate redundant compute.',
      s3:true,s3n:['Vector DB snapshots','Log archival (cold tier)'],
-     bms:{H:{r:'O',n:'Managed endpoints (Bedrock, Vertex AI Model Garden) + API Gateway. Full serving stack as managed service.'},N:{r:'F',n:'Provides GPU compute for serving. Customer deploys and manages vLLM/Triton. Neocloud is infrastructure only.'},A:{r:'F',n:'API gateway and routing layer between user and multiple inference providers. The aggregation play at L5.'},O:{r:'O',n:'Model serving and endpoint management. Multi-model routing, A/B testing, autoscaling.'},D:{r:'F',n:'io.net cluster formation for inference endpoints. Works for batch and latency-tolerant workloads.'},B:{r:'O',n:'Internal inference APIs on-prem. Private vector DB for internal RAG applications.'},I:{r:'O',n:'ChatGPT/Claude.ai serving infrastructure. Hundreds of millions of daily requests. Proprietary caching and batching optimisations.'}}}
+    bms:{H:{r:'O',n:'Managed endpoints (Bedrock, Vertex AI Model Garden) + API Gateway. Full serving stack as managed service.'},N:{r:'F',n:'Provides GPU compute for serving. Customer deploys and manages vLLM/Triton. Neocloud is infrastructure only.'},A:{r:'F',n:'API gateway and routing layer between user and multiple inference providers. The aggregation play at L5.'},O:{r:'O',n:'Model serving and endpoint management. Multi-model routing, A/B testing, autoscaling.'},D:{r:'F',n:'DePIN cluster formation for inference endpoints. Works for batch and latency-tolerant workloads.'},B:{r:'O',n:'Internal inference APIs on-prem. Private vector DB for internal RAG applications.'},I:{r:'O',n:'ChatGPT/Claude.ai serving infrastructure. Hundreds of millions of daily requests. Proprietary caching and batching optimisations.'}}}
   ]},
   {grp:'Management &amp; Application',layers:[
     {key:'l6',num:'6',name:'L6 &mdash; Control Plane &middot; FinOps &middot; Security',color:'#FFF3E0',desc:'GPU access control, cost attribution, fleet monitoring, compliance certs (SOC2, HIPAA, GDPR) that gate enterprise deals.',s3:true,s3n:['Log archival (cold tier)','Cost data exports'],
@@ -4087,14 +4087,6 @@ var COMPANY_DB=[
   customers:['European enterprises','Sovereign AI projects'],
   diff:'Open-weight models (Mixtral, Le Chat); EU sovereign AI positioning; Macron endorsement; neocloud pivot for sovereign compute.',
   desc:'French AI lab + emerging neocloud. Open-weight models. Primary EU alternative to US AI providers.'},
- {id:'vast',name:'Vast.ai',bm:'A',tiers:['gpuaas'],
-  founded:2019,hq:{flag:'\u{1F1FA}\u{1F1F8}',region:'north_america'},
-  rev:30,fte:30,s3:false,ib:false,soc2:false,pub:false,eu:false,
-  cm:'bronze',
-  gpus:['H100','A100','RTX 4090'],
-  customers:['ML researchers','Cost-sensitive startups'],
-  diff:'P2P GPU marketplace; lowest prices via bidding; consumer GPU access; no commitment; spot-like economics.',
-  desc:'Peer-to-peer GPU marketplace. Aggregates idle GPUs from data centers and individuals. Cheapest per-GPU-hour.'},
  {id:'runpod',name:'RunPod',bm:'N',tiers:['gpuaas','mlaas'],
   founded:2022,hq:{flag:'\u{1F1FA}\u{1F1F8}',region:'north_america'},
   rev:50,fte:50,s3:false,ib:false,soc2:false,pub:false,eu:false,
@@ -4167,22 +4159,6 @@ var COMPANY_DB=[
   customers:['Latin American developers','Global startups'],
   diff:'LatAm-native; Sao Paulo + global DCs; bare metal + cloud; aggressive pricing; developer API.',
   desc:'Bare metal and GPU cloud with strong Latin America presence. Global deployment, developer-first.'},
- {id:'ionet',name:'io.net',bm:'D',tiers:['gpuaas'],
-  founded:2023,hq:{flag:'\u{1F1FA}\u{1F1F8}',region:'north_america'},
-  rev:10,fte:50,s3:false,ib:false,soc2:false,pub:false,eu:false,
-  cm:'unrated',
-  gpus:['Various (peer)','H100','RTX'],
-  customers:['AI startups','Cost-sensitive inference'],
-  diff:'DePIN GPU network on Solana; cluster-formation from distributed peers; $30M Series A; inference-focused.',
-  desc:'Decentralized GPU network on Solana. Aggregates unused GPU capacity globally. Optimized for inference workloads.'},
- {id:'akash',name:'Akash Network',bm:'D',tiers:['gpuaas'],
-  founded:2018,hq:{flag:'\u{1F1FA}\u{1F1F8}',region:'north_america'},
-  rev:5,fte:30,s3:false,ib:false,soc2:false,pub:false,eu:false,
-  cm:'unrated',
-  gpus:['Various (peer)','H100','A100'],
-  customers:['Web3 developers','Cost-sensitive users'],
-  diff:'Open-source decentralized cloud (Cosmos SDK); AKT token; permissionless GPU marketplace; on-chain pricing.',
-  desc:'Open-source decentralized cloud marketplace. Permissionless GPU access via crypto payments. Cosmos-based.'},
  {id:'applied_digital',name:'Applied Digital',bm:'N',tiers:['bmaas'],
   founded:2001,hq:{flag:'\u{1F1FA}\u{1F1F8}',region:'north_america'},
   rev:200,fte:200,s3:false,ib:true,soc2:false,pub:true,eu:false,

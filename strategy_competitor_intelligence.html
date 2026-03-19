@@ -37,7 +37,7 @@ body.light{
 /* ── TRANSITION ── */
 body,body *{transition:background-color .22s ease,border-color .22s ease,color .18s ease,box-shadow .22s ease;}
 
-body{font-family:'Outfit',sans-serif;background:var(--bg-s);color:var(--text);min-height:100vh;font-size:14px;}
+body{font-family:'Outfit',sans-serif;background:var(--bg-s);color:var(--text);min-height:100vh;font-size:14px;padding-top:24px;}
 
 /* ── THEME TOGGLE ── */
 .theme-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;padding:6px 12px;background:var(--card);border:1px solid var(--border);border-radius:20px;transition:all .15s;}
@@ -94,18 +94,20 @@ body.light .theme-toggle-thumb{transform:translateX(16px);}
 .cmp-stack-btn.active{border-color:rgba(56,189,248,.35);background:rgba(56,189,248,.1);color:var(--accent);}
 .cmp-clear-btn{font-family:'JetBrains Mono',monospace;font-size:10px;padding:8px 10px;border-radius:6px;border:1px solid var(--border);background:var(--surf);color:var(--muted);cursor:pointer;white-space:nowrap;}
 .cmp-clear-btn:hover{color:var(--text);border-color:var(--border-l);}
-.cmp-usp-section{display:grid;grid-template-columns:repeat(2,minmax(280px,1fr));gap:10px;margin:0 0 14px;}
-.cmp-usp-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;}
-.cmp-usp-card h4{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--text);margin:0 0 8px;}
-.cmp-usp-card ul{margin:0;padding-left:16px;display:flex;flex-direction:column;gap:6px;}
-.cmp-usp-card li{font-size:11.5px;line-height:1.5;color:var(--sub);}
-.cmp-usp-card li strong{color:var(--text);font-weight:600;}
-.cmp-usp-chip{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:8.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px;}
-.cmp-usp-chip::before{content:'';width:8px;height:8px;border-radius:2px;background:var(--accent);opacity:.75;}
-.cmp-usp-summary{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin:0 0 12px;}
-.cmp-usp-summary h4{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--text);margin:0 0 8px;}
-.cmp-usp-summary ul{margin:0;padding-left:16px;display:flex;flex-direction:column;gap:6px;}
-.cmp-usp-summary li{font-size:11.5px;line-height:1.5;color:var(--sub);}
+.cmp-usp-list{margin:0;padding-left:16px;display:flex;flex-direction:column;gap:4px;}
+.cmp-usp-list li{font-size:11px;line-height:1.45;color:var(--sub);}
+.cmp-usp-list li strong{color:var(--text);font-weight:600;}
+.cmp-hdr-filter{display:block;width:100%;background:var(--card2);border:1px solid var(--border);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:9px;padding:4px 6px;border-radius:5px;}
+.cmp-hdr-filter.ck{display:flex;align-items:center;justify-content:center;gap:4px;font-size:8.5px;padding:4px 2px;}
+.cmp-hdr-filter-stack{display:grid;grid-template-columns:repeat(3,minmax(48px,1fr));gap:4px;}
+.cmp-hdr-filter-stack label{display:flex;align-items:center;gap:4px;font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--sub);white-space:nowrap;}
+.cmp-hdr-filter-stack input{accent-color:var(--accent);}
+.cmp-model-pill{display:inline-flex;align-items:center;justify-content:center;min-width:110px;padding:4px 8px;border-radius:999px;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;border:1px solid transparent;}
+.cmp-model-pill.h{background:rgba(37,99,235,.14);border-color:rgba(37,99,235,.28);color:#2563EB;}
+.cmp-model-pill.n{background:rgba(5,150,105,.14);border-color:rgba(5,150,105,.28);color:#059669;}
+.cmp-model-pill.a{background:rgba(217,119,6,.14);border-color:rgba(217,119,6,.28);color:#D97706;}
+.cmp-model-pill.o{background:rgba(124,58,237,.14);border-color:rgba(124,58,237,.28);color:#7C3AED;}
+.cmp-model-pill.x{background:rgba(148,163,184,.14);border-color:rgba(148,163,184,.28);color:var(--muted);}
 .cmp-stack-cells{display:grid;grid-template-columns:repeat(9,minmax(24px,1fr));gap:4px;min-width:264px;}
 .cmp-stack-cell{height:22px;border-radius:4px;border:1px solid rgba(255,255,255,.18);font-family:'JetBrains Mono',monospace;font-size:8px;display:flex;align-items:center;justify-content:center;font-weight:700;}
 .cmp-tr-main{border-bottom:1px solid var(--border);}
@@ -152,9 +154,8 @@ body.light .theme-toggle-thumb{transform:translateX(16px);}
 .cmp-stack-cell.l7{background:rgba(142,68,173,.22);color:#8e44ad;}
 
 @media (max-width: 1400px){
-  .cmp-controls{grid-template-columns:1fr 1fr;}
   .cmp-detail-wrap{grid-template-columns:1fr;}
-  .cmp-usp-section{grid-template-columns:1fr;}
+  .cmp-hdr-filter-stack{grid-template-columns:repeat(2,minmax(48px,1fr));}
 }
 
 /* ── TIER SECTION ── */
@@ -541,132 +542,13 @@ table.stk td.grp-border-l{border-left:2px solid var(--border-ll)!important;}
     <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;margin-bottom:8px;">GPU Compute Business Models: Strategic Comparison</div>
     <ul style="margin:0 0 10px;padding-left:16px;display:flex;flex-direction:column;gap:5px;">
       <li style="font-size:12px;color:var(--sub);line-height:1.5;">Side-by-side comparison across <strong>USP</strong>, <strong>business model</strong>, <strong>pricing</strong>, <strong>orchestration depth</strong>, <strong>stack presence</strong>, and <strong>buyer fit</strong>.</li>
-      <li style="font-size:12px;color:var(--sub);line-height:1.5;">Row expansion exposes <strong>differentiators</strong>, <strong>software posture</strong>, <strong>workload alignment</strong>, and <strong>risk gaps</strong> without losing table scanability.</li>
-      <li style="font-size:12px;color:var(--sub);line-height:1.5;">Read this USP section first, then apply filters to isolate substitutes by region, pricing model, and required stack layers.</li>
+      <li style="font-size:12px;color:var(--sub);line-height:1.5;">Each provider row now carries a <strong>bullet-point USP block</strong> with deeper differentiators and trade-offs sourced from the business-model comparison reference.</li>
+      <li style="font-size:12px;color:var(--sub);line-height:1.5;">All filters live inside table headers for faster in-context comparison (including <strong>business model</strong>).</li>
     </ul>
     <ul style="margin:0;padding-left:16px;display:flex;flex-direction:column;gap:4px;">
       <li style="font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;">Updated: March 2026</li>
       <li style="font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;">Sources: ClusterMAX 2.0, Saturn Cloud (Dec 2025), Thunder Compute (Feb 2026), provider disclosures</li>
     </ul>
-  </div>
-
-  <div class="cmp-usp-summary">
-    <h4>Key Differentiating Factors (Bullet-Only)</h4>
-    <ul>
-      <li><strong>Execution moat:</strong> CoreWeave and Nebius lead on production training execution via mature Slurm-on-Kubernetes patterns (SUNK/Soperator), with CoreWeave strongest on reliability and Nebius strongest on spot flexibility.</li>
-      <li><strong>Hyperscaler split:</strong> Azure differentiates via FedRAMP/DoD + InfiniBand SHARP, Oracle via AGI-neutral supply posture and Stargate scale, GCP via strongest Kubernetes batch stack, AWS via ecosystem lock-in and custom silicon breadth.</li>
-      <li><strong>Price floor pressure:</strong> Voltage Park, Hyperbolic, Vast.ai and similar marketplaces set low-price references, but often trade off deterministic reliability, compliance depth, and advanced orchestration.</li>
-      <li><strong>Software-led edge:</strong> Together.ai and CoreWeave show that kernel/runtime and orchestration quality can sustain premium positioning even when raw GPU pricing commoditizes.</li>
-      <li><strong>Sovereignty/compliance wedge:</strong> Nebius (EU sovereignty), Azure (defense compliance), Oracle (global neutral hosting posture) win regulated and politically constrained workloads.</li>
-    </ul>
-  </div>
-
-  <div class="cmp-usp-section">
-    <div class="cmp-usp-card">
-      <div class="cmp-usp-chip">Premium Training Operators</div>
-      <h4>Why They Win</h4>
-      <ul>
-        <li><strong>CoreWeave:</strong> SUNK maturity, BlueField isolation, and deep reliability tooling support multi-thousand GPU runs with fewer interruptions.</li>
-        <li><strong>Nebius:</strong> closest operational substitute to CoreWeave with transparent pricing and preemptible/spot optionality.</li>
-        <li><strong>FluidStack:</strong> operator-heavy model can deliver Gold-tier outcomes without owning hardware; strong for bespoke enterprise execution.</li>
-        <li><strong>Lambda:</strong> frequent on-demand capacity depth and strong hardware operations for teams prioritizing fast access over platform breadth.</li>
-      </ul>
-    </div>
-
-    <div class="cmp-usp-card">
-      <div class="cmp-usp-chip">Hyperscaler Positioning</div>
-      <h4>How They Differentiate</h4>
-      <ul>
-        <li><strong>Azure:</strong> strongest regulated-enterprise posture; differentiated by FedRAMP/DoD and SHARP-capable InfiniBand footprint.</li>
-        <li><strong>Oracle:</strong> AGI-neutral supplier positioning plus Stargate relevance and fast infrastructure deployment cadence.</li>
-        <li><strong>GCP:</strong> highest-quality managed Kubernetes workflow for AI batch and straggler handling; excellent for platform teams.</li>
-        <li><strong>AWS:</strong> largest adjacent services ecosystem and strongest installed-base lock-in; best fit when data and ops already live in AWS.</li>
-      </ul>
-    </div>
-
-    <div class="cmp-usp-card">
-      <div class="cmp-usp-chip">Price-Led & Marketplace Plays</div>
-      <h4>Where They Fit</h4>
-      <ul>
-        <li><strong>Voltage Park / value players:</strong> useful when lowest $/GPU-hour dominates and strict uptime/compliance is secondary.</li>
-        <li><strong>Vast.ai / Hyperbolic style marketplaces:</strong> maximize price arbitrage and supply access, but infrastructure consistency varies widely.</li>
-        <li><strong>Crusoe:</strong> sustainability and power-sourcing story can be a board-level differentiator for ESG-sensitive procurement.</li>
-        <li><strong>Decision rule:</strong> as pricing falls, software quality, support responsiveness, and workload-tailored orchestration become the durable moat.</li>
-      </ul>
-    </div>
-
-    <div class="cmp-usp-card">
-      <div class="cmp-usp-chip">Buyer-Fit Heuristics</div>
-      <h4>Quick Matching Bullets</h4>
-      <ul>
-        <li><strong>Frontier labs:</strong> prioritize deterministic supply + reliability + large-cluster scheduling depth over headline hourly price.</li>
-        <li><strong>Enterprise regulated:</strong> prioritize compliance boundary, contractual support model, and data residency above benchmark speed.</li>
-        <li><strong>Startup research:</strong> prioritize on-demand access, spot economics, and minimal sales friction for faster iteration loops.</li>
-        <li><strong>Platform teams:</strong> prioritize K8s/Slurm integration quality, observability, and failure automation over pure hardware specs.</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="cmp-controls">
-    <input id="cmp-filter-query" class="cmp-input" type="text" placeholder="Filter across provider, USP, model, software, buyer..."/>
-    <select id="cmp-filter-tier" class="cmp-select">
-      <option value="all">Tier: All</option>
-      <option value="platinum">Tier: Platinum</option>
-      <option value="gold">Tier: Gold</option>
-      <option value="silver">Tier: Silver</option>
-      <option value="bronze">Tier: Bronze</option>
-      <option value="emerging">Tier: Emerging</option>
-    </select>
-    <select id="cmp-filter-price" class="cmp-select">
-      <option value="all">Pricing: All tiers</option>
-      <option value="low">Pricing: Low</option>
-      <option value="medium">Pricing: Medium</option>
-      <option value="high">Pricing: High</option>
-    </select>
-    <select id="cmp-filter-contract" class="cmp-select">
-      <option value="all">Contract: All</option>
-      <option value="hourly">Contract: Hourly</option>
-      <option value="daily">Contract: Daily</option>
-      <option value="weekly">Contract: Weekly</option>
-      <option value="long-term">Contract: Long-term (months+)</option>
-    </select>
-    <select id="cmp-filter-egress" class="cmp-select">
-      <option value="all">Egress: All</option>
-      <option value="free">Egress: Free</option>
-      <option value="metered">Egress: Metered</option>
-      <option value="conditional">Egress: Conditional</option>
-    </select>
-    <select id="cmp-filter-region" class="cmp-select">
-      <option value="all">Region Presence: All</option>
-      <option value="NA">North America</option>
-      <option value="EU">Europe</option>
-      <option value="APAC">APAC</option>
-    </select>
-    <select id="cmp-filter-buyer" class="cmp-select">
-      <option value="all">Buyer Tag: All</option>
-    </select>
-    <select id="cmp-sort" class="cmp-select">
-      <option value="tier-desc">Sort: Tier (High to Low)</option>
-      <option value="price-asc">Sort: Pricing Tier (Low to High)</option>
-      <option value="price-desc">Sort: Pricing Tier (High to Low)</option>
-      <option value="stack-desc">Sort: Stack Presence (High to Low)</option>
-      <option value="name-asc">Sort: Provider (A-Z)</option>
-      <option value="contract-asc">Sort: Contract (Hourly to Long-term)</option>
-      <option value="egress-asc">Sort: Egress (Free first)</option>
-    </select>
-    <button id="cmp-clear" class="cmp-clear-btn" type="button">Reset</button>
-    <div class="cmp-stack-filter" id="cmp-stack-filter">
-      <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin-right:2px;">Require:</span>
-      <button type="button" class="cmp-stack-btn" data-layer="0">L−1</button>
-      <button type="button" class="cmp-stack-btn" data-layer="1">L0</button>
-      <button type="button" class="cmp-stack-btn" data-layer="2">L1</button>
-      <button type="button" class="cmp-stack-btn" data-layer="3">L2</button>
-      <button type="button" class="cmp-stack-btn" data-layer="4">L3</button>
-      <button type="button" class="cmp-stack-btn" data-layer="5">L4</button>
-      <button type="button" class="cmp-stack-btn" data-layer="6">L5</button>
-      <button type="button" class="cmp-stack-btn" data-layer="7">L6</button>
-      <button type="button" class="cmp-stack-btn" data-layer="8">L7</button>
-    </div>
   </div>
   <div style="overflow-x:auto;border:1px solid var(--border);border-radius:10px;">
     <table class="cmp-table" id="cmp-table" style="width:100%;border-collapse:collapse;background:var(--card);font-size:12px;">
@@ -690,6 +572,99 @@ table.stk td.grp-border-l{border-left:2px solid var(--border-ll)!important;}
           <th style="padding:12px 10px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);">Buyer Tags</th>
           <th style="padding:12px 10px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);">Details</th>
         </tr>
+        <tr style="border-bottom:1px solid var(--border);">
+          <th style="padding:8px 10px;min-width:220px;">
+            <select id="cmp-filter-tier" class="cmp-hdr-filter" title="Filter by tier">
+              <option value="all">Tier: All</option>
+              <option value="platinum">Platinum</option>
+              <option value="gold">Gold</option>
+              <option value="silver">Silver</option>
+              <option value="bronze">Bronze</option>
+              <option value="emerging">Emerging</option>
+            </select>
+            <select id="cmp-sort" class="cmp-hdr-filter" style="margin-top:4px;" title="Sort rows">
+              <option value="tier-desc">Sort: Tier</option>
+              <option value="price-asc">Sort: Price asc</option>
+              <option value="price-desc">Sort: Price desc</option>
+              <option value="stack-desc">Sort: Stack score</option>
+              <option value="name-asc">Sort: Name A-Z</option>
+              <option value="contract-asc">Sort: Contract</option>
+              <option value="egress-asc">Sort: Egress</option>
+            </select>
+          </th>
+          <th style="padding:8px 10px;min-width:280px;">
+            <input id="cmp-filter-query" class="cmp-hdr-filter" type="text" placeholder="Search provider / USP / software / buyer"/>
+          </th>
+          <th style="padding:8px 10px;min-width:160px;">
+            <select id="cmp-filter-model" class="cmp-hdr-filter" title="Filter by business model">
+              <option value="all">Model: All</option>
+              <option value="h">Hyperscaler</option>
+              <option value="n">Neocloud</option>
+              <option value="a">Aggregator</option>
+              <option value="o">Orchestrator</option>
+              <option value="x">Other / Mixed</option>
+            </select>
+          </th>
+          <th style="padding:8px 10px;min-width:95px;">
+            <select id="cmp-filter-price" class="cmp-hdr-filter" title="Filter by pricing">
+              <option value="all">All</option>
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </th>
+          <th style="padding:8px 10px;min-width:95px;">
+            <select id="cmp-filter-contract" class="cmp-hdr-filter" title="Filter by contract">
+              <option value="all">All</option>
+              <option value="hourly">Hourly</option>
+              <option value="daily">Daily</option>
+              <option value="weekly">Weekly</option>
+              <option value="long-term">Long-term</option>
+            </select>
+          </th>
+          <th style="padding:8px 6px;min-width:68px;text-align:center;"><label class="cmp-hdr-filter ck"><input id="cmp-filter-k8s" type="checkbox"/>Only ✓</label></th>
+          <th style="padding:8px 6px;min-width:68px;text-align:center;"><label class="cmp-hdr-filter ck"><input id="cmp-filter-slurm" type="checkbox"/>Only ✓</label></th>
+          <th style="padding:8px 6px;min-width:78px;text-align:center;"><label class="cmp-hdr-filter ck"><input id="cmp-filter-cosched" type="checkbox"/>Only ✓</label></th>
+          <th style="padding:8px 10px;min-width:150px;"></th>
+          <th style="padding:8px 10px;min-width:220px;">
+            <div class="cmp-hdr-filter-stack">
+              <label><input type="checkbox" class="cmp-filter-layer" data-layer="0"/>L−1</label>
+              <label><input type="checkbox" class="cmp-filter-layer" data-layer="1"/>L0</label>
+              <label><input type="checkbox" class="cmp-filter-layer" data-layer="2"/>L1</label>
+              <label><input type="checkbox" class="cmp-filter-layer" data-layer="3"/>L2</label>
+              <label><input type="checkbox" class="cmp-filter-layer" data-layer="4"/>L3</label>
+              <label><input type="checkbox" class="cmp-filter-layer" data-layer="5"/>L4</label>
+              <label><input type="checkbox" class="cmp-filter-layer" data-layer="6"/>L5</label>
+              <label><input type="checkbox" class="cmp-filter-layer" data-layer="7"/>L6</label>
+              <label><input type="checkbox" class="cmp-filter-layer" data-layer="8"/>L7</label>
+            </div>
+          </th>
+          <th style="padding:8px 10px;min-width:130px;">
+            <select id="cmp-filter-region" class="cmp-hdr-filter" title="Filter by region">
+              <option value="all">All regions</option>
+              <option value="NA">North America</option>
+              <option value="EU">Europe</option>
+              <option value="APAC">APAC</option>
+            </select>
+          </th>
+          <th style="padding:8px 6px;"></th>
+          <th style="padding:8px 6px;"></th>
+          <th style="padding:8px 6px;"></th>
+          <th style="padding:8px 10px;min-width:100px;">
+            <select id="cmp-filter-egress" class="cmp-hdr-filter" title="Filter by egress">
+              <option value="all">All</option>
+              <option value="free">Free</option>
+              <option value="metered">Metered</option>
+              <option value="conditional">Conditional</option>
+            </select>
+          </th>
+          <th style="padding:8px 10px;min-width:150px;">
+            <select id="cmp-filter-buyer" class="cmp-hdr-filter" title="Filter by buyer tag">
+              <option value="all">Buyer tag: All</option>
+            </select>
+          </th>
+          <th style="padding:8px 10px;min-width:90px;text-align:center;"><button id="cmp-clear" class="cmp-clear-btn" type="button">Reset</button></th>
+        </tr>
       </thead>
       <tbody id="cmp-body"></tbody>
     </table>
@@ -703,7 +678,7 @@ table.stk td.grp-border-l{border-left:2px solid var(--border-ll)!important;}
 <div id="tab-archetypes" class="panel active">
   <div class="arch-intro">
     <div class="arch-title">Business Model Archetypes</div>
-    <div class="arch-sub">This table maps the 7 archetypes from `value_chain_master` to stack ownership (L0-L7) and to the four abstraction layers: BMaaS, GPUaaS, MLaaS, and WaaS. Use it as a quick strategy decoder before diving into provider-level comparisons.</div>
+    <div class="arch-sub">This table maps the core archetypes from `value_chain_master` to stack ownership (L0-L7) and to BMaaS/GPUaaS/MLaaS/WaaS. Non-core models (Hybrid Enterprise and Inference API/Model Provider) are folded by default below the core set.</div>
   </div>
   <div class="arch-wrap"><table class="arch-table" id="arch-table"></table></div>
 </div>
@@ -1471,6 +1446,7 @@ const SPACE_TIER_COLOR = {
 const ARCHETYPES = [
   {
     code:'H', name:'Hyperscaler', color:'#2563EB',
+    core:true,
     model:'Vertically integrated full-stack cloud with global compliance and managed services.',
     stack:'L0-L7 full-stack ownership',
     abstraction:['BMaaS','GPUaaS','MLaaS','WaaS'],
@@ -1478,6 +1454,7 @@ const ARCHETYPES = [
   },
   {
     code:'N', name:'Neocloud', color:'#059669',
+    core:true,
     model:'GPU-first infrastructure operator focused on cluster quality and cost-performance.',
     stack:'L0 (procurement), L1, L2, L3, partial L5',
     abstraction:['BMaaS','GPUaaS'],
@@ -1485,27 +1462,23 @@ const ARCHETYPES = [
   },
   {
     code:'A', name:'Aggregator', color:'#D97706',
+    core:true,
     model:'Asset-light marketplace/unified API that routes demand to third-party supply.',
     stack:'L3 federation, L6 marketplace/billing, L7 unified API',
     abstraction:['GPUaaS','MLaaS'],
-    examples:'Vast.ai, TensorDock, Lepton'
+    examples:'TensorDock, Lepton, multi-provider spot brokers'
   },
   {
     code:'O', name:'Orchestrator / ML Platform', color:'#7C3AED',
+    core:true,
     model:'Software-first control plane and workflow layer above provider infrastructure.',
     stack:'L3 scheduling, L4 execution, L5 MLOps, L6 observability, L7 developer API',
     abstraction:['MLaaS','GPUaaS'],
     examples:'Run:ai, Modal, Together AI, SambaNova, W&B'
   },
   {
-    code:'D', name:'DePIN', color:'#DC2626',
-    model:'Decentralized peer-supplied compute coordinated via blockchain incentives.',
-    stack:'L1 peer nodes, L3 blockchain orchestration, L4 inference/FT only',
-    abstraction:['GPUaaS'],
-    examples:'io.net, Akash, Nosana'
-  },
-  {
     code:'B', name:'Hybrid Enterprise', color:'#475569',
+    core:false,
     model:'On-prem primary cluster with cloud burst for overflow and elasticity.',
     stack:'L0 procurement, L1 on-prem DC, L2-L7 self-managed/outsourced mix',
     abstraction:['BMaaS','GPUaaS','MLaaS'],
@@ -1513,6 +1486,7 @@ const ARCHETYPES = [
   },
   {
     code:'I', name:'Inference API / Model Provider', color:'#0891B2',
+    core:false,
     model:'Model-owning provider monetizing token APIs and end-user AI products.',
     stack:'L1-L3 leased/partnered, L4-L7 owned (training, inference, app)',
     abstraction:['WaaS','MLaaS'],
@@ -1525,6 +1499,8 @@ const ABSTRACTION_COLS = ['BMaaS','GPUaaS','MLaaS','WaaS'];
 function renderArchetypes(){
   const tbl = document.getElementById('arch-table');
   if(!tbl) return;
+  const coreArchetypes=ARCHETYPES.filter(a=>a.core!==false);
+  const nonCoreArchetypes=ARCHETYPES.filter(a=>a.core===false);
   let html = '<thead><tr>'
     + '<th>Archetype</th>'
     + '<th>What This Model Sells</th>'
@@ -1533,7 +1509,7 @@ function renderArchetypes(){
     + '<th>Representative Examples</th>'
     + '</tr></thead><tbody>';
 
-  ARCHETYPES.forEach(function(a){
+  coreArchetypes.forEach(function(a){
     const tags = ABSTRACTION_COLS.map(function(col){
       const hit = a.abstraction.indexOf(col) !== -1;
       return '<span class="arch-tag' + (hit ? ' hit' : '') + '">' + col + '</span>';
@@ -1547,6 +1523,31 @@ function renderArchetypes(){
       + '<td class="arch-ex">' + a.examples + '</td>'
       + '</tr>';
   });
+
+  if(nonCoreArchetypes.length){
+    const folded=nonCoreArchetypes.map(function(a){
+      const tags = ABSTRACTION_COLS.map(function(col){
+        const hit = a.abstraction.indexOf(col) !== -1;
+        return '<span class="arch-tag' + (hit ? ' hit' : '') + '">' + col + '</span>';
+      }).join('');
+      return '<tr>'
+        + '<td><span class="arch-code" style="background:' + a.color + ';">' + a.code + '</span><span class="arch-name">' + a.name + '</span></td>'
+        + '<td>' + a.model + '</td>'
+        + '<td class="arch-stack">' + a.stack + '</td>'
+        + '<td><div class="arch-layer-tags">' + tags + '</div></td>'
+        + '<td class="arch-ex">' + a.examples + '</td>'
+        + '</tr>';
+    }).join('');
+
+    html += '<tr><td colspan="5" style="padding:10px 12px;background:var(--surf);">'
+      + '<details style="font-family:\'JetBrains Mono\',monospace;font-size:10px;color:var(--muted);">'
+      + '<summary style="cursor:pointer;">Show non-core archetypes (folded by default): Hybrid Enterprise, Inference API / Model Provider</summary>'
+      + '<table style="width:100%;border-collapse:collapse;margin-top:10px;background:var(--card);">'
+      + '<tbody>' + folded + '</tbody>'
+      + '</table>'
+      + '</details>'
+      + '</td></tr>';
+  }
 
   html += '</tbody>';
   tbl.innerHTML = html;
@@ -2299,6 +2300,87 @@ const CMP_CONFIDENCE={
   vultr:{level:'medium',note:'Business model and stack framing aligned to comparative notes and internal synthesis.'}
 };
 
+const CMP_MODEL_META={
+  h:{label:'Hyperscaler', cls:'h'},
+  n:{label:'Neocloud', cls:'n'},
+  a:{label:'Aggregator', cls:'a'},
+  o:{label:'Orchestrator', cls:'o'},
+  x:{label:'Other / Mixed', cls:'x'}
+};
+
+const CMP_USP_BULLETS={
+  coreweave:[
+    'Industry benchmark for large-scale training reliability and cluster operations.',
+    'SUNK + DPU isolation + cache optimization stack drives strong multi-thousand GPU stability.',
+    'Trade-off: premium pricing and commitment-heavy enterprise contracting.'
+  ],
+  nebius:[
+    'Closest neocloud substitute to CoreWeave with transparent commercial posture.',
+    'Open SonK/Soperator path plus preemptible capacity improves flexibility for mixed workloads.',
+    'Trade-off: smaller aggregate capacity footprint versus largest US fleets.'
+  ],
+  oracle:[
+    'AGI-neutral hyperscaler stance enables broad frontier and enterprise partnerships.',
+    'Strong reserved-capacity economics and global footprint for large multi-region programs.',
+    'Trade-off: developer ergonomics and ecosystem pull lag top AI-native platforms.'
+  ],
+  azure:[
+    'Compliance and regulated-enterprise strength remain core moat (FedRAMP/DoD-oriented buyers).',
+    'Deep Microsoft ecosystem integration supports enterprise governance and deployment scale.',
+    'Trade-off: capacity and cost predictability vary for non-anchor accounts.'
+  ],
+  gcp:[
+    'Strongest Kubernetes-first operating model among hyperscalers for ML platform teams.',
+    'TPU-native pathway and mature MLOps integration improve fit for pipeline-heavy environments.',
+    'Trade-off: NVIDIA-first user ergonomics can trail TPU-optimized workflows.'
+  ],
+  aws:[
+    'Largest enterprise ecosystem and service adjacency create significant switching friction.',
+    'Custom silicon and platform breadth support broad workload portfolios beyond pure GPU play.',
+    'Trade-off: very large training UX/network transparency remains a frequent complaint.'
+  ],
+  together:[
+    'Software and kernel specialization reinforces inference-forward positioning.',
+    'Open-model ecosystem pull and API product posture drive strong developer adoption.',
+    'Trade-off: partner footprint can introduce variability in operational consistency.'
+  ],
+  lambda:[
+    'High-demand on-demand inventory and practical researcher onboarding remain key strengths.',
+    'Hardware operations depth supports rapid cluster bring-up for iterative teams.',
+    'Trade-off: managed orchestration depth is shallower than top enterprise operators.'
+  ],
+  crusoe:[
+    'Energy-sourcing narrative and infrastructure JV momentum create board-level differentiation.',
+    'Strong fit for long-horizon reserved programs where sustainability narrative matters.',
+    'Trade-off: maturity and consistency vary by site and expansion pace.'
+  ],
+  fluidstack:[
+    'Execution-heavy operating model can deliver high quality without owning all infrastructure.',
+    'Fast engineering response and practical customer enablement support complex deployments.',
+    'Trade-off: consistency is partly coupled to partner data center quality.'
+  ]
+};
+
+function cmpModelKey(model){
+  const s=(model||'').toLowerCase();
+  if(s.includes('hyperscaler')) return 'h';
+  if(s.includes('aggregator')) return 'a';
+  if(s.includes('asset-heavy')) return 'n';
+  if(s.includes('asset-light')) return 'o';
+  if(s.includes('orchestrator')) return 'o';
+  return 'x';
+}
+
+function getUspBullets(p){
+  const preset=CMP_USP_BULLETS[p.id];
+  if(preset && preset.length) return preset;
+  return [
+    p.usp,
+    'Technical posture: ' + p.software,
+    'Trade-off: ' + p.gaps
+  ];
+}
+
 function buildComparison(){
   const tbody=document.getElementById('cmp-body');
   if(!tbody) return;
@@ -2324,6 +2406,8 @@ function buildComparison(){
   let html='';
   rows.forEach(p=>{
     const stackHtml=renderStackPresenceCells(p.stackArr);
+    const modelMeta=CMP_MODEL_META[p.modelKey]||CMP_MODEL_META.x;
+    const uspBullets=getUspBullets(p).map(x=>`<li>${x}</li>`).join('');
     const pu=priceUi[p.priceTierKey]||priceUi.other;
     const cu=contractUi[p.contractKey]||contractUi.other;
     const eu=egressUi[p.egressPolicy]||egressUi.conditional;
@@ -2337,8 +2421,8 @@ function buildComparison(){
           <span class="cmp-conf ${conf.level}">${conf.level}</span>
         </div>
       </td>
-      <td style="padding:10px 12px;font-size:11px;color:var(--sub);line-height:1.4;">${p.usp}</td>
-      <td style="padding:10px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--sub);">${p.model}</td>
+      <td style="padding:10px 12px;"><ul class="cmp-usp-list">${uspBullets}</ul></td>
+      <td style="padding:10px;"><span class="cmp-model-pill ${modelMeta.cls}">${modelMeta.label}</span></td>
       <td style="padding:10px;text-align:center;"><span style="display:inline-flex;align-items:center;justify-content:center;min-width:68px;padding:4px 8px;border-radius:999px;background:${pu.bg};color:${pu.fg};border:1px solid ${pu.bd};font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;">${pu.lbl}</span></td>
       <td style="padding:10px;text-align:center;"><span style="display:inline-flex;align-items:center;justify-content:center;min-width:84px;padding:4px 8px;border-radius:999px;background:${cu.bg};color:${cu.fg};border:1px solid ${cu.bd};font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;">${cu.lbl}</span></td>
       <td style="padding:10px;text-align:center;">${renderCmpCheck(p.k8s)}</td>
@@ -2399,11 +2483,15 @@ function toggleCmpDetail(id){
 const CMP_STATE={
   query:'',
   tier:'all',
+  model:'all',
   priceTier:'all',
   contract:'all',
   egress:'all',
   region:'all',
   buyer:'all',
+  k8sOnly:false,
+  slurmOnly:false,
+  coSchedOnly:false,
   sort:'tier-desc',
   layers:new Set()
 };
@@ -2443,6 +2531,7 @@ function getComparisonRows(){
     return {
       ...p,
       stackArr,
+      modelKey:cmpModelKey(p.model),
       priceTierKey:cmpPriceTierKey(p.pricingTier),
       contractKey:cmpContractKey(p.contractTerm),
       egressKey:cmpEgressKey(p.egressPolicy),
@@ -2452,10 +2541,14 @@ function getComparisonRows(){
 
   rows=rows.filter(p=>{
     if(CMP_STATE.tier!=='all' && p.tier!==CMP_STATE.tier) return false;
+    if(CMP_STATE.model!=='all' && p.modelKey!==CMP_STATE.model) return false;
     if(q){
       const hay=[p.name,p.usp,p.model,p.pricingTier,p.contractTerm,p.coType,p.coMaturity,p.geography,p.egressDetail,p.provenance,p.software,p.buyersText,p.workloads,p.hardware,(p.buyersTags||[]).join(' ')].join(' ').toLowerCase();
       if(!hay.includes(q)) return false;
     }
+    if(CMP_STATE.k8sOnly && !p.k8s) return false;
+    if(CMP_STATE.slurmOnly && !p.slurm) return false;
+    if(CMP_STATE.coSchedOnly && !p.coScheduling) return false;
     if(CMP_STATE.priceTier!=='all' && p.priceTierKey!==CMP_STATE.priceTier) return false;
     if(CMP_STATE.contract!=='all' && p.contractKey!==CMP_STATE.contract) return false;
     if(CMP_STATE.egress!=='all' && p.egressKey!==CMP_STATE.egress) return false;
@@ -2493,60 +2586,74 @@ function getComparisonRows(){
 function resetComparisonFilters(){
   CMP_STATE.query='';
   CMP_STATE.tier='all';
+  CMP_STATE.model='all';
   CMP_STATE.priceTier='all';
   CMP_STATE.contract='all';
   CMP_STATE.egress='all';
   CMP_STATE.region='all';
   CMP_STATE.buyer='all';
+  CMP_STATE.k8sOnly=false;
+  CMP_STATE.slurmOnly=false;
+  CMP_STATE.coSchedOnly=false;
   CMP_STATE.sort='tier-desc';
   CMP_STATE.layers.clear();
   const q=document.getElementById('cmp-filter-query'); if(q) q.value='';
   const t=document.getElementById('cmp-filter-tier'); if(t) t.value='all';
+  const m=document.getElementById('cmp-filter-model'); if(m) m.value='all';
   const p=document.getElementById('cmp-filter-price'); if(p) p.value='all';
   const ct=document.getElementById('cmp-filter-contract'); if(ct) ct.value='all';
   const e=document.getElementById('cmp-filter-egress'); if(e) e.value='all';
   const r=document.getElementById('cmp-filter-region'); if(r) r.value='all';
   const b=document.getElementById('cmp-filter-buyer'); if(b) b.value='all';
+  const k8=document.getElementById('cmp-filter-k8s'); if(k8) k8.checked=false;
+  const sl=document.getElementById('cmp-filter-slurm'); if(sl) sl.checked=false;
+  const cs=document.getElementById('cmp-filter-cosched'); if(cs) cs.checked=false;
   const o=document.getElementById('cmp-sort'); if(o) o.value='tier-desc';
-  document.querySelectorAll('#cmp-stack-filter .cmp-stack-btn').forEach(btn=>btn.classList.remove('active'));
+  document.querySelectorAll('.cmp-filter-layer').forEach(chk=>{ chk.checked=false; });
   buildComparison();
 }
 
 function initComparisonControls(){
   const q=document.getElementById('cmp-filter-query');
   const t=document.getElementById('cmp-filter-tier');
+  const m=document.getElementById('cmp-filter-model');
   const p=document.getElementById('cmp-filter-price');
   const ct=document.getElementById('cmp-filter-contract');
   const e=document.getElementById('cmp-filter-egress');
   const r=document.getElementById('cmp-filter-region');
   const b=document.getElementById('cmp-filter-buyer');
+  const k8=document.getElementById('cmp-filter-k8s');
+  const sl=document.getElementById('cmp-filter-slurm');
+  const cs=document.getElementById('cmp-filter-cosched');
   const o=document.getElementById('cmp-sort');
   const c=document.getElementById('cmp-clear');
-  if(!q || !t || !p || !ct || !e || !r || !b || !o || !c) return;
+  if(!q || !t || !m || !p || !ct || !e || !r || !b || !k8 || !sl || !cs || !o || !c) return;
 
   const tags=[...new Set(COMPARISON_DATA.flatMap(x=>x.buyersTags||[]))].sort((a,b)=>a.localeCompare(b));
   b.innerHTML='<option value="all">Buyer Tag: All</option>'+tags.map(tag=>`<option value="${tag}">${tag}</option>`).join('');
 
   q.addEventListener('input',()=>{CMP_STATE.query=q.value||''; buildComparison();});
   t.addEventListener('change',()=>{CMP_STATE.tier=t.value; buildComparison();});
+  m.addEventListener('change',()=>{CMP_STATE.model=m.value; buildComparison();});
   p.addEventListener('change',()=>{CMP_STATE.priceTier=p.value; buildComparison();});
   ct.addEventListener('change',()=>{CMP_STATE.contract=ct.value; buildComparison();});
   e.addEventListener('change',()=>{CMP_STATE.egress=e.value; buildComparison();});
   r.addEventListener('change',()=>{CMP_STATE.region=r.value; buildComparison();});
   b.addEventListener('change',()=>{CMP_STATE.buyer=b.value; buildComparison();});
+  k8.addEventListener('change',()=>{CMP_STATE.k8sOnly=!!k8.checked; buildComparison();});
+  sl.addEventListener('change',()=>{CMP_STATE.slurmOnly=!!sl.checked; buildComparison();});
+  cs.addEventListener('change',()=>{CMP_STATE.coSchedOnly=!!cs.checked; buildComparison();});
   o.addEventListener('change',()=>{CMP_STATE.sort=o.value; buildComparison();});
   c.addEventListener('click',resetComparisonFilters);
 
-  document.querySelectorAll('#cmp-stack-filter .cmp-stack-btn').forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      const idx=Number(btn.dataset.layer);
+  document.querySelectorAll('.cmp-filter-layer').forEach(chk=>{
+    chk.addEventListener('change',()=>{
+      const idx=Number(chk.dataset.layer);
       if(Number.isNaN(idx)) return;
       if(CMP_STATE.layers.has(idx)){
         CMP_STATE.layers.delete(idx);
-        btn.classList.remove('active');
       }else{
         CMP_STATE.layers.add(idx);
-        btn.classList.add('active');
       }
       buildComparison();
     });

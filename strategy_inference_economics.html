@@ -40,6 +40,7 @@ body {
   font-family: var(--body);
   font-size: 15px;
   line-height: 1.65;
+  padding-top: 24px;
   overflow-x: hidden;
 }
 
@@ -1781,7 +1782,7 @@ let GPUS = {
     chassis_u: 4, gpu_per_chassis: 4,      // 4× per 4U custom server (with spacing for cooling)
     ecc: false, datacenter: false, sustained_eff: 0.76,
     color: '#16a34a',
-    note: 'Consumer GPU. NO ECC memory (silent bit errors under sustained load). Thermal throttles at 85°C. No datacenter warranty. Only available on Vast.ai/DePIN — not major clouds.'
+    note: 'Consumer GPU. NO ECC memory (silent bit errors under sustained load). Thermal throttles at 85°C. No datacenter warranty. Typically available via marketplace or self-hosted channels, not major clouds.'
   },
   'H100 PCIe': {
     vram: 80, bandwidth: 2000, tflops: 756, tdp: 350,
