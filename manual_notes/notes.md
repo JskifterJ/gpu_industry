@@ -1,3 +1,9 @@
+# **Notes (20/03)**
+- what are the dimensions we could position ourselves in? 
+	- aggregating the aggregators; platform of cloud compute platforms; integrated with all; input requirements; quote is sent to all 'aggregators' with given constraints; return with offer
+	- asset-heavy: we source our own compute, datacenter colocation
+	- asset-light: orchestration software or aggregation -> if aggregation, can support datacenter on hedging on compute hardware acquisitions. 
+
 # **Notes (14/03)**
 - SLUNK/Soperator only relevant for large-scale MLops/training workloads across thousands of GPUs across several days/weeks 
 
