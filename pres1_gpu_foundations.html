@@ -722,6 +722,16 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
       </div>
     </div>
 
+    <div class="anim anim-2" style="display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:-6px;">
+      <span class="tag tag-llm" style="padding:3px 8px;">Prompt</span>
+      <span style="font-family:var(--mono);font-size:10px;color:var(--dim2);">→</span>
+      <span class="tag tag-sw" style="padding:3px 8px;">Token IDs</span>
+      <span style="font-family:var(--mono);font-size:10px;color:var(--dim2);">→</span>
+      <span class="tag tag-hw" style="padding:3px 8px;">Embeddings</span>
+      <span style="font-family:var(--mono);font-size:10px;color:var(--dim2);">→</span>
+      <span class="tag" style="padding:3px 8px;color:var(--sw);background:var(--sw-dim);border:1px solid var(--sw-mid);">Prefill / Decode</span>
+    </div>
+
     <div class="anim anim-3" style="margin-top:-4px;background:rgba(245,158,11,0.10);border:1px solid rgba(245,158,11,0.30);border-left:3px solid var(--llm);border-radius:4px;padding:8px 10px;font-family:var(--mono);font-size:8.5px;color:var(--text);line-height:1.6;">
       Prompt in focus: <span style="color:var(--llm);font-weight:600;">"The capital of France is ___"</span>. Use <strong>Prefill</strong> to process all prompt tokens in parallel, then <strong>Decode</strong> to generate one token at a time.
     </div>
@@ -740,6 +750,12 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
             <button id="emb-btn-prefill" onclick="embSetPhase('prefill')" style="font-family:var(--mono);font-size:8px;padding:4px 10px;border-radius:3px;cursor:pointer;border:1px solid var(--sw);background:rgba(13,148,136,0.15);color:var(--sw);">Prefill (parallel)</button>
             <button id="emb-btn-decode" onclick="embSetPhase('decode')" style="font-family:var(--mono);font-size:8px;padding:4px 10px;border-radius:3px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--dim);">Decode (sequential)</button>
           </div>
+        </div>
+        <div id="emb-milestones" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;">
+          <div data-ms="grammar" style="font-family:var(--mono);font-size:7.5px;color:var(--dim2);text-transform:uppercase;letter-spacing:0.08em;border:1px solid var(--border);border-radius:3px;padding:4px 5px;text-align:center;">Grammar active</div>
+          <div data-ms="relation" style="font-family:var(--mono);font-size:7.5px;color:var(--dim2);text-transform:uppercase;letter-spacing:0.08em;border:1px solid var(--border);border-radius:3px;padding:4px 5px;text-align:center;">Relation active</div>
+          <div data-ms="knowledge" style="font-family:var(--mono);font-size:7.5px;color:var(--dim2);text-transform:uppercase;letter-spacing:0.08em;border:1px solid var(--border);border-radius:3px;padding:4px 5px;text-align:center;">Knowledge active</div>
+          <div data-ms="output" style="font-family:var(--mono);font-size:7.5px;color:var(--dim2);text-transform:uppercase;letter-spacing:0.08em;border:1px solid var(--border);border-radius:3px;padding:4px 5px;text-align:center;">Output head active</div>
         </div>
         <canvas id="emb-canvas" style="width:100%;height:220px;display:block;border-radius:4px;border:1px solid var(--border);background:var(--bg3);"></canvas>
         <div style="display:grid;grid-template-columns:auto 1fr auto auto;gap:8px;align-items:center;">
@@ -762,6 +778,7 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
         <div id="emb-prompt-focus" style="font-family:var(--mono);font-size:8px;line-height:1.55;color:var(--llm);background:var(--llm-dim);border:1px solid var(--llm-mid);border-radius:3px;padding:6px 7px;">Prompt: "The capital of France is ___"</div>
         <div id="emb-probs" style="display:flex;flex-direction:column;gap:5px;flex:1;"></div>
         <div id="emb-process" style="font-family:var(--mono);font-size:8px;color:var(--muted);line-height:1.55;background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:7px 8px;"></div>
+        <div id="emb-talktrack" style="font-family:var(--mono);font-size:8px;color:var(--muted);line-height:1.55;background:var(--bg3);border-left:2px solid var(--sw);border-radius:3px;padding:7px 8px;"></div>
         <div style="background:var(--bg3);border-radius:3px;padding:7px;border-left:2px solid var(--sw);">
           <div id="emb-insight" style="font-family:var(--mono);font-size:8px;color:var(--muted);line-height:1.6;">Layer 1: raw embeddings, no context yet — all tokens roughly equal</div>
         </div>
@@ -894,6 +911,23 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
       if(stageName) stageName.textContent = stage.name;
       var stageDesc = document.getElementById('emb-stage-desc');
       if(stageDesc) stageDesc.textContent = stage.desc;
+
+      var msWrap = document.getElementById('emb-milestones');
+      if(msWrap){
+        var grammarOn = EMB.layer >= 1;
+        var relationOn = EMB.layer >= 37;
+        var knowledgeOn = EMB.layer >= 57;
+        var outputOn = EMB.layer >= 73;
+        var flags = { grammar: grammarOn, relation: relationOn, knowledge: knowledgeOn, output: outputOn };
+        Array.prototype.forEach.call(msWrap.children, function(ch){
+          var key = ch.getAttribute('data-ms');
+          var on = !!flags[key];
+          ch.style.color = on ? 'var(--text)' : 'var(--dim2)';
+          ch.style.borderColor = on ? 'var(--sw-mid)' : 'var(--border)';
+          ch.style.background = on ? 'var(--sw-dim)' : 'transparent';
+        });
+      }
+
       var pf = document.getElementById('emb-prompt-focus');
       if(pf){
         if(EMB.phase === 'prefill'){
@@ -907,10 +941,22 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
       if(process){
         var ranked = probs.slice().sort(function(a,b){ return b.prob - a.prob; });
         var lead = ranked[0], second = ranked[1];
+        var gap = Math.max(0, (lead.prob - second.prob) * 100);
         process.innerHTML = ''
-          + 'h(layer ' + EMB.layer + ') · output head projection:<br>'
-          + 'logit(' + lead.label + ')=' + lead.logit.toFixed(2) + ', logit(' + second.label + ')=' + second.logit.toFixed(2) + '<br>'
-          + '<span style="color:var(--sw);font-weight:600;">Top token:</span> ' + lead.label + ' (' + (lead.prob*100).toFixed(1) + '%)';
+          + '<span style="color:var(--sw);font-weight:600;">Top candidate now:</span> ' + lead.label + ' (' + (lead.prob*100).toFixed(1) + '%)<br>'
+          + 'Runner-up: ' + second.label + ' (' + (second.prob*100).toFixed(1) + '%)<br>'
+          + 'Confidence gap: ' + gap.toFixed(1) + ' pts';
+      }
+
+      var talk = document.getElementById('emb-talktrack');
+      if(talk){
+        var line = '';
+        if(EMB.layer <= 16) line = 'Presenter line: the model is mostly building sentence structure and local grammar.';
+        else if(EMB.layer <= 36) line = 'Presenter line: phrase-level meaning forms; key words start acting as one concept.';
+        else if(EMB.layer <= 56) line = 'Presenter line: attention routes to relevant context such as "capital" and "France".';
+        else if(EMB.layer <= 72) line = 'Presenter line: trained knowledge is now pushing strongly toward factual candidates.';
+        else line = 'Presenter line: output head aligns the hidden state so one next-token choice dominates.';
+        talk.textContent = line;
       }
     }
 
