@@ -2902,62 +2902,56 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
 
     <div class="anim anim-3" style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:12px 14px;">
       <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:8px;">
-        <div style="font-family:var(--mono);font-size:8.5px;color:var(--dim);text-transform:uppercase;letter-spacing:0.12em;">Example scenario</div>
-        <div style="font-family:var(--mono);font-size:8.5px;color:var(--text);">Llama 70B FP8 · 8x H100 · Tensor parallel = 8 · Context = 8k · Batch = 64 users</div>
+        <div style="font-family:var(--mono);font-size:8.5px;color:var(--dim);text-transform:uppercase;letter-spacing:0.12em;">Configurable scenario</div>
+        <div id="dgx-scenario-line" style="font-family:var(--mono);font-size:8.5px;color:var(--text);">Llama 70B FP8 · 8x H100 · Tensor parallel = 8 · Context = 8k · Batch = 64 users</div>
+      </div>
+
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;" id="dgx-scenario-btns">
+        <button type="button" onclick="dgxSetScenario('chat')" style="font-family:var(--mono);font-size:8px;padding:4px 8px;border-radius:999px;border:1px solid var(--border);background:var(--bg3);color:var(--dim);cursor:pointer;">Light chat</button>
+        <button type="button" onclick="dgxSetScenario('standard')" style="font-family:var(--mono);font-size:8px;padding:4px 8px;border-radius:999px;border:1px solid var(--border);background:var(--bg3);color:var(--dim);cursor:pointer;">Typical production</button>
+        <button type="button" onclick="dgxSetScenario('agentic')" style="font-family:var(--mono);font-size:8px;padding:4px 8px;border-radius:999px;border:1px solid var(--border);background:var(--bg3);color:var(--dim);cursor:pointer;">Agentic / long context</button>
+        <button type="button" onclick="dgxSetScenario('heavy')" style="font-family:var(--mono);font-size:8px;padding:4px 8px;border-radius:999px;border:1px solid var(--border);background:var(--bg3);color:var(--dim);cursor:pointer;">Heavy bottleneck</button>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:7px 9px;">
+        <div style="font-family:var(--mono);font-size:8px;color:var(--dim);text-transform:uppercase;">Output tokens</div>
+        <input type="range" id="dgx-out" min="100" max="2000" step="50" value="500" style="flex:1;accent-color:var(--sw);" oninput="dgxSetOutput(this.value)">
+        <div id="dgx-out-lbl" style="font-family:var(--mono);font-size:10px;color:var(--sw);font-weight:600;min-width:40px;text-align:right;">500</div>
       </div>
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px;">
-        <div style="background:rgba(180,83,9,0.06);border:1px solid rgba(180,83,9,0.2);border-radius:4px;padding:9px 10px;">
-          <div style="font-family:var(--mono);font-size:8px;color:var(--llm);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:7px;">HGX data path (slower sync)</div>
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:4px;">
-            <span class="tag" style="background:var(--llm-dim);border:1px solid var(--llm-mid);color:var(--llm);">GPU</span>
-            <span style="font-family:var(--mono);font-size:9px;color:var(--red);">→ PCIe → CPU/Switch → PCIe →</span>
-            <span class="tag" style="background:var(--llm-dim);border:1px solid var(--llm-mid);color:var(--llm);">GPU</span>
-          </div>
-          <div style="margin-top:7px;font-size:10px;color:var(--muted);line-height:1.5;">Extra hops increase all-reduce time. During this sync, Tensor Cores wait.</div>
-        </div>
-        <div style="background:rgba(13,148,136,0.06);border:1px solid var(--sw-mid);border-radius:4px;padding:9px 10px;">
-          <div style="font-family:var(--mono);font-size:8px;color:var(--sw);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:7px;">DGX data path (faster sync)</div>
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:4px;">
-            <span class="tag" style="background:var(--sw-dim);border:1px solid var(--sw-mid);color:var(--sw);">GPU</span>
-            <span style="font-family:var(--mono);font-size:9px;color:var(--green);">→ NVLink switch fabric →</span>
-            <span class="tag" style="background:var(--sw-dim);border:1px solid var(--sw-mid);color:var(--sw);">GPU</span>
-          </div>
-          <div style="margin-top:7px;font-size:10px;color:var(--muted);line-height:1.5;">Low-latency all-reduce keeps sync overhead near-zero versus compute time.</div>
-        </div>
-      </div>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
         <div style="background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:9px 10px;">
           <div style="font-family:var(--mono);font-size:8px;color:var(--dim);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;">HGX per-token timeline (ms)</div>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">
             <div style="width:92px;font-family:var(--mono);font-size:8px;color:var(--muted);">Compute</div>
-            <div style="flex:1;height:13px;background:var(--bg4);border-radius:2px;overflow:hidden;"><div class="bar-fill" style="--w:76.5%;width:var(--w);background:var(--blue);"></div></div>
-            <div style="font-family:var(--mono);font-size:8px;color:var(--blue);width:42px;text-align:right;">2.6</div>
+            <div style="flex:1;height:13px;background:var(--bg4);border-radius:2px;overflow:hidden;"><div id="dgx-hgx-comp-bar" class="bar-fill" style="--w:76%;width:var(--w);background:var(--blue);"></div></div>
+            <div id="dgx-hgx-comp" style="font-family:var(--mono);font-size:8px;color:var(--blue);width:42px;text-align:right;">2.6</div>
           </div>
           <div style="display:flex;align-items:center;gap:8px;">
             <div style="width:92px;font-family:var(--mono);font-size:8px;color:var(--muted);">All-reduce</div>
-            <div style="flex:1;height:13px;background:var(--bg4);border-radius:2px;overflow:hidden;"><div class="bar-fill" style="--w:23.5%;width:var(--w);background:var(--red);"></div></div>
-            <div style="font-family:var(--mono);font-size:8px;color:var(--red);width:42px;text-align:right;">0.8</div>
+            <div style="flex:1;height:13px;background:var(--bg4);border-radius:2px;overflow:hidden;"><div id="dgx-hgx-ar-bar" class="bar-fill" style="--w:24%;width:var(--w);background:var(--red);"></div></div>
+            <div id="dgx-hgx-ar" style="font-family:var(--mono);font-size:8px;color:var(--red);width:42px;text-align:right;">0.8</div>
           </div>
-          <div style="margin-top:7px;font-family:var(--mono);font-size:8px;color:var(--muted);">Total: 3.4 ms/token · GPU utilization proxy: <span style="color:var(--llm);">~76%</span></div>
+          <div id="dgx-hgx-total" style="margin-top:7px;font-family:var(--mono);font-size:8px;color:var(--muted);">Total: 3.4 ms/token · GPU utilization proxy: ~76%</div>
         </div>
 
         <div style="background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:9px 10px;">
           <div style="font-family:var(--mono);font-size:8px;color:var(--dim);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;">DGX per-token timeline (ms)</div>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">
             <div style="width:92px;font-family:var(--mono);font-size:8px;color:var(--muted);">Compute</div>
-            <div style="flex:1;height:13px;background:var(--bg4);border-radius:2px;overflow:hidden;"><div class="bar-fill" style="--w:97.7%;width:var(--w);background:var(--blue);"></div></div>
-            <div style="font-family:var(--mono);font-size:8px;color:var(--blue);width:42px;text-align:right;">2.6</div>
+            <div style="flex:1;height:13px;background:var(--bg4);border-radius:2px;overflow:hidden;"><div id="dgx-dgx-comp-bar" class="bar-fill" style="--w:98%;width:var(--w);background:var(--blue);"></div></div>
+            <div id="dgx-dgx-comp" style="font-family:var(--mono);font-size:8px;color:var(--blue);width:42px;text-align:right;">2.6</div>
           </div>
           <div style="display:flex;align-items:center;gap:8px;">
             <div style="width:92px;font-family:var(--mono);font-size:8px;color:var(--muted);">All-reduce</div>
-            <div style="flex:1;height:13px;background:var(--bg4);border-radius:2px;overflow:hidden;"><div class="bar-fill" style="--w:2.3%;width:var(--w);background:var(--green);"></div></div>
-            <div style="font-family:var(--mono);font-size:8px;color:var(--green);width:42px;text-align:right;">0.06</div>
+            <div style="flex:1;height:13px;background:var(--bg4);border-radius:2px;overflow:hidden;"><div id="dgx-dgx-ar-bar" class="bar-fill" style="--w:2%;width:var(--w);background:var(--green);"></div></div>
+            <div id="dgx-dgx-ar" style="font-family:var(--mono);font-size:8px;color:var(--green);width:42px;text-align:right;">0.06</div>
           </div>
-          <div style="margin-top:7px;font-family:var(--mono);font-size:8px;color:var(--muted);">Total: 2.66 ms/token · GPU utilization proxy: <span style="color:var(--green);">~98%</span></div>
+          <div id="dgx-dgx-total" style="margin-top:7px;font-family:var(--mono);font-size:8px;color:var(--muted);">Total: 2.66 ms/token · GPU utilization proxy: ~98%</div>
         </div>
       </div>
+
+      <div id="dgx-penalty-box" style="background:rgba(220,38,38,0.08);border:1px solid rgba(220,38,38,0.2);border-radius:4px;padding:9px 10px;font-family:var(--mono);font-size:8.5px;color:var(--text);line-height:1.7;"></div>
     </div>
 
     <div class="anim anim-4" style="background:rgba(220,38,38,0.06);border:1px solid rgba(220,38,38,0.2);border-left:3px solid var(--red);border-radius:4px;padding:10px 14px;">
@@ -2966,6 +2960,132 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
     </div>
   </div>
 </div>
+
+<script>
+(function(){
+  var DGXCFG = {
+    scenario: 'standard',
+    outputTokens: 500,
+    presets: {
+      chat: {
+        label: 'Llama 70B FP8 · 8x H100 · TP=8 · Context=4k · Batch=8 users',
+        computeMs: 2.1,
+        hgxArMs: 0.35,
+        dgxArMs: 0.03
+      },
+      standard: {
+        label: 'Llama 70B FP8 · 8x H100 · TP=8 · Context=8k · Batch=64 users',
+        computeMs: 2.6,
+        hgxArMs: 0.80,
+        dgxArMs: 0.06
+      },
+      agentic: {
+        label: 'Llama 70B FP8 · 8x H100 · TP=8 · Context=24k · Batch=48 users',
+        computeMs: 3.1,
+        hgxArMs: 1.70,
+        dgxArMs: 0.11
+      },
+      heavy: {
+        label: 'Llama 70B FP8 · 8x H100 · TP=8 · Context=32k · Batch=96 users',
+        computeMs: 3.8,
+        hgxArMs: 3.20,
+        dgxArMs: 0.18
+      }
+    }
+  };
+
+  function byId(id){ return document.getElementById(id); }
+
+  function setBar(id, pct){
+    var el = byId(id);
+    if(!el) return;
+    var v = Math.max(0, Math.min(100, pct));
+    el.style.width = v.toFixed(1) + '%';
+    el.style.setProperty('--w', v.toFixed(1) + '%');
+  }
+
+  function fmtMs(v){ return v.toFixed(2).replace(/\.00$/, '') + 'ms'; }
+  function fmtSec(v){ return v.toFixed(2).replace(/\.00$/, '') + 's'; }
+
+  function renderDgxScenarioButtons(){
+    var wrap = byId('dgx-scenario-btns');
+    if(!wrap) return;
+    var names = [
+      {k:'chat', t:'Light chat'},
+      {k:'standard', t:'Typical production'},
+      {k:'agentic', t:'Agentic / long context'},
+      {k:'heavy', t:'Heavy bottleneck'}
+    ];
+    wrap.innerHTML = names.map(function(n){
+      var active = n.k === DGXCFG.scenario;
+      return '<button type="button" onclick="dgxSetScenario(\''+n.k+'\')" style="font-family:var(--mono);font-size:8px;padding:4px 8px;border-radius:999px;border:1px solid '+(active?'var(--sw)':'var(--border)')+';background:'+(active?'rgba(13,148,136,0.14)':'var(--bg3)')+';color:'+(active?'var(--sw)':'var(--dim)')+';cursor:pointer;">'+n.t+'</button>';
+    }).join('');
+  }
+
+  function dgxRender(){
+    var p = DGXCFG.presets[DGXCFG.scenario] || DGXCFG.presets.standard;
+    var out = DGXCFG.outputTokens;
+    var hgxTotal = p.computeMs + p.hgxArMs;
+    var dgxTotal = p.computeMs + p.dgxArMs;
+
+    var hgxCompPct = (p.computeMs / hgxTotal) * 100;
+    var hgxArPct = 100 - hgxCompPct;
+    var dgxCompPct = (p.computeMs / dgxTotal) * 100;
+    var dgxArPct = 100 - dgxCompPct;
+
+    var hgxUtil = (p.computeMs / hgxTotal) * 100;
+    var dgxUtil = (p.computeMs / dgxTotal) * 100;
+
+    var hgxPromptSec = (hgxTotal * out) / 1000;
+    var dgxPromptSec = (dgxTotal * out) / 1000;
+    var penaltySec = hgxPromptSec - dgxPromptSec;
+    var slowerPct = dgxPromptSec > 0 ? (penaltySec / dgxPromptSec) * 100 : 0;
+    var hgxSyncSec = (p.hgxArMs * out) / 1000;
+    var dgxSyncSec = (p.dgxArMs * out) / 1000;
+
+    var outLbl = byId('dgx-out-lbl');
+    if(outLbl) outLbl.textContent = String(out);
+    var scenLbl = byId('dgx-scenario-line');
+    if(scenLbl) scenLbl.textContent = p.label;
+
+    var hgxComp = byId('dgx-hgx-comp'); if(hgxComp) hgxComp.textContent = p.computeMs.toFixed(2).replace(/\.00$/,'');
+    var hgxAr = byId('dgx-hgx-ar'); if(hgxAr) hgxAr.textContent = p.hgxArMs.toFixed(2).replace(/\.00$/,'');
+    var dgxComp = byId('dgx-dgx-comp'); if(dgxComp) dgxComp.textContent = p.computeMs.toFixed(2).replace(/\.00$/,'');
+    var dgxAr = byId('dgx-dgx-ar'); if(dgxAr) dgxAr.textContent = p.dgxArMs.toFixed(2).replace(/\.00$/,'');
+
+    setBar('dgx-hgx-comp-bar', hgxCompPct);
+    setBar('dgx-hgx-ar-bar', hgxArPct);
+    setBar('dgx-dgx-comp-bar', dgxCompPct);
+    setBar('dgx-dgx-ar-bar', dgxArPct);
+
+    var hgxTotalEl = byId('dgx-hgx-total');
+    if(hgxTotalEl) hgxTotalEl.innerHTML = 'Total: ' + fmtMs(hgxTotal) + '/token · GPU utilization proxy: <span style="color:var(--llm);">~' + hgxUtil.toFixed(0) + '%</span>';
+    var dgxTotalEl = byId('dgx-dgx-total');
+    if(dgxTotalEl) dgxTotalEl.innerHTML = 'Total: ' + fmtMs(dgxTotal) + '/token · GPU utilization proxy: <span style="color:var(--green);">~' + dgxUtil.toFixed(0) + '%</span>';
+
+    var box = byId('dgx-penalty-box');
+    if(box){
+      box.innerHTML =
+        '<strong style="color:var(--red);">Relatable penalty at ' + out + ' output tokens:</strong> HGX takes <span style="color:var(--text);">' + fmtSec(hgxPromptSec) + '</span> vs DGX <span style="color:var(--text);">' + fmtSec(dgxPromptSec) + '</span>.<br>'
+        + 'That is <span style="color:var(--red);">+' + fmtSec(penaltySec) + '</span> per prompt (~' + slowerPct.toFixed(0) + '% slower). Sync-only time: HGX ' + fmtSec(hgxSyncSec) + ' vs DGX ' + fmtSec(dgxSyncSec) + '.';
+    }
+
+    renderDgxScenarioButtons();
+  }
+
+  window.dgxSetScenario = function(key){
+    DGXCFG.scenario = DGXCFG.presets[key] ? key : 'standard';
+    dgxRender();
+  };
+
+  window.dgxSetOutput = function(v){
+    DGXCFG.outputTokens = Math.max(100, Math.min(2000, parseInt(v, 10) || 500));
+    dgxRender();
+  };
+
+  setTimeout(dgxRender, 0);
+})();
+</script>
 
 
 <div class="slide" id="sEcon" data-slide="13">
@@ -2993,6 +3113,7 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
 
     <!-- Controls row -->
     <div class="anim anim-2" style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:12px 16px;">
+      <div id="econ-scenario-btns" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;"></div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr) repeat(2,1fr);gap:14px;align-items:end;">
         <!-- Model -->
         <div>
@@ -3106,7 +3227,15 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
     };
 
     var _model = '70B', _prec = 'FP8';
+    var _econScenario = 'chat';
     var PUE = 1.4, ELEC = 0.12, RACK_PER_U_MO = 80;
+
+    var ECON_SCENARIOS = {
+      chat:      {label:'Short chat', model:'70B', prec:'FP8',  batch:8,   input:1200,  output:300},
+      rag:       {label:'RAG + tools', model:'70B', prec:'FP8',  batch:24,  input:8000,  output:600},
+      agentic:   {label:'Agentic long context', model:'70B', prec:'BF16', batch:16,  input:20000, output:900},
+      throughput:{label:'Batch throughput', model:'moe', prec:'FP8', batch:128, input:1500, output:350}
+    };
 
     // ── Render buttons ─────────────────────────────────────────────
     function renderModelBtns(){
@@ -3127,8 +3256,37 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
       }).join('');
     }
 
+    function renderScenarioBtns(){
+      var el = document.getElementById('econ-scenario-btns');
+      if(!el) return;
+      var order = ['chat','rag','agentic','throughput'];
+      el.innerHTML = order.map(function(k){
+        var s = ECON_SCENARIOS[k];
+        var active = _econScenario === k;
+        return '<button type="button" onclick="econApplyScenario(\''+k+'\')" style="font-family:var(--mono);font-size:8px;padding:4px 9px;border-radius:999px;cursor:pointer;border:1px solid '+(active?'var(--sw)':'var(--border)')+';background:'+(active?'rgba(13,148,136,0.14)':'var(--bg3)')+';color:'+(active?'var(--sw)':'var(--dim)')+';">'+s.label+'</button>';
+      }).join('');
+    }
+
     window.econSetModel = function(m){ _model=m; renderModelBtns(); econUpdate(); };
     window.econSetPrec  = function(p){ _prec=p;  renderPrecBtns();  econUpdate(); };
+    window.econApplyScenario = function(name){
+      var s = ECON_SCENARIOS[name] || ECON_SCENARIOS.chat;
+      _econScenario = name in ECON_SCENARIOS ? name : 'chat';
+      _model = s.model;
+      _prec = s.prec;
+
+      var batchEl = document.getElementById('econ-batch');
+      var inEl = document.getElementById('econ-in');
+      var outEl = document.getElementById('econ-out');
+      if(batchEl) batchEl.value = s.batch;
+      if(inEl) inEl.value = s.input;
+      if(outEl) outEl.value = s.output;
+
+      renderModelBtns();
+      renderPrecBtns();
+      renderScenarioBtns();
+      econUpdate();
+    };
 
     // ── Calc ──────────────────────────────────────────────────────
     function calc(cfgKey, model, prec, batch, inputTok, outputTok){
@@ -3401,7 +3559,8 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
 
     renderModelBtns();
     renderPrecBtns();
-    econUpdate();
+    renderScenarioBtns();
+    econApplyScenario('chat');
   })();
   </script>
 
