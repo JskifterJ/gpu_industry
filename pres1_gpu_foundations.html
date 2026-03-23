@@ -809,7 +809,7 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
           <div data-ms="knowledge" style="font-family:var(--mono);font-size:7.5px;color:var(--dim2);text-transform:uppercase;letter-spacing:0.08em;border:1px solid var(--border);border-radius:3px;padding:4px 5px;text-align:center;">Knowledge active</div>
           <div data-ms="output" style="font-family:var(--mono);font-size:7.5px;color:var(--dim2);text-transform:uppercase;letter-spacing:0.08em;border:1px solid var(--border);border-radius:3px;padding:4px 5px;text-align:center;">Output head active</div>
         </div>
-        <canvas id="emb-canvas" style="width:100%;height:220px;display:block;border-radius:4px;border:1px solid var(--border);background:var(--bg3);"></canvas>
+        <canvas id="emb-canvas" style="width:100%;height:290px;display:block;border-radius:4px;border:1px solid var(--border);background:var(--bg3);"></canvas>
         <div style="display:grid;grid-template-columns:auto 1fr auto auto;gap:8px;align-items:center;">
           <button id="emb-play-btn" onclick="embTogglePlay()" style="font-family:var(--mono);font-size:8px;padding:4px 10px;border-radius:3px;border:1px solid var(--border);background:var(--bg3);cursor:pointer;color:var(--text);white-space:nowrap;">▶ Play layers</button>
           <input type="range" id="emb-layer" min="1" max="80" value="1" style="width:100%;accent-color:var(--sw);" oninput="embSetLayer(parseInt(this.value),true)">
@@ -863,24 +863,24 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
     // Token cluster positions in 3D (x, y, z) normalised [-1, 1]
     // Groups: countries (blue), capitals (teal), verbs (purple), adj (amber), our prompt tokens
     var CLUSTERS = [
-      // Countries
-      {label:'France',   x:-0.45, y: 0.30, z: 0.10, group:'country', isPrompt:true,  color:'#3B82F6'},
-      {label:'Germany',  x:-0.35, y: 0.40, z:-0.05, group:'country', isPrompt:false, color:'#60A5FA'},
-      {label:'Italy',    x:-0.50, y: 0.20, z: 0.20, group:'country', isPrompt:false, color:'#93C5FD'},
-      {label:'Spain',    x:-0.30, y: 0.35, z: 0.15, group:'country', isPrompt:false, color:'#BFDBFE'},
-      // Capitals
-      {label:'Paris',    x: 0.35, y: 0.30, z: 0.05, group:'capital', isPrompt:false, color:'#14B8A6'},
-      {label:'Berlin',   x: 0.45, y: 0.40, z:-0.10, group:'capital', isPrompt:false, color:'#2DD4BF'},
-      {label:'Rome',     x: 0.40, y: 0.20, z: 0.20, group:'capital', isPrompt:false, color:'#5EEAD4'},
-      {label:'Madrid',   x: 0.30, y: 0.35, z: 0.10, group:'capital', isPrompt:false, color:'#99F6E4'},
-      // Function words (our prompt)
-      {label:'"The"',    x:-0.10, y:-0.50, z:-0.20, group:'func',    isPrompt:true,  color:'#6EE7B7'},
-      {label:'"capital"',x:-0.15, y:-0.10, z: 0.30, group:'abstract',isPrompt:true,  color:'#93C5FD'},
-      {label:'"of"',     x: 0.00, y:-0.40, z: 0.00, group:'func',    isPrompt:true,  color:'#94A3B8'},
-      {label:'"is"',     x: 0.10, y:-0.45, z:-0.10, group:'copula',  isPrompt:true,  color:'#FCA5A5'},
-      // Output candidates
-      {label:'→ Paris?', x: 0.35, y: 0.30, z: 0.05, group:'predict', isPrompt:false, color:'#F59E0B'},
-      {label:'→ Lyon?',  x: 0.28, y: 0.28, z: 0.12, group:'predict', isPrompt:false, color:'#FCD34D'},
+      // Countries (upper-left semantic region)
+      {label:'France',   x:-0.72, y: 0.56, z: 0.10, group:'country', isPrompt:true,  color:'#3B82F6'},
+      {label:'Germany',  x:-0.64, y: 0.76, z:-0.05, group:'country', isPrompt:false, color:'#60A5FA'},
+      {label:'Italy',    x:-0.82, y: 0.40, z: 0.20, group:'country', isPrompt:false, color:'#93C5FD'},
+      {label:'Spain',    x:-0.56, y: 0.62, z: 0.15, group:'country', isPrompt:false, color:'#BFDBFE'},
+      // Capitals (upper-right semantic region)
+      {label:'Paris',    x: 0.58, y: 0.56, z: 0.05, group:'capital', isPrompt:false, color:'#14B8A6'},
+      {label:'Berlin',   x: 0.70, y: 0.78, z:-0.10, group:'capital', isPrompt:false, color:'#2DD4BF'},
+      {label:'Rome',     x: 0.78, y: 0.42, z: 0.20, group:'capital', isPrompt:false, color:'#5EEAD4'},
+      {label:'Madrid',   x: 0.50, y: 0.62, z: 0.10, group:'capital', isPrompt:false, color:'#99F6E4'},
+      // Function words / syntactic tokens (lower-left)
+      {label:'"The"',    x:-0.72, y:-0.62, z:-0.20, group:'func',    isPrompt:true,  color:'#6EE7B7'},
+      {label:'"capital"',x:-0.46, y:-0.26, z: 0.30, group:'abstract',isPrompt:true,  color:'#93C5FD'},
+      {label:'"of"',     x:-0.24, y:-0.56, z: 0.00, group:'func',    isPrompt:true,  color:'#94A3B8'},
+      {label:'"is"',     x:-0.08, y:-0.60, z:-0.10, group:'copula',  isPrompt:true,  color:'#FCA5A5'},
+      // Output candidates (lower-right)
+      {label:'→ Paris?', x: 0.62, y:-0.24, z: 0.05, group:'predict', isPrompt:false, color:'#F59E0B'},
+      {label:'→ Lyon?',  x: 0.42, y:-0.36, z: 0.12, group:'predict', isPrompt:false, color:'#FCD34D'},
     ];
 
     // Layer stages (what happens at each range)
@@ -1013,10 +1013,10 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
     }
 
     // ── Canvas rendering ───────────────────────────────────────────
-    function project(x, y, z, cx, cy){
-      // Simple isometric-ish projection
-      var px = cx + x*130 + z*50;
-      var py = cy - y*110 + z*30;
+    function project(x, y, z, cx, cy, scaleX, scaleY, depthX, depthY){
+      // Stretch to fill rectangular canvas while preserving a mild 3D cue from z.
+      var px = cx + x*scaleX + z*depthX;
+      var py = cy - y*scaleY + z*depthY;
       return {px:px, py:py, z:z};
     }
 
@@ -1041,15 +1041,48 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
       ctx.fillStyle = isDark ? '#0e1117' : '#f0f4f8';
       ctx.fillRect(0,0,cw,ch);
 
-      var cx = cw*0.5, cy = ch*0.5;
+      var padX = 24;
+      var padY = 20;
+      var plotW = Math.max(10, cw - padX*2);
+      var plotH = Math.max(10, ch - padY*2);
+      var cx = padX + plotW*0.5;
+      var cy = padY + plotH*0.5;
+      var scaleX = plotW * 0.44;
+      var scaleY = plotH * 0.43;
+      var depthX = plotW * 0.06;
+      var depthY = plotH * 0.04;
+
+      // Semantic regions for intuitive "areas" in embedding space.
+      function zone(x0, y0, w, h, color, label){
+        ctx.save();
+        ctx.globalAlpha = isDark ? 0.14 : 0.16;
+        ctx.fillStyle = color;
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.roundRect(x0, y0, w, h, 28);
+        ctx.fill();
+        ctx.globalAlpha = isDark ? 0.30 : 0.34;
+        ctx.stroke();
+        ctx.globalAlpha = isDark ? 0.70 : 0.55;
+        ctx.font = '600 8px "JetBrains Mono",monospace';
+        ctx.textAlign = 'left';
+        ctx.fillText(label, x0 + 9, y0 + 14);
+        ctx.restore();
+      }
+
+      zone(padX + 6,        padY + 6,         plotW*0.36, plotH*0.42, '#60A5FA', 'Country semantics');
+      zone(cw - padX - 6 - plotW*0.36, padY + 6,         plotW*0.36, plotH*0.42, '#2DD4BF', 'Capital semantics');
+      zone(padX + 6,        ch - padY - 6 - plotH*0.32,  plotW*0.42, plotH*0.32, '#93C5FD', 'Prompt grammar tokens');
+      zone(cw - padX - 6 - plotW*0.34, ch - padY - 6 - plotH*0.30, plotW*0.34, plotH*0.30, '#F59E0B', 'Output candidates');
 
       // Draw connecting lines (country→capital arrows at later layers)
       if(EMB.layer > 32){
         var alpha = Math.min(1, (EMB.layer-32)/20);
         // France → Paris
         var fr = CLUSTERS[0], pa = CLUSTERS[4];
-        var fproj = project(fr.x, fr.y, fr.z, cx, cy);
-        var pproj = project(pa.x, pa.y, pa.z, cx, cy);
+        var fproj = project(fr.x, fr.y, fr.z, cx, cy, scaleX, scaleY, depthX, depthY);
+        var pproj = project(pa.x, pa.y, pa.z, cx, cy, scaleX, scaleY, depthX, depthY);
         ctx.save();
         ctx.globalAlpha = alpha * 0.7;
         ctx.strokeStyle = '#F59E0B';
@@ -1096,8 +1129,8 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
         [0, 1, 11].forEach(function(i){
           var src = CLUSTERS[i];
           var dst = CLUSTERS[4];
-          var sp = project(src.x, src.y, src.z, cx, cy);
-          var dp = project(dst.x, dst.y, dst.z, cx, cy);
+          var sp = project(src.x, src.y, src.z, cx, cy, scaleX, scaleY, depthX, depthY);
+          var dp = project(dst.x, dst.y, dst.z, cx, cy, scaleX, scaleY, depthX, depthY);
           ctx.beginPath();
           ctx.moveTo(sp.px, sp.py);
           ctx.lineTo(dp.px, dp.py);
@@ -1119,7 +1152,7 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
         // Keep base cluster layout for interpretability and animate confidence through highlighting
         var animX = c.x, animY = c.y, animZ = c.z;
 
-        var proj = project(animX, animY, animZ, cx, cy);
+        var proj = project(animX, animY, animZ, cx, cy, scaleX, scaleY, depthX, depthY);
         var r = c.isPrompt ? 7 : (c.group === 'predict' ? 5 : 5);
         var alpha = c.isPrompt ? 1.0 : (c.group === 'country' || c.group === 'capital' ? 0.7 : 0.5);
 
@@ -1191,10 +1224,10 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
       ctx.lineWidth = 1;
       // X axis
       ctx.beginPath();
-      ctx.moveTo(cx-140, cy); ctx.lineTo(cx+140, cy); ctx.stroke();
+      ctx.moveTo(padX + 8, cy); ctx.lineTo(cw - padX - 8, cy); ctx.stroke();
       // Y axis
       ctx.beginPath();
-      ctx.moveTo(cx, cy-130); ctx.lineTo(cx, cy+80); ctx.stroke();
+      ctx.moveTo(cx, padY + 8); ctx.lineTo(cx, ch - padY - 8); ctx.stroke();
       ctx.restore();
 
       // Axis labels
@@ -1203,9 +1236,9 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
       ctx.fillStyle = isDark ? '#94a3b8' : '#64748b';
       ctx.font = '7.5px "JetBrains Mono",monospace';
       ctx.textAlign = 'center';
-      ctx.fillText('→ dimension 1 (of 8,192)', cx+50, cy+4);
+      ctx.fillText('→ dimension 1 (of 8,192)', cw - padX - 84, cy+4);
       ctx.textAlign = 'left';
-      ctx.save(); ctx.translate(cx-148, cy-40); ctx.rotate(-Math.PI/2);
+      ctx.save(); ctx.translate(padX + 4, cy-28); ctx.rotate(-Math.PI/2);
       ctx.fillText('dim 2 ↑', 0, 0);
       ctx.restore();
 
@@ -1213,7 +1246,7 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
       var path = [];
       for(var l=1; l<=EMB.layer; l++){
         var vec = embVectorAt(l);
-        path.push(project(vec[0], vec[1], vec[2], cx, cy));
+        path.push(project(vec[0], vec[1], vec[2], cx, cy, scaleX, scaleY, depthX, depthY));
       }
       if(path.length > 1){
         ctx.save();
@@ -1318,7 +1351,7 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
     };
 
     window.embSetSpeed = function(v){
-      EMB.speedMs = v==='slow' ? 950 : v==='fast' ? 280 : 650;
+      EMB.speedMs = v==='slow' ? 950 : v==='fast' ? 140 : 650;
     };
 
     // Start loop when slide becomes active
@@ -2548,7 +2581,7 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
     <div class="chrome-left">
       <div class="chrome-logo">GPU & AI Foundations</div>
       <div class="chrome-sep"></div>
-      <div class="chrome-title">GPU Generations: Consumer vs Data-Centre — Six Cards, One Spec Table</div>
+      <div class="chrome-title">GPU Generations: Consumer vs Data-Centre — Five Cards, One Spec Table</div>
     </div>
     <div class="chrome-right">
       <button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="nav-counter">Light</span></button>
@@ -2566,23 +2599,17 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
       <strong style="color:var(--text);">How to read:</strong> prioritize memory bandwidth and interconnect first, then memory capacity, then raw TFLOPS. Inference throughput follows that order.
     </div>
 
-    <!-- COMPARISON TABLE: 1 label + 6 GPU columns -->
+    <!-- COMPARISON TABLE: 1 label + 5 GPU columns -->
     <div class="anim anim-2" style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;overflow:hidden;font-size:8px;">
 
       <!-- Column headers -->
-      <div style="display:grid;grid-template-columns:82px repeat(6,1fr);border-bottom:1px solid var(--border);">
+      <div style="display:grid;grid-template-columns:110px repeat(5,1fr);border-bottom:1px solid var(--border);">
         <div style="padding:5px 8px;font-family:var(--mono);font-size:7px;color:var(--dim);text-transform:uppercase;display:flex;align-items:center;">Metric</div>
         <!-- RTX 5090 — consumer, orange top border -->
         <div style="padding:5px 8px;text-align:center;border-left:1px solid var(--border);border-top:2px solid var(--llm);background:rgba(180,83,9,0.05);">
           <div style="font-family:var(--display);font-size:16px;color:var(--llm);">RTX 5090</div>
           <div style="font-family:var(--mono);font-size:7px;color:var(--llm);">Consumer · PCIe only</div>
           <div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">2025 · Blackwell</div>
-        </div>
-        <!-- A100 -->
-        <div style="padding:5px 8px;text-align:center;border-left:1px solid var(--border);background:rgba(100,117,128,0.05);">
-          <div style="font-family:var(--display);font-size:16px;color:var(--dim);">A100</div>
-          <div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">2020 · Ampere</div>
-          <div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">reference</div>
         </div>
         <!-- H100 -->
         <div style="padding:5px 8px;text-align:center;border-left:1px solid var(--border);background:rgba(37,99,235,0.04);">
@@ -2611,7 +2638,7 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
       </div>
 
       <!-- ROW 1: Memory Capacity — max = 288 GB (R100) -->
-      <div style="display:grid;grid-template-columns:82px repeat(6,1fr);border-bottom:1px solid var(--border);">
+      <div style="display:grid;grid-template-columns:110px repeat(5,1fr);border-bottom:1px solid var(--border);">
         <div style="padding:4px 8px;display:flex;flex-direction:column;justify-content:center;">
           <div style="font-family:var(--mono);font-size:8px;color:var(--text);">Memory</div>
           <div style="font-family:var(--mono);font-size:7px;color:var(--blue);">max 288 GB</div>
@@ -2619,10 +2646,6 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
         <div style="padding:4px 8px;border-left:1px solid var(--border);background:rgba(180,83,9,0.03);">
           <div style="background:var(--bg4);border-radius:2px;height:12px;overflow:hidden;margin-bottom:2px;"><div style="width:11.1%;height:100%;background:var(--llm);border-radius:2px;opacity:0.7;"></div></div>
           <div style="font-family:var(--mono);font-size:8px;color:var(--llm);text-align:center;">32 GB GDDR7</div>
-        </div>
-        <div style="padding:4px 8px;border-left:1px solid var(--border);background:rgba(100,117,128,0.03);">
-          <div style="background:var(--bg4);border-radius:2px;height:12px;overflow:hidden;margin-bottom:2px;"><div style="width:27.8%;height:100%;background:rgba(100,117,128,0.55);border-radius:2px;"></div></div>
-          <div style="font-family:var(--mono);font-size:8px;color:var(--dim);text-align:center;">80 GB HBM2e</div>
         </div>
         <div style="padding:4px 8px;border-left:1px solid var(--border);background:rgba(37,99,235,0.03);">
           <div style="background:var(--bg4);border-radius:2px;height:12px;overflow:hidden;margin-bottom:2px;"><div style="width:27.8%;height:100%;background:var(--blue);border-radius:2px;opacity:0.7;"></div></div>
@@ -2643,7 +2666,7 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
       </div>
 
       <!-- ROW 2: Bandwidth — max = 22,000 GB/s -->
-      <div style="display:grid;grid-template-columns:82px repeat(6,1fr);border-bottom:1px solid var(--border);">
+      <div style="display:grid;grid-template-columns:110px repeat(5,1fr);border-bottom:1px solid var(--border);">
         <div style="padding:4px 8px;display:flex;flex-direction:column;justify-content:center;">
           <div style="font-family:var(--mono);font-size:8px;color:var(--text);">Mem BW</div>
           <div style="font-family:var(--mono);font-size:7px;color:var(--red);">max 22 TB/s</div>
@@ -2651,10 +2674,6 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
         <div style="padding:4px 8px;border-left:1px solid var(--border);background:rgba(180,83,9,0.03);">
           <div style="background:var(--bg4);border-radius:2px;height:12px;overflow:hidden;margin-bottom:2px;"><div style="width:8.1%;height:100%;background:var(--llm);border-radius:2px;opacity:0.7;"></div></div>
           <div style="font-family:var(--mono);font-size:8px;color:var(--llm);text-align:center;">1.79 TB/s</div>
-        </div>
-        <div style="padding:4px 8px;border-left:1px solid var(--border);background:rgba(100,117,128,0.03);">
-          <div style="background:var(--bg4);border-radius:2px;height:12px;overflow:hidden;margin-bottom:2px;"><div style="width:9.1%;height:100%;background:rgba(100,117,128,0.55);border-radius:2px;"></div></div>
-          <div style="font-family:var(--mono);font-size:8px;color:var(--dim);text-align:center;">2.0 TB/s</div>
         </div>
         <div style="padding:4px 8px;border-left:1px solid var(--border);background:rgba(37,99,235,0.03);">
           <div style="background:var(--bg4);border-radius:2px;height:12px;overflow:hidden;margin-bottom:2px;"><div style="width:15.2%;height:100%;background:var(--blue);border-radius:2px;opacity:0.7;"></div></div>
@@ -2675,17 +2694,13 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
       </div>
 
       <!-- ROW 3: NVLink — max = 3,600 GB/s -->
-      <div style="display:grid;grid-template-columns:82px repeat(6,1fr);border-bottom:1px solid var(--border);">
+      <div style="display:grid;grid-template-columns:110px repeat(5,1fr);border-bottom:1px solid var(--border);">
         <div style="padding:4px 8px;display:flex;flex-direction:column;justify-content:center;">
           <div style="font-family:var(--mono);font-size:8px;color:var(--text);">NVLink BW</div>
           <div style="font-family:var(--mono);font-size:7px;color:var(--sw);">max 3,600 GB/s</div>
         </div>
         <div style="padding:4px 8px;border-left:1px solid var(--border);background:rgba(180,83,9,0.03);display:flex;align-items:center;justify-content:center;">
           <span style="font-family:var(--mono);font-size:8px;color:var(--red);">N/A · PCIe only</span>
-        </div>
-        <div style="padding:4px 8px;border-left:1px solid var(--border);background:rgba(100,117,128,0.03);">
-          <div style="background:var(--bg4);border-radius:2px;height:12px;overflow:hidden;margin-bottom:2px;"><div style="width:16.7%;height:100%;background:rgba(100,117,128,0.5);border-radius:2px;"></div></div>
-          <div style="font-family:var(--mono);font-size:8px;color:var(--dim);text-align:center;">600 GB/s NVL3</div>
         </div>
         <div style="padding:4px 8px;border-left:1px solid var(--border);background:rgba(37,99,235,0.03);">
           <div style="background:var(--bg4);border-radius:2px;height:12px;overflow:hidden;margin-bottom:2px;"><div style="width:25%;height:100%;background:var(--sw);border-radius:2px;opacity:0.7;"></div></div>
@@ -2706,7 +2721,7 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
       </div>
 
       <!-- ROW 4: Compute — max = 16,000 TFLOPS FP8 -->
-      <div style="display:grid;grid-template-columns:82px repeat(6,1fr);border-bottom:1px solid var(--border);">
+      <div style="display:grid;grid-template-columns:110px repeat(5,1fr);border-bottom:1px solid var(--border);">
         <div style="padding:4px 8px;display:flex;flex-direction:column;justify-content:center;">
           <div style="font-family:var(--mono);font-size:8px;color:var(--text);">Compute</div>
           <div style="font-family:var(--mono);font-size:7px;color:var(--llm);">max 16k TFLOPS</div>
@@ -2714,10 +2729,6 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
         <div style="padding:4px 8px;border-left:1px solid var(--border);background:rgba(180,83,9,0.03);">
           <div style="background:var(--bg4);border-radius:2px;height:12px;overflow:hidden;margin-bottom:2px;"><div style="width:20.9%;height:100%;background:var(--llm);border-radius:2px;opacity:0.7;"></div></div>
           <div style="font-family:var(--mono);font-size:8px;color:var(--llm);text-align:center;">3,352 FP8 TOPS</div>
-        </div>
-        <div style="padding:4px 8px;border-left:1px solid var(--border);background:rgba(100,117,128,0.03);">
-          <div style="background:var(--bg4);border-radius:2px;height:12px;overflow:hidden;margin-bottom:2px;"><div style="width:1.95%;height:100%;background:rgba(100,117,128,0.5);border-radius:2px;"></div></div>
-          <div style="font-family:var(--mono);font-size:8px;color:var(--dim);text-align:center;">312 TF32 ∅FP8</div>
         </div>
         <div style="padding:4px 8px;border-left:1px solid var(--border);background:rgba(37,99,235,0.03);">
           <div style="background:var(--bg4);border-radius:2px;height:12px;overflow:hidden;margin-bottom:2px;"><div style="width:12.4%;height:100%;background:var(--llm);border-radius:2px;opacity:0.7;"></div></div>
@@ -2738,17 +2749,13 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
       </div>
 
       <!-- ROW 5: Tok/s 70B FP8 — max = 314 (Rubin) -->
-      <div style="display:grid;grid-template-columns:82px repeat(6,1fr);">
+      <div style="display:grid;grid-template-columns:110px repeat(5,1fr);border-bottom:1px solid var(--border);">
         <div style="padding:4px 8px;display:flex;flex-direction:column;justify-content:center;">
           <div style="font-family:var(--mono);font-size:8px;color:var(--text);">Tok/s 70B</div>
           <div style="font-family:var(--mono);font-size:7px;color:var(--hw);">max 314 tok/s</div>
         </div>
         <div style="padding:4px 8px;border-left:1px solid var(--border);background:rgba(180,83,9,0.03);display:flex;align-items:center;justify-content:center;">
           <span style="font-family:var(--mono);font-size:8px;color:var(--red);">✗ OOM (32 GB &lt; 70 GB)</span>
-        </div>
-        <div style="padding:4px 8px;border-left:1px solid var(--border);background:rgba(100,117,128,0.03);">
-          <div style="background:var(--bg4);border-radius:2px;height:12px;overflow:hidden;margin-bottom:2px;"><div style="width:8.9%;height:100%;background:rgba(100,117,128,0.55);border-radius:2px;"></div></div>
-          <div style="font-family:var(--mono);font-size:8px;color:var(--dim);text-align:center;">~28 tok/s · 1×</div>
         </div>
         <div style="padding:4px 8px;border-left:1px solid var(--border);background:rgba(37,99,235,0.03);">
           <div style="background:var(--bg4);border-radius:2px;height:12px;overflow:hidden;margin-bottom:2px;"><div style="width:15.3%;height:100%;background:var(--sw);border-radius:2px;opacity:0.75;"></div></div>
@@ -2767,84 +2774,87 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
           <div style="font-family:var(--mono);font-size:8px;color:var(--green);text-align:center;">~314 tok/s · 11×</div>
         </div>
       </div>
-    </div>
 
-    <!-- WORKLOAD MATRIX -->
-    <div class="anim anim-3" style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;overflow:hidden;font-size:8px;">
-      <div style="display:grid;grid-template-columns:120px repeat(6,1fr);border-bottom:1px solid var(--border);">
-        <div style="padding:4px 8px;font-family:var(--mono);font-size:7px;color:var(--dim);text-transform:uppercase;display:flex;align-items:center;">Model / workload</div>
-        <div style="padding:4px 8px;text-align:center;border-left:1px solid var(--border);font-family:var(--mono);font-size:7.5px;color:var(--llm);">RTX 5090 (32 GB)</div>
-        <div style="padding:4px 8px;text-align:center;border-left:1px solid var(--border);font-family:var(--mono);font-size:7.5px;color:var(--dim);">A100 (80 GB)</div>
-        <div style="padding:4px 8px;text-align:center;border-left:1px solid var(--border);font-family:var(--mono);font-size:7.5px;color:var(--blue);">H100 (80 GB)</div>
-        <div style="padding:4px 8px;text-align:center;border-left:1px solid var(--border);font-family:var(--mono);font-size:7.5px;color:var(--sw);">H200 (141 GB)</div>
-        <div style="padding:4px 8px;text-align:center;border-left:1px solid var(--border);font-family:var(--mono);font-size:7.5px;color:var(--hw);">B200 (192 GB)</div>
-        <div style="padding:4px 8px;text-align:center;border-left:1px solid var(--border);font-family:var(--mono);font-size:7.5px;color:var(--green);">R100 (288 GB)</div>
+      <!-- ROW 6: Est. cloud cost per GPU-hour -->
+      <div style="display:grid;grid-template-columns:110px repeat(5,1fr);border-bottom:1px solid var(--border);">
+        <div style="padding:4px 8px;display:flex;flex-direction:column;justify-content:center;">
+          <div style="font-family:var(--mono);font-size:8px;color:var(--text);">$/GPU-hour</div>
+          <div style="font-family:var(--mono);font-size:7px;color:var(--dim);">est. cloud spot</div>
+        </div>
+        <div style="padding:4px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--llm);text-align:center;">$0.9</div>
+        <div style="padding:4px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--blue);text-align:center;">$2.4–3.1</div>
+        <div style="padding:4px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--sw);text-align:center;">$3.6–4.3</div>
+        <div style="padding:4px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--hw);text-align:center;">$5.0–7.5</div>
+        <div style="padding:4px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--green);text-align:center;">$8–14 est.</div>
       </div>
-      <!-- Section: Dense LLMs -->
-      <div style="padding:2px 8px;font-family:var(--mono);font-size:7px;color:var(--dim);text-transform:uppercase;background:var(--bg3);border-bottom:1px solid var(--border);">Dense LLMs (FP8)</div>
-      <div style="display:grid;grid-template-columns:120px repeat(6,1fr);border-bottom:1px solid var(--border);">
-        <div style="padding:3px 8px;font-size:8.5px;color:var(--muted);">Llama 8B <span style="font-family:var(--mono);font-size:7px;color:var(--dim2);">· 8 GB</span></div>
-        <div style="padding:3px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--green);text-align:center;">✓ fits (no NVLink)</div>
-        <div style="padding:3px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--green);text-align:center;">✓ single GPU</div>
-        <div style="padding:3px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--green);text-align:center;">✓ single GPU</div>
-        <div style="padding:3px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--green);text-align:center;">✓ single GPU</div>
-        <div style="padding:3px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--green);text-align:center;">✓ single GPU</div>
-        <div style="padding:3px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--green);text-align:center;">✓ 280 GB free</div>
+
+      <!-- ROW 7: Est. market card price -->
+      <div style="display:grid;grid-template-columns:110px repeat(5,1fr);border-bottom:1px solid var(--border);">
+        <div style="padding:4px 8px;display:flex;flex-direction:column;justify-content:center;">
+          <div style="font-family:var(--mono);font-size:8px;color:var(--text);">Card price</div>
+          <div style="font-family:var(--mono);font-size:7px;color:var(--dim);">est. street / broker</div>
+        </div>
+        <div style="padding:4px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--llm);text-align:center;">$2.0–2.5k</div>
+        <div style="padding:4px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--blue);text-align:center;">$25–40k</div>
+        <div style="padding:4px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--sw);text-align:center;">$30–45k</div>
+        <div style="padding:4px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--hw);text-align:center;">$45–70k</div>
+        <div style="padding:4px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--green);text-align:center;">TBD (2026)</div>
       </div>
-      <div style="display:grid;grid-template-columns:120px repeat(6,1fr);border-bottom:1px solid var(--border);">
-        <div style="padding:3px 8px;font-size:8.5px;color:var(--muted);">Llama 70B <span style="font-family:var(--mono);font-size:7px;color:var(--dim2);">· 70 GB</span></div>
-        <div style="padding:3px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--red);text-align:center;">✗ OOM (32 &lt; 70)</div>
-        <div style="padding:3px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--llm);text-align:center;">⚠ 1 GPU · tight</div>
-        <div style="padding:3px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--sw);text-align:center;">✓ 1 GPU · small KV</div>
-        <div style="padding:3px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--green);text-align:center;">✓ 71 GB free</div>
-        <div style="padding:3px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--green);text-align:center;">✓ 122 GB free</div>
-        <div style="padding:3px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--green);text-align:center;">✓ 218 GB free</div>
+
+      <!-- ROW 8: Workload fit legend -->
+      <div style="display:grid;grid-template-columns:110px repeat(5,1fr);border-bottom:1px solid var(--border);background:var(--bg3);">
+        <div style="padding:4px 8px;font-family:var(--mono);font-size:7px;color:var(--dim);text-transform:uppercase;display:flex;align-items:center;">Workload fit</div>
+        <div style="padding:4px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:7px;color:var(--dim2);text-align:center;">✓ optimal · ◐ viable cluster · ✗ poor fit</div>
+        <div style="padding:4px 8px;border-left:1px solid var(--border);"></div>
+        <div style="padding:4px 8px;border-left:1px solid var(--border);"></div>
+        <div style="padding:4px 8px;border-left:1px solid var(--border);"></div>
+        <div style="padding:4px 8px;border-left:1px solid var(--border);"></div>
       </div>
-      <div style="display:grid;grid-template-columns:120px repeat(6,1fr);border-bottom:1px solid var(--border);">
-        <div style="padding:3px 8px;font-size:8.5px;color:var(--muted);">Llama 405B <span style="font-family:var(--mono);font-size:7px;color:var(--dim2);">· 405 GB</span></div>
-        <div style="padding:3px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--red);text-align:center;">✗ OOM</div>
-        <div style="padding:3px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--red);text-align:center;">✗ needs 6 GPUs</div>
-        <div style="padding:3px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--red);text-align:center;">✗ needs 6 GPUs</div>
-        <div style="padding:3px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--llm);text-align:center;">⚠ 3 GPUs · tight</div>
-        <div style="padding:3px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--llm);text-align:center;">⚠ 3 GPUs</div>
-        <div style="padding:3px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--green);text-align:center;">✓ 2 GPUs</div>
+
+      <!-- ROW 9: 7B-13B -->
+      <div style="display:grid;grid-template-columns:110px repeat(5,1fr);border-bottom:1px solid var(--border);">
+        <div style="padding:4px 8px;font-family:var(--mono);font-size:8px;color:var(--muted);">7B-13B inference</div>
+        <div style="padding:4px 8px;border-left:1px solid var(--border);text-align:center;"><span style="color:var(--green);font-family:var(--mono);font-size:11px;">✓</span></div>
+        <div style="padding:4px 8px;border-left:1px solid var(--border);text-align:center;"><span style="color:var(--green);font-family:var(--mono);font-size:11px;">✓</span></div>
+        <div style="padding:4px 8px;border-left:1px solid var(--border);text-align:center;"><span style="color:var(--green);font-family:var(--mono);font-size:11px;">✓</span></div>
+        <div style="padding:4px 8px;border-left:1px solid var(--border);text-align:center;"><span style="color:var(--green);font-family:var(--mono);font-size:11px;">✓</span></div>
+        <div style="padding:4px 8px;border-left:1px solid var(--border);text-align:center;"><span style="color:var(--green);font-family:var(--mono);font-size:11px;">✓</span></div>
       </div>
-      <!-- Section: MoE -->
-      <div style="padding:2px 8px;font-family:var(--mono);font-size:7px;color:var(--dim);text-transform:uppercase;background:var(--bg3);border-bottom:1px solid var(--border);">Mixture-of-Experts</div>
-      <div style="display:grid;grid-template-columns:120px repeat(6,1fr);border-bottom:1px solid var(--border);">
-        <div style="padding:3px 8px;font-size:8.5px;color:var(--muted);">DeepSeek V3 <span style="font-family:var(--mono);font-size:7px;color:var(--dim2);">· 671B/37B active</span></div>
-        <div style="padding:3px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--red);text-align:center;">✗ OOM</div>
-        <div style="padding:3px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--red);text-align:center;">✗ multi-node</div>
-        <div style="padding:3px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--red);text-align:center;">✗ multi-node</div>
-        <div style="padding:3px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--llm);text-align:center;">⚠ 5+ nodes</div>
-        <div style="padding:3px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--llm);text-align:center;">⚠ 4 nodes</div>
-        <div style="padding:3px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--green);text-align:center;">✓ 3 GPUs</div>
+
+      <!-- ROW 10: 70B -->
+      <div style="display:grid;grid-template-columns:110px repeat(5,1fr);border-bottom:1px solid var(--border);">
+        <div style="padding:4px 8px;font-family:var(--mono);font-size:8px;color:var(--muted);">70B inference</div>
+        <div style="padding:4px 8px;border-left:1px solid var(--border);text-align:center;"><span style="color:var(--red);font-family:var(--mono);font-size:11px;">✗</span><div style="font-size:6.8px;color:var(--dim2);">needs cluster</div></div>
+        <div style="padding:4px 8px;border-left:1px solid var(--border);text-align:center;"><span style="color:var(--green);font-family:var(--mono);font-size:11px;">✓</span><div style="font-size:6.8px;color:var(--dim2);">1 card</div></div>
+        <div style="padding:4px 8px;border-left:1px solid var(--border);text-align:center;"><span style="color:var(--green);font-family:var(--mono);font-size:11px;">✓</span><div style="font-size:6.8px;color:var(--dim2);">1 card</div></div>
+        <div style="padding:4px 8px;border-left:1px solid var(--border);text-align:center;"><span style="color:var(--green);font-family:var(--mono);font-size:11px;">✓</span><div style="font-size:6.8px;color:var(--dim2);">1 card</div></div>
+        <div style="padding:4px 8px;border-left:1px solid var(--border);text-align:center;"><span style="color:var(--green);font-family:var(--mono);font-size:11px;">✓</span><div style="font-size:6.8px;color:var(--dim2);">1 card</div></div>
       </div>
-      <!-- Section: Other -->
-      <div style="padding:2px 8px;font-family:var(--mono);font-size:7px;color:var(--dim);text-transform:uppercase;background:var(--bg3);border-bottom:1px solid var(--border);">Other Workloads</div>
-      <div style="display:grid;grid-template-columns:120px repeat(6,1fr);border-bottom:1px solid var(--border);">
-        <div style="padding:3px 8px;font-size:8.5px;color:var(--muted);">Image gen (SD XL) <span style="font-family:var(--mono);font-size:7px;color:var(--dim2);">· 6.5 GB</span></div>
-        <div style="padding:3px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--green);text-align:center;">✓ fast</div>
-        <div style="padding:3px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--green);text-align:center;">✓ fast</div>
-        <div style="padding:3px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--green);text-align:center;">✓ 1.7× A100</div>
-        <div style="padding:3px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--green);text-align:center;">✓ = H100</div>
-        <div style="padding:3px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--green);text-align:center;">✓ 2.3× H100</div>
-        <div style="padding:3px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--green);text-align:center;">✓ 8× H100 est.</div>
+
+      <!-- ROW 11: 405B -->
+      <div style="display:grid;grid-template-columns:110px repeat(5,1fr);border-bottom:1px solid var(--border);">
+        <div style="padding:4px 8px;font-family:var(--mono);font-size:8px;color:var(--muted);">405B dense model</div>
+        <div style="padding:4px 8px;border-left:1px solid var(--border);text-align:center;"><span style="color:var(--red);font-family:var(--mono);font-size:11px;">✗</span></div>
+        <div style="padding:4px 8px;border-left:1px solid var(--border);text-align:center;"><span style="color:var(--llm);font-family:var(--mono);font-size:11px;">◐</span><div style="font-size:6.8px;color:var(--dim2);">8-card node</div></div>
+        <div style="padding:4px 8px;border-left:1px solid var(--border);text-align:center;"><span style="color:var(--llm);font-family:var(--mono);font-size:11px;">◐</span><div style="font-size:6.8px;color:var(--dim2);">3-4 cards</div></div>
+        <div style="padding:4px 8px;border-left:1px solid var(--border);text-align:center;"><span style="color:var(--green);font-family:var(--mono);font-size:11px;">✓</span><div style="font-size:6.8px;color:var(--dim2);">2-3 cards</div></div>
+        <div style="padding:4px 8px;border-left:1px solid var(--border);text-align:center;"><span style="color:var(--green);font-family:var(--mono);font-size:11px;">✓</span><div style="font-size:6.8px;color:var(--dim2);">2 cards</div></div>
       </div>
-      <div style="display:grid;grid-template-columns:120px repeat(6,1fr);">
-        <div style="padding:3px 8px;font-size:8.5px;color:var(--muted);">Fine-tune 70B LoRA <span style="font-family:var(--mono);font-size:7px;color:var(--dim2);">· ~160 GB</span></div>
-        <div style="padding:3px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--red);text-align:center;">✗ OOM</div>
-        <div style="padding:3px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--red);text-align:center;">✗ needs 2 nodes</div>
-        <div style="padding:3px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--red);text-align:center;">✗ needs 2 nodes</div>
-        <div style="padding:3px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--llm);text-align:center;">⚠ 1 node · tight</div>
-        <div style="padding:3px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--green);text-align:center;">✓ 1 node</div>
-        <div style="padding:3px 8px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--green);text-align:center;">✓ single GPU!</div>
+
+      <!-- ROW 12: 1T+ MoE -->
+      <div style="display:grid;grid-template-columns:110px repeat(5,1fr);">
+        <div style="padding:4px 8px;font-family:var(--mono);font-size:8px;color:var(--muted);">1T+ MoE serving</div>
+        <div style="padding:4px 8px;border-left:1px solid var(--border);text-align:center;"><span style="color:var(--red);font-family:var(--mono);font-size:11px;">✗</span></div>
+        <div style="padding:4px 8px;border-left:1px solid var(--border);text-align:center;"><span style="color:var(--red);font-family:var(--mono);font-size:11px;">✗</span></div>
+        <div style="padding:4px 8px;border-left:1px solid var(--border);text-align:center;"><span style="color:var(--llm);font-family:var(--mono);font-size:11px;">◐</span><div style="font-size:6.8px;color:var(--dim2);">multi-node</div></div>
+        <div style="padding:4px 8px;border-left:1px solid var(--border);text-align:center;"><span style="color:var(--llm);font-family:var(--mono);font-size:11px;">◐</span><div style="font-size:6.8px;color:var(--dim2);">fewer nodes</div></div>
+        <div style="padding:4px 8px;border-left:1px solid var(--border);text-align:center;"><span style="color:var(--green);font-family:var(--mono);font-size:11px;">✓</span><div style="font-size:6.8px;color:var(--dim2);">best fit</div></div>
       </div>
     </div>
 
     <!-- Footnote row -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-      <div style="font-family:var(--mono);font-size:7.5px;color:var(--dim2);line-height:1.6;">Tok/s = HBM BW ÷ model weight bytes (single-user BW-limited decode) · RTX 5090 GDDR7 bandwidth, not HBM · Sources: NVIDIA product datasheets, GTC 2026, CES 2026 · R100 = confirmed H2 2026 production · ★ R100 22 TB/s = NVIDIA official spec; Tom's Hardware analysis cites ~13 TB/s per GPU die (8×HBM4 stacks at 6.4 GT/s); figure may reflect Vera Rubin Superchip (2 dies)</div>
+      <div style="font-family:var(--mono);font-size:7.5px;color:var(--dim2);line-height:1.6;">Tok/s = HBM BW ÷ model weight bytes (single-user BW-limited decode) · Cost rows are estimates from public cloud list prices and market/broker ranges (Mar 2026 snapshot) · RTX 5090 price anchor: NVIDIA official starting price; cloud-hour anchors include Runpod listed rates (RTX 5090, H100, H200, B200) · R100 pricing pre-launch estimate only.</div>
       <div style="background:rgba(5,150,105,0.08);border:1px solid rgba(5,150,105,0.2);border-radius:3px;padding:5px 10px;font-family:var(--mono);font-size:7.5px;color:var(--green);line-height:1.6;"><strong>Rubin Ultra (2027):</strong> 100 PFLOPS FP4, 1 TB HBM4e, ~32 TB/s, NVL576 "Kyber" rack · <strong>RTX 5090 consumer note:</strong> no ECC memory, no NVLink, no datacenter warranty — fundamentally different class of product</div>
     </div>
 
@@ -2867,182 +2877,92 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
 
   <div class="slide-body" style="gap:11px;">
     <div class="anim anim-1">
-      <div class="section-label">NVLink vs PCIe bandwidth — the single number that drives system selection</div>
-      <div style="font-family:var(--display);font-size:26px;line-height:1.0;color:var(--text);">Same GPU chips, radically different systems.<br><span style="color:var(--sw);">The interconnect bandwidth between GPUs determines throughput, TCO, and what workloads are viable.</span></div>
+      <div class="section-label">PCIe vs NVLink — where multi-GPU efficiency is won or lost</div>
+      <div style="font-family:var(--display);font-size:26px;line-height:1.0;color:var(--text);">Same H100 class silicon, different fabric.<br><span style="color:var(--sw);">Interconnect decides whether GPUs spend time computing or waiting.</span></div>
     </div>
 
-    <div class="anim anim-1" style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--sw);border-radius:4px;padding:9px 12px;font-size:11px;color:var(--muted);line-height:1.6;">
-      <strong style="color:var(--text);">Key takeaway:</strong> buying the same GPU die with a weaker interconnect can erase a large share of paid compute through communication overhead.
-    </div>
-
-    <!-- Architecture diagrams side by side -->
     <div class="anim anim-2" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-
-      <!-- HGX PCIe -->
-      <div style="background:var(--bg2);border:1px solid var(--border);border-top:2px solid var(--llm);border-radius:4px;padding:12px 14px;">
-        <div style="font-family:var(--mono);font-size:8.5px;color:var(--llm);font-weight:600;text-transform:uppercase;letter-spacing:0.12em;margin-bottom:4px;">HGX H100 PCIe — OEM Server</div>
-        <div style="font-size:10px;color:var(--muted);margin-bottom:10px;line-height:1.5;">GPU board only. Each H100 connects to the CPU via PCIe. No dedicated GPU–GPU fabric. All inter-GPU traffic goes: GPU → PCIe → CPU switch → PCIe → GPU.</div>
-        <svg viewBox="0 0 320 130" style="width:100%;display:block;" xmlns="http://www.w3.org/2000/svg">
-          <!-- CPU in centre -->
-          <rect x="120" y="52" width="80" height="28" rx="3" fill="rgba(100,117,128,0.15)" stroke="rgba(100,117,128,0.5)" stroke-width="1.5"/>
-          <text x="160" y="64" style="font-family:'JetBrains Mono',monospace;font-size:8px;fill:var(--dim)" text-anchor="middle">CPU / PCIe</text>
-          <text x="160" y="74" style="font-family:'JetBrains Mono',monospace;font-size:7px;fill:var(--dim2)" text-anchor="middle">Switch</text>
-          <!-- 8 GPU boxes in two rows -->
-          <!-- Top row: GPUs 1-4 -->
-          <rect x="4" y="4" width="38" height="24" rx="2" fill="rgba(180,83,9,0.12)" stroke="var(--llm)" stroke-width="1"/>
-          <text x="23" y="15" style="font-family:'JetBrains Mono',monospace;font-size:7px;fill:var(--llm)" text-anchor="middle">GPU1</text>
-          <text x="23" y="24" style="font-family:'JetBrains Mono',monospace;font-size:6.5px;fill:var(--dim2)" text-anchor="middle">H100 PCIe</text>
-          <rect x="48" y="4" width="38" height="24" rx="2" fill="rgba(180,83,9,0.12)" stroke="var(--llm)" stroke-width="1"/>
-          <text x="67" y="15" style="font-family:'JetBrains Mono',monospace;font-size:7px;fill:var(--llm)" text-anchor="middle">GPU2</text>
-          <text x="67" y="24" style="font-family:'JetBrains Mono',monospace;font-size:6.5px;fill:var(--dim2)" text-anchor="middle">H100 PCIe</text>
-          <rect x="92" y="4" width="38" height="24" rx="2" fill="rgba(180,83,9,0.12)" stroke="var(--llm)" stroke-width="1"/>
-          <text x="111" y="15" style="font-family:'JetBrains Mono',monospace;font-size:7px;fill:var(--llm)" text-anchor="middle">GPU3</text>
-          <text x="111" y="24" style="font-family:'JetBrains Mono',monospace;font-size:6.5px;fill:var(--dim2)" text-anchor="middle">H100 PCIe</text>
-          <rect x="136" y="4" width="38" height="24" rx="2" fill="rgba(180,83,9,0.12)" stroke="var(--llm)" stroke-width="1"/>
-          <text x="155" y="15" style="font-family:'JetBrains Mono',monospace;font-size:7px;fill:var(--llm)" text-anchor="middle">GPU4</text>
-          <text x="155" y="24" style="font-family:'JetBrains Mono',monospace;font-size:6.5px;fill:var(--dim2)" text-anchor="middle">H100 PCIe</text>
-          <!-- Top row: GPUs 5-8 -->
-          <rect x="180" y="4" width="38" height="24" rx="2" fill="rgba(180,83,9,0.12)" stroke="var(--llm)" stroke-width="1"/>
-          <text x="199" y="15" style="font-family:'JetBrains Mono',monospace;font-size:7px;fill:var(--llm)" text-anchor="middle">GPU5</text>
-          <text x="199" y="24" style="font-family:'JetBrains Mono',monospace;font-size:6.5px;fill:var(--dim2)" text-anchor="middle">H100 PCIe</text>
-          <rect x="224" y="4" width="38" height="24" rx="2" fill="rgba(180,83,9,0.12)" stroke="var(--llm)" stroke-width="1"/>
-          <text x="243" y="15" style="font-family:'JetBrains Mono',monospace;font-size:7px;fill:var(--llm)" text-anchor="middle">GPU6</text>
-          <text x="243" y="24" style="font-family:'JetBrains Mono',monospace;font-size:6.5px;fill:var(--dim2)" text-anchor="middle">H100 PCIe</text>
-          <rect x="268" y="4" width="38" height="24" rx="2" fill="rgba(180,83,9,0.12)" stroke="var(--llm)" stroke-width="1"/>
-          <text x="287" y="15" style="font-family:'JetBrains Mono',monospace;font-size:7px;fill:var(--llm)" text-anchor="middle">GPU7</text>
-          <text x="287" y="24" style="font-family:'JetBrains Mono',monospace;font-size:6.5px;fill:var(--dim2)" text-anchor="middle">H100 PCIe</text>
-          <!-- Lines from each GPU to CPU switch — all route through centre -->
-          <line x1="23" y1="28" x2="140" y2="52" stroke="rgba(180,83,9,0.35)" stroke-width="1" stroke-dasharray="3,2"/>
-          <line x1="67" y1="28" x2="148" y2="52" stroke="rgba(180,83,9,0.35)" stroke-width="1" stroke-dasharray="3,2"/>
-          <line x1="111" y1="28" x2="155" y2="52" stroke="rgba(180,83,9,0.35)" stroke-width="1" stroke-dasharray="3,2"/>
-          <line x1="155" y1="28" x2="160" y2="52" stroke="rgba(180,83,9,0.35)" stroke-width="1" stroke-dasharray="3,2"/>
-          <line x1="199" y1="28" x2="172" y2="52" stroke="rgba(180,83,9,0.35)" stroke-width="1" stroke-dasharray="3,2"/>
-          <line x1="243" y1="28" x2="178" y2="52" stroke="rgba(180,83,9,0.35)" stroke-width="1" stroke-dasharray="3,2"/>
-          <line x1="287" y1="28" x2="188" y2="52" stroke="rgba(180,83,9,0.35)" stroke-width="1" stroke-dasharray="3,2"/>
-          <!-- PCIe BW label -->
-          <text x="160" y="98" style="font-family:'JetBrains Mono',monospace;font-size:8px;fill:var(--red)" text-anchor="middle">PCIe 5.0: 64 GB/s per link</text>
-          <text x="160" y="108" style="font-family:'JetBrains Mono',monospace;font-size:7.5px;fill:var(--dim2)" text-anchor="middle">At 8 GPUs: ~18% efficiency → eff. BW ~11.5 GB/s</text>
-          <text x="160" y="120" style="font-family:'JetBrains Mono',monospace;font-size:7.5px;fill:var(--red)" text-anchor="middle">Comms overhead ~0.8 ms/token decode step</text>
-        </svg>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--llm);border-radius:4px;padding:10px 12px;">
+        <div style="display:flex;justify-content:space-between;align-items:end;gap:8px;">
+          <div style="font-family:var(--display);font-size:22px;color:var(--llm);line-height:1;">HGX</div>
+          <div style="font-family:var(--mono);font-size:8px;color:var(--llm);text-transform:uppercase;letter-spacing:0.12em;">PCIe fabric</div>
+        </div>
+        <div style="margin-top:6px;font-size:10.5px;color:var(--muted);line-height:1.55;">GPU-to-GPU traffic is routed through CPU/PCIe switch paths. That creates contention and queueing during tensor-parallel synchronization.</div>
+        <div style="margin-top:8px;background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:7px 8px;font-family:var(--mono);font-size:8px;color:var(--dim);">Nominal link: 64 GB/s · Effective at 8 GPUs: ~11.5 GB/s</div>
       </div>
-
-      <!-- DGX (NVLink) -->
-      <div style="background:var(--bg2);border:1px solid var(--border);border-top:2px solid var(--sw);border-radius:4px;padding:12px 14px;">
-        <div style="font-family:var(--mono);font-size:8.5px;color:var(--sw);font-weight:600;text-transform:uppercase;letter-spacing:0.12em;margin-bottom:4px;">DGX H100 — Integrated System · NVLink Switch</div>
-        <div style="font-size:10px;color:var(--muted);margin-bottom:10px;line-height:1.5;">All-to-all NVLink mesh via dedicated NVLink Switch chip. Every GPU has a direct 900 GB/s path to every other GPU. No CPU bottleneck for GPU–GPU communication.</div>
-        <svg viewBox="0 0 320 130" style="width:100%;display:block;" xmlns="http://www.w3.org/2000/svg">
-          <!-- NVLink Switch in centre -->
-          <rect x="118" y="50" width="84" height="32" rx="3" fill="rgba(13,148,136,0.15)" stroke="var(--sw)" stroke-width="1.5"/>
-          <text x="160" y="63" style="font-family:'JetBrains Mono',monospace;font-size:8px;fill:var(--sw)" text-anchor="middle">NVLink</text>
-          <text x="160" y="73" style="font-family:'JetBrains Mono',monospace;font-size:7px;fill:var(--sw)" text-anchor="middle">Switch</text>
-          <!-- 8 GPU boxes, 4 above and 4 below -->
-          <rect x="4" y="4" width="38" height="24" rx="2" fill="rgba(37,99,235,0.10)" stroke="var(--blue)" stroke-width="1"/>
-          <text x="23" y="15" style="font-family:'JetBrains Mono',monospace;font-size:7px;fill:var(--blue)" text-anchor="middle">GPU1</text>
-          <text x="23" y="24" style="font-family:'JetBrains Mono',monospace;font-size:6.5px;fill:var(--dim2)" text-anchor="middle">H100 SXM</text>
-          <rect x="48" y="4" width="38" height="24" rx="2" fill="rgba(37,99,235,0.10)" stroke="var(--blue)" stroke-width="1"/>
-          <text x="67" y="15" style="font-family:'JetBrains Mono',monospace;font-size:7px;fill:var(--blue)" text-anchor="middle">GPU2</text>
-          <text x="67" y="24" style="font-family:'JetBrains Mono',monospace;font-size:6.5px;fill:var(--dim2)" text-anchor="middle">H100 SXM</text>
-          <rect x="92" y="4" width="38" height="24" rx="2" fill="rgba(37,99,235,0.10)" stroke="var(--blue)" stroke-width="1"/>
-          <text x="111" y="15" style="font-family:'JetBrains Mono',monospace;font-size:7px;fill:var(--blue)" text-anchor="middle">GPU3</text>
-          <text x="111" y="24" style="font-family:'JetBrains Mono',monospace;font-size:6.5px;fill:var(--dim2)" text-anchor="middle">H100 SXM</text>
-          <rect x="136" y="4" width="38" height="24" rx="2" fill="rgba(37,99,235,0.10)" stroke="var(--blue)" stroke-width="1"/>
-          <text x="155" y="15" style="font-family:'JetBrains Mono',monospace;font-size:7px;fill:var(--blue)" text-anchor="middle">GPU4</text>
-          <text x="155" y="24" style="font-family:'JetBrains Mono',monospace;font-size:6.5px;fill:var(--dim2)" text-anchor="middle">H100 SXM</text>
-          <rect x="180" y="4" width="38" height="24" rx="2" fill="rgba(37,99,235,0.10)" stroke="var(--blue)" stroke-width="1"/>
-          <text x="199" y="15" style="font-family:'JetBrains Mono',monospace;font-size:7px;fill:var(--blue)" text-anchor="middle">GPU5</text>
-          <text x="199" y="24" style="font-family:'JetBrains Mono',monospace;font-size:6.5px;fill:var(--dim2)" text-anchor="middle">H100 SXM</text>
-          <rect x="224" y="4" width="38" height="24" rx="2" fill="rgba(37,99,235,0.10)" stroke="var(--blue)" stroke-width="1"/>
-          <text x="243" y="15" style="font-family:'JetBrains Mono',monospace;font-size:7px;fill:var(--blue)" text-anchor="middle">GPU6</text>
-          <text x="243" y="24" style="font-family:'JetBrains Mono',monospace;font-size:6.5px;fill:var(--dim2)" text-anchor="middle">H100 SXM</text>
-          <rect x="268" y="4" width="38" height="24" rx="2" fill="rgba(37,99,235,0.10)" stroke="var(--blue)" stroke-width="1"/>
-          <text x="287" y="15" style="font-family:'JetBrains Mono',monospace;font-size:7px;fill:var(--blue)" text-anchor="middle">GPU7</text>
-          <text x="287" y="24" style="font-family:'JetBrains Mono',monospace;font-size:6.5px;fill:var(--dim2)" text-anchor="middle">H100 SXM</text>
-          <!-- GPU8 below switch -->
-          <rect x="136" y="90" width="48" height="24" rx="2" fill="rgba(37,99,235,0.10)" stroke="var(--blue)" stroke-width="1"/>
-          <text x="160" y="101" style="font-family:'JetBrains Mono',monospace;font-size:7px;fill:var(--blue)" text-anchor="middle">GPU8</text>
-          <text x="160" y="110" style="font-family:'JetBrains Mono',monospace;font-size:6.5px;fill:var(--dim2)" text-anchor="middle">H100 SXM</text>
-          <!-- NVLink connections — full colour lines -->
-          <line x1="23" y1="28" x2="130" y2="50" stroke="var(--sw)" stroke-width="1.2" opacity="0.6"/>
-          <line x1="67" y1="28" x2="140" y2="50" stroke="var(--sw)" stroke-width="1.2" opacity="0.6"/>
-          <line x1="111" y1="28" x2="148" y2="50" stroke="var(--sw)" stroke-width="1.2" opacity="0.6"/>
-          <line x1="155" y1="28" x2="156" y2="50" stroke="var(--sw)" stroke-width="1.2" opacity="0.6"/>
-          <line x1="199" y1="28" x2="168" y2="50" stroke="var(--sw)" stroke-width="1.2" opacity="0.6"/>
-          <line x1="243" y1="28" x2="178" y2="50" stroke="var(--sw)" stroke-width="1.2" opacity="0.6"/>
-          <line x1="287" y1="28" x2="190" y2="50" stroke="var(--sw)" stroke-width="1.2" opacity="0.6"/>
-          <line x1="160" y1="90" x2="160" y2="82" stroke="var(--sw)" stroke-width="1.2" opacity="0.6"/>
-          <!-- BW label -->
-          <text x="160" y="122" style="font-family:'JetBrains Mono',monospace;font-size:8px;fill:var(--green)" text-anchor="middle">NVLink 4.0: 900 GB/s all-to-all (14× PCIe)</text>
-          <text x="160" y="130" style="font-family:'JetBrains Mono',monospace;font-size:7.5px;fill:var(--dim2)" text-anchor="middle">At 8 GPUs: ~90% efficiency → &lt;0.01 ms/token overhead</text>
-        </svg>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--sw);border-radius:4px;padding:10px 12px;">
+        <div style="display:flex;justify-content:space-between;align-items:end;gap:8px;">
+          <div style="font-family:var(--display);font-size:22px;color:var(--sw);line-height:1;">DGX</div>
+          <div style="font-family:var(--mono);font-size:8px;color:var(--sw);text-transform:uppercase;letter-spacing:0.12em;">NVLink fabric</div>
+        </div>
+        <div style="margin-top:6px;font-size:10.5px;color:var(--muted);line-height:1.55;">Dedicated all-to-all NVLink switch keeps synchronization on a high-bandwidth low-latency GPU fabric with minimal queueing.</div>
+        <div style="margin-top:8px;background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:7px 8px;font-family:var(--mono);font-size:8px;color:var(--dim);">Nominal link: 900 GB/s · Effective at 8 GPUs: ~810 GB/s</div>
       </div>
     </div>
 
-    <!-- Comparison table: HGX PCIe vs DGX H100 vs DGX B200 -->
-    <div class="anim anim-3" style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;overflow:hidden;">
-      <div style="display:grid;grid-template-columns:140px repeat(3,1fr);border-bottom:1px solid var(--border);">
-        <div style="padding:6px 12px;font-family:var(--mono);font-size:7.5px;color:var(--dim);text-transform:uppercase;display:flex;align-items:center;">Configuration</div>
-        <div style="padding:6px 12px;text-align:center;border-left:1px solid var(--border);background:rgba(180,83,9,0.06);border-top:2px solid var(--llm);">
-          <div style="font-family:var(--display);font-size:16px;color:var(--llm);">HGX PCIe</div>
-          <div style="font-family:var(--mono);font-size:7.5px;color:var(--dim2);">8 × H100 PCIe · OEM server</div>
+    <div class="anim anim-3" style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:12px 14px;">
+      <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:8px;">
+        <div style="font-family:var(--mono);font-size:8.5px;color:var(--dim);text-transform:uppercase;letter-spacing:0.12em;">Example scenario</div>
+        <div style="font-family:var(--mono);font-size:8.5px;color:var(--text);">Llama 70B FP8 · 8x H100 · Tensor parallel = 8 · Context = 8k · Batch = 64 users</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px;">
+        <div style="background:rgba(180,83,9,0.06);border:1px solid rgba(180,83,9,0.2);border-radius:4px;padding:9px 10px;">
+          <div style="font-family:var(--mono);font-size:8px;color:var(--llm);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:7px;">HGX data path (slower sync)</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:4px;">
+            <span class="tag" style="background:var(--llm-dim);border:1px solid var(--llm-mid);color:var(--llm);">GPU</span>
+            <span style="font-family:var(--mono);font-size:9px;color:var(--red);">→ PCIe → CPU/Switch → PCIe →</span>
+            <span class="tag" style="background:var(--llm-dim);border:1px solid var(--llm-mid);color:var(--llm);">GPU</span>
+          </div>
+          <div style="margin-top:7px;font-size:10px;color:var(--muted);line-height:1.5;">Extra hops increase all-reduce time. During this sync, Tensor Cores wait.</div>
         </div>
-        <div style="padding:6px 12px;text-align:center;border-left:1px solid var(--border);background:rgba(37,99,235,0.05);border-top:2px solid var(--blue);">
-          <div style="font-family:var(--display);font-size:16px;color:var(--blue);">DGX H100</div>
-          <div style="font-family:var(--mono);font-size:7.5px;color:var(--dim2);">8 × H100 SXM5 · NVIDIA system</div>
+        <div style="background:rgba(13,148,136,0.06);border:1px solid var(--sw-mid);border-radius:4px;padding:9px 10px;">
+          <div style="font-family:var(--mono);font-size:8px;color:var(--sw);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:7px;">DGX data path (faster sync)</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:4px;">
+            <span class="tag" style="background:var(--sw-dim);border:1px solid var(--sw-mid);color:var(--sw);">GPU</span>
+            <span style="font-family:var(--mono);font-size:9px;color:var(--green);">→ NVLink switch fabric →</span>
+            <span class="tag" style="background:var(--sw-dim);border:1px solid var(--sw-mid);color:var(--sw);">GPU</span>
+          </div>
+          <div style="margin-top:7px;font-size:10px;color:var(--muted);line-height:1.5;">Low-latency all-reduce keeps sync overhead near-zero versus compute time.</div>
         </div>
-        <div style="padding:6px 12px;text-align:center;border-left:1px solid var(--border);background:rgba(124,58,237,0.05);border-top:2px solid var(--hw);">
-          <div style="font-family:var(--display);font-size:16px;color:var(--hw);">DGX B200</div>
-          <div style="font-family:var(--mono);font-size:7.5px;color:var(--dim2);">8 × B200 SXM6 · NVIDIA system</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:9px 10px;">
+          <div style="font-family:var(--mono);font-size:8px;color:var(--dim);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;">HGX per-token timeline (ms)</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">
+            <div style="width:92px;font-family:var(--mono);font-size:8px;color:var(--muted);">Compute</div>
+            <div style="flex:1;height:13px;background:var(--bg4);border-radius:2px;overflow:hidden;"><div style="width:76.5%;height:100%;background:var(--blue);"></div></div>
+            <div style="font-family:var(--mono);font-size:8px;color:var(--blue);width:42px;text-align:right;">2.6</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div style="width:92px;font-family:var(--mono);font-size:8px;color:var(--muted);">All-reduce</div>
+            <div style="flex:1;height:13px;background:var(--bg4);border-radius:2px;overflow:hidden;"><div style="width:23.5%;height:100%;background:var(--red);"></div></div>
+            <div style="font-family:var(--mono);font-size:8px;color:var(--red);width:42px;text-align:right;">0.8</div>
+          </div>
+          <div style="margin-top:7px;font-family:var(--mono);font-size:8px;color:var(--muted);">Total: 3.4 ms/token · GPU utilization proxy: <span style="color:var(--llm);">~76%</span></div>
         </div>
-      </div>
-      <!-- Rows -->
-      <div style="display:grid;grid-template-columns:140px repeat(3,1fr);border-bottom:1px solid var(--border);">
-        <div style="padding:5px 12px;font-family:var(--mono);font-size:8px;color:var(--text);display:flex;align-items:center;">GPU interconnect</div>
-        <div style="padding:5px 12px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8.5px;color:var(--red);text-align:center;">PCIe 5.0 · 64 GB/s</div>
-        <div style="padding:5px 12px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8.5px;color:var(--green);text-align:center;">NVLink 4.0 · 900 GB/s</div>
-        <div style="padding:5px 12px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8.5px;color:var(--green);text-align:center;">NVLink 5.0 · 1,800 GB/s</div>
-      </div>
-      <div style="display:grid;grid-template-columns:140px repeat(3,1fr);border-bottom:1px solid var(--border);">
-        <div style="padding:5px 12px;font-family:var(--mono);font-size:8px;color:var(--text);display:flex;align-items:center;">Eff. BW @ 8 GPUs</div>
-        <div style="padding:5px 12px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8.5px;color:var(--red);text-align:center;">~11.5 GB/s (18% of peak)</div>
-        <div style="padding:5px 12px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8.5px;color:var(--sw);text-align:center;">~810 GB/s (90% of peak)</div>
-        <div style="padding:5px 12px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8.5px;color:var(--sw);text-align:center;">~1,620 GB/s (90% of peak)</div>
-      </div>
-      <div style="display:grid;grid-template-columns:140px repeat(3,1fr);border-bottom:1px solid var(--border);">
-        <div style="padding:5px 12px;font-family:var(--mono);font-size:8px;color:var(--text);display:flex;align-items:center;">Comms overhead</div>
-        <div style="padding:5px 12px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8.5px;color:var(--red);text-align:center;">~0.8 ms / token</div>
-        <div style="padding:5px 12px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8.5px;color:var(--green);text-align:center;">&lt;0.01 ms / token</div>
-        <div style="padding:5px 12px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8.5px;color:var(--green);text-align:center;">&lt;0.01 ms / token</div>
-      </div>
-      <div style="display:grid;grid-template-columns:140px repeat(3,1fr);border-bottom:1px solid var(--border);">
-        <div style="padding:5px 12px;font-family:var(--mono);font-size:8px;color:var(--text);display:flex;align-items:center;">Node HBM total</div>
-        <div style="padding:5px 12px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8.5px;color:var(--muted);text-align:center;">640 GB (8 × 80)</div>
-        <div style="padding:5px 12px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8.5px;color:var(--muted);text-align:center;">640 GB (8 × 80)</div>
-        <div style="padding:5px 12px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8.5px;color:var(--sw);text-align:center;">1,536 GB (8 × 192)</div>
-      </div>
-      <div style="display:grid;grid-template-columns:140px repeat(3,1fr);border-bottom:1px solid var(--border);">
-        <div style="padding:5px 12px;font-family:var(--mono);font-size:8px;color:var(--text);display:flex;align-items:center;">System price (est.)</div>
-        <div style="padding:5px 12px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8.5px;color:var(--muted);text-align:center;">$120–180k (OEM)</div>
-        <div style="padding:5px 12px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8.5px;color:var(--muted);text-align:center;">$200–300k (NVIDIA)</div>
-        <div style="padding:5px 12px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8.5px;color:var(--muted);text-align:center;">$400–600k (NVIDIA)</div>
-      </div>
-      <div style="display:grid;grid-template-columns:140px repeat(3,1fr);border-bottom:1px solid var(--border);">
-        <div style="padding:5px 12px;font-family:var(--mono);font-size:8px;color:var(--text);display:flex;align-items:center;">Cloud spot / GPU / hr</div>
-        <div style="padding:5px 12px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8.5px;color:var(--muted);text-align:center;">~$3.33</div>
-        <div style="padding:5px 12px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8.5px;color:var(--muted);text-align:center;">~$2.99–3.50</div>
-        <div style="padding:5px 12px;border-left:1px solid var(--border);font-family:var(--mono);font-size:8.5px;color:var(--muted);text-align:center;">~$7–10</div>
-      </div>
-      <div style="display:grid;grid-template-columns:140px repeat(3,1fr);">
-        <div style="padding:5px 12px;font-family:var(--mono);font-size:8px;color:var(--text);display:flex;align-items:center;">Best for</div>
-        <div style="padding:5px 12px;border-left:1px solid var(--border);font-size:9.5px;color:var(--muted);">Dev/test, ≤70B single-GPU, inference-only, budget-conscious</div>
-        <div style="padding:5px 12px;border-left:1px solid var(--border);font-size:9.5px;color:var(--muted);">70B+ production inference, multi-GPU training, tensor parallelism</div>
-        <div style="padding:5px 12px;border-left:1px solid var(--border);font-size:9.5px;color:var(--muted);">Max-scale inference, large MoE, agentic long-context workloads</div>
+
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:9px 10px;">
+          <div style="font-family:var(--mono);font-size:8px;color:var(--dim);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;">DGX per-token timeline (ms)</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">
+            <div style="width:92px;font-family:var(--mono);font-size:8px;color:var(--muted);">Compute</div>
+            <div style="flex:1;height:13px;background:var(--bg4);border-radius:2px;overflow:hidden;"><div style="width:97.7%;height:100%;background:var(--blue);"></div></div>
+            <div style="font-family:var(--mono);font-size:8px;color:var(--blue);width:42px;text-align:right;">2.6</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div style="width:92px;font-family:var(--mono);font-size:8px;color:var(--muted);">All-reduce</div>
+            <div style="flex:1;height:13px;background:var(--bg4);border-radius:2px;overflow:hidden;"><div style="width:2.3%;height:100%;background:var(--green);"></div></div>
+            <div style="font-family:var(--mono);font-size:8px;color:var(--green);width:42px;text-align:right;">0.06</div>
+          </div>
+          <div style="margin-top:7px;font-family:var(--mono);font-size:8px;color:var(--muted);">Total: 2.66 ms/token · GPU utilization proxy: <span style="color:var(--green);">~98%</span></div>
+        </div>
       </div>
     </div>
 
-    <!-- Key insight -->
     <div class="anim anim-4" style="background:rgba(220,38,38,0.06);border:1px solid rgba(220,38,38,0.2);border-left:3px solid var(--red);border-radius:4px;padding:10px 14px;">
-      <div style="font-family:var(--mono);font-size:9px;color:var(--red);font-weight:600;margin-bottom:4px;">The PCIe penalty at scale — why the price difference narrows on a TCO basis</div>
-      <div style="font-size:11px;color:var(--muted);line-height:1.6;">At 8× PCIe GPUs running Llama 70B: each all-reduce for tensor parallelism adds ~0.8 ms to the decode step (already 2.6 ms). That's a <strong style="color:var(--text);">31% throughput penalty</strong> — equivalent to losing 2 GPUs' worth of work. For production inference at scale, a DGX H100 at $280k delivers better cost-per-token than an HGX PCIe server at $150k simply because it wastes less of what you paid for. Prices estimated based on public cloud rates and market reports. Source: v10 inference economics model + NVIDIA pricing guides.</div>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--red);font-weight:600;margin-bottom:4px;">Why HGX efficiency is lower (in one line)</div>
+      <div style="font-size:11px;color:var(--muted);line-height:1.6;">HGX over PCIe spends a larger slice of each token step synchronizing activations between GPUs, so expensive Tensor Cores are idle more often. DGX over NVLink minimizes that synchronization tax, so a larger fraction of wall-clock time is useful compute.</div>
     </div>
   </div>
 </div>
