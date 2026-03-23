@@ -304,9 +304,24 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
 
     <div class="anim anim-2" style="max-width:680px;">
       <p class="callout" style="color:var(--muted);font-weight:300;">
-        You use ChatGPT to draft emails. Claude to research. Copilot to write code. Midjourney to design.
-        Behind every response — in milliseconds — a warehouse of specialized hardware draws megawatts of power to run billions of mathematical operations. This deck explains exactly what that hardware is, why it matters, and how it works.
+        You use ChatGPT to draft emails, Claude to research, Copilot to code, and Midjourney to design.
+        Every one of those responses is generated in a data centre by specialized chips doing massive parallel math. This deck gives you the mental model from chip to system.
       </p>
+    </div>
+
+    <div class="anim anim-2" style="max-width:680px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:10px 12px;">
+        <div style="font-family:var(--mono);font-size:8px;letter-spacing:0.12em;text-transform:uppercase;color:var(--dim2);margin-bottom:4px;">What</div>
+        <div style="font-size:11px;line-height:1.55;color:var(--muted);">What hardware powers modern AI products.</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:10px 12px;">
+        <div style="font-family:var(--mono);font-size:8px;letter-spacing:0.12em;text-transform:uppercase;color:var(--dim2);margin-bottom:4px;">Why</div>
+        <div style="font-size:11px;line-height:1.55;color:var(--muted);">Why GPUs, not CPUs, became the default for AI workloads.</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:10px 12px;">
+        <div style="font-family:var(--mono);font-size:8px;letter-spacing:0.12em;text-transform:uppercase;color:var(--dim2);margin-bottom:4px;">Remember</div>
+        <div style="font-size:11px;line-height:1.55;color:var(--muted);">AI is software running on industrial-scale parallel compute.</div>
+      </div>
     </div>
 
     <div class="anim anim-3 stagger section-outline">
@@ -348,6 +363,9 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
     <div style="font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:0.28em;text-transform:uppercase;">Section 1 of 3</div>
     <div style="font-family:var(--display);font-size:clamp(52px,7vw,88px);color:var(--text);line-height:0.92;text-align:center;">The Machine</div>
     <div style="font-size:15px;color:var(--muted);text-align:center;max-width:520px;line-height:1.7;">What is actually inside a computer — and why the GPU, originally built for video games, became the engine of every AI product you use.</div>
+    <div style="max-width:520px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--hw);border-radius:4px;padding:10px 14px;font-size:11px;line-height:1.6;color:var(--muted);text-align:left;">
+      <strong style="color:var(--text);">Section takeaway:</strong> one architectural shift matters most: moving from a few strong cores (CPU) to thousands of parallel cores (GPU).
+    </div>
     <div class="section-outline" style="margin-top:8px;">
       <div class="section-pill active-1">
         <div class="section-pill-num">01</div>
@@ -389,6 +407,21 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
     <div class="anim anim-1">
       <div class="section-label">The building blocks</div>
       <div style="font-family:var(--display);font-size:32px;line-height:1.0;color:var(--text);margin-top:4px;">What's inside a computer — <span style="color:var(--sw);">and why GPUs changed AI.</span></div>
+    </div>
+
+    <div class="anim anim-1" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:8px 10px;">
+        <div style="font-family:var(--mono);font-size:8px;color:var(--dim2);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:3px;">Look for</div>
+        <div style="font-size:10.5px;color:var(--muted);line-height:1.5;">CPU, RAM, GPU, and interconnects as distinct jobs.</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:8px 10px;">
+        <div style="font-family:var(--mono);font-size:8px;color:var(--dim2);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:3px;">Compare</div>
+        <div style="font-size:10.5px;color:var(--muted);line-height:1.5;">Left: consumer machine. Right: AI rack built around GPU trays.</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:8px 10px;">
+        <div style="font-family:var(--mono);font-size:8px;color:var(--dim2);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:3px;">Remember</div>
+        <div style="font-size:10.5px;color:var(--muted);line-height:1.5;">AI scaling is mostly a GPU scaling problem.</div>
+      </div>
     </div>
 
     <!-- Main visual: Tower → Server rack, side by side -->
@@ -535,6 +568,10 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
             </div>
           </div>
         </div>
+
+        <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--sw);border-radius:4px;padding:10px 12px;">
+          <div style="font-size:11px;color:var(--muted);line-height:1.6;"><strong style="color:var(--text);">Key takeaway:</strong> CPUs coordinate and sequence; GPUs execute huge batches of the same operation. LLM inference is dominated by that second pattern.</div>
+        </div>
       </div>
     </div>
   </div>
@@ -560,7 +597,7 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
     <div class="anim anim-1">
       <div class="section-label">Applications across industries</div>
       <div style="font-family:var(--display);font-size:34px;color:var(--text);line-height:1.0;">The same chip runs chatbots, drug discovery, and self-driving cars.</div>
-      <div style="font-size:12px;color:var(--muted);margin-top:6px;line-height:1.6;">GPUs power every compute-intensive AI application. LLM inference is the largest share today, but the same chips run biology, physics, image synthesis, and autonomous systems.</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:6px;line-height:1.6;">GPUs power every compute-intensive AI application. LLM inference is the largest share today, but the same silicon also runs biology, physics, image synthesis, and autonomous systems.</div>
     </div>
 
     <!-- GPU demand bar -->
@@ -642,7 +679,7 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
 
     <!-- Key point callout -->
     <div class="anim anim-4" style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--sw);border-radius:4px;padding:11px 16px;">
-      <div style="font-size:11.5px;color:var(--muted);line-height:1.6;"><strong style="color:var(--text);">The common thread:</strong> all of these workloads reduce to the same operation — large matrix multiplications done in parallel. That's why one chip (the GPU) dominates across domains as different as protein folding, film production, and writing emails. The architecture that renders a game frame is the same one folding proteins and generating your next email draft.</div>
+      <div style="font-size:11.5px;color:var(--muted);line-height:1.6;"><strong style="color:var(--text);">Key takeaway:</strong> these very different products all reduce to the same primitive: large matrix multiplications in parallel. That shared math is why one architecture (GPU) can dominate workloads from protein folding to chat responses.</div>
     </div>
 
     <!-- Source footnote -->
@@ -698,6 +735,21 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
     <div class="anim anim-1">
       <div class="section-label">From token IDs to meaning — the 8,192-dimensional coordinate space</div>
       <div style="font-family:var(--display);font-size:28px;line-height:1.0;color:var(--text);">Embedding Space (3D Analogy):<br><span style="color:var(--llm);">watch how each layer adds grammar, relation, and factual nuance.</span></div>
+    </div>
+
+    <div class="anim anim-1" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:8px 10px;">
+        <div style="font-family:var(--mono);font-size:8px;color:var(--dim2);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:3px;">Step logic</div>
+        <div style="font-size:10.5px;color:var(--muted);line-height:1.5;">Prompt text becomes token IDs, then vectors, then a next-token vote.</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:8px 10px;">
+        <div style="font-family:var(--mono);font-size:8px;color:var(--dim2);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:3px;">What changes per layer</div>
+        <div style="font-size:10.5px;color:var(--muted);line-height:1.5;">Layer depth shifts probabilities from broad guesses to one dominant token.</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:8px 10px;">
+        <div style="font-family:var(--mono);font-size:8px;color:var(--dim2);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:3px;">Remember</div>
+        <div style="font-size:10.5px;color:var(--muted);line-height:1.5;">Meaning is not a word list. It is a moving point in vector space.</div>
+      </div>
     </div>
 
     <div class="anim anim-2" style="display:grid;grid-template-columns:1.15fr 1fr 1fr;gap:10px;">
@@ -1321,6 +1373,10 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
       <div style="font-family:var(--display);font-size:26px;line-height:1.0;color:var(--text);">Parameters = Layers × Width² × 12<br><span style="color:var(--blue);">Memory = Parameters × bytes-per-weight</span></div>
     </div>
 
+    <div class="anim anim-1" style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:4px;padding:9px 12px;font-size:11px;color:var(--muted);line-height:1.6;">
+      <strong style="color:var(--text);">Key takeaway:</strong> width ($d$) is the expensive knob because memory grows with $d^2$, while depth ($L$) grows linearly. Precision decides whether the model fits on one GPU or many.
+    </div>
+
     <!-- Explainer row -->
     <div class="anim anim-2" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
       <div style="background:rgba(124,58,237,0.08);border:1px solid var(--hw-mid);border-left:3px solid var(--hw);border-radius:4px;padding:10px 12px;">
@@ -1842,6 +1898,9 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
     <div style="font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:0.28em;text-transform:uppercase;">Section 3 of 3</div>
     <div style="font-family:var(--display);font-size:clamp(52px,7vw,88px);color:var(--text);line-height:0.92;text-align:center;">The System</div>
     <div style="font-size:15px;color:var(--muted);text-align:center;max-width:520px;line-height:1.7;">How the hardware is assembled into servers and clusters — and how quantization, tensor parallelism, and each GPU generation affect speed, cost, and what workloads you can run.</div>
+    <div style="max-width:520px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--sw);border-radius:4px;padding:10px 14px;font-size:11px;line-height:1.6;color:var(--muted);text-align:left;">
+      <strong style="color:var(--text);">Section takeaway:</strong> architecture choices now become economic choices: interconnect, memory, and software determine cost per token.
+    </div>
     <div class="section-outline" style="margin-top:8px;">
       <div class="section-pill dim">
         <div class="section-pill-num">01</div>
@@ -1883,6 +1942,10 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
     <div class="anim anim-1">
       <div class="section-label">The precision trade-off</div>
       <div style="font-family:var(--display);font-size:30px;line-height:1.0;color:var(--text);">Quantization: store weights in fewer bits,<br><span style="color:var(--sw);">fit more model into the same GPU.</span></div>
+    </div>
+
+    <div class="anim anim-1" style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--sw);border-radius:4px;padding:9px 12px;font-size:11px;color:var(--muted);line-height:1.6;">
+      <strong style="color:var(--text);">Remember:</strong> every time you halve bytes per weight, you roughly halve memory and memory traffic. That is why quantization is often the fastest route to lower inference cost.
     </div>
 
     <!-- Main comparison: memory bar + node visual -->
@@ -2089,6 +2152,10 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
     <div class="anim anim-1">
       <div class="section-label">Two independent limits — configure and watch live</div>
       <div style="font-family:var(--display);font-size:26px;line-height:1.0;color:var(--text);">Model too big? Split it.<br><span style="color:var(--green);">Two independent constraints: memory <em>capacity</em> and memory <em>bandwidth</em>.</span></div>
+    </div>
+
+    <div class="anim anim-1" style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--green);border-radius:4px;padding:9px 12px;font-size:11px;color:var(--muted);line-height:1.6;">
+      <strong style="color:var(--text);">Remember:</strong> capacity answers "how many users can I hold?" and bandwidth answers "how fast can I serve each user?" You need both.
     </div>
 
     <!-- ── PHYSICS EXPLAINER ─────────────────────────────────────────── -->
@@ -2495,6 +2562,10 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
       <div style="font-family:var(--display);font-size:22px;line-height:1.0;color:var(--text);">From gaming card to AI supercomputer — the same spec table, N/A where it genuinely doesn't apply.</div>
     </div>
 
+    <div class="anim anim-1" style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--sw);border-radius:4px;padding:8px 10px;font-size:10.5px;color:var(--muted);line-height:1.6;">
+      <strong style="color:var(--text);">How to read:</strong> prioritize memory bandwidth and interconnect first, then memory capacity, then raw TFLOPS. Inference throughput follows that order.
+    </div>
+
     <!-- COMPARISON TABLE: 1 label + 6 GPU columns -->
     <div class="anim anim-2" style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;overflow:hidden;font-size:8px;">
 
@@ -2800,6 +2871,10 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
       <div style="font-family:var(--display);font-size:26px;line-height:1.0;color:var(--text);">Same GPU chips, radically different systems.<br><span style="color:var(--sw);">The interconnect bandwidth between GPUs determines throughput, TCO, and what workloads are viable.</span></div>
     </div>
 
+    <div class="anim anim-1" style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--sw);border-radius:4px;padding:9px 12px;font-size:11px;color:var(--muted);line-height:1.6;">
+      <strong style="color:var(--text);">Key takeaway:</strong> buying the same GPU die with a weaker interconnect can erase a large share of paid compute through communication overhead.
+    </div>
+
     <!-- Architecture diagrams side by side -->
     <div class="anim anim-2" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
 
@@ -2990,6 +3065,10 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
     <div class="anim anim-1">
       <div class="section-label">Roofline model — adjust workload and watch cost per token respond in real time</div>
       <div style="font-family:var(--display);font-size:24px;line-height:1.0;color:var(--text);">The cheapest GPU per hour is rarely the cheapest per token.<br><span style="color:var(--sw);">Configure your workload — see throughput, latency, and cost.</span></div>
+    </div>
+
+    <div class="anim anim-1" style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--sw);border-radius:4px;padding:9px 12px;font-size:11px;color:var(--muted);line-height:1.6;">
+      <strong style="color:var(--text);">Decision rule:</strong> optimize for cost per delivered token at your real batch/context pattern, not headline $/GPU-hour.
     </div>
 
     <!-- Controls row -->
@@ -3307,6 +3386,10 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
       <div style="font-family:var(--display);font-size:32px;line-height:1.0;color:var(--text);">Tokenize → embed → layer → predict → stream:<br><span style="color:var(--sw)">every constraint, in order.</span></div>
     </div>
 
+    <div class="anim anim-1" style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--sw);border-radius:4px;padding:9px 12px;font-size:11px;color:var(--muted);line-height:1.6;max-width:960px;">
+      <strong style="color:var(--text);">One-line recap:</strong> model quality, latency, and unit economics are all downstream of a single pipeline that can be tuned at hardware, system, and software layers.
+    </div>
+
     <!-- Flow diagram -->
     <div class="anim anim-2" style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:16px 18px;">
       <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
@@ -3403,6 +3486,10 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
     <div class="anim anim-1">
       <div class="section-label">Every dashboard, with what it covers</div>
       <div style="font-family:var(--display);font-size:32px;line-height:1.0;color:var(--text);">Every dashboard in the workspace,<br><span style="color:var(--sw)">with what each one covers.</span></div>
+    </div>
+
+    <div class="anim anim-1" style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--sw);border-radius:4px;padding:9px 12px;font-size:11px;color:var(--muted);line-height:1.6;max-width:760px;">
+      <strong style="color:var(--text);">Exit takeaway:</strong> use this deck for first principles, then use the linked dashboards for scenario analysis, sourcing choices, and operator-level decisions.
     </div>
 
     <div class="anim anim-2 body-text" style="max-width:680px;">
