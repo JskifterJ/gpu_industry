@@ -130,11 +130,19 @@ html.dark .toggle-thumb{transform:translateX(12px);background:var(--hw);}
   overflow-y:auto;
   padding:28px 48px 72px;
   display:flex;flex-direction:column;gap:18px;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior-y:contain;
+  touch-action:pan-y pinch-zoom;
 }
 .slide-body::-webkit-scrollbar{width:5px;}
 .slide-body::-webkit-scrollbar-track{background:transparent;}
 .slide-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
 .slide-body::-webkit-scrollbar-thumb:hover{background:var(--dim2);}
+
+#emb-canvas,
+#emb3d-canvas{
+  touch-action:pan-y pinch-zoom;
+}
 
 /* ── NAVIGATION ── */
 .nav-bar{
@@ -788,33 +796,26 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
       Prompt in focus: <span style="color:var(--llm);font-weight:600;">"The capital of France is ___"</span>. Use <strong>Prefill</strong> to process all prompt tokens in parallel, then <strong>Decode</strong> to generate one token at a time.
     </div>
 
-    <!-- Step 3: Prefill/decode dynamics -->
+    <!-- Step 3: v10-style embedding explorer -->
     <div class="anim anim-4" style="display:grid;grid-template-columns:1fr 320px;gap:12px;flex:1;min-height:0;">
-
-      <!-- Left: canvas -->
-      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:10px;display:flex;flex-direction:column;gap:8px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
-          <div>
-            <div style="font-family:var(--mono);font-size:8px;color:var(--dim);text-transform:uppercase;letter-spacing:0.1em;">Step 3 · Prefill/Decode in Embedding Space (3D analogy)</div>
-            <div style="font-family:var(--mono);font-size:8px;color:var(--dim2);margin-top:2px;" id="emb-stage-label">Layer 1 / 80 — grammar and word placement scaffolding</div>
-          </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:10px;display:flex;flex-direction:column;gap:8px;min-height:0;">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap;">
+          <div style="font-family:var(--mono);font-size:8px;color:var(--dim);text-transform:uppercase;letter-spacing:0.1em;">Step 3 · Embedding Space Tracker (v10 style)</div>
           <div style="display:flex;gap:6px;">
-            <button id="emb-btn-prefill" onclick="embSetPhase('prefill')" style="font-family:var(--mono);font-size:8px;padding:4px 10px;border-radius:3px;cursor:pointer;border:1px solid var(--sw);background:rgba(13,148,136,0.15);color:var(--sw);">Prefill (parallel)</button>
-            <button id="emb-btn-decode" onclick="embSetPhase('decode')" style="font-family:var(--mono);font-size:8px;padding:4px 10px;border-radius:3px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--dim);">Decode (sequential)</button>
+            <button id="emb3d-prefill" onclick="setEmb3dPhase('prefill')" style="font-family:var(--mono);font-size:8px;padding:4px 10px;border-radius:3px;border:1px solid var(--sw);background:var(--sw-dim);color:var(--sw);cursor:pointer;">Prefill</button>
+            <button id="emb3d-decode" onclick="setEmb3dPhase('decode')" style="font-family:var(--mono);font-size:8px;padding:4px 10px;border-radius:3px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;">Decode</button>
           </div>
         </div>
-        <div id="emb-milestones" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;">
-          <div data-ms="grammar" style="font-family:var(--mono);font-size:7.5px;color:var(--dim2);text-transform:uppercase;letter-spacing:0.08em;border:1px solid var(--border);border-radius:3px;padding:4px 5px;text-align:center;">Grammar active</div>
-          <div data-ms="relation" style="font-family:var(--mono);font-size:7.5px;color:var(--dim2);text-transform:uppercase;letter-spacing:0.08em;border:1px solid var(--border);border-radius:3px;padding:4px 5px;text-align:center;">Relation active</div>
-          <div data-ms="knowledge" style="font-family:var(--mono);font-size:7.5px;color:var(--dim2);text-transform:uppercase;letter-spacing:0.08em;border:1px solid var(--border);border-radius:3px;padding:4px 5px;text-align:center;">Knowledge active</div>
-          <div data-ms="output" style="font-family:var(--mono);font-size:7.5px;color:var(--dim2);text-transform:uppercase;letter-spacing:0.08em;border:1px solid var(--border);border-radius:3px;padding:4px 5px;text-align:center;">Output head active</div>
-        </div>
-        <canvas id="emb-canvas" style="width:100%;height:290px;display:block;border-radius:4px;border:1px solid var(--border);background:var(--bg3);"></canvas>
+
+        <div id="emb3d-stage-bar" style="background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:7px 8px;font-family:var(--mono);font-size:8px;color:var(--text);line-height:1.55;">Layer 1 starts with grammar and placement scaffolding.</div>
+
+        <canvas id="emb3d-canvas" style="width:100%;height:300px;display:block;border-radius:4px;border:1px solid var(--border);background:var(--bg3);"></canvas>
+
         <div style="display:grid;grid-template-columns:auto 1fr auto auto;gap:8px;align-items:center;">
-          <button id="emb-play-btn" onclick="embTogglePlay()" style="font-family:var(--mono);font-size:8px;padding:4px 10px;border-radius:3px;border:1px solid var(--border);background:var(--bg3);cursor:pointer;color:var(--text);white-space:nowrap;">▶ Play layers</button>
-          <input type="range" id="emb-layer" min="1" max="80" value="1" style="width:100%;accent-color:var(--sw);" oninput="embSetLayer(parseInt(this.value),true)">
-          <span id="emb-layer-lbl" style="font-family:var(--mono);font-size:8px;color:var(--dim);white-space:nowrap;">Layer 1 / 80</span>
-          <select id="emb-speed" onchange="embSetSpeed(this.value)" style="font-family:var(--mono);font-size:8px;padding:3px 6px;border-radius:3px;border:1px solid var(--border);background:var(--bg2);color:var(--text);">
+          <button id="emb3d-play" onclick="toggleEmb3dPlay()" style="font-family:var(--mono);font-size:8px;padding:4px 10px;border-radius:3px;border:1px solid var(--border);background:var(--bg3);cursor:pointer;color:var(--text);white-space:nowrap;">Play layers</button>
+          <input type="range" id="emb3d-layer" min="1" max="80" value="1" style="width:100%;accent-color:var(--sw);" oninput="setEmb3dLayer(parseInt(this.value,10),true)">
+          <span id="emb3d-layer-label" style="font-family:var(--mono);font-size:8px;color:var(--dim);white-space:nowrap;">Layer 1 / 80</span>
+          <select onchange="setEmb3dSpeed(this.value)" style="font-family:var(--mono);font-size:8px;padding:3px 6px;border-radius:3px;border:1px solid var(--border);background:var(--bg2);color:var(--text);">
             <option value="slow">Slow</option>
             <option value="medium" selected>Medium</option>
             <option value="fast">Fast</option>
@@ -822,562 +823,303 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
         </div>
       </div>
 
-      <!-- Right: token voting + layer nuance panel -->
-      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:10px;display:flex;flex-direction:column;gap:8px;overflow:hidden;">
-        <div style="font-family:var(--mono);font-size:8px;color:var(--dim);text-transform:uppercase;letter-spacing:0.1em;">Layer effect and token voting</div>
-        <div id="emb-stage-name" style="font-family:var(--mono);font-size:8.5px;color:var(--text);line-height:1.45;background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:7px 8px;">Layers 1-16: grammar and word placement scaffolding</div>
-        <div id="emb-stage-desc" style="font-size:10px;color:var(--muted);line-height:1.55;">Attention builds sentence structure and local dependencies; FFN adds short-range language patterns.</div>
-        <div id="emb-prompt-focus" style="font-family:var(--mono);font-size:8px;line-height:1.55;color:var(--llm);background:var(--llm-dim);border:1px solid var(--llm-mid);border-radius:3px;padding:6px 7px;">Prompt: "The capital of France is ___"</div>
-        <div id="emb-probs" style="display:flex;flex-direction:column;gap:5px;flex:1;"></div>
-        <div id="emb-process" style="font-family:var(--mono);font-size:8px;color:var(--muted);line-height:1.55;background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:7px 8px;"></div>
-        <div id="emb-talktrack" style="font-family:var(--mono);font-size:8px;color:var(--muted);line-height:1.55;background:var(--bg3);border-left:2px solid var(--sw);border-radius:3px;padding:7px 8px;"></div>
-        <div style="background:var(--bg3);border-radius:3px;padding:7px;border-left:2px solid var(--sw);">
-          <div id="emb-insight" style="font-family:var(--mono);font-size:8px;color:var(--muted);line-height:1.6;">Layer 1: raw embeddings, no context yet — all tokens roughly equal</div>
-        </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:10px;display:flex;flex-direction:column;gap:8px;overflow:auto;">
+        <div id="emb3d-stage-name" style="font-family:var(--mono);font-size:8.5px;color:var(--text);line-height:1.45;background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:7px 8px;">Layers 1-16: grammar + placement scaffolding</div>
+        <div id="emb3d-stage-desc" style="font-size:10px;color:var(--muted);line-height:1.55;">Attention resolves syntax while FFN strengthens local language cues.</div>
+        <div id="emb3d-probs" style="display:flex;flex-direction:column;gap:5px;"></div>
+        <div id="emb3d-process" style="font-family:var(--mono);font-size:8px;color:var(--muted);line-height:1.6;background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:7px 8px;"></div>
+        <div id="emb3d-note" style="font-family:var(--mono);font-size:8px;color:var(--muted);line-height:1.6;background:var(--bg3);border-left:2px solid var(--sw);border-radius:3px;padding:7px 8px;"></div>
       </div>
     </div>
   </div>
 
   <script>
   (function(){
-    // ── State ──────────────────────────────────────────────────────
-    var EMB = {
-      layer: 1,
+    var EMB3D = {
       phase: 'prefill',
+      layer: 1,
       playing: false,
+      lastTs: 0,
       speedMs: 650,
       raf: null,
-      lastTs: 0,
-      acc: 0,
       baseVec: [0.18,-0.44,0.07,0.31,-0.12,0.22,-0.05,0.11],
       targetDecode: [0.84,-0.16,0.70,0.76,0.58,0.51,0.73,0.66],
       targetPrefill: [0.56,-0.20,0.33,0.47,0.24,0.29,0.37,0.30],
       outputRows: [
-        { key:'paris', label:'Paris', bias:0.82, weights:[0.72,-0.18,0.64,0.59,0.52,0.31,0.68,0.47] },
-        { key:'lyon', label:'Lyon', bias:0.58, weights:[0.41,-0.10,0.36,0.43,0.28,0.25,0.34,0.29] },
-        { key:'marseille', label:'Marseille', bias:0.52, weights:[0.30,-0.06,0.22,0.28,0.16,0.19,0.24,0.20] },
-        { key:'other', label:'other…', bias:0.34, weights:[0.12,0.05,0.04,0.02,0.09,0.06,0.03,0.02] }
+        { label:'Paris', bias:0.82, weights:[0.72,-0.18,0.64,0.59,0.52,0.31,0.68,0.47] },
+        { label:'Lyon', bias:0.58, weights:[0.41,-0.10,0.36,0.43,0.28,0.25,0.34,0.29] },
+        { label:'Berlin', bias:0.52, weights:[0.34,-0.12,0.31,0.37,0.26,0.23,0.30,0.22] },
+        { label:'Other', bias:0.34, weights:[0.12,0.05,0.04,0.02,0.09,0.06,0.03,0.02] }
       ]
     };
 
-    // Token cluster positions in 3D (x, y, z) normalised [-1, 1]
-    // Groups: countries (blue), capitals (teal), verbs (purple), adj (amber), our prompt tokens
-    var CLUSTERS = [
-      // Countries (upper-left semantic region)
-      {label:'France',   x:-0.72, y: 0.56, z: 0.10, group:'country', isPrompt:true,  color:'#3B82F6'},
-      {label:'Germany',  x:-0.64, y: 0.76, z:-0.05, group:'country', isPrompt:false, color:'#60A5FA'},
-      {label:'Italy',    x:-0.82, y: 0.40, z: 0.20, group:'country', isPrompt:false, color:'#93C5FD'},
-      {label:'Spain',    x:-0.56, y: 0.62, z: 0.15, group:'country', isPrompt:false, color:'#BFDBFE'},
-      // Capitals (upper-right semantic region)
-      {label:'Paris',    x: 0.58, y: 0.56, z: 0.05, group:'capital', isPrompt:false, color:'#14B8A6'},
-      {label:'Berlin',   x: 0.70, y: 0.78, z:-0.10, group:'capital', isPrompt:false, color:'#2DD4BF'},
-      {label:'Rome',     x: 0.78, y: 0.42, z: 0.20, group:'capital', isPrompt:false, color:'#5EEAD4'},
-      {label:'Madrid',   x: 0.50, y: 0.62, z: 0.10, group:'capital', isPrompt:false, color:'#99F6E4'},
-      // Function words / syntactic tokens (lower-left)
-      {label:'"The"',    x:-0.72, y:-0.62, z:-0.20, group:'func',    isPrompt:true,  color:'#6EE7B7'},
-      {label:'"capital"',x:-0.46, y:-0.26, z: 0.30, group:'abstract',isPrompt:true,  color:'#93C5FD'},
-      {label:'"of"',     x:-0.24, y:-0.56, z: 0.00, group:'func',    isPrompt:true,  color:'#94A3B8'},
-      {label:'"is"',     x:-0.08, y:-0.60, z:-0.10, group:'copula',  isPrompt:true,  color:'#FCA5A5'},
-      // Output candidates (lower-right)
-      {label:'→ Paris?', x: 0.62, y:-0.24, z: 0.05, group:'predict', isPrompt:false, color:'#F59E0B'},
-      {label:'→ Lyon?',  x: 0.42, y:-0.36, z: 0.12, group:'predict', isPrompt:false, color:'#FCD34D'},
-    ];
+    function byId(id){ return document.getElementById(id); }
 
-    // Layer stages (what happens at each range)
-    var STAGES = [
-      {from:1,  to:16, name:'Layers 1-16: grammar + placement scaffolding', desc:'Attention resolves short syntax links (article -> noun, noun -> verb). FFN starts shaping local language patterns.'},
-      {from:17, to:36, name:'Layers 17-36: local feature composition', desc:'Phrase-level patterns form; "capital of France" starts behaving like one coherent relation.'},
-      {from:37, to:56, name:'Layers 37-56: relation routing', desc:'Attention routes toward relevant context tokens; FFN amplifies country -> capital features.'},
-      {from:57, to:72, name:'Layers 57-72: factual retrieval pressure', desc:'Model pulls harder on memorized factual directions from training data.'},
-      {from:73, to:80, name:'Layers 73-80: output alignment', desc:'Hidden state is aligned for output projection so the top next-token candidate is clear.'}
-    ];
-
-    function getStage(l){
-      return STAGES.find(function(s){ return l >= s.from && l <= s.to; }) || STAGES[0];
-    }
-
-    function embEase(t){
+    function emb3dEase(t){
       return t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t + 2, 2)/2;
     }
 
-    function embVectorAt(layer){
-      var t = embEase((layer - 1) / 79);
-      var target = EMB.phase === 'decode' ? EMB.targetDecode : EMB.targetPrefill;
+    function emb3dStageInfo(layer){
+      if(layer <= 16) return { name:'Layers 1-16: grammar + placement scaffolding', desc:'Attention resolves short syntax links and FFN reinforces local language cues.' };
+      if(layer <= 36) return { name:'Layers 17-36: local feature composition', desc:'Phrase-level meaning becomes coherent (e.g., "capital of France").' };
+      if(layer <= 56) return { name:'Layers 37-56: relation routing', desc:'Attention routes toward relation tokens; FFN amplifies country-to-capital features.' };
+      if(layer <= 72) return { name:'Layers 57-72: factual retrieval pressure', desc:'Fact-bearing directions are strengthened while unrelated clusters are suppressed.' };
+      return { name:'Layers 73-80: output alignment', desc:'The hidden state is aligned so one next-token candidate dominates.' };
+    }
+
+    function emb3dVectorAt(layer){
+      var t = emb3dEase((layer - 1) / 79);
+      var target = EMB3D.phase === 'decode' ? EMB3D.targetDecode : EMB3D.targetPrefill;
       var v = [];
       for(var i=0; i<8; i++){
-        var base = EMB.baseVec[i];
+        var base = EMB3D.baseVec[i];
         var dst = target[i];
-        var wiggle = 0;
-        if(layer <= 16) wiggle = Math.sin(layer*0.22 + i*0.8) * 0.015;
-        else if(layer <= 36) wiggle = Math.sin(layer*0.18 + i*0.6) * 0.028;
-        else if(layer <= 56) wiggle = Math.sin(layer*0.15 + i*0.55) * 0.020;
-        else wiggle = Math.sin(layer*0.1 + i*0.4) * 0.010;
+        var wiggle = layer <= 36 ? Math.sin(layer*0.18 + i*0.6) * 0.02 : Math.sin(layer*0.1 + i*0.4) * 0.01;
         v.push(base + (dst - base) * t + wiggle);
       }
       return v;
     }
 
-    function getProbsAtLayer(l){
-      var cur = embVectorAt(l);
-      var rows = EMB.outputRows.map(function(row){
+    function emb3dToyProbs(layer){
+      var cur = emb3dVectorAt(layer);
+      var rows = EMB3D.outputRows.map(function(row){
         var voteSum = 0;
-        for(var i=0;i<cur.length;i++) voteSum += cur[i] * row.weights[i];
-        return { label: row.label, bias: row.bias, voteSum: voteSum, logit: row.bias + voteSum };
+        for(var i=0; i<cur.length; i++) voteSum += cur[i] * row.weights[i];
+        return { label:row.label, logit:row.bias + voteSum };
       });
       var maxL = Math.max.apply(null, rows.map(function(r){ return r.logit; }));
       var exps = rows.map(function(r){ return Math.exp(r.logit - maxL); });
-      var s = exps.reduce(function(a,b){ return a+b; }, 0);
-      return rows.map(function(r, idx){
-        return {
-          label: r.label,
-          prob: exps[idx] / s,
-          logit: r.logit,
-          color: r.label === 'Paris' ? 'var(--sw)' : (r.label === 'Lyon' ? 'var(--llm)' : (r.label === 'Marseille' ? 'var(--blue)' : 'var(--dim2)'))
-        };
-      });
+      var sum = exps.reduce(function(a,b){ return a+b; }, 0);
+      rows.forEach(function(r, i){ r.prob = exps[i] / sum; });
+      return rows.sort(function(a,b){ return b.prob - a.prob; });
     }
 
-    function renderProbs(){
-      var probs = getProbsAtLayer(EMB.layer);
-      var el = document.getElementById('emb-probs');
-      if(!el) return;
-      var html = '';
-      probs.forEach(function(p){
-        var pct = (p.prob*100).toFixed(1);
-        html += '<div style="display:flex;align-items:center;gap:6px;">'
-          + '<div style="font-family:var(--mono);font-size:8.5px;color:var(--muted);width:60px;flex-shrink:0;">' + p.label + '</div>'
-          + '<div style="flex:1;background:var(--bg4);border-radius:2px;height:13px;overflow:hidden;">'
-          + '<div style="width:' + (p.prob*100) + '%;height:100%;background:' + p.color + ';border-radius:2px;transition:width 0.3s;"></div>'
-          + '</div>'
-          + '<div style="font-family:var(--mono);font-size:8.5px;width:36px;text-align:right;color:' + p.color + ';">' + pct + '%</div>'
-          + '</div>';
-      });
-      el.innerHTML = html;
+    function renderEmb3dMeta(){
+      var info = emb3dStageInfo(EMB3D.layer);
+      if(byId('emb3d-stage-name')) byId('emb3d-stage-name').textContent = info.name;
+      if(byId('emb3d-stage-desc')) byId('emb3d-stage-desc').textContent = info.desc;
+      if(byId('emb3d-stage-bar')) byId('emb3d-stage-bar').textContent = 'Layer ' + EMB3D.layer + ' / 80: ' + info.desc;
+      if(byId('emb3d-layer-label')) byId('emb3d-layer-label').textContent = 'Layer ' + EMB3D.layer + ' / 80';
 
-      var stage = getStage(EMB.layer);
-      var ins = document.getElementById('emb-insight');
-      if(ins) ins.textContent = stage.name + ': ' + stage.desc;
-      var stageLbl = document.getElementById('emb-stage-label');
-      if(stageLbl) stageLbl.textContent = 'Layer ' + EMB.layer + ' / 80 — ' + stage.desc.substring(0,55) + '…';
-      var stageName = document.getElementById('emb-stage-name');
-      if(stageName) stageName.textContent = stage.name;
-      var stageDesc = document.getElementById('emb-stage-desc');
-      if(stageDesc) stageDesc.textContent = stage.desc;
-
-      var msWrap = document.getElementById('emb-milestones');
-      if(msWrap){
-        var grammarOn = EMB.layer >= 1;
-        var relationOn = EMB.layer >= 37;
-        var knowledgeOn = EMB.layer >= 57;
-        var outputOn = EMB.layer >= 73;
-        var flags = { grammar: grammarOn, relation: relationOn, knowledge: knowledgeOn, output: outputOn };
-        Array.prototype.forEach.call(msWrap.children, function(ch){
-          var key = ch.getAttribute('data-ms');
-          var on = !!flags[key];
-          ch.style.color = on ? 'var(--text)' : 'var(--dim2)';
-          ch.style.borderColor = on ? 'var(--sw-mid)' : 'var(--border)';
-          ch.style.background = on ? 'var(--sw-dim)' : 'transparent';
-        });
+      var probs = emb3dToyProbs(EMB3D.layer);
+      var max = probs[0] ? probs[0].prob : 0;
+      var colors = ['var(--sw)','var(--llm)','var(--blue)','var(--dim2)'];
+      if(byId('emb3d-probs')){
+        byId('emb3d-probs').innerHTML = probs.map(function(p, i){
+          return '<div style="display:flex;align-items:center;gap:6px;">'
+            + '<div style="font-family:var(--mono);font-size:8px;color:var(--muted);width:52px;">' + p.label + '</div>'
+            + '<div style="flex:1;background:var(--bg4);border-radius:2px;height:12px;overflow:hidden;">'
+            + '<div style="width:' + (p.prob*100).toFixed(2) + '%;height:100%;background:' + colors[i] + ';"></div></div>'
+            + '<div style="font-family:var(--mono);font-size:8px;color:' + colors[i] + ';width:36px;text-align:right;">' + (p.prob*100).toFixed(1) + '%</div>'
+            + '</div>';
+        }).join('');
       }
 
-      var pf = document.getElementById('emb-prompt-focus');
-      if(pf){
-        if(EMB.phase === 'prefill'){
-          pf.innerHTML = 'Prompt in focus: <span style="color:var(--llm);font-weight:600;">"The capital of France is ___"</span> (all prompt tokens run this layer in parallel).';
-        } else {
-          pf.innerHTML = 'Prompt context kept in KV cache: decoding one candidate next token against <span style="color:var(--llm);font-weight:600;">"The capital of France is ___"</span>.';
-        }
+      if(byId('emb3d-process')){
+        var lead = probs[0], second = probs[1];
+        byId('emb3d-process').innerHTML = '<strong style="color:var(--text);">Live vote:</strong> '
+          + lead.label + ' leads at ' + (lead.prob*100).toFixed(1) + '%; '
+          + (second ? ('runner-up ' + second.label + ' at ' + (second.prob*100).toFixed(1) + '%.') : '')
+          + '<br>Confidence gap: ' + ((lead.prob - (second ? second.prob : 0))*100).toFixed(1) + ' pts.';
       }
 
-      var process = document.getElementById('emb-process');
-      if(process){
-        var ranked = probs.slice().sort(function(a,b){ return b.prob - a.prob; });
-        var lead = ranked[0], second = ranked[1];
-        var gap = Math.max(0, (lead.prob - second.prob) * 100);
-        process.innerHTML = ''
-          + '<span style="color:var(--sw);font-weight:600;">Top candidate now:</span> ' + lead.label + ' (' + (lead.prob*100).toFixed(1) + '%)<br>'
-          + 'Runner-up: ' + second.label + ' (' + (second.prob*100).toFixed(1) + '%)<br>'
-          + 'Confidence gap: ' + gap.toFixed(1) + ' pts';
-      }
-
-      var talk = document.getElementById('emb-talktrack');
-      if(talk){
-        var line = '';
-        if(EMB.layer <= 16) line = 'Presenter line: the model is mostly building sentence structure and local grammar.';
-        else if(EMB.layer <= 36) line = 'Presenter line: phrase-level meaning forms; key words start acting as one concept.';
-        else if(EMB.layer <= 56) line = 'Presenter line: attention routes to relevant context such as "capital" and "France".';
-        else if(EMB.layer <= 72) line = 'Presenter line: trained knowledge is now pushing strongly toward factual candidates.';
-        else line = 'Presenter line: output head aligns the hidden state so one next-token choice dominates.';
-        talk.textContent = line;
+      if(byId('emb3d-note')){
+        byId('emb3d-note').innerHTML = EMB3D.phase === 'prefill'
+          ? 'Prefill: all prompt tokens run this layer in parallel; this is a tracked representative token state.'
+          : 'Decode: one token candidate is refined through all 80 layers using KV-cache context.';
       }
     }
 
-    // ── Canvas rendering ───────────────────────────────────────────
-    function project(x, y, z, cx, cy, scaleX, scaleY, depthX, depthY){
-      // Stretch to fill rectangular canvas while preserving a mild 3D cue from z.
-      var px = cx + x*scaleX + z*depthX;
-      var py = cy - y*scaleY + z*depthY;
-      return {px:px, py:py, z:z};
-    }
-
-    function lerpXYZ(t, fromX, fromY, fromZ, toX, toY, toZ){
-      return {x: fromX+(toX-fromX)*t, y: fromY+(toY-fromY)*t, z: fromZ+(toZ-fromZ)*t};
-    }
-
-    function drawEmbCanvas(){
-      var canvas = document.getElementById('emb-canvas');
-      if(!canvas) return;
-      var dpr = Math.min(2, window.devicePixelRatio||1);
-      var cw = canvas.clientWidth, ch = canvas.clientHeight;
-      if(canvas.width !== Math.round(cw*dpr) || canvas.height !== Math.round(ch*dpr)){
-        canvas.width = Math.round(cw*dpr);
-        canvas.height = Math.round(ch*dpr);
+    function initEmb3dCanvas(){
+      var canvas = byId('emb3d-canvas');
+      if(!canvas) return null;
+      var dpr = Math.max(1, window.devicePixelRatio || 1);
+      var w = Math.floor(canvas.clientWidth);
+      var h = Math.floor(canvas.clientHeight);
+      if(canvas.width !== Math.floor(w*dpr) || canvas.height !== Math.floor(h*dpr)){
+        canvas.width = Math.floor(w*dpr);
+        canvas.height = Math.floor(h*dpr);
       }
       var ctx = canvas.getContext('2d');
-      ctx.setTransform(dpr,0,0,dpr,0,0);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      return { canvas: canvas, ctx: ctx, w: w, h: h };
+    }
 
+    function emb3dProject(x, y, z, c){
+      return { x: c.x + x*c.rx + z*22, y: c.y + y*c.ry - z*16 };
+    }
+
+    function drawEmb3d(){
+      var state = initEmb3dCanvas();
+      if(!state) return;
+      var ctx = state.ctx, w = state.w, h = state.h;
       var isDark = document.documentElement.classList.contains('dark');
-      ctx.clearRect(0,0,cw,ch);
-      ctx.fillStyle = isDark ? '#0e1117' : '#f0f4f8';
-      ctx.fillRect(0,0,cw,ch);
 
-      var padX = 24;
-      var padY = 20;
-      var plotW = Math.max(10, cw - padX*2);
-      var plotH = Math.max(10, ch - padY*2);
-      var cx = padX + plotW*0.5;
-      var cy = padY + plotH*0.5;
-      var scaleX = plotW * 0.44;
-      var scaleY = plotH * 0.43;
-      var depthX = plotW * 0.06;
-      var depthY = plotH * 0.04;
+      ctx.clearRect(0,0,w,h);
+      ctx.fillStyle = isDark ? '#101723' : '#f3f8ff';
+      ctx.fillRect(0,0,w,h);
 
-      // Semantic regions for intuitive "areas" in embedding space.
-      function zone(x0, y0, w, h, color, label){
-        ctx.save();
-        ctx.globalAlpha = isDark ? 0.14 : 0.16;
-        ctx.fillStyle = color;
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.roundRect(x0, y0, w, h, 28);
-        ctx.fill();
-        ctx.globalAlpha = isDark ? 0.30 : 0.34;
-        ctx.stroke();
-        ctx.globalAlpha = isDark ? 0.70 : 0.55;
-        ctx.font = '600 8px "JetBrains Mono",monospace';
-        ctx.textAlign = 'left';
-        ctx.fillText(label, x0 + 9, y0 + 14);
-        ctx.restore();
+      var grid = isDark ? 'rgba(220,230,255,.08)' : 'rgba(20,30,50,.10)';
+      for(var gx=0; gx<=12; gx++){
+        var x = (gx/12)*w;
+        ctx.strokeStyle = grid;
+        ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke();
+      }
+      for(var gy=0; gy<=8; gy++){
+        var y = (gy/8)*h;
+        ctx.strokeStyle = grid;
+        ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke();
       }
 
-      zone(padX + 6,        padY + 6,         plotW*0.36, plotH*0.42, '#60A5FA', 'Country semantics');
-      zone(cw - padX - 6 - plotW*0.36, padY + 6,         plotW*0.36, plotH*0.42, '#2DD4BF', 'Capital semantics');
-      zone(padX + 6,        ch - padY - 6 - plotH*0.32,  plotW*0.42, plotH*0.32, '#93C5FD', 'Prompt grammar tokens');
-      zone(cw - padX - 6 - plotW*0.34, ch - padY - 6 - plotH*0.30, plotW*0.34, plotH*0.30, '#F59E0B', 'Output candidates');
+      var c = { x:w*0.5, y:h*0.56, rx:Math.max(108,w*0.37), ry:h*0.25 };
+      var clusters = [
+        { n:'CAPITAL CITIES', x: 0.92, y:-0.34, z:0.70, col: isDark ? '#2dd4bf' : '#0d9488', spread:[[0,0],[11,-4],[-12,2],[7,10],[-8,-10]] },
+        { n:'COUNTRIES', x: 0.46, y:-0.02, z:0.28, col: isDark ? '#60a5fa' : '#2563eb', spread:[[0,0],[10,3],[-10,-2],[4,11],[-6,-10]] },
+        { n:'PROGRAMMING', x: 0.04, y:0.58, z:-0.44, col: isDark ? '#f472b6' : '#be185d', spread:[[0,0],[11,-2],[-11,2],[5,12],[-8,-11]] },
+        { n:'ANIMALS', x:-0.98, y:-0.26, z:0.18, col: isDark ? '#c084fc' : '#7c3aed', spread:[[0,0],[10,-3],[-12,3],[8,10],[-6,-10]] },
+        { n:'FOODS', x:-0.76, y:0.30, z:-0.26, col: isDark ? '#fbbf24' : '#b45309', spread:[[0,0],[12,1],[-10,-4],[6,11],[-7,-11]] }
+      ];
 
-      // Draw connecting lines (country→capital arrows at later layers)
-      if(EMB.layer > 32){
-        var alpha = Math.min(1, (EMB.layer-32)/20);
-        // France → Paris
-        var fr = CLUSTERS[0], pa = CLUSTERS[4];
-        var fproj = project(fr.x, fr.y, fr.z, cx, cy, scaleX, scaleY, depthX, depthY);
-        var pproj = project(pa.x, pa.y, pa.z, cx, cy, scaleX, scaleY, depthX, depthY);
-        ctx.save();
-        ctx.globalAlpha = alpha * 0.7;
-        ctx.strokeStyle = '#F59E0B';
-        ctx.lineWidth = 1.5;
-        ctx.setLineDash([4,3]);
-        ctx.beginPath();
-        ctx.moveTo(fproj.px, fproj.py);
-        ctx.lineTo(pproj.px, pproj.py);
-        ctx.stroke();
-        // Arrow head
-        var angle = Math.atan2(pproj.py - fproj.py, pproj.px - fproj.px);
-        ctx.setLineDash([]);
-        ctx.fillStyle = '#F59E0B';
-        ctx.beginPath();
-        ctx.moveTo(pproj.px, pproj.py);
-        ctx.lineTo(pproj.px - 8*Math.cos(angle-0.4), pproj.py - 8*Math.sin(angle-0.4));
-        ctx.lineTo(pproj.px - 8*Math.cos(angle+0.4), pproj.py - 8*Math.sin(angle+0.4));
-        ctx.closePath();
-        ctx.fill();
-        ctx.restore();
-
-        // Label
-        if(alpha > 0.5){
-          ctx.save();
-          ctx.globalAlpha = alpha;
-          ctx.fillStyle = '#F59E0B';
-          ctx.font = '600 8px "JetBrains Mono",monospace';
-          ctx.textAlign = 'center';
-          var midX = (fproj.px+pproj.px)/2, midY = (fproj.py+pproj.py)/2 - 10;
-          ctx.fillText('capital-of', midX, midY);
-          ctx.restore();
-        }
-      }
-
-      // Draw decode attention lines
-      if(EMB.phase === 'decode' && EMB.layer > 40){
-        var alpha2 = Math.min(0.6, (EMB.layer-40)/30);
-        ctx.save();
-        ctx.globalAlpha = alpha2 * 0.5;
-        ctx.strokeStyle = '#10B981';
-        ctx.lineWidth = 0.8;
-        ctx.setLineDash([2,4]);
-        // Lines from France, capital, is → Paris (predict region)
-        [0, 1, 11].forEach(function(i){
-          var src = CLUSTERS[i];
-          var dst = CLUSTERS[4];
-          var sp = project(src.x, src.y, src.z, cx, cy, scaleX, scaleY, depthX, depthY);
-          var dp = project(dst.x, dst.y, dst.z, cx, cy, scaleX, scaleY, depthX, depthY);
-          ctx.beginPath();
-          ctx.moveTo(sp.px, sp.py);
-          ctx.lineTo(dp.px, dp.py);
-          ctx.stroke();
+      clusters.forEach(function(cl){
+        var p = emb3dProject(cl.x, cl.y, cl.z, c);
+        cl.spread.forEach(function(offset, idx){
+          ctx.fillStyle = cl.col;
+          ctx.globalAlpha = idx === 0 ? 0.9 : 0.55;
+          ctx.beginPath(); ctx.arc(p.x + offset[0], p.y + offset[1], idx === 0 ? 4.2 : 3.3, 0, Math.PI*2); ctx.fill();
         });
-        ctx.restore();
-      }
-
-      // Sort clusters by z for painter's algorithm
-      var sorted = CLUSTERS.map(function(c, i){ return {c:c, i:i}; });
-      sorted.sort(function(a, b){ return a.c.z - b.c.z; });
-
-      // Draw points
-      sorted.forEach(function(item){
-        var c = item.c;
-        // Skip prediction candidates unless in later layers
-        if(c.group === 'predict' && EMB.layer < 50) return;
-
-        // Keep base cluster layout for interpretability and animate confidence through highlighting
-        var animX = c.x, animY = c.y, animZ = c.z;
-
-        var proj = project(animX, animY, animZ, cx, cy, scaleX, scaleY, depthX, depthY);
-        var r = c.isPrompt ? 7 : (c.group === 'predict' ? 5 : 5);
-        var alpha = c.isPrompt ? 1.0 : (c.group === 'country' || c.group === 'capital' ? 0.7 : 0.5);
-
-        if(c.group === 'predict'){
-          alpha = Math.min(0.9, (EMB.layer-50)/20);
-          if(alpha <= 0) return;
-          // Paris gets bigger as probability rises
-          if(c.label === '→ Paris?'){
-            var pp = getProbsAtLayer(EMB.layer)[0].prob;
-            r = 5 + pp * 12;
-          }
-        }
-
-        // Draw cluster ellipses
-        if(!c.isPrompt && c.group !== 'predict'){
-          var group = c.group;
-          if(sorted.filter(function(x){ return x.c.group===group && x.i <= item.i; }).length === 1){
-            // First item of this group — draw ellipse
-            ctx.save();
-            ctx.globalAlpha = 0.08;
-            ctx.fillStyle = c.color;
-            ctx.beginPath();
-            ctx.ellipse(proj.px, proj.py, 50, 30, -0.1, 0, Math.PI*2);
-            ctx.fill();
-            ctx.restore();
-          }
-        }
-
-        ctx.save();
-        ctx.globalAlpha = alpha;
-
-        // Shadow
-        ctx.shadowColor = 'rgba(0,0,0,0.2)';
-        ctx.shadowBlur = 4;
-
-        // Fill
-        ctx.beginPath();
-        ctx.arc(proj.px, proj.py, r, 0, Math.PI*2);
-        ctx.fillStyle = c.color;
-        ctx.fill();
-
-        // Ring for prompt tokens
-        if(c.isPrompt){
-          ctx.lineWidth = 1.5;
-          ctx.strokeStyle = c.color;
-          ctx.globalAlpha = 0.5;
-          ctx.beginPath();
-          ctx.arc(proj.px, proj.py, r+4, 0, Math.PI*2);
-          ctx.stroke();
-        }
-
-        ctx.restore();
-
-        // Label
-        ctx.save();
-        ctx.globalAlpha = c.isPrompt ? 1.0 : 0.75;
-        ctx.fillStyle = isDark ? '#e2e8f0' : '#1e293b';
-        ctx.font = (c.isPrompt ? '700 ' : '') + '8.5px "JetBrains Mono",monospace';
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = isDark ? '#cbd5e1' : '#334155';
+        ctx.font = '8px JetBrains Mono';
         ctx.textAlign = 'center';
-        ctx.textBaseline = 'top';
-        ctx.fillText(c.label, proj.px, proj.py + r + 3);
-        ctx.restore();
+        ctx.fillText(cl.n, p.x, p.y - 20);
       });
 
-      // Draw axes (faint)
-      ctx.save();
-      ctx.globalAlpha = 0.12;
-      ctx.strokeStyle = isDark ? '#94a3b8' : '#475569';
-      ctx.lineWidth = 1;
-      // X axis
-      ctx.beginPath();
-      ctx.moveTo(padX + 8, cy); ctx.lineTo(cw - padX - 8, cy); ctx.stroke();
-      // Y axis
-      ctx.beginPath();
-      ctx.moveTo(cx, padY + 8); ctx.lineTo(cx, ch - padY - 8); ctx.stroke();
-      ctx.restore();
-
-      // Axis labels
-      ctx.save();
-      ctx.globalAlpha = 0.45;
-      ctx.fillStyle = isDark ? '#94a3b8' : '#64748b';
-      ctx.font = '7.5px "JetBrains Mono",monospace';
-      ctx.textAlign = 'center';
-      ctx.fillText('→ dimension 1 (of 8,192)', cw - padX - 84, cy+4);
-      ctx.textAlign = 'left';
-      ctx.save(); ctx.translate(padX + 4, cy-28); ctx.rotate(-Math.PI/2);
-      ctx.fillText('dim 2 ↑', 0, 0);
-      ctx.restore();
-
-      // Draw tracked hidden-state path across layers
       var path = [];
-      for(var l=1; l<=EMB.layer; l++){
-        var vec = embVectorAt(l);
-        path.push(project(vec[0], vec[1], vec[2], cx, cy, scaleX, scaleY, depthX, depthY));
+      for(var l=1; l<=EMB3D.layer; l++){
+        var v = emb3dVectorAt(l);
+        path.push(emb3dProject(v[0], v[1], v[2], c));
       }
       if(path.length > 1){
-        ctx.save();
-        ctx.strokeStyle = isDark ? 'rgba(34,197,94,.55)' : 'rgba(16,185,129,.42)';
+        ctx.strokeStyle = isDark ? 'rgba(34,197,94,.55)' : 'rgba(5,150,105,.45)';
         ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.moveTo(path[0].px, path[0].py);
-        for(var pi=1; pi<path.length; pi++) ctx.lineTo(path[pi].px, path[pi].py);
+        ctx.moveTo(path[0].x, path[0].y);
+        for(var i=1; i<path.length; i++) ctx.lineTo(path[i].x, path[i].y);
         ctx.stroke();
-        ctx.restore();
       }
 
       var cur = path[path.length-1];
       if(cur){
-        ctx.save();
-        ctx.fillStyle = isDark ? '#ff6b6b' : '#dc2626';
-        ctx.beginPath();
-        ctx.arc(cur.px, cur.py, 7, 0, Math.PI*2);
-        ctx.fill();
-        ctx.fillStyle = isDark ? '#e2e8f0' : '#111827';
-        ctx.font = '11px JetBrains Mono';
-        ctx.fillText(EMB.phase === 'decode' ? 'candidate token state' : 'tracked prompt-token state', cur.px + 10, cur.py - 9);
-        ctx.restore();
+        ctx.fillStyle = isDark ? '#f87171' : '#dc2626';
+        ctx.beginPath(); ctx.arc(cur.x, cur.y, 7, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = isDark ? '#e2e8f0' : '#0f172a';
+        ctx.font = '10px JetBrains Mono';
+        ctx.textAlign = 'left';
+        ctx.fillText(EMB3D.phase === 'decode' ? 'candidate token state' : 'tracked prompt-token state', cur.x + 10, cur.y - 8);
       }
-
-      // Phase label
-      ctx.font = '700 9px "JetBrains Mono",monospace';
-      ctx.textAlign = 'right';
-      ctx.globalAlpha = 0.6;
-      ctx.fillStyle = EMB.phase === 'prefill' ? '#14B8A6' : '#F59E0B';
-      ctx.fillText(EMB.phase === 'prefill' ? 'PREFILL — all tokens processed in parallel' : 'DECODE — one token generated at a time', cw-8, 14);
-      ctx.restore();
     }
 
-    // ── Animation loop ─────────────────────────────────────────────
-    function embLoop(ts){
-      if(!EMB.raf) return;
-      if(!EMB.lastTs) EMB.lastTs = ts;
-      var dt = ts - EMB.lastTs; EMB.lastTs = ts;
-      if(EMB.playing){
-        EMB.acc = (EMB.acc||0) + dt;
-        if(EMB.acc >= EMB.speedMs){
-          EMB.acc = 0;
-          if(EMB.layer < 80){ embSetLayer(EMB.layer+1, false); }
+    function stepEmb3d(ts){
+      if(!EMB3D.raf) return;
+      if(!EMB3D.lastTs) EMB3D.lastTs = ts;
+      var dt = ts - EMB3D.lastTs;
+      EMB3D.lastTs = ts;
+
+      if(EMB3D.playing){
+        EMB3D._acc = (EMB3D._acc || 0) + dt;
+        if(EMB3D._acc >= EMB3D.speedMs){
+          EMB3D._acc = 0;
+          if(EMB3D.layer < 80) setEmb3dLayer(EMB3D.layer + 1, false);
           else {
-            EMB.playing = false;
-            var btn = document.getElementById('emb-play-btn');
-            if(btn) btn.textContent = '↺ Replay';
+            EMB3D.playing = false;
+            var play = byId('emb3d-play');
+            if(play) play.textContent = 'Replay from layer 1';
           }
         }
       }
-      drawEmbCanvas();
-      EMB.raf = requestAnimationFrame(embLoop);
+
+      drawEmb3d();
+      EMB3D.raf = requestAnimationFrame(stepEmb3d);
     }
 
-    window.embSetLayer = function(l, fromSlider){
-      EMB.layer = Math.max(1, Math.min(80, l));
+    function startEmb3d(){
+      if(EMB3D.raf) return;
+      EMB3D.raf = requestAnimationFrame(stepEmb3d);
+      renderEmb3dMeta();
+      drawEmb3d();
+    }
+
+    function stopEmb3d(){
+      if(EMB3D.raf){ cancelAnimationFrame(EMB3D.raf); EMB3D.raf = null; }
+    }
+
+    window.setEmb3dSpeed = function(v){
+      EMB3D.speedMs = v === 'slow' ? 950 : (v === 'fast' ? 280 : 650);
+    };
+
+    window.toggleEmb3dPlay = function(){
+      if(EMB3D.layer >= 80){
+        EMB3D.layer = 1;
+        window.setEmb3dLayer(1, false);
+      }
+      EMB3D.playing = !EMB3D.playing;
+      var btn = byId('emb3d-play');
+      if(btn) btn.textContent = EMB3D.playing ? 'Pause layers' : 'Play layers';
+    };
+
+    window.setEmb3dPhase = function(phase){
+      EMB3D.phase = phase;
+      EMB3D.layer = 1;
+      EMB3D.playing = false;
+      EMB3D._acc = 0;
+      if(byId('emb3d-prefill')){
+        byId('emb3d-prefill').style.borderColor = phase === 'prefill' ? 'var(--sw)' : 'var(--border)';
+        byId('emb3d-prefill').style.background = phase === 'prefill' ? 'var(--sw-dim)' : 'transparent';
+        byId('emb3d-prefill').style.color = phase === 'prefill' ? 'var(--sw)' : 'var(--dim)';
+      }
+      if(byId('emb3d-decode')){
+        byId('emb3d-decode').style.borderColor = phase === 'decode' ? 'var(--sw)' : 'var(--border)';
+        byId('emb3d-decode').style.background = phase === 'decode' ? 'var(--sw-dim)' : 'transparent';
+        byId('emb3d-decode').style.color = phase === 'decode' ? 'var(--sw)' : 'var(--dim)';
+      }
+      if(byId('emb3d-play')) byId('emb3d-play').textContent = 'Play layers';
+      window.setEmb3dLayer(1, false);
+    };
+
+    window.setEmb3dLayer = function(layer, fromSlider){
+      EMB3D.layer = Math.max(1, Math.min(80, layer || 1));
       if(fromSlider){
-        EMB.playing = false;
-        var playPause = document.getElementById('emb-play-btn');
-        if(playPause) playPause.textContent = '▶ Play layers';
+        EMB3D.playing = false;
+        if(byId('emb3d-play')) byId('emb3d-play').textContent = 'Play layers';
       }
-      var sl = document.getElementById('emb-layer');
-      if(sl && !fromSlider) sl.value = EMB.layer;
-      var lbl = document.getElementById('emb-layer-lbl');
-      if(lbl) lbl.textContent = 'Layer ' + EMB.layer + ' / 80';
-      renderProbs();
+      if(byId('emb3d-layer') && !fromSlider) byId('emb3d-layer').value = EMB3D.layer;
+      renderEmb3dMeta();
+      drawEmb3d();
     };
 
-    window.embSetPhase = function(p){
-      EMB.phase = p;
-      EMB.layer = 1;
-      EMB.playing = false;
-      EMB.acc = 0;
-      ['prefill','decode'].forEach(function(ph){
-        var btn = document.getElementById('emb-btn-'+ph);
-        if(!btn) return;
-        if(ph === p){
-          btn.style.borderColor = 'var(--sw)';
-          btn.style.background = 'rgba(13,148,136,0.15)';
-          btn.style.color = 'var(--sw)';
-        } else {
-          btn.style.borderColor = 'var(--border)';
-          btn.style.background = 'transparent';
-          btn.style.color = 'var(--dim)';
-        }
-      });
-      var playBtn = document.getElementById('emb-play-btn');
-      if(playBtn) playBtn.textContent = '▶ Play layers';
-      embSetLayer(1, false);
-      drawEmbCanvas();
-    };
-
-    window.embTogglePlay = function(){
-      if(EMB.layer >= 80){
-        EMB.layer = 1;
-        embSetLayer(1, false);
-      }
-      EMB.playing = !EMB.playing;
-      var btn = document.getElementById('emb-play-btn');
-      if(btn) btn.textContent = EMB.playing ? '⏸ Pause' : '▶ Play layers';
-    };
-
-    window.embSetSpeed = function(v){
-      EMB.speedMs = v==='slow' ? 950 : v==='fast' ? 140 : 650;
-    };
-
-    // Start loop when slide becomes active
-    function startEmb(){
-      if(EMB.raf) return;
-      EMB.raf = requestAnimationFrame(embLoop);
-      renderProbs();
-    }
-    function stopEmb(){
-      if(EMB.raf){ cancelAnimationFrame(EMB.raf); EMB.raf = null; }
+    // Ensure wheel over canvas still scrolls slide body when zoomed in.
+    var canvas = byId('emb3d-canvas');
+    if(canvas){
+      canvas.addEventListener('wheel', function(e){
+        var scroller = canvas.closest('.slide-body');
+        if(scroller) scroller.scrollTop += e.deltaY;
+      }, {passive:true});
     }
 
-    // Hook into the deck's slide navigation
-    var origNavigate = window.navigate;
-    // We'll start the canvas when this slide is active - use MutationObserver
-    var slide = document.getElementById('sEmb');
+    var slide = byId('sEmb');
     if(slide){
       var obs = new MutationObserver(function(){
-        if(slide.classList.contains('active')) startEmb();
-        else stopEmb();
+        if(slide.classList.contains('active')) startEmb3d();
+        else stopEmb3d();
       });
       obs.observe(slide, {attributes:true, attributeFilter:['class']});
-      if(slide.classList.contains('active')) startEmb();
+      if(slide.classList.contains('active')) startEmb3d();
     }
-    // Also draw once immediately so it's visible if tab is already active
-    setTimeout(function(){ embSetPhase('prefill'); drawEmbCanvas(); renderProbs(); }, 100);
+
+    setTimeout(function(){
+      window.setEmb3dPhase('prefill');
+      window.setEmb3dLayer(1, false);
+    }, 100);
   })();
   </script>
 
