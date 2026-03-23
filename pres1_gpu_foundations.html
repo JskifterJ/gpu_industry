@@ -2932,12 +2932,12 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
           <div style="font-family:var(--mono);font-size:8px;color:var(--dim);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;">HGX per-token timeline (ms)</div>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">
             <div style="width:92px;font-family:var(--mono);font-size:8px;color:var(--muted);">Compute</div>
-            <div style="flex:1;height:13px;background:var(--bg4);border-radius:2px;overflow:hidden;"><div style="width:76.5%;height:100%;background:var(--blue);"></div></div>
+            <div style="flex:1;height:13px;background:var(--bg4);border-radius:2px;overflow:hidden;"><div class="bar-fill" style="--w:76.5%;width:var(--w);background:var(--blue);"></div></div>
             <div style="font-family:var(--mono);font-size:8px;color:var(--blue);width:42px;text-align:right;">2.6</div>
           </div>
           <div style="display:flex;align-items:center;gap:8px;">
             <div style="width:92px;font-family:var(--mono);font-size:8px;color:var(--muted);">All-reduce</div>
-            <div style="flex:1;height:13px;background:var(--bg4);border-radius:2px;overflow:hidden;"><div style="width:23.5%;height:100%;background:var(--red);"></div></div>
+            <div style="flex:1;height:13px;background:var(--bg4);border-radius:2px;overflow:hidden;"><div class="bar-fill" style="--w:23.5%;width:var(--w);background:var(--red);"></div></div>
             <div style="font-family:var(--mono);font-size:8px;color:var(--red);width:42px;text-align:right;">0.8</div>
           </div>
           <div style="margin-top:7px;font-family:var(--mono);font-size:8px;color:var(--muted);">Total: 3.4 ms/token · GPU utilization proxy: <span style="color:var(--llm);">~76%</span></div>
@@ -2947,12 +2947,12 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
           <div style="font-family:var(--mono);font-size:8px;color:var(--dim);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;">DGX per-token timeline (ms)</div>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">
             <div style="width:92px;font-family:var(--mono);font-size:8px;color:var(--muted);">Compute</div>
-            <div style="flex:1;height:13px;background:var(--bg4);border-radius:2px;overflow:hidden;"><div style="width:97.7%;height:100%;background:var(--blue);"></div></div>
+            <div style="flex:1;height:13px;background:var(--bg4);border-radius:2px;overflow:hidden;"><div class="bar-fill" style="--w:97.7%;width:var(--w);background:var(--blue);"></div></div>
             <div style="font-family:var(--mono);font-size:8px;color:var(--blue);width:42px;text-align:right;">2.6</div>
           </div>
           <div style="display:flex;align-items:center;gap:8px;">
             <div style="width:92px;font-family:var(--mono);font-size:8px;color:var(--muted);">All-reduce</div>
-            <div style="flex:1;height:13px;background:var(--bg4);border-radius:2px;overflow:hidden;"><div style="width:2.3%;height:100%;background:var(--green);"></div></div>
+            <div style="flex:1;height:13px;background:var(--bg4);border-radius:2px;overflow:hidden;"><div class="bar-fill" style="--w:2.3%;width:var(--w);background:var(--green);"></div></div>
             <div style="font-family:var(--mono);font-size:8px;color:var(--green);width:42px;text-align:right;">0.06</div>
           </div>
           <div style="margin-top:7px;font-family:var(--mono);font-size:8px;color:var(--muted);">Total: 2.66 ms/token · GPU utilization proxy: <span style="color:var(--green);">~98%</span></div>
@@ -3041,11 +3041,31 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
       <div id="econ-card-dgxb200" style="background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--hw);border-radius:4px;padding:12px;"></div>
     </div>
 
-    <!-- Bandwidth comparison bars -->
-    <div class="anim anim-4" style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:10px 14px;">
-      <div style="font-family:var(--mono);font-size:8px;color:var(--dim);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;">Effective throughput — total tok/s this node delivers to all users</div>
-      <div id="econ-bars" style="display:flex;flex-direction:column;gap:5px;"></div>
-      <div style="font-family:var(--mono);font-size:7.5px;color:var(--dim2);margin-top:6px;">PCIe comms overhead reduces throughput at high GPU count. NVLink near-linear. Costs include compute (cloud spot rate) + electricity at PUE 1.4 + $80/U/mo rack. Source: v10 inference economics model.</div>
+    <!-- Visual analytics (v10-inspired): cost component bars + scale line chart -->
+    <div class="anim anim-4" style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:10px 14px;display:grid;grid-template-columns:1.05fr 1fr;gap:12px;align-items:start;">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:9px 10px;">
+        <div style="font-family:var(--mono);font-size:8px;color:var(--dim);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;">Cost stack per 1M output tokens</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:6px;font-family:var(--mono);font-size:7px;color:var(--dim);">
+          <span style="display:flex;align-items:center;gap:4px;"><span style="width:7px;height:7px;border-radius:50%;background:var(--sw);"></span>compute</span>
+          <span style="display:flex;align-items:center;gap:4px;"><span style="width:7px;height:7px;border-radius:50%;background:var(--llm);"></span>energy</span>
+          <span style="display:flex;align-items:center;gap:4px;"><span style="width:7px;height:7px;border-radius:50%;background:var(--blue);"></span>rack</span>
+        </div>
+        <div id="econ-cost-stack" style="display:flex;flex-direction:column;gap:6px;"></div>
+      </div>
+
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:9px 10px;">
+        <div style="font-family:var(--mono);font-size:8px;color:var(--dim);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;">Tokens/sec vs GPU count (same workload)</div>
+        <canvas id="econ-scale-chart" width="560" height="230" style="width:100%;height:230px;display:block;background:var(--bg2);border:1px solid var(--border);border-radius:3px;"></canvas>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;font-family:var(--mono);font-size:7px;color:var(--dim);">
+          <span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:2px;background:var(--llm);"></span>HGX PCIe</span>
+          <span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:2px;background:var(--blue);"></span>DGX H100</span>
+          <span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:2px;background:var(--hw);"></span>DGX B200</span>
+        </div>
+      </div>
+
+      <div style="grid-column:1 / -1;font-family:var(--mono);font-size:7.5px;color:var(--dim2);line-height:1.7;">
+        Cost accounting shown explicitly as <strong style="color:var(--text);">compute + energy + rack</strong>. The line chart isolates scaling behavior so you can see when adding GPUs improves throughput versus when interconnect overhead flattens gains.
+      </div>
     </div>
   </div>
 
@@ -3184,6 +3204,10 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
 
     function fmtMs(ms){ return ms >= 1000 ? (ms/1000).toFixed(2)+'s' : ms.toFixed(0)+'ms'; }
     function fmtCost(c){ return c === null ? 'N/A' : '$'+(c < 0.01 ? c.toFixed(4) : c < 1 ? c.toFixed(3) : c.toFixed(2)); }
+    function fmtCompact(v){
+      if(v >= 1000) return (v/1000).toFixed(v % 1000 === 0 ? 0 : 1) + 'k';
+      return v.toFixed(0);
+    }
 
     function renderCard(elId, cfgKey, result, cfg){
       var el = document.getElementById(elId);
@@ -3230,29 +3254,125 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
         +' · Comms: <span style="color:'+(result.comms_ms>0.5?'var(--red)':'var(--sw)')+';">'+result.comms_ms.toFixed(2)+'ms</span></div>';
     }
 
-    function renderBars(results){
-      var el = document.getElementById('econ-bars');
+    function renderCostStack(results){
+      var el = document.getElementById('econ-cost-stack');
       if(!el) return;
-      var max_tps = Math.max.apply(null, ['pcie','dgxh100','dgxb200'].map(function(k){ return results[k] && !results[k].oom ? results[k].toks_per_sec : 0; }));
-      if(max_tps === 0) { el.innerHTML = ''; return; }
+      var max_total = Math.max.apply(null, ['pcie','dgxh100','dgxb200'].map(function(k){ return results[k] && !results[k].oom ? results[k].total_cost : 0; }));
+      if(max_total === 0) { el.innerHTML = ''; return; }
       var html = '';
       ['pcie','dgxh100','dgxb200'].forEach(function(k){
         var r = results[k]; var cfg = CFGS[k];
-        if(!r || r.oom){ 
-          html += '<div style="display:flex;align-items:center;gap:8px;"><div style="font-family:var(--mono);font-size:8px;color:var(--dim);width:100px;flex-shrink:0;">'+cfg.name+'</div>'
-            +'<div style="flex:1;background:var(--bg4);border-radius:2px;height:16px;display:flex;align-items:center;padding-left:8px;font-family:\'JetBrains Mono\',monospace;font-size:8px;color:var(--red);">OOM</div></div>';
+        if(!r || r.oom){
+          html += '<div style="display:flex;align-items:center;gap:8px;"><div style="font-family:var(--mono);font-size:8px;color:var(--dim);width:106px;flex-shrink:0;">'+cfg.name+'</div>'
+            +'<div style="flex:1;background:var(--bg4);border-radius:2px;height:18px;display:flex;align-items:center;padding-left:8px;font-family:\'JetBrains Mono\',monospace;font-size:8px;color:var(--red);">OOM</div></div>';
           return;
         }
-        var pct = (r.toks_per_sec / max_tps * 100).toFixed(1);
+
+        var cPct = (r.compute_cost / max_total * 100);
+        var ePct = (r.energy_cost / max_total * 100);
+        var rkPct = (r.rack_cost / max_total * 100);
+
         html += '<div style="display:flex;align-items:center;gap:8px;">'
-          +'<div style="font-family:var(--mono);font-size:8px;color:'+cfg.color+';width:100px;flex-shrink:0;">'+cfg.name+'</div>'
-          +'<div style="flex:1;background:var(--bg4);border-radius:2px;height:16px;overflow:hidden;">'
-          +'<div style="width:'+pct+'%;height:100%;background:'+cfg.color+';border-radius:2px;opacity:0.8;transition:width 0.4s;display:flex;align-items:center;padding-left:6px;font-family:\'JetBrains Mono\',monospace;font-size:8px;color:rgba(0,0,0,0.75);white-space:nowrap;overflow:hidden;">'
-          +r.toks_per_sec.toFixed(0)+' tok/s</div></div>'
-          +'<div style="font-family:var(--mono);font-size:8px;color:'+cfg.color+';width:70px;text-align:right;">'+fmtCost(r.cost_per_mtok)+'/1M</div>'
+          +'<div style="font-family:var(--mono);font-size:8px;color:'+cfg.color+';width:106px;flex-shrink:0;">'+cfg.name+'</div>'
+          +'<div style="flex:1;background:var(--bg4);border-radius:2px;height:18px;overflow:hidden;display:flex;">'
+          +'<div style="width:'+cPct.toFixed(2)+'%;height:100%;background:var(--sw);"></div>'
+          +'<div style="width:'+ePct.toFixed(2)+'%;height:100%;background:var(--llm);"></div>'
+          +'<div style="width:'+rkPct.toFixed(2)+'%;height:100%;background:var(--blue);"></div>'
+          +'</div>'
+          +'<div style="font-family:var(--mono);font-size:8px;color:'+cfg.color+';width:90px;text-align:right;">'+fmtCost(r.cost_per_mtok)+'/1M</div>'
           +'</div>';
       });
       el.innerHTML = html;
+    }
+
+    function drawScaleChart(batch, inputTok, outputTok){
+      var canvas = document.getElementById('econ-scale-chart');
+      if(!canvas || !canvas.getContext) return;
+      var ctx = canvas.getContext('2d');
+      var w = canvas.width, h = canvas.height;
+
+      ctx.clearRect(0, 0, w, h);
+
+      var padL = 44, padR = 12, padT = 16, padB = 30;
+      var plotW = w - padL - padR;
+      var plotH = h - padT - padB;
+
+      var xs = [1, 2, 4, 8];
+      var keys = ['pcie', 'dgxh100', 'dgxb200'];
+      var series = {};
+      var maxY = 0;
+
+      keys.forEach(function(k){
+        series[k] = xs.map(function(g){
+          var r = calc(k, _model, _prec, batch, inputTok, outputTok);
+          if(!r || r.oom) return 0;
+          var scale = g / Math.max(r.n_gpus, 1);
+          var scaled = r.toks_per_sec * scale;
+          maxY = Math.max(maxY, scaled);
+          return scaled;
+        });
+      });
+
+      if(maxY <= 0){
+        ctx.fillStyle = '#888';
+        ctx.font = '11px JetBrains Mono';
+        ctx.fillText('No valid points for current configuration', padL, h / 2);
+        return;
+      }
+
+      function sx(i){ return padL + (i / (xs.length - 1)) * plotW; }
+      function sy(v){ return padT + plotH - (v / maxY) * plotH; }
+
+      ctx.strokeStyle = 'rgba(120,130,140,0.28)';
+      ctx.lineWidth = 1;
+      for(var gy = 0; gy <= 4; gy++){
+        var y = padT + (gy / 4) * plotH;
+        ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(padL + plotW, y); ctx.stroke();
+      }
+
+      ctx.fillStyle = '#6f7c88';
+      ctx.font = '8px JetBrains Mono';
+      for(var yi = 0; yi <= 4; yi++){
+        var val = maxY * (1 - yi / 4);
+        ctx.fillText(fmtCompact(val), 4, padT + (yi / 4) * plotH + 3);
+      }
+
+      xs.forEach(function(xv, i){
+        var x = sx(i);
+        ctx.fillStyle = '#6f7c88';
+        ctx.font = '8px JetBrains Mono';
+        ctx.fillText(String(xv), x - 3, h - 10);
+      });
+
+      function drawLine(arr, color){
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        arr.forEach(function(v, i){
+          var x = sx(i), y = sy(v);
+          if(i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+
+        arr.forEach(function(v, i){
+          var x = sx(i), y = sy(v);
+          ctx.fillStyle = color;
+          ctx.beginPath(); ctx.arc(x, y, 2.7, 0, Math.PI * 2); ctx.fill();
+        });
+      }
+
+      drawLine(series.pcie, '#b45309');
+      drawLine(series.dgxh100, '#2563eb');
+      drawLine(series.dgxb200, '#7c3aed');
+
+      ctx.fillStyle = '#6f7c88';
+      ctx.font = '8px JetBrains Mono';
+      ctx.fillText('GPU count', padL + plotW - 36, h - 10);
+      ctx.save();
+      ctx.translate(10, padT + 10);
+      ctx.rotate(-Math.PI / 2);
+      ctx.fillText('tok/s', 0, 0);
+      ctx.restore();
     }
 
     window.econUpdate = function(){
@@ -3275,7 +3395,8 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
       renderCard('econ-card-pcie',    'pcie',    results.pcie,    CFGS.pcie);
       renderCard('econ-card-dgxh100', 'dgxh100', results.dgxh100, CFGS.dgxh100);
       renderCard('econ-card-dgxb200', 'dgxb200', results.dgxb200, CFGS.dgxb200);
-      renderBars(results);
+      renderCostStack(results);
+      drawScaleChart(batch, inputTok, outputTok);
     };
 
     renderModelBtns();
