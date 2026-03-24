@@ -335,18 +335,18 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
     <div class="anim anim-3 stagger section-outline">
       <div class="section-pill active-1">
         <div class="section-pill-num">01 · Section</div>
-        <div class="section-pill-title" style="color:var(--hw);">The Machine</div>
-        <div class="section-pill-desc">Computer anatomy, GPU workloads, and why parallel silicon became essential.</div>
+        <div class="section-pill-title" style="color:var(--hw);">Hardware</div>
+        <div class="section-pill-desc">Computer anatomy and the hardware stack from rack to GPU chip.</div>
       </div>
       <div class="section-pill active-2">
         <div class="section-pill-num">02 · Section</div>
-        <div class="section-pill-title" style="color:var(--llm);">The Model</div>
-        <div class="section-pill-desc">Embeddings, model size, and quantization trade-offs for fitting models in memory.</div>
+        <div class="section-pill-title" style="color:var(--llm);">Application & Inference Workloads</div>
+        <div class="section-pill-desc">Workload demand, embeddings, model size, and quantization trade-offs for serving AI.</div>
       </div>
       <div class="section-pill active-3">
         <div class="section-pill-num">03 · Section</div>
-        <div class="section-pill-title" style="color:var(--sw);">The System</div>
-        <div class="section-pill-desc">Server design, multi-GPU scaling, and latest hardware generations.</div>
+        <div class="section-pill-title" style="color:var(--sw);">GPU Economics</div>
+        <div class="section-pill-desc">Serving architecture, multi-GPU scaling, and cost per token economics.</div>
       </div>
     </div>
 
@@ -369,7 +369,7 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
 <div class="slide" id="sD1" data-slide="1">
   <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;background:var(--bg);gap:24px;padding:60px;">
     <div style="font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:0.28em;text-transform:uppercase;">Section 1 of 3</div>
-    <div style="font-family:var(--display);font-size:clamp(52px,7vw,88px);color:var(--text);line-height:0.92;text-align:center;">The Machine</div>
+    <div style="font-family:var(--display);font-size:clamp(52px,7vw,88px);color:var(--text);line-height:0.92;text-align:center;">Hardware</div>
     <div style="font-size:15px;color:var(--muted);text-align:center;max-width:520px;line-height:1.7;">What is actually inside a computer — and why the GPU, originally built for video games, became the engine of every AI product you use.</div>
     <div style="max-width:520px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--hw);border-radius:4px;padding:10px 14px;font-size:11px;line-height:1.6;color:var(--muted);text-align:left;">
       <strong style="color:var(--text);">Section takeaway:</strong> one architectural shift matters most: moving from a few strong cores (CPU) to thousands of parallel cores (GPU).
@@ -377,18 +377,18 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
     <div class="section-outline" style="margin-top:8px;">
       <div class="section-pill active-1">
         <div class="section-pill-num">01</div>
-        <div class="section-pill-title" style="color:var(--hw);">The Machine</div>
-        <div class="section-pill-desc">Computer anatomy and workload fundamentals.</div>
+        <div class="section-pill-title" style="color:var(--hw);">Hardware</div>
+        <div class="section-pill-desc">Computer anatomy and GPU hardware fundamentals.</div>
       </div>
       <div class="section-pill dim">
         <div class="section-pill-num">02</div>
-        <div class="section-pill-title">The Model</div>
-        <div class="section-pill-desc">Embeddings, model memory, quantization.</div>
+        <div class="section-pill-title">Application & Inference Workloads</div>
+        <div class="section-pill-desc">Workload demand, embeddings, model memory, quantization.</div>
       </div>
       <div class="section-pill dim">
         <div class="section-pill-num">03</div>
-        <div class="section-pill-title">The System</div>
-        <div class="section-pill-desc">Server architecture and scaling.</div>
+        <div class="section-pill-title">GPU Economics</div>
+        <div class="section-pill-desc">Serving architecture, scaling, and cost per token.</div>
       </div>
     </div>
   </div>
@@ -700,23 +700,23 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
 <div class="slide" id="sD2" data-slide="4">
   <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;background:var(--bg);gap:24px;padding:60px;">
     <div style="font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:0.28em;text-transform:uppercase;">Section 2 of 3</div>
-    <div style="font-family:var(--display);font-size:clamp(52px,7vw,88px);color:var(--text);line-height:0.92;text-align:center;">The Model</div>
-    <div style="font-size:15px;color:var(--muted);text-align:center;max-width:520px;line-height:1.7;">What language models actually are — how tokens become meaning, why 70 billion parameters costs 70 GB of memory, and what you can do to fit more model onto less hardware.</div>
+    <div style="font-family:var(--display);font-size:clamp(52px,7vw,88px);color:var(--text);line-height:0.92;text-align:center;">Application & Inference Workloads</div>
+    <div style="font-size:15px;color:var(--muted);text-align:center;max-width:520px;line-height:1.7;">Which AI applications consume GPUs today, plus the model mechanics behind that demand: embeddings, parameter memory, and precision trade-offs.</div>
     <div class="section-outline" style="margin-top:8px;">
       <div class="section-pill dim">
         <div class="section-pill-num">01</div>
-        <div class="section-pill-title">The Machine</div>
-        <div class="section-pill-desc">Computer components and workload demand.</div>
+        <div class="section-pill-title">Hardware</div>
+        <div class="section-pill-desc">Computer components and GPU hardware constraints.</div>
       </div>
       <div class="section-pill active-2">
         <div class="section-pill-num">02</div>
-        <div class="section-pill-title" style="color:var(--llm);">The Model</div>
-        <div class="section-pill-desc">Embeddings, model size, and quantization.</div>
+        <div class="section-pill-title" style="color:var(--llm);">Application & Inference Workloads</div>
+        <div class="section-pill-desc">Workload demand, embeddings, model size, and quantization.</div>
       </div>
       <div class="section-pill dim">
         <div class="section-pill-num">03</div>
-        <div class="section-pill-title">The System</div>
-        <div class="section-pill-desc">Server design and scaling constraints.</div>
+        <div class="section-pill-title">GPU Economics</div>
+        <div class="section-pill-desc">Serving design, scaling limits, and economics.</div>
       </div>
     </div>
   </div>
@@ -1671,26 +1671,26 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
 <div class="slide" id="sD3" data-slide="8">
   <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;background:var(--bg);gap:24px;padding:60px;">
     <div style="font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:0.28em;text-transform:uppercase;">Section 3 of 3</div>
-    <div style="font-family:var(--display);font-size:clamp(52px,7vw,88px);color:var(--text);line-height:0.92;text-align:center;">The System</div>
-    <div style="font-size:15px;color:var(--muted);text-align:center;max-width:520px;line-height:1.7;">How the hardware is assembled into servers and clusters — and how quantization, tensor parallelism, and each GPU generation affect speed, cost, and what workloads you can run.</div>
+    <div style="font-family:var(--display);font-size:clamp(52px,7vw,88px);color:var(--text);line-height:0.92;text-align:center;">GPU Economics</div>
+    <div style="font-size:15px;color:var(--muted);text-align:center;max-width:520px;line-height:1.7;">How architecture choices become economic outcomes: utilization, interconnect efficiency, generation differences, and cost per token.</div>
     <div style="max-width:520px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--sw);border-radius:4px;padding:10px 14px;font-size:11px;line-height:1.6;color:var(--muted);text-align:left;">
       <strong style="color:var(--text);">Section takeaway:</strong> architecture choices now become economic choices: interconnect, memory, and software determine cost per token.
     </div>
     <div class="section-outline" style="margin-top:8px;">
       <div class="section-pill dim">
         <div class="section-pill-num">01</div>
-        <div class="section-pill-title">The Machine</div>
-        <div class="section-pill-desc">Computer anatomy and workloads.</div>
+        <div class="section-pill-title">Hardware</div>
+        <div class="section-pill-desc">Computer anatomy and GPU hardware foundations.</div>
       </div>
       <div class="section-pill dim">
         <div class="section-pill-num">02</div>
-        <div class="section-pill-title">The Model</div>
-        <div class="section-pill-desc">Embedding space and model memory.</div>
+        <div class="section-pill-title">Application & Inference Workloads</div>
+        <div class="section-pill-desc">Workload demand, embedding space, and model memory.</div>
       </div>
       <div class="section-pill active-3">
         <div class="section-pill-num">03</div>
-        <div class="section-pill-title" style="color:var(--sw);">The System</div>
-        <div class="section-pill-desc">Server internals, scaling, and chip generations.</div>
+        <div class="section-pill-title" style="color:var(--sw);">GPU Economics</div>
+        <div class="section-pill-desc">Utilization, scaling efficiency, and unit economics.</div>
       </div>
     </div>
   </div>
@@ -3520,7 +3520,7 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
 </div><!-- end deck -->
 
 <script>
-const slideOrder = ['s0','sD1','s1','s2','sD2','sEmb','sModel','s6','sD3','s5','s7','s8','sDGX','sEcon','s9','s10'];
+const slideOrder = ['s0','sD1','s1','s5','sDGX','sD2','s2','sEmb','sModel','s6','sD3','s7','s8','sEcon','s9','s10'];
 const SLIDES = slideOrder.map(id => document.getElementById(id)).filter(Boolean);
 const TOTAL  = SLIDES.length;
 let current  = 0;
