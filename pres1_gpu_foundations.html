@@ -36,7 +36,7 @@
   --display: 'Bebas Neue', sans-serif;
   --sans:    'Barlow', sans-serif;
   --mono:    'JetBrains Mono', monospace;
-  --slide-dur: 0.55s;
+  --slide-dur: 0.275s;
 }
 /* ── DARK THEME ── */
 html.dark {
@@ -3566,7 +3566,7 @@ function goTo(n) {
     SLIDES[current].style.opacity = '0';
     setTimeout(() => { SLIDES[current].style.transform=''; SLIDES[current].style.opacity=''; SLIDES[current].classList.add('prev'); }, 10);
   }
-  setTimeout(() => { SLIDES[current].classList.remove('prev'); SLIDES[current].style.transform=''; SLIDES[current].style.opacity=''; }, 600);
+  setTimeout(() => { SLIDES[current].classList.remove('prev'); SLIDES[current].style.transform=''; SLIDES[current].style.opacity=''; }, 300);
   current = n;
   SLIDES[current].classList.add('active');
   SLIDES[current].classList.remove('prev');
