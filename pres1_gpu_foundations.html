@@ -79,6 +79,13 @@ html,body{width:100%;height:100%;overflow:auto;background:var(--bg);color:var(--
   opacity:0;overflow-y:auto;overflow-x:hidden;
   background:var(--bg);
 }
+.slide#sGenLoop {
+  position:relative !important;
+  height:auto !important;
+  min-height:100vh !important;
+  overflow:visible !important;
+  display:block !important;
+}
 .slide.active{transform:translateX(0);opacity:1;}
 .slide.prev{transform:translateX(-100%);opacity:0;}
 
@@ -1257,6 +1264,368 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
 
 
 <!-- ═══════════════════════════════════════════════════════════
+     SLIDE — GENERATION LOOP & KV CACHE
+═══════════════════════════════════════════════════════════ -->
+<style>
+.gl-stage{flex-shrink:0;background:var(--bg3);border:1.5px solid var(--border);border-radius:6px;padding:5px 8px;text-align:center;min-width:64px;transition:border-color .25s,background .25s;}
+.gl-stage.lit{border-color:var(--llm)!important;background:rgba(180,83,9,.12);}
+.gl-sname{font-family:var(--mono);font-size:7.5px;font-weight:600;color:var(--muted);line-height:1.2;}
+.gl-stage.lit .gl-sname{color:var(--llm);}
+.gl-sdesc{font-family:var(--mono);font-size:6.5px;color:var(--dim);margin-top:2px;line-height:1.25;}
+.gl-arr{flex-shrink:0;color:var(--dim2);font-size:10px;padding:0 1px;display:flex;align-items:center;}
+.gl-btn{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:4px 12px;font-family:var(--mono);font-size:9px;color:var(--muted);cursor:pointer;transition:border-color .2s,color .2s;}
+.gl-btn:hover{border-color:var(--llm);color:var(--llm);}
+.gl-btn.playing{border-color:var(--red);color:var(--red);background:rgba(220,38,38,.08);}
+@keyframes glBadgePop{0%{opacity:0;transform:translateY(4px);}20%{opacity:1;transform:translateY(0);}80%{opacity:1;}100%{opacity:0;transform:translateY(-4px);}}
+@keyframes glBarPulse{0%,100%{filter:brightness(1);}50%{filter:brightness(1.35);}}
+</style>
+<div class="slide" id="sGenLoop" data-slide="0">
+  <div class="slide-chrome">
+    <div class="chrome-left">
+      <div class="chrome-logo">GPU & AI Foundations</div>
+      <div class="chrome-sep"></div>
+      <div class="chrome-title">The Generation Loop: One Token Per Pass, K+V Vectors Cached to HBM</div>
+    </div>
+    <div class="chrome-right">
+      <button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="nav-counter">Light</span></button>
+      <span class="nav-counter">05 / 17</span>
+    </div>
+  </div>
+
+  <div class="slide-body" style="gap:10px;">
+
+    <!-- Headline -->
+    <div class="anim anim-1">
+      <div class="section-label">decode loop — one token per pass · K+V written to HBM · context grows each time</div>
+      <div style="font-family:var(--display);font-size:30px;line-height:1.0;color:var(--text);">Each output token runs all 80 layers again.<br><span style="color:var(--llm);">K and V vectors hop into HBM — and they stay.</span></div>
+    </div>
+
+    <!-- Two-column main -->
+    <div class="anim anim-2" style="display:grid;grid-template-columns:1.25fr 0.85fr;gap:12px;flex:1;min-height:0;">
+
+      <!-- ── LEFT: Generation Loop ──────────────────────────── -->
+      <div style="display:flex;flex-direction:column;gap:10px;background:var(--bg2);border:1.5px solid var(--border);border-radius:6px;padding:20px 22px 18px 22px;align-self:start;box-shadow:0 2px 10px 0 rgba(0,0,0,0.04);max-width:99%;">
+
+        <div style="font-family:var(--mono);font-size:7.5px;color:var(--llm);text-transform:uppercase;letter-spacing:0.14em;margin-bottom:2px;">Return Path — The Generation Loop</div>
+
+        <!-- Pipeline strip -->
+        <div style="display:flex;align-items:center;gap:0;overflow-x:auto;padding-bottom:2px;">
+          <div class="gl-stage" id="gl-s0"><div class="gl-sname">Token buffer</div><div class="gl-sdesc">context<br>token IDs</div></div>
+          <div class="gl-arr">→</div>
+          <div class="gl-stage" id="gl-s1"><div class="gl-sname">Embedding</div><div class="gl-sdesc">IDs →<br>8,192-dim</div></div>
+          <div class="gl-arr">→</div>
+          <div class="gl-stage" id="gl-s2"><div class="gl-sname">80× Attention</div><div class="gl-sdesc">Q/K/V<br>KV cache ↑</div></div>
+          <div class="gl-arr">→</div>
+          <div class="gl-stage" id="gl-s3"><div class="gl-sname">80× FFN</div><div class="gl-sdesc">fact recall<br>residual</div></div>
+          <div class="gl-arr">→</div>
+          <div class="gl-stage" id="gl-s4"><div class="gl-sname">Output proj</div><div class="gl-sdesc">128K vocab<br>logits</div></div>
+          <div class="gl-arr">→</div>
+          <div class="gl-stage" id="gl-s5"><div class="gl-sname">Sampling</div><div class="gl-sdesc">temp+top-p<br>pick token</div></div>
+          <div class="gl-arr">→</div>
+          <div class="gl-stage" id="gl-s6"><div class="gl-sname">Token egress</div><div class="gl-sdesc">SSE stream<br>to client</div></div>
+          <div class="gl-arr">→</div>
+          <div class="gl-stage" id="gl-s7" style="border-color:rgba(180,83,9,.35);"><div class="gl-sname" style="color:var(--llm);">Context +</div><div class="gl-sdesc">append<br>next pass</div></div>
+        </div>
+
+        <!-- Status -->
+        <div id="gl-info" style="font-family:var(--mono);font-size:8.5px;color:var(--llm);padding:5px 8px;background:rgba(180,83,9,.07);border-radius:4px;min-height:22px;line-height:1.4;">Press Play to watch the generation loop step by step.</div>
+
+        <!-- Context + Output -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div>
+            <div style="font-family:var(--mono);font-size:7px;color:var(--muted);margin-bottom:3px;text-transform:uppercase;letter-spacing:.1em;">Context window (input + output)</div>
+            <div id="gl-context" style="background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:6px 8px;font-family:var(--mono);font-size:9px;color:var(--muted);min-height:36px;line-height:1.6;">The capital of France is</div>
+          </div>
+          <div>
+            <div style="font-family:var(--mono);font-size:7px;color:var(--muted);margin-bottom:3px;text-transform:uppercase;letter-spacing:.1em;">Generated output</div>
+            <div id="gl-output" style="background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:6px 8px;font-family:var(--mono);font-size:9px;min-height:36px;line-height:1.6;"></div>
+          </div>
+        </div>
+
+        <!-- KV progress bar -->
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-family:var(--mono);font-size:7.5px;color:var(--muted);flex-shrink:0;width:56px;">KV in use</span>
+          <div style="flex:1;background:var(--bg4);border-radius:2px;height:6px;overflow:hidden;">
+            <div id="gl-kv-fill" style="height:100%;background:var(--sw);border-radius:2px;transition:width .4s ease;width:0%;"></div>
+          </div>
+          <span id="gl-kv-val" style="font-family:var(--mono);font-size:7.5px;color:var(--sw);width:88px;flex-shrink:0;text-align:right;">0 of 50 tokens</span>
+        </div>
+
+        <!-- Controls -->
+        <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;">
+          <button class="gl-btn" id="gl-play-btn" onclick="glToggle()">▶ Play</button>
+          <button class="gl-btn" onclick="glReset()">↺ Reset</button>
+          <span style="font-family:var(--mono);font-size:7.5px;color:var(--dim);">Speed:</span>
+          <span style="font-family:var(--mono);font-size:7.5px;color:var(--dim);">0.5×</span>
+          <input type="range" id="gl-speed" min="300" max="1800" step="150" value="450" style="width:60px;accent-color:var(--llm);direction:ltr;" oninput="glSpeedLbl()">
+          <span style="font-family:var(--mono);font-size:7.5px;color:var(--dim);">3×</span>
+          <span id="gl-speed-lbl" style="font-family:var(--mono);font-size:7.5px;color:var(--dim);">2.0×</span>
+          <span id="gl-pass-info" style="font-family:var(--mono);font-size:7.5px;color:var(--dim);margin-left:auto;">Pass 0 / 13</span>
+        </div>
+      </div>
+
+      <!-- ── RIGHT: Q/K/V + KV-in-HBM ──────────────────────── -->
+      <div style="display:flex;flex-direction:column;gap:10px;">
+
+        <!-- K and V explainer chips -->
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:12px 14px;flex-shrink:0;">
+          <div style="font-family:var(--mono);font-size:7.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-bottom:9px;">What are K and V?</div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+            <div style="background:rgba(13,148,136,.1);border:1.5px solid var(--sw);border-radius:5px;padding:9px 11px;">
+              <div style="font-family:var(--mono);font-size:11px;font-weight:700;color:var(--sw);margin-bottom:5px;">K &nbsp;·&nbsp; Key</div>
+              <div style="font-size:10.5px;color:var(--muted);line-height:1.5;">The token's <strong style="color:var(--text);">address</strong> in meaning space — what it is, in context. Other tokens search against K to decide what to attend to.</div>
+            </div>
+            <div style="background:rgba(13,148,136,.07);border:1.5px solid var(--sw-mid);border-radius:5px;padding:9px 11px;">
+              <div style="font-family:var(--mono);font-size:11px;font-weight:700;color:var(--sw);margin-bottom:5px;">V &nbsp;·&nbsp; Value</div>
+              <div style="font-size:10.5px;color:var(--muted);line-height:1.5;">What the token <strong style="color:var(--text);">contributes</strong> when found. Once a match is made via K, the model reads V to update its understanding.</div>
+            </div>
+          </div>
+
+          <div style="font-family:var(--mono);font-size:7.5px;color:var(--dim);background:var(--bg3);border-radius:3px;padding:5px 8px;line-height:1.5;margin-bottom:10px;">Library card analogy: K is the label on the card (searchable index) · V is what you read when you pull it.</div>
+
+          <!-- Simplified K+V → HBM diagram -->
+          <div style="font-family:var(--mono);font-size:7.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px;">At every attention layer — per token</div>
+
+          <svg viewBox="0 0 340 66" width="100%" style="overflow:visible;display:block;">
+            <defs>
+              <marker id="gl-ah-sw" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 Z" fill="var(--sw)"/></marker>
+            </defs>
+
+            <!-- Token box -->
+            <rect x="2" y="17" width="52" height="32" rx="4" fill="var(--bg3)" stroke="var(--border)" stroke-width="1.2"/>
+            <text x="28" y="35" font-family="JetBrains Mono,monospace" font-size="9" fill="var(--text)" text-anchor="middle" font-weight="600">token</text>
+            <text x="28" y="45" font-family="JetBrains Mono,monospace" font-size="7" fill="var(--dim)" text-anchor="middle">8,192-dim</text>
+
+            <!-- Stem -->
+            <line x1="54" y1="33" x2="70" y2="33" stroke="var(--muted)" stroke-width="1.3"/>
+            <circle cx="70" cy="33" r="2.5" fill="var(--muted)"/>
+
+            <!-- K branch (upper) -->
+            <polyline points="70,33 70,17 196,17" fill="none" stroke="var(--sw)" stroke-width="1.8" marker-end="url(#gl-ah-sw)"/>
+            <text x="130" y="13" font-family="JetBrains Mono,monospace" font-size="9" fill="var(--sw)" text-anchor="middle" font-weight="600">K  key</text>
+
+            <!-- V branch (lower) -->
+            <polyline points="70,33 70,49 196,49" fill="none" stroke="var(--sw)" stroke-width="1.8" marker-end="url(#gl-ah-sw)"/>
+            <text x="130" y="62" font-family="JetBrains Mono,monospace" font-size="9" fill="var(--sw)" text-anchor="middle" font-weight="600">V  value</text>
+
+            <!-- K+V merge → HBM -->
+            <line x1="196" y1="17" x2="214" y2="17" stroke="var(--sw)" stroke-width="1.5"/>
+            <line x1="196" y1="49" x2="214" y2="49" stroke="var(--sw)" stroke-width="1.5"/>
+            <line x1="214" y1="17" x2="214" y2="49" stroke="var(--sw)" stroke-width="1.5"/>
+            <line x1="214" y1="33" x2="230" y2="33" stroke="var(--sw)" stroke-width="1.8" marker-end="url(#gl-ah-sw)"/>
+
+            <!-- KV cache box -->
+            <rect x="230" y="13" width="106" height="40" rx="5" fill="rgba(13,148,136,0.13)" stroke="var(--sw)" stroke-width="1.8"/>
+            <text x="283" y="30" font-family="JetBrains Mono,monospace" font-size="9.5" fill="var(--sw)" text-anchor="middle" font-weight="600">KV cache</text>
+            <text x="283" y="43" font-family="JetBrains Mono,monospace" font-size="7.5" fill="var(--muted)" text-anchor="middle">persists in HBM</text>
+
+            <!-- Q footnote (dim, right edge) -->
+            <text x="338" y="5" font-family="JetBrains Mono,monospace" font-size="7" fill="var(--dim2)" text-anchor="end">(Q query: used this pass, then discarded)</text>
+          </svg>
+        </div>
+
+        <!-- KV-in-HBM card -->
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:12px 14px;flex:1;position:relative;overflow:visible;">
+          <div style="font-family:var(--mono);font-size:7.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-bottom:9px;">KV cache in HBM — what accumulates</div>
+
+          <!-- Stacked bar: prompt | generated | free -->
+          <div style="height:26px;border-radius:3px;overflow:hidden;display:flex;border:1px solid var(--border);margin-bottom:5px;position:relative;">
+            <!-- Prompt tokens (fixed, full opacity) -->
+            <div id="gl-bar-prompt" style="width:10%;background:var(--sw);flex-shrink:0;display:flex;align-items:center;justify-content:center;"></div>
+            <!-- Generated tokens (grows) -->
+            <div id="gl-bar-gen" style="width:0%;background:var(--sw);opacity:.6;flex-shrink:0;transition:width .4s ease;position:relative;">
+              <!-- Hop badge -->
+              <div id="gl-hop-badge" style="position:absolute;right:0;top:-26px;font-family:var(--mono);font-size:7.5px;white-space:nowrap;opacity:0;background:var(--bg2);border:1px solid var(--sw);color:var(--sw);border-radius:3px;padding:2px 5px;pointer-events:none;transition:opacity .2s;"></div>
+            </div>
+            <!-- Free -->
+            <div style="flex:1;background:var(--bg4);opacity:.5;"></div>
+          </div>
+
+          <!-- Bar legend -->
+          <div style="display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap;">
+            <div style="display:flex;align-items:center;gap:4px;font-family:var(--mono);font-size:7px;color:var(--muted);">
+              <div style="width:8px;height:8px;background:var(--sw);border-radius:1px;flex-shrink:0;"></div>Prompt tokens (in KV from start)
+            </div>
+            <div style="display:flex;align-items:center;gap:4px;font-family:var(--mono);font-size:7px;color:var(--muted);">
+              <div style="width:8px;height:8px;background:var(--sw);opacity:.6;border-radius:1px;flex-shrink:0;"></div>Generated tokens (each hop adds ~0.31 MB)
+            </div>
+            <div style="display:flex;align-items:center;gap:4px;font-family:var(--mono);font-size:7px;color:var(--muted);">
+              <div style="width:8px;height:8px;background:var(--bg4);border:1px solid var(--border);border-radius:1px;flex-shrink:0;"></div>Free HBM
+            </div>
+          </div>
+
+          <!-- Stat rows -->
+          <div style="display:flex;flex-direction:column;gap:5px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:5px 8px;background:var(--bg3);border:1px solid var(--border);border-radius:3px;">
+              <span style="font-family:var(--mono);font-size:7.5px;color:var(--muted);">Prompt tokens</span>
+              <span style="font-family:var(--mono);font-size:7.5px;color:var(--sw);">5 × 0.31 MB = 1.6 MB</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:5px 8px;background:var(--bg3);border:1px solid var(--border);border-radius:3px;">
+              <span style="font-family:var(--mono);font-size:7.5px;color:var(--muted);">Generated tokens <span id="gl-gen-count" style="color:var(--text);">(0)</span></span>
+              <span style="font-family:var(--mono);font-size:7.5px;color:var(--sw);" id="gl-gen-mb">0 × 0.31 MB = 0 MB</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:5px 8px;background:rgba(13,148,136,.08);border:1px solid var(--sw-mid);border-radius:3px;">
+              <span style="font-family:var(--mono);font-size:7.5px;color:var(--text);font-weight:600;">Total KV in HBM</span>
+              <span style="font-family:var(--mono);font-size:7.5px;color:var(--sw);font-weight:600;" id="gl-total-mb">1.6 MB</span>
+            </div>
+          </div>
+
+          <div style="font-family:var(--mono);font-size:7px;color:var(--dim);margin-top:8px;line-height:1.55;">0.31 MB = 80 layers × 2 (K+V) × 8 GQA heads × 128 dim × 2 bytes. Grows every token — both prompt and output. This is what limits context length at a given HBM size.</div>
+        </div>
+
+      </div><!-- /right -->
+    </div><!-- /two-col -->
+  </div><!-- /slide-body -->
+
+  <script>
+  (function(){
+    var GL = {
+      playing: false, timer: null, pass: 0, stage: 0,
+      tokens: [' Paris','.',' It',' is',' located',' along',' the',' Seine',' River','.',' It',' is',' one'],
+      stageInfos: [
+        'Loading context: 5 prompt + {n} generated tokens into GPU HBM.',
+        'Token IDs → 8,192-dim embedding vectors.',
+        'Running attention × 80 layers. Q used then discarded — K+V written to HBM cache.',
+        'Running FFN × 80 layers — factual recall from 70B parameters.',
+        'Projecting to 128K-token vocabulary. Scoring all candidates.',
+        'Sampling: temperature + top-p applied. Selected: "{tok}"',
+        '"{tok}" streamed to client via SSE. Token appended to output.',
+        'Token now in context window. Starting pass {next} — all 80 layers again.'
+      ],
+      KV_PER_TOK: 0.3125,
+      PROMPT_TOKS: 5,
+      BAR_MAX_TOKS: 50   // visual max for bar display
+    };
+
+    function byId(id){ return document.getElementById(id); }
+
+    function glInfo(s){ var el = byId('gl-info'); if(el) el.textContent = s; }
+
+    function glSetStage(i){
+      for(var j=0;j<8;j++){
+        var s = byId('gl-s'+j);
+        if(s) s.classList.toggle('lit', j===i);
+      }
+    }
+
+    function glUpdateKV(genToks){
+      var totalToks = GL.PROMPT_TOKS + genToks;
+      var genMB = (genToks * GL.KV_PER_TOK).toFixed(1);
+      var totalMB = (totalToks * GL.KV_PER_TOK).toFixed(1);
+
+      // Left panel KV bar (token count based)
+      var pct = Math.min(totalToks / GL.BAR_MAX_TOKS * 100, 100);
+      var fill = byId('gl-kv-fill');
+      if(fill) fill.style.width = pct + '%';
+      var val = byId('gl-kv-val');
+      if(val) val.textContent = totalToks + ' of ' + GL.BAR_MAX_TOKS + ' tokens';
+
+      // Right panel bar: prompt fixed at 10%, gen grows up to 90% of remaining
+      var genPct = Math.min(genToks / GL.BAR_MAX_TOKS * 90, 88);
+      var genEl = byId('gl-bar-gen');
+      if(genEl) genEl.style.width = genPct + '%';
+
+      // Stat rows
+      var gc = byId('gl-gen-count'); if(gc) gc.textContent = '(' + genToks + ')';
+      var gm = byId('gl-gen-mb'); if(gm) gm.textContent = genToks + ' × 0.31 MB = ' + genMB + ' MB';
+      var tm = byId('gl-total-mb'); if(tm) tm.textContent = totalMB + ' MB';
+    }
+
+    function glShowHop(tok){
+      var badge = byId('gl-hop-badge');
+      if(!badge) return;
+      badge.textContent = '+0.31 MB  "' + tok.trim() + '"';
+      badge.style.opacity = '1';
+      var gen = byId('gl-bar-gen');
+      if(gen){ gen.style.animation='none'; void gen.offsetWidth; gen.style.animation='glBarPulse .5s ease'; }
+      setTimeout(function(){ badge.style.opacity='0'; }, 1100);
+    }
+
+    function glTick(){
+      if(!GL.playing) return;
+      var tok = GL.tokens[GL.pass] || '...';
+      var info = GL.stageInfos[GL.stage]
+        .replace('{n}', GL.pass)
+        .replace('{tok}', tok.trim())
+        .replace('{next}', GL.pass + 2);
+      glSetStage(GL.stage);
+      glInfo(info);
+
+      if(GL.stage === 6){
+        var out = byId('gl-output');
+        if(out){ var sp = document.createElement('span'); sp.style.color='var(--green)'; sp.textContent=tok; out.appendChild(sp); }
+        var ctx = byId('gl-context');
+        if(ctx){ var sp2 = document.createElement('span'); sp2.style.color='var(--sw)'; sp2.textContent=tok; ctx.appendChild(sp2); }
+        glShowHop(tok);
+        glUpdateKV(GL.pass + 1);
+      }
+
+      if(GL.stage === 7){
+        GL.pass++;
+        GL.stage = 0;
+        var pi = byId('gl-pass-info'); if(pi) pi.textContent = 'Pass ' + GL.pass + ' / ' + GL.tokens.length;
+        if(GL.pass >= GL.tokens.length){
+          GL.playing = false;
+          var btn = byId('gl-play-btn');
+          if(btn){ btn.textContent = '⏹ Done'; btn.classList.remove('playing'); }
+          glSetStage(-1);
+          glInfo('Generation complete — ' + GL.tokens.length + ' tokens. Press Reset to replay.');
+          return;
+        }
+      } else {
+        GL.stage++;
+      }
+
+      var speed = parseInt((byId('gl-speed')||{value:900}).value) || 900;
+      GL.timer = setTimeout(glTick, speed);
+    }
+
+    window.glToggle = function(){
+      if(GL.pass >= GL.tokens.length){ glReset(); return; }
+      GL.playing = !GL.playing;
+      var btn = byId('gl-play-btn');
+      if(btn){ btn.textContent = GL.playing ? '⏸ Pause' : '▶ Play'; btn.classList.toggle('playing', GL.playing); }
+      if(GL.playing) glTick(); else clearTimeout(GL.timer);
+    };
+
+    window.glReset = function(){
+      GL.playing = false; GL.pass = 0; GL.stage = 0;
+      clearTimeout(GL.timer);
+      var btn = byId('gl-play-btn');
+      if(btn){ btn.textContent = '▶ Play'; btn.classList.remove('playing'); }
+      var out = byId('gl-output'); if(out) out.innerHTML = '';
+      var ctx = byId('gl-context'); if(ctx) ctx.innerHTML = 'The capital of France is';
+      var fill = byId('gl-kv-fill'); if(fill) fill.style.width = '0%';
+      var val = byId('gl-kv-val'); if(val) val.textContent = '0 of 50 tokens';
+      var pi = byId('gl-pass-info'); if(pi) pi.textContent = 'Pass 0 / ' + GL.tokens.length;
+      var gen = byId('gl-bar-gen'); if(gen) gen.style.width = '0%';
+      var badge = byId('gl-hop-badge'); if(badge) badge.style.opacity = '0';
+      var gc = byId('gl-gen-count'); if(gc) gc.textContent = '(0)';
+      var gm = byId('gl-gen-mb'); if(gm) gm.textContent = '0 × 0.31 MB = 0 MB';
+      var tm = byId('gl-total-mb'); if(tm) tm.textContent = '1.6 MB';
+      glSetStage(-1);
+      glInfo('Press Play to watch the generation loop step by step.');
+    };
+
+    window.glSpeedLbl = function(){
+      var speed = parseInt((byId('gl-speed')||{value:450}).value) || 450;
+      // Map 300ms (fastest) = 3x, 450ms = 2x, 900ms = 1x, 1800ms = 0.5x
+      var x;
+      if (speed <= 300) x = 3.0;
+      else if (speed <= 450) x = 2.0;
+      else if (speed <= 900) x = 1.0;
+      else x = 0.5;
+      var lbl = byId('gl-speed-lbl');
+      if(lbl) lbl.textContent = x.toFixed(1) + '×';
+    };
+  })();
+  </script>
+
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
      SLIDE MODEL — MODEL BUILDER
 ═══════════════════════════════════════════════════════════ -->
 <div class="slide" id="sModel" data-slide="6">
@@ -1279,23 +1648,7 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
     </div>
 
     <div class="anim anim-1" style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:4px;padding:9px 12px;font-size:11px;color:var(--muted);line-height:1.6;">
-      <strong style="color:var(--text);">Key takeaway:</strong> width ($d$) is the expensive knob because memory grows with $d^2$, while depth ($L$) grows linearly. Precision decides whether the model fits on one GPU or many.
-    </div>
-
-    <!-- Explainer row -->
-    <div class="anim anim-2" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
-      <div style="background:rgba(124,58,237,0.08);border:1px solid var(--hw-mid);border-left:3px solid var(--hw);border-radius:4px;padding:10px 12px;">
-        <div style="font-family:var(--mono);font-size:9px;color:var(--hw);font-weight:600;margin-bottom:4px;">d — Hidden Dimension</div>
-        <div style="font-size:11px;color:var(--muted);line-height:1.6;">The length of each token's vector. Every layer multiplies a d×d matrix — so doubling d quadruples parameters <em>per layer</em>. Llama 70B: d = 8,192.</div>
-      </div>
-      <div style="background:rgba(37,99,235,0.07);border:1px solid rgba(37,99,235,0.2);border-left:3px solid var(--blue);border-radius:4px;padding:10px 12px;">
-        <div style="font-family:var(--mono);font-size:9px;color:var(--blue);font-weight:600;margin-bottom:4px;">L — Layers (Depth)</div>
-        <div style="font-size:11px;color:var(--muted);line-height:1.6;">Each layer runs one full attention + FFN pass over all tokens. More layers = deeper reasoning. Parameters scale linearly with L. Llama 70B: L = 80.</div>
-      </div>
-      <div style="background:rgba(180,83,9,0.08);border:1px solid var(--llm-mid);border-left:3px solid var(--llm);border-radius:4px;padding:10px 12px;">
-        <div style="font-family:var(--mono);font-size:9px;color:var(--llm);font-weight:600;margin-bottom:4px;">Precision — bytes/weight</div>
-        <div style="font-size:11px;color:var(--muted);line-height:1.6;">FP32 = 4 bytes, BF16 = 2, FP8 = 1, INT4 = 0.5. Same model at FP8 uses half the GPU memory as BF16. Memory = params × bytes.</div>
-      </div>
+      <strong style="color:var(--text);">Key takeaway:</strong> width (d) is the expensive knob because memory grows with d^2, while depth (L) grows linearly. Precision decides whether the model fits on one GPU or many.
     </div>
 
     <!-- Interactive builder -->
@@ -3016,7 +3369,7 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
     </div>
   </div>
 
-  <div class="slide-body" style="gap:10px;">
+  <div class="slide-body" style="gap:10px;padding-bottom:180px;">
     <div class="anim anim-1">
       <div class="section-label">Roofline model — adjust workload and watch cost per token respond in real time</div>
       <div style="font-family:var(--display);font-size:24px;line-height:1.0;color:var(--text);">The cheapest GPU per hour is rarely the cheapest per token.<br><span style="color:var(--sw);">Configure your workload — see throughput, latency, and cost.</span></div>
@@ -3900,7 +4253,7 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
 </div><!-- end deck -->
 
 <script>
-const slideOrder = ['s0','sD1','s1','s5','sDGX','sD2','s2','sEmb','sModel','s6','sD3','s7','s8','sEcon','sWrap','s9','s10'];
+const slideOrder = ['s0','sD1','s1','s5','sDGX','sD2','s2','sEmb','sGenLoop','sModel','s6','sD3','s7','s8','sEcon','sWrap','s9','s10'];
 const SLIDES = slideOrder.map(id => document.getElementById(id)).filter(Boolean);
 const TOTAL  = SLIDES.length;
 let current  = 0;
