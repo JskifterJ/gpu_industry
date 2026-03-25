@@ -1,0 +1,1844 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The GPU Cloud Competitive Landscape — Strategy Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;1,300&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#060810;--bg2:#0d1117;--bg3:#141a24;--bg4:#1c2333;
+  --border:rgba(255,255,255,0.10);--text:#edf4fc;--muted:#b4c4d8;--dim:#8898b0;--dim2:#627080;
+  --h:#6366f1;--h-dim:rgba(99,102,241,0.15);
+  --n:#10b981;--n-dim:rgba(16,185,129,0.15);
+  --o:#a855f7;--o-dim:rgba(168,85,247,0.15);
+  --a:#f59e0b;--a-dim:rgba(245,158,11,0.15);
+  --pt:#94a3b8;--gold:#f59e0b;--silver:#94a3b8;--bronze:#b45309;
+  --chrome-bg:rgba(6,8,16,0.94);--chrome-border:rgba(255,255,255,0.09);--nav-bg:rgba(6,8,16,0.92);
+  --radar-grid:rgba(128,128,128,0.15);--radar-line:rgba(128,128,128,0.12);--radar-text:rgba(180,196,216,0.65);
+  --display:'Bebas Neue',sans-serif;--sans:'Barlow',sans-serif;--mono:'JetBrains Mono',monospace;
+  --slide-dur:0.55s;
+}
+html.light {
+  --bg:#f5f2ee;--bg2:#ede9e2;--bg3:#e0dbd4;--bg4:#d4cec5;
+  --border:rgba(0,0,0,0.11);--text:#18161f;--muted:#3a4855;--dim:#556672;--dim2:#7a909e;
+  --h:#3730a3;--h-dim:rgba(55,48,163,0.09);
+  --n:#065f46;--n-dim:rgba(6,95,70,0.09);
+  --o:#5b21b6;--o-dim:rgba(91,33,182,0.09);
+  --a:#92400e;--a-dim:rgba(146,64,14,0.09);
+  --chrome-bg:rgba(245,242,238,0.96);--chrome-border:rgba(0,0,0,0.10);--nav-bg:rgba(245,242,238,0.94);
+  --radar-grid:rgba(0,0,0,0.15);--radar-line:rgba(0,0,0,0.10);--radar-text:rgba(30,50,70,0.70);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;transform:translateX(100%);transition:transform var(--slide-dur) cubic-bezier(0.76,0,0.24,1),opacity 0.4s ease;opacity:0;overflow:hidden;background:var(--bg);}
+.slide.active{transform:translateX(0);opacity:1;}
+.slide.prev{transform:translateX(-100%);opacity:0;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.slide.active .anim{animation:fadeUp 0.5s ease both;}
+.slide.active .anim-1{animation-delay:.05s}.slide.active .anim-2{animation-delay:.14s}
+.slide.active .anim-3{animation-delay:.23s}.slide.active .anim-4{animation-delay:.32s}
+.slide.active .anim-5{animation-delay:.41s}.slide.active .anim-6{animation-delay:.50s}
+.slide.active .anim-7{animation-delay:.58s}
+/* CHROME */
+.slide-chrome{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:13px 44px;z-index:10;background:var(--chrome-bg);backdrop-filter:blur(12px);border-bottom:1px solid var(--chrome-border);}
+.chrome-left{display:flex;align-items:center;gap:11px;}
+.chrome-logo{font-family:var(--mono);font-size:9px;font-weight:500;color:var(--muted);letter-spacing:0.2em;text-transform:uppercase;border:1px solid var(--border);padding:3px 7px;border-radius:2px;}
+.chrome-sep{width:1px;height:13px;background:var(--dim2);}
+.chrome-title{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;}
+.chrome-right{display:flex;align-items:center;gap:12px;}
+.chrome-note{font-family:var(--mono);font-size:8px;color:var(--dim2);}
+/* TOGGLE */
+.theme-toggle{display:flex;align-items:center;gap:6px;cursor:pointer;background:transparent;border:1px solid var(--border);color:var(--dim);font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:3px 8px;border-radius:12px;}
+.toggle-track{width:24px;height:13px;border-radius:7px;background:var(--dim2);position:relative;flex-shrink:0;}
+html.light .toggle-track{background:var(--h);}
+.toggle-thumb{position:absolute;top:2px;left:2px;width:9px;height:9px;border-radius:50%;background:var(--bg);transition:transform .3s;}
+html.light .toggle-thumb{transform:translateX(11px);}
+/* NAV */
+.nav{position:fixed;bottom:0;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:14px;z-index:200;padding:10px 44px 14px;background:var(--nav-bg);backdrop-filter:blur(10px);border-top:1px solid var(--chrome-border);}
+.nav-dots{display:flex;gap:4px;align-items:center;}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--dim2);cursor:pointer;transition:all .22s;}
+.dot.active{background:var(--text);width:14px;border-radius:3px;}
+.dot:hover:not(.active){background:var(--muted);}
+.nav-btn{width:26px;height:26px;border-radius:50%;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;}
+.nav-btn:hover{border-color:var(--dim);color:var(--text);}
+.nav-btn:disabled{opacity:.2;cursor:default;}
+/* PROGRESS */
+.progress{position:fixed;top:0;left:0;height:2px;background:var(--h);transition:width .4s ease,background .3s;z-index:300;}
+.slide-counter{position:fixed;bottom:13px;left:44px;font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.1em;z-index:201;}
+.counter-cur{color:var(--muted);}
+.key-hint{position:fixed;bottom:13px;right:44px;font-family:var(--mono);font-size:9px;color:var(--dim2);display:flex;align-items:center;gap:4px;z-index:201;}
+.key-badge{border:1px solid var(--dim2);border-radius:3px;padding:1px 4px;font-size:8px;}
+/* SLIDE BODY */
+.slide-body{flex:1;display:flex;padding-bottom:52px;overflow:hidden;}
+/* TOOLTIP */
+.tip{border-bottom:1px dashed var(--dim2);cursor:help;position:relative;}
+.tip:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);white-space:pre-line;background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:8px 12px;font-family:var(--mono);font-size:9px;color:var(--muted);line-height:1.5;min-width:200px;max-width:300px;z-index:500;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.25);}
+/* TIER BADGES */
+.tbadge{display:inline-block;font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;padding:2px 6px;border-radius:3px;font-weight:500;}
+.tbadge.pt{background:rgba(100,116,139,0.2);color:#475569;border:1px solid rgba(100,116,139,0.4);}
+html:not(.light) .tbadge.pt{background:rgba(148,163,184,0.15);color:#cbd5e1;border:1px solid rgba(148,163,184,0.3);}
+.tbadge.gold{background:rgba(245,158,11,0.15);color:#b45309;border:1px solid rgba(245,158,11,0.35);}
+html:not(.light) .tbadge.gold{color:#f59e0b;}
+.tbadge.silver{background:rgba(100,116,139,0.12);color:#475569;border:1px solid rgba(100,116,139,0.3);}
+html:not(.light) .tbadge.silver{color:#94a3b8;}
+.tbadge.nr{background:rgba(239,68,68,0.12);color:#b91c1c;border:1px solid rgba(239,68,68,0.3);}
+html:not(.light) .tbadge.nr{color:#f87171;}
+
+/* ── STACK LEGEND ── */
+.stk-legend{display:grid;grid-template-columns:repeat(9,1fr);gap:2px;margin-top:4px;}
+.stk-leg-cell{display:flex;flex-direction:column;align-items:center;gap:2px;}
+.stk-leg-dot{width:8px;height:4px;border-radius:1px;}
+.stk-leg-label{font-family:var(--mono);font-size:6.5px;color:var(--dim2);text-align:center;line-height:1.2;}
+
+/* ── DEEP DIVE ── */
+.deepdive-wrap{flex:1;display:flex;gap:0;overflow:hidden;}
+.dd-left{width:42%;padding:20px 28px 52px 44px;display:flex;flex-direction:column;gap:13px;overflow-y:auto;}
+.dd-right{flex:1;padding:20px 44px 52px 24px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;border-left:1px solid var(--border);}
+.dd-model-badge{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:9px;letter-spacing:.15em;text-transform:uppercase;padding:4px 11px;border-radius:18px;border:1px solid;width:fit-content;}
+.dd-title{font-family:var(--display);font-size:clamp(28px,3.2vw,44px);line-height:.95;letter-spacing:.04em;}
+.dd-pitch{font-size:12.5px;color:var(--muted);line-height:1.6;font-weight:300;}
+.dd-section-label{font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-bottom:5px;}
+.dd-stack-strip{display:grid;grid-template-columns:repeat(9,1fr);gap:3px;}
+.dd-ss-cell{height:22px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:7px;color:rgba(255,255,255,0.55);cursor:help;font-weight:500;}
+html.light .dd-ss-cell{color:rgba(0,0,0,0.30);}
+.dd-ss-cell.full{opacity:1;}
+.dd-ss-cell.partial{opacity:0.55;}
+.dd-ss-cell.limited{opacity:0.30;border:1px dashed rgba(128,128,128,0.25);}
+.dd-ss-cell.none{opacity:0.10;background:rgba(128,128,128,0.12) !important;}
+.dim-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.dim-card{background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:10px;}
+.dim-label{font-family:var(--mono);font-size:7.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:4px;}
+.dim-value{font-size:12px;font-weight:600;color:var(--text);}
+.dim-sub{font-family:var(--mono);font-size:8.5px;color:var(--dim);margin-top:3px;line-height:1.4;}
+.edge-list{display:flex;flex-direction:column;gap:6px;}
+.edge-item{display:flex;gap:8px;font-size:11.5px;color:var(--muted);line-height:1.5;}
+.edge-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.moat-risk{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.moat-card{background:var(--bg3);border-radius:6px;padding:9px 11px;border:1px solid var(--border);}
+.moat-label{font-family:var(--mono);font-size:8px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;}
+.moat-list{font-size:10px;color:var(--muted);line-height:1.55;}
+
+/* ── RANKINGS ── */
+.top3-wrap{flex:1;display:flex;flex-direction:column;padding:0 44px 52px;gap:12px;overflow-y:auto;}
+.top3-header{display:flex;align-items:baseline;gap:12px;padding-top:6px;}
+.top3-title{font-family:var(--display);font-size:26px;letter-spacing:.05em;}
+.top3-sub{font-family:var(--mono);font-size:8px;color:var(--dim);letter-spacing:.06em;}
+.company-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;}
+.co-card{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:16px;display:flex;flex-direction:column;gap:8px;overflow:hidden;position:relative;}
+.co-card:hover{border-color:rgba(128,128,128,0.28);}
+.co-rank{position:absolute;top:10px;right:12px;font-family:var(--display);font-size:30px;color:rgba(128,128,128,0.06);line-height:1;}
+.co-top{display:flex;align-items:center;gap:8px;}
+.co-monogram{width:30px;height:30px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;font-weight:600;flex-shrink:0;}
+.co-name-wrap{display:flex;flex-direction:column;gap:3px;}
+.co-name{font-family:var(--display);font-size:17px;letter-spacing:.04em;line-height:1;}
+.co-score-row{display:flex;align-items:baseline;gap:6px;}
+.co-total{font-family:var(--mono);font-size:20px;font-weight:600;}
+.co-total-label{font-family:var(--mono);font-size:8px;color:var(--dim);letter-spacing:.06em;}
+.co-radar-wrap{display:flex;justify-content:center;}
+.co-usp{font-size:11px;color:var(--muted);line-height:1.55;font-weight:300;}
+.co-highlights{display:flex;flex-direction:column;gap:3px;}
+.co-hl{display:flex;gap:6px;font-family:var(--mono);font-size:8.5px;color:var(--dim);line-height:1.35;}
+.co-hl-dot{width:4px;height:4px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+
+/* ── CO-SPEC structured metadata table ── */
+.co-spec{display:flex;flex-direction:column;gap:0;padding-top:6px;border-top:1px solid var(--border);margin-top:2px;}
+.cs-row{display:grid;grid-template-columns:80px 1fr;gap:6px;padding:3px 0;border-bottom:1px solid rgba(128,128,128,0.06);}
+.cs-row:last-child{border-bottom:none;}
+.cs-k{font-family:var(--mono);font-size:7.5px;color:var(--dim2);letter-spacing:.06em;text-transform:uppercase;padding-top:1px;flex-shrink:0;}
+.cs-v{font-family:var(--mono);font-size:8px;color:var(--muted);line-height:1.35;}
+.cs-v.good{color:var(--n);}html:not(.light) .cs-v.good{color:#10b981;}
+.cs-v.warn{color:#92400e;}html:not(.light) .cs-v.warn{color:#f59e0b;}
+.cs-v.bad{color:#b91c1c;}html:not(.light) .cs-v.bad{color:#f87171;}
+.cs-v.neutral{color:var(--muted);}
+.cs-score{font-weight:700;}
+/* pricing level dots */
+.price-dots{display:inline-flex;gap:2px;align-items:center;vertical-align:middle;margin-right:4px;}
+.pd{width:6px;height:6px;border-radius:50%;display:inline-block;}
+.pd.on{opacity:1;}.pd.off{opacity:0.18;}
+
+/* ── BUYER PROFILES (on deep-dive slides) ── */
+.buyer-profiles{display:flex;flex-direction:column;gap:5px;}
+.bp-row{display:flex;gap:8px;align-items:flex-start;}
+.bp-tag{font-family:var(--mono);font-size:7.5px;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:3px;background:var(--bg3);border:1px solid var(--border);color:var(--dim);white-space:nowrap;flex-shrink:0;margin-top:1px;}
+.bp-text{font-size:11px;color:var(--muted);line-height:1.5;font-weight:300;}
+
+/* ── STACK MATRIX ── */
+.matrix-wrap{width:100%;padding:4px 40px 52px;overflow-y:auto;}
+.stk-matrix{width:100%;border-collapse:collapse;font-family:var(--mono);}
+.stk-matrix th{font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:7px 9px;border-bottom:1px solid var(--border);color:var(--dim);text-align:left;}
+.stk-matrix td{padding:6px 9px;border-bottom:1px solid rgba(128,128,128,0.07);vertical-align:top;}
+.stk-layer-badge{display:inline-flex;align-items:center;gap:5px;margin-bottom:2px;}
+.stk-layer-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
+.stk-layer-name{font-size:9px;font-weight:600;color:var(--text);}
+.stk-layer-nodes{font-size:7.5px;color:var(--dim);line-height:1.45;margin-top:1px;}
+.stk-cov{display:flex;flex-direction:column;gap:2px;min-width:90px;}
+.stk-cov-pill{display:inline-flex;align-items:center;gap:4px;font-size:8px;padding:2px 7px;border-radius:9px;width:fit-content;}
+.stk-node{font-size:7px;color:var(--dim2);padding-left:2px;line-height:1.4;}
+.owns{background:rgba(128,128,128,0.14);color:var(--text);border:1px solid rgba(128,128,128,0.28);}
+.facilitates{background:rgba(128,128,128,0.06);color:var(--muted);border:1px dashed rgba(128,128,128,0.22);}
+.uses{background:transparent;color:var(--dim);border:1px solid rgba(128,128,128,0.12);}
+.na{background:transparent;color:var(--dim2);border:1px solid rgba(128,128,128,0.07);opacity:.55;}
+
+/* ── MODELS GRID ── */
+.models-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:0 44px;flex:1;align-content:center;}
+.model-card{border-radius:9px;padding:18px;border:1px solid var(--border);position:relative;overflow:hidden;display:flex;flex-direction:column;gap:10px;}
+.mc-code{font-family:var(--display);font-size:44px;line-height:1;opacity:.12;position:absolute;top:8px;right:12px;}
+.mc-name{font-family:var(--display);font-size:20px;letter-spacing:.05em;}
+.mc-tagline{font-family:var(--mono);font-size:8px;color:var(--dim);letter-spacing:.06em;line-height:1.5;}
+.mc-desc{font-size:11px;color:var(--muted);line-height:1.55;font-weight:300;}
+.mc-strip{display:grid;grid-template-columns:repeat(9,1fr);gap:2px;}
+.mc-sc{height:5px;border-radius:1px;}
+.mc-abs{display:flex;gap:3px;flex-wrap:wrap;}
+.mc-ab{font-family:var(--mono);font-size:7.5px;padding:2px 5px;border-radius:8px;background:rgba(128,128,128,0.08);border:1px solid var(--border);color:var(--dim);}
+.mc-ab.on{background:rgba(128,128,128,0.15);color:var(--muted);border-color:rgba(128,128,128,0.28);}
+.mc-capex{display:flex;align-items:center;gap:6px;}
+.mc-capex-label{font-family:var(--mono);font-size:7.5px;color:var(--dim);letter-spacing:.06em;}
+.mc-capex-dots{display:flex;gap:2px;}
+.mc-capex-dot{width:7px;height:7px;border-radius:50%;}
+.mc-examples{font-family:var(--mono);font-size:8px;color:var(--dim);border-top:1px solid var(--border);padding-top:7px;margin-top:2px;line-height:1.4;}
+
+/* ── DASHBOARD / EMERGING / BRIDGE ── */
+.dash-wrap{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:0 44px 52px;overflow-y:auto;align-content:start;}
+.dash-feature{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:15px 17px;display:flex;flex-direction:column;gap:7px;}
+.dash-feature:hover{border-color:rgba(128,128,128,0.3);}
+.dash-feat-label{font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);}
+.dash-feat-title{font-family:var(--display);font-size:15px;letter-spacing:.04em;}
+.dash-feat-desc{font-size:10.5px;color:var(--muted);line-height:1.55;font-weight:300;}
+.dash-feat-examples{font-family:var(--mono);font-size:8px;color:var(--dim);border-top:1px solid var(--border);padding-top:5px;margin-top:2px;line-height:1.5;}
+.dash-link{font-family:var(--mono);font-size:9px;color:var(--h);text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border:1px solid rgba(99,102,241,0.25);border-radius:4px;background:var(--h-dim);}
+.dash-link:hover{opacity:.8;}
+.link-row{display:flex;gap:8px;flex-wrap:wrap;padding-top:4px;}
+.emerging-wrap{flex:1;display:flex;flex-direction:column;padding:0 44px 52px;gap:12px;overflow-y:auto;}
+.emerging-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.em-card{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:14px;display:flex;flex-direction:column;gap:7px;}
+.em-title{font-family:var(--display);font-size:13px;letter-spacing:.04em;line-height:1.2;}
+.em-stage{font-family:var(--mono);font-size:7.5px;letter-spacing:.1em;text-transform:uppercase;padding:2px 6px;border-radius:8px;width:fit-content;}
+.em-desc{font-size:10px;color:var(--muted);line-height:1.5;font-weight:300;}
+.em-driver{font-family:var(--mono);font-size:8px;color:var(--dim);line-height:1.4;border-top:1px solid var(--border);padding-top:5px;margin-top:2px;}
+
+/* ── COVER / BRIDGE ── */
+.bg-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(128,128,128,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(128,128,128,0.06) 1px,transparent 1px);background-size:60px 60px;z-index:0;}
+.eyebrow{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;color:var(--dim);text-transform:uppercase;}
+
+/* ── AGENDA ── */
+.agenda-body{display:flex;flex:1;align-items:center;padding:0 80px;gap:80px;}
+.agenda-num{font-family:var(--display);font-size:clamp(60px,7vw,96px);color:var(--border);line-height:1;min-width:90px;}
+.agenda-items{display:flex;flex-direction:column;gap:0;}
+.agenda-item{display:flex;align-items:center;gap:20px;padding:12px 0;border-bottom:1px solid var(--border);}
+.agenda-item:last-child{border-bottom:none;}
+.agenda-n{font-family:var(--display);font-size:28px;color:var(--dim2);line-height:1;min-width:36px;}
+.agenda-title{font-family:var(--sans);font-size:16px;font-weight:600;color:var(--text);}
+.agenda-sub{font-family:var(--mono);font-size:9px;color:var(--dim);margin-top:2px;}
+.agenda-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+
+/* ── STACK EXPLAINER ── */
+.cake-wrap{display:grid;grid-template-columns:1fr 36px 1fr;gap:0;flex:1;padding:12px 44px 16px;align-items:center;}
+.cake-side{display:flex;flex-direction:column;gap:4px;}
+.cake-title{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-bottom:8px;}
+.cake-layer{padding:10px 14px;border-radius:6px;display:flex;flex-direction:column;gap:2px;}
+.cake-l-name{font-family:var(--sans);font-size:12.5px;font-weight:600;}
+.cake-l-sub{font-family:var(--mono);font-size:8.5px;color:var(--dim);line-height:1.4;}
+.cake-divider{display:flex;flex-direction:column;align-items:center;gap:8px;padding:0 6px;}
+.cake-arrow{font-family:var(--display);font-size:18px;color:var(--dim2);}
+.cake-eq{font-family:var(--mono);font-size:8px;color:var(--dim2);letter-spacing:.05em;}
+
+/* ── HEATMAP ── */
+.heatmap-wrap{display:flex;flex:1;flex-direction:column;padding:8px 44px 12px;overflow:hidden;}
+.hm-table{width:100%;border-collapse:collapse;flex:1;}
+.hm-table th{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);padding:6px 8px;text-align:center;border-bottom:1px solid var(--border);}
+.hm-table th:first-child{text-align:left;min-width:200px;}
+.hm-table td{padding:5px 8px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.hm-layer{display:flex;align-items:center;gap:8px;}
+.hm-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
+.hm-lname{font-family:var(--sans);font-size:11px;font-weight:500;}
+.hm-sub{font-family:var(--mono);font-size:7.5px;color:var(--dim);margin-top:1px;}
+.hm-cell{display:flex;align-items:center;justify-content:center;}
+.hm-pill{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:4px;font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.03em;white-space:nowrap;}
+.hm-pill.full{background:rgba(34,197,94,.15);color:#16a34a;border:1px solid rgba(34,197,94,.25);}
+.hm-pill.partial{background:rgba(234,179,8,.13);color:#ca8a04;border:1px solid rgba(234,179,8,.22);}
+.hm-pill.limited{background:rgba(249,115,22,.12);color:#ea580c;border:1px solid rgba(249,115,22,.20);}
+.hm-pill.none{background:rgba(100,116,139,.08);color:var(--dim2);border:1px solid var(--border);}
+html.light .hm-pill.full{background:rgba(21,128,61,.1);color:#15803d;}
+html.light .hm-pill.partial{background:rgba(161,98,7,.10);color:#a16207;}
+html.light .hm-pill.limited{background:rgba(194,65,12,.08);color:#c2410c;}
+
+/* ── CLUSTERMAX INTRO ── */
+.cmi-wrap{display:flex;flex:1;padding:10px 44px 16px;gap:32px;}
+.cmi-left{flex:0 0 300px;display:flex;flex-direction:column;gap:12px;}
+.cmi-right{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:8px;align-content:start;}
+.cmi-intro{font-size:13px;color:var(--muted);line-height:1.65;font-weight:300;}
+.cmi-stat-row{display:flex;gap:16px;flex-wrap:wrap;}
+.cmi-stat{text-align:center;padding:8px 16px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;}
+.cmi-stat-n{font-family:var(--display);font-size:28px;color:var(--text);}
+.cmi-stat-l{font-family:var(--mono);font-size:8px;color:var(--dim);text-transform:uppercase;letter-spacing:.1em;}
+.cmi-crit{display:flex;flex-direction:column;gap:6px;padding:10px 12px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);}
+.cmi-crit-label{font-family:var(--mono);font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;}
+.cmi-crit-desc{font-family:var(--sans);font-size:11px;color:var(--muted);line-height:1.4;}
+.tier-legend{display:flex;flex-direction:column;gap:6px;margin-top:4px;}
+.tier-leg-row{display:flex;align-items:center;gap:10px;}
+.tier-leg-badge{font-family:var(--mono);font-size:9px;font-weight:700;padding:3px 9px;border-radius:3px;min-width:70px;text-align:center;}
+
+/* ── DEEP DIVE REDESIGN ── */
+.dd-kpi-row{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
+.dd-kpi{padding:6px 12px;border-radius:4px;border:1px solid var(--border);background:var(--bg3);}
+.dd-kpi-label{font-family:var(--mono);font-size:7.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--dim);margin-bottom:1px;}
+.dd-kpi-value{font-family:var(--display);font-size:20px;line-height:1.1;}
+.dd-diff-box{padding:10px 14px;border-radius:6px;border-left:3px solid;margin-bottom:10px;}
+.dd-diff-label{font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-bottom:4px;}
+.dd-diff-text{font-size:13px;font-weight:600;line-height:1.45;}
+.dd-compete-box{padding:8px 12px;border-radius:5px;border:1px solid var(--border);background:var(--bg3);margin-bottom:10px;}
+.dd-compete-label{font-family:var(--mono);font-size:7.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-bottom:3px;}
+.dd-compete-text{font-size:12px;color:var(--muted);line-height:1.4;}
+
+/* ── RANKINGS SLIM ── */
+.co-oneliner{font-size:12px;font-weight:500;line-height:1.45;padding:8px 0 4px;color:var(--text);}
+.co-vs{font-family:var(--mono);font-size:10px;color:var(--dim);padding:4px 0 6px;border-bottom:1px solid var(--border);margin-bottom:8px;}
+.co-vs strong{color:var(--muted);}
+.co-expand{margin-top:4px;}
+.co-expand summary{font-family:var(--mono);font-size:9px;color:var(--dim2);cursor:pointer;padding:4px 0;list-style:none;display:flex;align-items:center;gap:6px;}
+.co-expand summary::-webkit-details-marker{display:none;}
+.co-expand summary::before{content:'▸';font-size:8px;}
+details[open].co-expand summary::before{content:'▾';}
+.co-expand-inner{padding-top:6px;}
+
+/* ── ORACLE DROPDOWN CARD ── */
+.oracle-spotlight{background:var(--bg3);border:1px solid rgba(245,158,11,0.3);border-radius:8px;padding:12px 16px;margin-top:8px;}
+.osp-header{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+.osp-badge{font-family:var(--mono);font-size:8px;font-weight:700;padding:3px 8px;border-radius:3px;background:rgba(245,158,11,.12);color:#b45309;border:1px solid rgba(245,158,11,.25);text-transform:uppercase;letter-spacing:.06em;}
+
+/* ── SUMMARY SLIDE ── */
+.summary-wrap{display:flex;flex:1;flex-direction:column;padding:8px 44px 12px;}
+.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;flex:1;}
+.sum-col{display:flex;flex-direction:column;gap:6px;padding:12px;border-radius:7px;border:1px solid var(--border);}
+.sum-model{font-family:var(--display);font-size:26px;line-height:1;margin-bottom:4px;}
+.sum-tagline{font-size:11px;font-weight:600;line-height:1.4;min-height:32px;}
+.sum-kv{display:flex;flex-direction:column;gap:3px;margin-top:2px;}
+.sum-k{font-family:var(--mono);font-size:7.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--dim);}
+.sum-v{font-size:11px;color:var(--muted);line-height:1.4;}
+.sum-v.accent{font-weight:600;}
+.sum-score-range{font-family:var(--display);font-size:22px;margin-top:4px;}
+.sum-risk{font-family:var(--mono);font-size:9px;padding:5px 8px;border-radius:3px;background:rgba(239,68,68,.08);color:#b91c1c;border:1px solid rgba(239,68,68,.15);line-height:1.4;margin-top:auto;}
+
+/* ── DEPIN SLIDE ── */
+.depin-wrap{display:flex;flex:1;flex-direction:column;padding:8px 44px 12px;gap:8px;}
+.depin-intro{font-size:12.5px;color:var(--muted);line-height:1.6;font-weight:300;max-width:820px;}
+.depin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;flex:1;}
+.dp-card{padding:12px 14px;border-radius:7px;border:1px solid var(--border);background:var(--bg3);display:flex;flex-direction:column;gap:5px;}
+.dp-name{font-family:var(--sans);font-size:13px;font-weight:700;}
+.dp-model{font-family:var(--mono);font-size:8px;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;}
+.dp-diff{font-size:11.5px;color:var(--muted);line-height:1.5;flex:1;}
+.dp-note{font-family:var(--mono);font-size:8.5px;padding:4px 8px;border-radius:3px;border:1px solid var(--border);color:var(--dim);}
+.depin-vs{padding:10px 14px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);}
+.depin-vs-title{font-family:var(--mono);font-size:8.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--dim);margin-bottom:6px;}
+.depin-vs-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;}
+.depin-vs-cell{font-size:11px;color:var(--muted);line-height:1.4;}
+.depin-vs-cell strong{display:block;font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.06em;color:var(--dim);margin-bottom:2px;}
+</style>
+</head>
+<body>
+<div class="progress" id="progress" style="width:5.26%"></div>
+<div class="slide-counter"><span class="counter-cur" id="ccur">01</span> / 19</div>
+<div class="key-hint"><span class="key-badge">←</span><span class="key-badge">→</span></div>
+<nav class="nav">
+  <button class="nav-btn" id="btn-prev" onclick="go(cur-1)" disabled>&#8592;</button>
+  <div class="nav-dots" id="dots"></div>
+  <button class="nav-btn" id="btn-next" onclick="go(cur+1)">&#8594;</button>
+</nav>
+
+<!-- ══ S1 — COVER ══ -->
+<div class="slide active" id="s1">
+  <div class="bg-grid"></div>
+  <div style="position:absolute;inset:0;z-index:0;">
+    <div style="position:absolute;top:-10%;left:-5%;width:50%;height:65%;background:radial-gradient(ellipse,rgba(99,102,241,0.10),transparent 70%);"></div>
+    <div style="position:absolute;bottom:0;right:0;width:45%;height:55%;background:radial-gradient(ellipse,rgba(16,185,129,0.08),transparent 70%);"></div>
+  </div>
+  <div style="position:absolute;top:18px;right:44px;z-index:20;">
+    <button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span id="tl">Dark</span></button>
+  </div>
+  <div style="position:relative;z-index:2;display:flex;flex-direction:column;justify-content:center;flex:1;padding:0 80px 52px;max-width:920px;">
+    <p class="eyebrow anim anim-1" style="margin-bottom:16px;">ClusterMAX Intelligence Series · Strategy Supplement · Deck 2 of 3</p>
+    <div style="font-family:var(--display);font-size:clamp(50px,6.5vw,86px);line-height:.92;letter-spacing:.04em;" class="anim anim-2">
+      THE<br><span style="color:var(--h);">GPU CLOUD</span><br><span style="color:var(--n);">COMPETITIVE</span><br><span style="color:var(--o);">LAND</span><span style="color:var(--a);">SCAPE</span>
+    </div>
+    <p class="anim anim-3" style="font-size:13.5px;color:var(--muted);font-weight:300;margin-top:18px;max-width:480px;line-height:1.6;">Four business models. Forty+ providers. One framework to decode who owns what, who commands a premium, and where the white space lies.</p>
+    <div class="anim anim-4" style="display:flex;gap:32px;margin-top:28px;">
+      <div><div style="font-family:var(--mono);font-size:8.5px;color:var(--dim);letter-spacing:.15em;text-transform:uppercase;">Source</div><div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:2px;">ClusterMAX 2.0 · SemiAnalysis Nov 2025</div></div>
+      <div><div style="font-family:var(--mono);font-size:8.5px;color:var(--dim);letter-spacing:.15em;text-transform:uppercase;">Scope</div><div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:2px;">37 rated · 84 reviewed · 209 tracked</div></div>
+      <div><div style="font-family:var(--mono);font-size:8.5px;color:var(--dim);letter-spacing:.15em;text-transform:uppercase;">Criteria</div><div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:2px;">10 categories · 1–5 scale · 50pt max</div></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ S2 — AGENDA ══ -->
+<div class="slide" id="s2">
+  <div class="bg-grid"></div>
+  <div style="position:absolute;top:18px;right:44px;z-index:20;">
+    <button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button>
+  </div>
+  <div class="agenda-body">
+    <div class="anim anim-1" style="display:flex;flex-direction:column;align-items:flex-start;gap:6px;">
+      <div style="font-family:var(--mono);font-size:8.5px;color:var(--dim);letter-spacing:.18em;text-transform:uppercase;">Deck 2 of 3</div>
+      <div style="font-family:var(--display);font-size:clamp(36px,4.5vw,58px);line-height:.94;letter-spacing:.04em;">WHAT<br>WE'LL<br>COVER</div>
+      <div style="width:40px;height:3px;background:var(--h);border-radius:2px;margin-top:8px;"></div>
+    </div>
+    <div class="agenda-items" style="flex:1;">
+      <div class="agenda-item anim anim-1">
+        <div class="agenda-n">01</div>
+        <div class="agenda-dot" style="background:#e8c840;"></div>
+        <div><div class="agenda-title">The Stack — 9 Layers Explained</div><div class="agenda-sub">How GPU clouds break into L−1 through L7 · vs NVIDIA's AI cake model</div></div>
+      </div>
+      <div class="agenda-item anim anim-2">
+        <div class="agenda-n">02</div>
+        <div class="agenda-dot" style="background:var(--h);"></div>
+        <div><div class="agenda-title">Four Business Models</div><div class="agenda-sub">Hyperscaler · Neocloud · Orchestrator · Aggregator · How they overlay the stack</div></div>
+      </div>
+      <div class="agenda-item anim anim-3">
+        <div class="agenda-n">03</div>
+        <div class="agenda-dot" style="background:var(--n);"></div>
+        <div><div class="agenda-title">ClusterMAX 2.0 — The Rating Framework</div><div class="agenda-sub">SemiAnalysis's 10-criteria hands-on test · 34 providers · 5-tier system</div></div>
+      </div>
+      <div class="agenda-item anim anim-4">
+        <div class="agenda-n">04</div>
+        <div class="agenda-dot" style="background:var(--o);"></div>
+        <div><div class="agenda-title">Deep Dives + Rankings</div><div class="agenda-sub">Each model: what they compete on · who leads · who to watch</div></div>
+      </div>
+      <div class="agenda-item anim anim-5">
+        <div class="agenda-n">05</div>
+        <div class="agenda-dot" style="background:var(--a);"></div>
+        <div><div class="agenda-title">Market Summary + DePIN</div><div class="agenda-sub">Cross-model comparison · decentralised GPU compute · what's next</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ S3 — STACK EXPLANATION ══ -->
+<div class="slide" id="s3">
+  <div class="slide-chrome">
+    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">The Stack · 9 Layers vs NVIDIA's AI Cake</div></div>
+    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
+  </div>
+  <div class="cake-wrap">
+    <!-- NVIDIA 5-layer cake (Jensen Huang's model) -->
+    <div class="cake-side">
+      <div class="cake-title" style="text-align:center;">Jensen Huang's 5-Layer AI Stack</div>
+      <div class="cake-layer anim anim-1" style="background:rgba(142,68,173,.18);border:1px solid rgba(142,68,173,.3);">
+        <div class="cake-l-name" style="color:#8e44ad;">Applications</div>
+        <div class="cake-l-sub">ChatGPT · Copilot · Gemini · enterprise AI products</div>
+      </div>
+      <div class="cake-layer anim anim-2" style="background:rgba(230,126,34,.15);border:1px solid rgba(230,126,34,.28);">
+        <div class="cake-l-name" style="color:#e67e22;">Algorithms</div>
+        <div class="cake-l-sub">Models · training frameworks · inference engines · fine-tuning</div>
+      </div>
+      <div class="cake-layer anim anim-3" style="background:rgba(90,184,106,.15);border:1px solid rgba(90,184,106,.28);">
+        <div class="cake-l-name" style="color:#5ab86a;">Software</div>
+        <div class="cake-l-sub">CUDA · cuDNN · NCCL · TensorRT · orchestration</div>
+      </div>
+      <div class="cake-layer anim anim-4" style="background:rgba(90,172,232,.15);border:1px solid rgba(90,172,232,.28);">
+        <div class="cake-l-name" style="color:#5aace8;">Systems</div>
+        <div class="cake-l-sub">Servers · networking (InfiniBand / NVLink) · cooling</div>
+      </div>
+      <div class="cake-layer anim anim-5" style="background:rgba(148,163,184,.15);border:1px solid rgba(148,163,184,.28);">
+        <div class="cake-l-name" style="color:#94a3b8;">Chips</div>
+        <div class="cake-l-sub">GPU silicon · NPUs · HBM memory · packaging (CoWoS)</div>
+      </div>
+      <div class="anim anim-6" style="font-family:var(--mono);font-size:8px;color:var(--dim2);margin-top:8px;line-height:1.5;">NVIDIA designs chips + software. Partners own systems up.<br>Jensen's key insight: the real value is in the full stack together.</div>
+    </div>
+
+    <!-- Divider -->
+    <div class="cake-divider">
+      <div class="cake-arrow anim anim-1">↔</div>
+      <div style="width:1px;flex:1;background:var(--border);margin:8px 0;"></div>
+      <div class="cake-eq anim anim-2" style="writing-mode:vertical-rl;transform:rotate(180deg);letter-spacing:.12em;">OUR FRAMEWORK</div>
+    </div>
+
+    <!-- Our 9-layer model -->
+    <div class="cake-side">
+      <div class="cake-title" style="text-align:center;">ClusterMAX 9-Layer Model (L−1 → L7)</div>
+      <div class="cake-layer anim anim-1" style="background:rgba(142,68,173,.12);border:1px solid rgba(142,68,173,.22);">
+        <div class="cake-l-name" style="color:#8e44ad;">L7 · Application</div>
+        <div class="cake-l-sub">RAG · agents · chat UI · inference API products · developer portals</div>
+      </div>
+      <div class="cake-layer anim anim-2" style="background:rgba(232,67,147,.12);border:1px solid rgba(232,67,147,.22);">
+        <div class="cake-l-name" style="color:#e84393;">L6 · Control Plane</div>
+        <div class="cake-l-sub">DCGM monitoring · health checks · IAM · FinOps · SOC2 compliance</div>
+      </div>
+      <div class="cake-layer anim anim-3" style="background:rgba(230,126,34,.12);border:1px solid rgba(230,126,34,.22);">
+        <div class="cake-l-name" style="color:#e67e22;">L5 · Data & Serving</div>
+        <div class="cake-l-sub">POSIX/VAST/Weka · S3-compatible object storage · model serving · KV cache</div>
+      </div>
+      <div class="cake-layer anim anim-4" style="background:rgba(155,89,182,.12);border:1px solid rgba(155,89,182,.22);">
+        <div class="cake-l-name" style="color:#9b59b6;">L4 · Workload Execution</div>
+        <div class="cake-l-sub">vLLM / SGLang · FSDP / Megatron · LoRA fine-tuning · P/D disaggregation</div>
+      </div>
+      <div class="cake-layer anim anim-5" style="background:rgba(90,184,106,.12);border:1px solid rgba(90,184,106,.22);">
+        <div class="cake-l-name" style="color:#5ab86a;">L3 · Orchestration</div>
+        <div class="cake-l-sub">Kubernetes (GPU Operator) · Slurm · SonK (SUNK / Soperator / Slinky)</div>
+      </div>
+      <div class="cake-layer anim anim-6" style="background:rgba(90,172,232,.12);border:1px solid rgba(90,172,232,.22);">
+        <div class="cake-l-name" style="color:#5aace8;">L2 · Firmware, Drivers, Libraries</div>
+        <div class="cake-l-sub">CUDA / ROCm · NCCL topology config · cuDNN · MIG · BMC/IPMI</div>
+      </div>
+      <div class="cake-layer anim anim-7" style="background:rgba(232,200,64,.12);border:1px solid rgba(232,200,64,.22);">
+        <div class="cake-l-name" style="color:#e8c840;">L1 · Physical Infrastructure</div>
+        <div class="cake-l-sub">HGX nodes · InfiniBand NDR 400G fabric · data center · liquid cooling</div>
+      </div>
+      <div class="cake-layer anim anim-1" style="background:rgba(148,163,184,.10);border:1px solid rgba(148,163,184,.18);opacity:.8;">
+        <div class="cake-l-name" style="color:#94a3b8;">L0 · Silicon Supply Chain</div>
+        <div class="cake-l-sub">GPU procurement (H100/B200/GB200) · custom ASICs (TPU / Trainium)</div>
+      </div>
+      <div class="cake-layer anim anim-1" style="background:rgba(231,76,60,.10);border:1px solid rgba(231,76,60,.18);opacity:.8;">
+        <div class="cake-l-name" style="color:#e74c3c;">L−1 · Energy & Connectivity</div>
+        <div class="cake-l-sub">PPAs · stranded gas power · submarine cables · own fiber / AS ownership</div>
+      </div>
+    </div>
+  </div>
+  <div style="padding:0 44px 10px;font-family:var(--mono);font-size:8px;color:var(--dim2);">We split NVIDIA's "Systems" layer into L1 (physical) + L2 (firmware) and add L−1 (energy) + L6 (cloud control plane) — the layers that determine competitive advantage in the GPU cloud market but sit outside NVIDIA's frame.</div>
+</div>
+
+<!-- ══ S4 — FOUR MODELS ══ -->
+<div class="slide" id="s4">
+  <div class="slide-chrome">
+    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Four Business Models</div></div>
+    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
+  </div>
+  <div class="slide-body" style="flex-direction:column;padding:10px 0 0;">
+    <div style="padding:0 44px 8px;font-family:var(--mono);font-size:9px;color:var(--dim);">The GPU compute market organises into four distinct archetypes, each occupying different layers of the <span class="tip" data-tip="L−1 (Energy) through L7 (Application). Each layer adds abstraction above the raw GPU silicon. Colour-coded consistently throughout this deck.">value chain</span> and serving different buyer profiles.</div>
+    <div class="models-grid">
+      <div class="model-card anim anim-1" style="border-color:rgba(99,102,241,0.3);background:linear-gradient(135deg,var(--h-dim),transparent);">
+        <div class="mc-code" style="color:var(--h);">H</div>
+        <div class="mc-name" style="color:var(--h);">Hyperscaler</div>
+        <div class="mc-tagline">AWS · GCP · Azure · Oracle</div>
+        <div class="mc-desc">Full-stack cloud with global compliance, managed ML services, and custom <span class="tip" data-tip="Custom AI ASICs: Google TPU, AWS Trainium, Azure Maia. Only hyperscalers design their own chips — neoclouds procure NVIDIA GPUs.">silicon</span>. Owns the full L−1 → L7 stack.</div>
+        <div style="font-family:var(--mono);font-size:7.5px;color:var(--dim);margin-bottom:2px;">STACK DEPTH</div>
+        <div class="mc-strip">
+          <div class="mc-sc" style="background:#e74c3c;" title="L-1 Energy"></div><div class="mc-sc" style="background:#94a3b8;" title="L0 Silicon"></div><div class="mc-sc" style="background:#e8c840;" title="L1 Physical"></div><div class="mc-sc" style="background:#5aace8;" title="L2 Firmware"></div><div class="mc-sc" style="background:#5ab86a;" title="L3 Orch"></div><div class="mc-sc" style="background:#9b59b6;" title="L4 Exec"></div><div class="mc-sc" style="background:#e67e22;" title="L5 Data"></div><div class="mc-sc" style="background:#e84393;" title="L6 Control"></div><div class="mc-sc" style="background:#8e44ad;" title="L7 App"></div>
+        </div>
+        <div class="mc-abs"><span class="mc-ab on">BMaaS</span><span class="mc-ab on">GPUaaS</span><span class="mc-ab on">MLaaS</span><span class="mc-ab on">WaaS</span></div>
+        <div class="mc-capex"><span class="mc-capex-label">CapEx</span><div class="mc-capex-dots"><div class="mc-capex-dot" style="background:var(--h);"></div><div class="mc-capex-dot" style="background:var(--h);"></div><div class="mc-capex-dot" style="background:var(--h);"></div><div class="mc-capex-dot" style="background:var(--h);"></div><div class="mc-capex-dot" style="background:var(--h);"></div></div><span style="font-family:var(--mono);font-size:7.5px;color:var(--dim);">Extreme</span></div>
+        <div class="mc-examples">AWS · GCP · Azure · Oracle · Pricing +30–50% vs neoclouds</div>
+      </div>
+      <div class="model-card anim anim-2" style="border-color:rgba(16,185,129,0.3);background:linear-gradient(135deg,var(--n-dim),transparent);">
+        <div class="mc-code" style="color:var(--n);">N</div>
+        <div class="mc-name" style="color:var(--n);">Neocloud</div>
+        <div class="mc-tagline">CoreWeave · Nebius · FluidStack · Crusoe</div>
+        <div class="mc-desc">GPU-first infrastructure operator. Owns the hardware (L1) and excels at cluster quality: <span class="tip" data-tip="InfiniBand NDR 400G: connects GPU nodes for distributed training. The IB fabric quality is the #1 hardware differentiator between neoclouds.">InfiniBand fabric</span> and <span class="tip" data-tip="SonK: Slurm-on-Kubernetes — runs the HPC batch scheduler and the cloud-native container orchestrator on the same physical GPU pool simultaneously.">SonK orchestration</span>.</div>
+        <div style="font-family:var(--mono);font-size:7.5px;color:var(--dim);margin-bottom:2px;">STACK DEPTH</div>
+        <div class="mc-strip">
+          <div class="mc-sc" style="background:#e74c3c;opacity:.4;"></div><div class="mc-sc" style="background:#94a3b8;opacity:.1;"></div><div class="mc-sc" style="background:#e8c840;"></div><div class="mc-sc" style="background:#5aace8;opacity:.6;"></div><div class="mc-sc" style="background:#5ab86a;"></div><div class="mc-sc" style="background:#9b59b6;opacity:.25;"></div><div class="mc-sc" style="background:#e67e22;opacity:.45;"></div><div class="mc-sc" style="background:#e84393;opacity:.5;"></div><div class="mc-sc" style="background:#8e44ad;opacity:.05;"></div>
+        </div>
+        <div class="mc-abs"><span class="mc-ab on">BMaaS</span><span class="mc-ab on">GPUaaS</span><span class="mc-ab">MLaaS</span><span class="mc-ab">WaaS</span></div>
+        <div class="mc-capex"><span class="mc-capex-label">CapEx</span><div class="mc-capex-dots"><div class="mc-capex-dot" style="background:var(--n);"></div><div class="mc-capex-dot" style="background:var(--n);"></div><div class="mc-capex-dot" style="background:var(--n);"></div><div class="mc-capex-dot" style="background:var(--n);"></div><div class="mc-capex-dot" style="background:rgba(128,128,128,0.15);"></div></div><span style="font-family:var(--mono);font-size:7.5px;color:var(--dim);">High</span></div>
+        <div class="mc-examples">CoreWeave ($CRWV) · Nebius ($NBIS) · FluidStack · Crusoe · −15–30% vs hyperscalers</div>
+      </div>
+      <div class="model-card anim anim-3" style="border-color:rgba(168,85,247,0.3);background:linear-gradient(135deg,var(--o-dim),transparent);">
+        <div class="mc-code" style="color:var(--o);">O</div>
+        <div class="mc-name" style="color:var(--o);">Orchestrator</div>
+        <div class="mc-tagline">Together AI · Lambda · Modal · Run:ai</div>
+        <div class="mc-desc">Software control-plane above raw infrastructure. Owns <span class="tip" data-tip="Scheduling, quota management, experiment tracking, fine-tune APIs. Some hybrid orchestrators (Together AI, Lambda) also own partial GPU capacity.">L3–L7 software</span>. Some own partial compute (hybrid orchestrators).</div>
+        <div style="font-family:var(--mono);font-size:7.5px;color:var(--dim);margin-bottom:2px;">STACK DEPTH</div>
+        <div class="mc-strip">
+          <div class="mc-sc" style="background:#e74c3c;opacity:.05;"></div><div class="mc-sc" style="background:#94a3b8;opacity:.05;"></div><div class="mc-sc" style="background:#e8c840;opacity:.2;"></div><div class="mc-sc" style="background:#5aace8;opacity:.2;"></div><div class="mc-sc" style="background:#5ab86a;"></div><div class="mc-sc" style="background:#9b59b6;"></div><div class="mc-sc" style="background:#e67e22;"></div><div class="mc-sc" style="background:#e84393;"></div><div class="mc-sc" style="background:#8e44ad;"></div>
+        </div>
+        <div class="mc-abs"><span class="mc-ab">BMaaS</span><span class="mc-ab on">GPUaaS</span><span class="mc-ab on">MLaaS</span><span class="mc-ab">WaaS</span></div>
+        <div class="mc-capex"><span class="mc-capex-label">CapEx</span><div class="mc-capex-dots"><div class="mc-capex-dot" style="background:var(--o);"></div><div class="mc-capex-dot" style="background:var(--o);"></div><div class="mc-capex-dot" style="background:rgba(128,128,128,0.15);"></div><div class="mc-capex-dot" style="background:rgba(128,128,128,0.15);"></div><div class="mc-capex-dot" style="background:rgba(128,128,128,0.15);"></div></div><span style="font-family:var(--mono);font-size:7.5px;color:var(--dim);">Low–Med</span></div>
+        <div class="mc-examples">Together AI · Lambda · Modal · Run:ai (NVIDIA) · Per-job / per-token pricing</div>
+      </div>
+      <div class="model-card anim anim-4" style="border-color:rgba(245,158,11,0.3);background:linear-gradient(135deg,var(--a-dim),transparent);">
+        <div class="mc-code" style="color:var(--a);">A</div>
+        <div class="mc-name" style="color:var(--a);">Aggregator</div>
+        <div class="mc-tagline">Vast.ai · Shadeform · TensorDock</div>
+        <div class="mc-desc">Asset-light <span class="tip" data-tip="Spot-market: routes demand to cheapest available GPU capacity from many underlying providers. 40–70% below reserved rates with preemption risk.">spot-market</span> operator. Routes demand to cheapest third-party supply. Zero hardware capex; revenue is the spread.</div>
+        <div style="font-family:var(--mono);font-size:7.5px;color:var(--dim);margin-bottom:2px;">STACK DEPTH</div>
+        <div class="mc-strip">
+          <div class="mc-sc" style="background:#e74c3c;opacity:.04;"></div><div class="mc-sc" style="background:#94a3b8;opacity:.04;"></div><div class="mc-sc" style="background:#e8c840;opacity:.04;"></div><div class="mc-sc" style="background:#5aace8;opacity:.04;"></div><div class="mc-sc" style="background:#5ab86a;opacity:.45;"></div><div class="mc-sc" style="background:#9b59b6;opacity:.06;"></div><div class="mc-sc" style="background:#e67e22;opacity:.3;"></div><div class="mc-sc" style="background:#e84393;opacity:.7;"></div><div class="mc-sc" style="background:#8e44ad;opacity:.85;"></div>
+        </div>
+        <div class="mc-abs"><span class="mc-ab">BMaaS</span><span class="mc-ab on">GPUaaS</span><span class="mc-ab">MLaaS</span><span class="mc-ab">WaaS</span></div>
+        <div class="mc-capex"><span class="mc-capex-label">CapEx</span><div class="mc-capex-dots"><div class="mc-capex-dot" style="background:var(--a);"></div><div class="mc-capex-dot" style="background:rgba(128,128,128,0.15);"></div><div class="mc-capex-dot" style="background:rgba(128,128,128,0.15);"></div><div class="mc-capex-dot" style="background:rgba(128,128,128,0.15);"></div><div class="mc-capex-dot" style="background:rgba(128,128,128,0.15);"></div></div><span style="font-family:var(--mono);font-size:7.5px;color:var(--dim);">Very Low</span></div>
+        <div class="mc-examples">Vast.ai · Shadeform (42+ providers) · TensorDock · Cheapest GPU-hrs (spot)</div>
+      </div>
+    </div>
+    <div style="padding:6px 44px;font-family:var(--mono);font-size:8px;color:var(--dim2);">Stack strip opacity encodes ownership depth · <span style="color:#e74c3c;">■</span>L−1 Energy <span style="color:#94a3b8;">■</span>L0 Silicon <span style="color:#e8c840;">■</span>L1 Physical <span style="color:#5aace8;">■</span>L2 Firmware <span style="color:#5ab86a;">■</span>L3 Orch <span style="color:#9b59b6;">■</span>L4 Exec <span style="color:#e67e22;">■</span>L5 Data <span style="color:#e84393;">■</span>L6 Control <span style="color:#8e44ad;">■</span>L7 App</div>
+  </div>
+</div>
+
+
+<!-- ══ S5 — STACK OWNERSHIP MAP ══ -->
+<div class="slide" id="s5">
+  <div class="slide-chrome">
+    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Stack Ownership Map · L−1 → L7</div></div>
+    <div class="chrome-right"><span class="chrome-note">● Owns · ◐ Facilitates · ○ Uses · — N/A</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
+  </div>
+  <div class="slide-body" style="overflow-y:auto;padding-bottom:0;">
+    <div class="matrix-wrap">
+      <table class="stk-matrix">
+        <thead><tr><th style="min-width:165px;">Layer · Key Technical Assets</th><th style="color:var(--h);min-width:125px;">H · Hyperscaler</th><th style="color:var(--n);min-width:125px;">N · Neocloud</th><th style="color:var(--o);min-width:125px;">O · Orchestrator</th><th style="color:var(--a);min-width:125px;">A · Aggregator</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><div class="stk-layer-badge"><div class="stk-layer-dot" style="background:#e74c3c;"></div><span class="stk-layer-name">L−1 Energy &amp; Connectivity</span></div><div class="stk-layer-nodes"><span class="tip" data-tip="Power Purchase Agreements: long-term contracts with power generators. Crusoe uses methane gas from oil wells. Hyperscalers own or contract 40–500MW facilities.">PPAs</span> · Stranded gas · Submarine cables · AS/fiber ownership</div></td>
+            <td><div class="stk-cov"><span class="hm-pill full">✓ Full</span><div class="stk-node">Own DCs + power grids (100–500MW)</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill partial">~ Varies</span><div class="stk-node">Crusoe: stranded gas. Others: colo</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill none">—</span></div></td>
+            <td><div class="stk-cov"><span class="hm-pill none">—</span></div></td>
+          </tr>
+          <tr>
+            <td><div class="stk-layer-badge"><div class="stk-layer-dot" style="background:#94a3b8;"></div><span class="stk-layer-name">L0 Silicon Supply Chain</span></div><div class="stk-layer-nodes"><span class="tip" data-tip="Custom AI ASICs: Google TPU v5e/5p, AWS Trainium2, Azure Maia 100. Only hyperscalers design their own AI chips. Neoclouds procure NVIDIA H100/H200/B200 from the open market.">Custom ASICs</span> · Foundry (TSMC) · <span class="tip" data-tip="Advanced Packaging (CoWoS): stacks HBM3e directly on the GPU die, delivering up to 5TB/s memory bandwidth on B200. TSMC CoWoS capacity is the primary bottleneck for H200/B200 supply.">CoWoS packaging</span> · GPU procurement</div></td>
+            <td><div class="stk-cov"><span class="hm-pill full">✓ Designs</span><div class="stk-node">TPU, Trainium2, Maia 100, Oracle ASIC</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill limited">· Procures</span><div class="stk-node">Allocated H100/H200/B200/GB200</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill limited">· Uses</span><div class="stk-node">Leases from neocloud/hyperscaler</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill none">—</span></div></td>
+          </tr>
+          <tr>
+            <td><div class="stk-layer-badge"><div class="stk-layer-dot" style="background:#e8c840;"></div><span class="stk-layer-name">L1 Physical Infrastructure</span></div><div class="stk-layer-nodes">DC (owned/colo) · 40–500MW power · Liquid cooling · <span class="tip" data-tip="HGX H100/B200: 8-GPU SXM server node with 6.4TB/s NVLink within the node. The physical building block of every GPU cluster.">HGX nodes</span> · <span class="tip" data-tip="InfiniBand NDR 400G: RDMA-capable interconnect between GPU nodes at 400Gb/s per port. SHARP in-network allreduce reduces CPU round-trips. IB fabric quality is the primary hardware differentiator.">InfiniBand NDR 400G</span></div></td>
+            <td><div class="stk-cov"><span class="hm-pill full">✓ Full</span><div class="stk-node">Global DC estate; 40–500MW facilities</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill full">✓ Owns</span><div class="stk-node">IB fabric ownership = core moat</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill limited">· Uses</span><div class="stk-node">Some own partial capacity (Together AI)</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill none">—</span></div></td>
+          </tr>
+          <tr>
+            <td><div class="stk-layer-badge"><div class="stk-layer-dot" style="background:#5aace8;"></div><span class="stk-layer-name">L2 Firmware, Drivers &amp; Libraries</span></div><div class="stk-layer-nodes"><span class="tip" data-tip="CUDA: NVIDIA's parallel compute platform. Every PyTorch operation on GPU becomes CUDA kernel calls. Version compatibility is the most common source of performance bugs.">CUDA</span>/ROCm · <span class="tip" data-tip="NCCL: NVIDIA Collective Communications Library. Manages allreduce/allgather in distributed training. Misconfigured NCCL topology (wrong topology.conf) is the #1 cause of low MFU.">NCCL topology</span> · cuDNN · <span class="tip" data-tip="MIG: Multi-Instance GPU. An H100 can be split into up to 7 isolated slices for smaller workloads. Hardware-enforced tenant isolation.">MIG</span> · BMC/IPMI</div></td>
+            <td><div class="stk-cov"><span class="hm-pill partial">~ Manages</span><div class="stk-node">Vendor CUDA/ROCm; own TensorRT</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill partial">~ Configures</span><div class="stk-node">NCCL topology config = key differentiator</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill limited">· Uses</span></div></td>
+            <td><div class="stk-cov"><span class="hm-pill none">—</span></div></td>
+          </tr>
+          <tr>
+            <td><div class="stk-layer-badge"><div class="stk-layer-dot" style="background:#5ab86a;"></div><span class="stk-layer-name">L3 Virtualisation &amp; Orchestration</span></div><div class="stk-layer-nodes">Kubernetes + <span class="tip" data-tip="GPU Operator: NVIDIA's K8s operator that automates GPU driver installation, device plugin, and DCGM monitoring sidecar. Required for any GPU workload on Kubernetes.">GPU Operator</span> · <span class="tip" data-tip="Slurm: dominant HPC batch scheduler for large distributed training runs. Used by all frontier AI labs. Manages node allocation, job queues, partitions.">Slurm</span> · <span class="tip" data-tip="SonK (Slurm-on-Kubernetes): runs Slurm and K8s on the same hardware pool simultaneously. Implementations: CoreWeave SUNK (proprietary), Nebius Soperator (open-source), SchedMD Slinky.">SonK</span> · BM/vGPU · Spot mgmt</div></td>
+            <td><div class="stk-cov"><span class="hm-pill full">✓ Full</span><div class="stk-node">EKS, GKE, AKS + CycleCloud/Slurm</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill full">✓ Full</span><div class="stk-node">SonK maturity = #1 differentiator</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill full">✓ Core</span><div class="stk-node">Multi-cloud federation, quota, scheduling</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill partial">~ Federates</span><div class="stk-node">Routes to cheapest provider; no own infra</div></div></td>
+          </tr>
+          <tr>
+            <td><div class="stk-layer-badge"><div class="stk-layer-dot" style="background:#9b59b6;"></div><span class="stk-layer-name">L4 Workload Execution</span></div><div class="stk-layer-nodes"><span class="tip" data-tip="vLLM: inference serving engine. PagedAttention manages KV-cache like OS virtual memory pages, enabling 24x higher throughput vs naive implementations.">vLLM</span>/SGLang · FSDP/Megatron · <span class="tip" data-tip="LoRA: Low-Rank Adaptation. Fine-tunes only ~0.1% of parameters, reducing GPU memory by 10–30x vs full fine-tuning.">LoRA/QLoRA</span> · <span class="tip" data-tip="Prefill-decode disaggregation: sends compute-intensive prompt processing to one GPU cluster, autoregressive generation to another. Matches hardware to the bottleneck type.">P/D disaggregation</span></div></td>
+            <td><div class="stk-cov"><span class="hm-pill partial">~ Managed</span><div class="stk-node">SageMaker, Vertex AI, Azure ML</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill limited">· Supports</span><div class="stk-node">Provides GPU; customer runs all ML frameworks</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill full">✓ Core</span><div class="stk-node">Inference engine, fine-tune pipelines</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill none">—</span></div></td>
+          </tr>
+          <tr>
+            <td><div class="stk-layer-badge"><div class="stk-layer-dot" style="background:#e67e22;"></div><span class="stk-layer-name">L5 Data &amp; Serving Infrastructure</span></div><div class="stk-layer-nodes"><span class="tip" data-tip="POSIX filesystem: standard file I/O. Training needs POSIX (Lustre, GPFS, Weka, VAST) for fast random dataset access. Object storage (S3-compatible) is used for checkpoints and model weights.">POSIX/VAST/Weka</span> · Object storage · <span class="tip" data-tip="KV Cache: stores key-value attention computations for processed tokens, enabling fast generation. PagedAttention (vLLM) manages KV cache allocation like OS virtual memory.">KV cache</span> · <span class="tip" data-tip="API gateway: entry point for inference requests. Handles auth, rate limiting, routing, load balancing. Adds 1–5ms latency on high-throughput serving paths.">API gateway</span></div></td>
+            <td><div class="stk-cov"><span class="hm-pill full">✓ Full</span><div class="stk-node">S3, GCS, ADLS + managed APIs</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill partial">~ Partial</span><div class="stk-node">VAST/Weka storage owned; serving layer minimal</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill full">✓ Core</span><div class="stk-node">Inference endpoints, semantic cache, model store</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill partial">~ Routes</span><div class="stk-node">Unified API; storage on underlying provider</div></div></td>
+          </tr>
+          <tr>
+            <td><div class="stk-layer-badge"><div class="stk-layer-dot" style="background:#e84393;"></div><span class="stk-layer-name">L6 Control Plane · FinOps · Security</span></div><div class="stk-layer-nodes"><span class="tip" data-tip="DCGM: NVIDIA Data Center GPU Manager. Exposes 300+ GPU metrics (XID errors, NVLink Rx/Tx, thermal, PCIe replays). The foundation of all GPU cluster health monitoring.">DCGM</span>/Grafana · <span class="tip" data-tip="Health checks: automated probes that detect unhealthy GPU nodes and drain them before jobs fail. Active (inject errors) + passive (background polling). CoreWeave is the gold standard.">Health checks</span> · IAM/SOC2 · FinOps</div></td>
+            <td><div class="stk-cov"><span class="hm-pill full">✓ Full</span><div class="stk-node">Azure Monitor, CloudWatch, SOC2/FedRAMP</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill partial">~ Partial</span><div class="stk-node">Monitoring + health checks vary per provider</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill full">✓ Core</span><div class="stk-node">Cost attribution, observability, model routing</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill limited">· Billing</span><div class="stk-node">Unified billing; no infra observability</div></div></td>
+          </tr>
+          <tr>
+            <td><div class="stk-layer-badge"><div class="stk-layer-dot" style="background:#8e44ad;"></div><span class="stk-layer-name">L7 Application &amp; End-User Interface</span></div><div class="stk-layer-nodes"><span class="tip" data-tip="RAG: Retrieval-Augmented Generation. Retrieves documents for context before generation. Reduces hallucination and enables up-to-date knowledge without retraining.">RAG pipelines</span> · <span class="tip" data-tip="AI Agents: LLMs with tool-calling, memory, and planning. Agentic workloads generate 5–30x more tokens per user session than simple Q&A — fundamentally different infrastructure requirements.">Agents</span> · Chat UI · API products</div></td>
+            <td><div class="stk-cov"><span class="hm-pill full">✓ Full</span><div class="stk-node">Gemini, Copilot, Bedrock, SageMaker Studio</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill none">—</span><div class="stk-node">Infrastructure only; no end-user apps</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill full">✓ Core</span><div class="stk-node">Fine-tune studio, inference API, dev portal</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill partial">~ API</span><div class="stk-node">Single API across 40+ underlying providers</div></div></td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="padding:6px 0;font-family:var(--mono);font-size:8px;color:var(--dim2);">✓ Full / Own = primary asset · ~ Partial = configures/enables · · Limited = uses substrate only · — None = absent from model</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ S6 — CLUSTERMAX INTRO ══ -->
+<div class="slide" id="s6">
+  <div class="slide-chrome">
+    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">ClusterMAX 2.0 · The Industry Standard</div></div>
+    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
+  </div>
+  <div class="cmi-wrap">
+    <div class="cmi-left">
+      <p class="cmi-intro anim anim-1">SemiAnalysis physically deploys clusters on each provider, runs standardized workloads, and scores against 10 criteria. Not marketing-based — testing-based. The result is the only rigorous GPU cloud benchmark the industry has.</p>
+      <div class="cmi-stat-row anim anim-2">
+        <div class="cmi-stat"><div class="cmi-stat-n">34</div><div class="cmi-stat-l">Providers tested</div></div>
+        <div class="cmi-stat"><div class="cmi-stat-n">84</div><div class="cmi-stat-l">Reviewed</div></div>
+        <div class="cmi-stat"><div class="cmi-stat-n">10</div><div class="cmi-stat-l">Criteria</div></div>
+        <div class="cmi-stat"><div class="cmi-stat-n">50</div><div class="cmi-stat-l">Max score</div></div>
+      </div>
+      <div class="tier-legend anim anim-3">
+        <div style="font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-bottom:4px;">Rating Tiers</div>
+        <div class="tier-leg-row"><span class="tier-leg-badge" style="background:rgba(245,215,139,.1);color:var(--plat);border:1px solid rgba(245,215,139,.25);">Platinum</span><span style="font-size:11px;color:var(--muted);">Proactive · premium-worthy · sets the bar</span></div>
+        <div class="tier-leg-row"><span class="tier-leg-badge" style="background:rgba(245,158,11,.1);color:var(--gold);border:1px solid rgba(245,158,11,.25);">Gold</span><span style="font-size:11px;color:var(--muted);">Strong across criteria · win most evaluations</span></div>
+        <div class="tier-leg-row"><span class="tier-leg-badge" style="background:rgba(148,163,184,.08);color:var(--silver);border:1px solid rgba(148,163,184,.2);">Silver</span><span style="font-size:11px;color:var(--muted);">Adequate · notable gaps · price-competitive</span></div>
+        <div class="tier-leg-row"><span class="tier-leg-badge" style="background:rgba(180,83,9,.1);color:#b45309;border:1px solid rgba(180,83,9,.25);">Bronze</span><span style="font-size:11px;color:var(--muted);">Minimum viable · needs material improvements</span></div>
+      </div>
+    </div>
+    <div class="cmi-right">
+      <div class="cmi-crit anim anim-1"><div class="cmi-crit-label" style="color:#b91c1c;">Security</div><div class="cmi-crit-desc">IB PKeys · container isolation · SOC2 · CVE embargo membership</div></div>
+      <div class="cmi-crit anim anim-1"><div class="cmi-crit-label" style="color:#0891b2;">Lifecycle</div><div class="cmi-crit-desc">Onboarding → cluster creation → support SLA · PyTorch install speed</div></div>
+      <div class="cmi-crit anim anim-2"><div class="cmi-crit-label" style="color:#5ab86a;">Orchestration</div><div class="cmi-crit-desc">Slurm config · K8s setup · SonK maturity · multi-node NCCL validation</div></div>
+      <div class="cmi-crit anim anim-2"><div class="cmi-crit-label" style="color:#e67e22;">Storage</div><div class="cmi-crit-desc">POSIX filesystem · object storage · local NVMe cache performance</div></div>
+      <div class="cmi-crit anim anim-3"><div class="cmi-crit-label" style="color:#5aace8;">Networking</div><div class="cmi-crit-desc">InfiniBand / RoCEv2 · NCCL allreduce bandwidth · SHARP support</div></div>
+      <div class="cmi-crit anim anim-3"><div class="cmi-crit-label" style="color:#ef4444;">Reliability</div><div class="cmi-crit-desc">Uptime SLA · passive + active health checks · auto-drain on failure</div></div>
+      <div class="cmi-crit anim anim-4"><div class="cmi-crit-label" style="color:#e84393;">Monitoring</div><div class="cmi-crit-desc">Grafana · DCGM metrics · straggler detection · dmesg / XID logs</div></div>
+      <div class="cmi-crit anim anim-4"><div class="cmi-crit-label" style="color:#22c55e;">Pricing</div><div class="cmi-crit-desc">$/GPU-hr vs peers · spot/preemptible availability · TCO per goodput-hour</div></div>
+      <div class="cmi-crit anim anim-5"><div class="cmi-crit-label" style="color:#a855f7;">Partnerships</div><div class="cmi-crit-desc">NVIDIA NCP · AMD Cloud Alliance · SchedMD · security embargo programs</div></div>
+      <div class="cmi-crit anim anim-5"><div class="cmi-crit-label" style="color:#f59e0b;">Availability</div><div class="cmi-crit-desc">GPU fleet size · on-demand vs reservation · Blackwell / GB200 access</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ S7 — HYPERSCALER DEEP DIVE ══ -->
+<div class="slide" id="s7">
+  <div class="slide-chrome">
+    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title" style="color:var(--h);">Hyperscaler · Deep Dive</div></div>
+    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
+  </div>
+  <div class="slide-body">
+    <div class="deepdive-wrap">
+      <div class="dd-left">
+        <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:8px;" class="anim anim-1">
+          <div style="font-family:var(--display);font-size:52px;line-height:.9;color:var(--h);">H</div>
+          <div>
+            <div style="font-family:var(--display);font-size:28px;line-height:1;color:var(--h);">HYPERSCALER</div>
+            <div style="font-family:var(--mono);font-size:8.5px;color:var(--dim);letter-spacing:.12em;text-transform:uppercase;">AWS · Azure · GCP · Oracle</div>
+          </div>
+        </div>
+        <div class="dd-diff-box anim anim-2" style="border-left-color:var(--h);background:var(--h-dim);">
+          <div class="dd-diff-label">What they compete on</div>
+          <div class="dd-diff-text">The only model with credible end-to-end stack ownership. Wins on compliance breadth and ISV ecosystem — not raw GPU performance.</div>
+        </div>
+        <div class="dd-kpi-row anim anim-3">
+          <div class="dd-kpi" style="border-color:rgba(99,102,241,.25);"><div class="dd-kpi-label">Pricing vs neocloud</div><div class="dd-kpi-value" style="color:var(--h);">+30–50%</div></div>
+          <div class="dd-kpi" style="border-color:rgba(99,102,241,.25);"><div class="dd-kpi-label">Capital intensity</div><div class="dd-kpi-value" style="color:var(--h);">Extreme</div></div>
+        </div>
+        <div class="anim anim-4">
+          <div class="dd-section-label">Stack Ownership (L−1 → L7)</div>
+          <div class="dd-stack-strip">
+            <div class="dd-ss-cell full" style="background:#e74c3c;" title="L-1 Energy: own power grids and PPAs">L−1</div>
+            <div class="dd-ss-cell full" style="background:#94a3b8;" title="L0 Silicon: TPU, Trainium, Maia custom ASICs">L0</div>
+            <div class="dd-ss-cell full" style="background:#e8c840;" title="L1 Physical: global DC estate, HGX nodes">L1</div>
+            <div class="dd-ss-cell full" style="background:#5aace8;" title="L2 Firmware: CUDA, TensorRT, custom drivers">L2</div>
+            <div class="dd-ss-cell full" style="background:#5ab86a;" title="L3 Orchestration: EKS/GKE/AKS + Slurm/CycleCloud">L3</div>
+            <div class="dd-ss-cell partial" style="background:#9b59b6;" title="L4 Execution: managed training/inference (SageMaker, Vertex AI)">L4</div>
+            <div class="dd-ss-cell full" style="background:#e67e22;" title="L5 Data: S3/GCS/ADLS, model serving APIs">L5</div>
+            <div class="dd-ss-cell full" style="background:#e84393;" title="L6 Control: CloudWatch, Azure Monitor, IAM, FedRAMP, SOC2">L6</div>
+            <div class="dd-ss-cell full" style="background:#8e44ad;" title="L7 App: Copilot, Gemini, Bedrock, SageMaker Studio">L7</div>
+          </div>
+          <div class="stk-legend">
+            <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#e74c3c;"></div><div class="stk-leg-label">L−1<br>Energy</div></div>
+            <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#94a3b8;"></div><div class="stk-leg-label">L0<br>Silicon</div></div>
+            <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#e8c840;"></div><div class="stk-leg-label">L1<br>Physical</div></div>
+            <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#5aace8;"></div><div class="stk-leg-label">L2<br>Firmware</div></div>
+            <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#5ab86a;"></div><div class="stk-leg-label">L3<br>Orch</div></div>
+            <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#9b59b6;"></div><div class="stk-leg-label">L4<br>Exec</div></div>
+            <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#e67e22;"></div><div class="stk-leg-label">L5<br>Data</div></div>
+            <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#e84393;"></div><div class="stk-leg-label">L6<br>Control</div></div>
+            <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#8e44ad;"></div><div class="stk-leg-label">L7<br>App</div></div>
+          </div>
+        </div>
+        <div class="dim-grid anim anim-5">
+
+
+
+
+        </div>
+      </div>
+      <div class="dd-right">
+        <div class="dd-section-label anim anim-1">Historical Edge</div>
+        <div class="edge-list anim anim-2">
+          <div class="edge-item"><div class="edge-dot" style="background:var(--h);"></div><div><strong>Compliance portfolio:</strong> SOC2, ISO27001, FedRAMP, HIPAA, PCI DSS, DoD IL5. No specialist can match this breadth. Regulated industries (healthcare, finance, government) default to hyperscalers regardless of price.</div></div>
+          <div class="edge-item"><div class="edge-dot" style="background:var(--h);"></div><div><strong>ISV ecosystem:</strong> Thousands of SaaS integrations, marketplace tools, pre-built ML solutions (SageMaker, Vertex AI Pipelines, Azure ML) reduce time-to-production for enterprise teams.</div></div>
+          <div class="edge-item"><div class="edge-dot" style="background:var(--h);"></div><div><strong>Custom silicon cost advantage:</strong> <span class="tip" data-tip="Google TPU v5e: 393 TFLOPS at lower $/FLOP than H100 for matrix-multiply-heavy workloads. AWS Trainium2: 3x better perf/$ than H100 for training on select models. Neither requires NVIDIA margin.">TPU/Trainium/Maia</span> create workload-specific cost advantages unreachable by GPU-procuring neoclouds.</div></div>
+        </div>
+        <div class="dd-section-label anim anim-3" style="margin-top:6px;">What Differentiates Each Hyperscaler</div>
+        <div class="edge-list anim anim-4">
+          <div class="edge-item"><div class="edge-dot" style="background:#f59e0b;"></div><div><strong>Oracle:</strong> AGI-neutral (no in-house AI lab) → signs OpenAI, Meta, ByteDance simultaneously. 60%+ of US Stargate ($300B+ OpenAI commitment). Best support experience, most cost-effective hyperscaler per GPU-hr.</div></div>
+          <div class="edge-item"><div class="edge-dot" style="background:#0891B2;"></div><div><strong>Azure:</strong> Only hyperscaler with <span class="tip" data-tip="SHARP: Scalable Hierarchical Aggregation and Reduction Protocol. Performs allreduce inside IB switches, cutting CPU round-trips by 10–30% at large node counts.">InfiniBand + SHARP</span> at scale. FedRAMP High / DoD IL5. Deep OpenAI integration (27% equity, model IP rights to 2032).</div></div>
+          <div class="edge-item"><div class="edge-dot" style="background:var(--n);"></div><div><strong>GCP:</strong> Best managed Kubernetes (GKE Autopilot). TPU v5 ecosystem is the strongest non-NVIDIA alternative. Lead in ML research tooling (Colab, Vertex AI, JAX).</div></div>
+          <div class="edge-item"><div class="edge-dot" style="background:#f97316;"></div><div><strong>AWS:</strong> Broadest service portfolio (200+ services). SageMaker is the most mature managed ML platform. Trainium2 signals serious ASIC commitment. Bedrock is the enterprise multi-model API default.</div></div>
+        </div>
+        <div class="moat-risk anim anim-5">
+          <div class="moat-card"><div class="moat-label">Moat</div><div class="moat-list">Compliance portfolio · ISV ecosystem · Custom silicon cost advantage · Enterprise contracts with switching costs · Global network PoPs</div></div>
+          <div class="moat-card" style="border-color:rgba(239,68,68,0.2);"><div class="moat-label" style="color:#b91c1c;">Risk</div><div class="moat-list">GPU allocation rationed for non-anchor tenants · Slower innovation vs specialists · 30–50% premium erodes demand for pure AI training · Compliance moat narrows as certifications commoditise</div></div>
+        </div>
+        <div class="anim anim-6">
+          <div class="dd-section-label" style="margin-top:4px;">Typical Buyer Profiles</div>
+          <div class="buyer-profiles">
+            <div class="bp-row"><div class="bp-tag">Regulated Enterprise</div><div class="bp-text">Healthcare, finance, and government teams requiring HIPAA, FedRAMP High, or PCI DSS compliance. Cannot use neoclouds regardless of price — audit requirements mandate hyperscaler attestations.</div></div>
+            <div class="bp-row"><div class="bp-tag">Enterprise App Teams</div><div class="bp-text">Existing Azure/AWS/GCP users leveraging SageMaker, Vertex AI, or Azure ML managed services. Prefers reduced cluster management overhead over raw GPU performance.</div></div>
+            <div class="bp-row"><div class="bp-tag">Frontier AI Affiliates</div><div class="bp-text">Labs with deep strategic ties to a specific hyperscaler: OpenAI → Azure, Google DeepMind → GCP, Anthropic → AWS Bedrock. Anchor-tenant relationships create structural lock-in.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ S8 — HYPERSCALER TOP 3 ══ -->
+<div class="slide" id="s8">
+  <div class="slide-chrome">
+    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title" style="color:var(--h);">Hyperscaler · Top Providers by Score</div></div>
+    <div class="chrome-right"><span class="chrome-note">Azure 34 · GCP 36 · AWS 29 · Oracle 39 — ranked by strategic relevance · CM scores shown</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
+  </div>
+  <div class="slide-body" style="flex-direction:column;padding-top:0;">
+    <div class="top3-wrap">
+      <div class="top3-header"><div class="top3-title" style="color:var(--h);">Hyperscaler Rankings</div><div class="top3-sub">AWS shown #1 by market share · Oracle as spotlight · criteria matrix confirmed</div></div>
+      <div class="company-cards">
+        <div class="co-card anim anim-1" style="border-top:2px solid var(--h);">
+          <div class="co-rank">1</div>
+          <div style="font-family:var(--mono);font-size:7.5px;color:var(--dim);padding:3px 12px 0;text-align:right;">#1 by market share · #3 by CM score (29/50)</div>
+          <div class="co-top"><div class="co-monogram" style="background:var(--h-dim);color:var(--h);border:1px solid rgba(99,102,241,0.35);">AWS</div><div class="co-name-wrap"><div class="co-name">Amazon AWS</div><span class="tbadge silver">Silver</span></div></div>
+          <div class="co-score-row"><div class="co-total" style="color:var(--h);">29</div><div class="co-total-label">/ 50 · #1 by cloud market share</div></div>
+          <div class="co-radar-wrap" id="radar-oracle"></div>
+          <div class="co-oneliner">Deepest cloud ecosystem (200+ services) + Trainium2 custom silicon — the incumbent default for enterprise AI teams already standardised on AWS.</div>
+          <div class="co-vs"><strong>vs Azure:</strong> Azure wins on InfiniBand + SHARP and government compliance; AWS wins on ecosystem breadth and Trainium2 cost advantage.</div>
+          <details class="co-expand">
+            <summary>Strengths, gaps & contract details</summary>
+            <div class="co-expand-inner">
+              <div class="co-highlights">
+                <div class="co-hl"><div class="co-hl-dot" style="background:var(--h);"></div>Trainium2 / Inferentia2 — only alternative to NVIDIA ASICs at hyperscale with real commercial deployment</div>
+                <div class="co-hl"><div class="co-hl-dot" style="background:var(--h);"></div>S3/FSx: where most enterprise training data already lives — moving is a multi-year project</div>
+                <div class="co-hl"><div class="co-hl-dot" style="background:#b91c1c;"></div>HyperPod Slurm took SemiAnalysis 14hrs/4 attempts · EFA opaque vs InfiniBand · monitoring near-absent</div>
+              </div>
+              <div class="co-spec" style="margin-top:6px;">
+                <div class="cs-row"><span class="cs-k">Contract</span><span class="cs-v">On-demand · 1–3yr reserved · Savings Plans</span></div>
+                <div class="cs-row"><span class="cs-k">Orch</span><span class="cs-v warn">HyperPod (painful) · EKS (functional)</span></div>
+              </div>
+            </div>
+          </details>
+        </div>
+        <div class="co-card anim anim-2" style="border-top:2px solid #0891B2;">
+          <div class="co-rank">2</div>
+          <div class="co-top"><div class="co-monogram" style="background:rgba(8,145,178,0.1);color:#0891B2;border:1px solid rgba(8,145,178,0.35);">AZ</div><div class="co-name-wrap"><div class="co-name">Azure</div><span class="tbadge gold">Gold</span></div></div>
+          <div class="co-score-row"><div class="co-total" style="color:#0891B2;">34</div><div class="co-total-label">/ 50</div></div>
+          <div class="co-radar-wrap" id="radar-azure"></div>
+          <div class="co-oneliner">Only hyperscaler with InfiniBand + SHARP at scale. Only one with FedRAMP High / DoD IL5. AKS auto-repair is the best managed K8s among hyperscalers.</div>
+          <div class="co-vs"><strong>vs Oracle:</strong> Azure wins on IB+SHARP and government compliance; Oracle wins on cost and AGI neutrality.</div>
+          <details class="co-expand">
+            <summary>Highlights & contract details</summary>
+            <div class="co-expand-inner">
+              <div class="co-highlights">
+                <div class="co-hl"><div class="co-hl-dot" style="background:#0891B2;"></div>IB + SHARP — critical for >256-GPU allreduce; no other hyperscaler has this</div>
+                <div class="co-hl"><div class="co-hl-dot" style="background:#0891B2;"></div>FedRAMP High / DoD IL5 — only option for classified US government AI workloads</div>
+                <div class="co-hl"><div class="co-hl-dot" style="background:#b91c1c;"></div>CycleCloud Slurm = no default health checks · Capacity constrained for non-OpenAI accounts</div>
+              </div>
+              <div class="co-spec" style="margin-top:6px;">
+                <div class="cs-row"><span class="cs-k">Contract</span><span class="cs-v">On-demand · 1–3yr reserved · Enterprise Agreements</span></div>
+                <div class="cs-row"><span class="cs-k">Orch</span><span class="cs-v">AKS (strong) · CycleCloud/Slurm (weak)</span></div>
+              </div>
+            </div>
+          </details>
+        </div>
+        <div class="co-card anim anim-3" style="border-top:2px solid #059669;">
+          <div class="co-rank">3</div>
+          <div class="co-top"><div class="co-monogram" style="background:rgba(5,150,105,0.10);color:#059669;border:1px solid rgba(5,150,105,0.35);">GCP</div><div class="co-name-wrap"><div class="co-name">Google Cloud</div><span class="tbadge silver">Silver</span></div></div>
+          <div class="co-score-row"><div class="co-total" style="color:#059669;">36</div><div class="co-total-label">/ 50 · Silver · Fast-tracking to Gold</div></div>
+          <div class="co-radar-wrap" id="radar-gcp"></div>
+          <div class="co-oneliner">Best managed Kubernetes among hyperscalers (GKE + CoMMA straggler detection). TPU v5 is the strongest non-NVIDIA alternative. Fast-tracking from Silver to Gold.</div>
+          <div class="co-vs"><strong>vs AWS:</strong> GKE materially better than EKS for AI K8s; AWS wins on ecosystem breadth and Trainium2.</div>
+          <details class="co-expand">
+            <summary>Highlights & contract details</summary>
+            <div class="co-expand-inner">
+              <div class="co-highlights">
+                <div class="co-hl"><div class="co-hl-dot" style="background:#059669;"></div>GKE Autopilot + CoMMA: best K8s + unique eBPF straggler detection for distributed training</div>
+                <div class="co-hl"><div class="co-hl-dot" style="background:#059669;"></div>TPU v5e/v5p: 30–50% better cost/FLOP vs H100 for matrix-multiply-heavy transformer training</div>
+                <div class="co-hl"><div class="co-hl-dot" style="background:#b91c1c;"></div>gIB plugin must be manually injected · NVL36×2 NVLink instability · Cluster Director still preview</div>
+              </div>
+              <div class="co-spec" style="margin-top:6px;">
+                <div class="cs-row"><span class="cs-k">Contract</span><span class="cs-v">On-demand · Committed Use Discounts (1–3yr)</span></div>
+                <div class="cs-row"><span class="cs-k">Orch</span><span class="cs-v good">GKE Autopilot (best-in-class) + Cluster Director Slurm (preview)</span></div>
+              </div>
+            </div>
+          </details>
+        </div>
+      </div>
+      <div style="font-family:var(--mono);font-size:8px;color:var(--dim2);">AWS (Silver, ~32/50 est.) rounds out the tier — broadest services portfolio but weakest AI-specific cluster quality per ClusterMAX.</div>
+    </div>
+  </div>
+
+      <div class="oracle-spotlight anim anim-4">
+        <div class="osp-header">
+          <div class="co-monogram" style="background:rgba(245,158,11,.1);color:#b45309;border:1px solid rgba(245,158,11,.3);width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:4px;font-family:var(--mono);font-size:10px;font-weight:700;">OR</div>
+          <div style="font-family:var(--sans);font-size:14px;font-weight:700;">Oracle OCI</div>
+          <span class="tbadge gold" style="font-size:9px;padding:2px 7px;">Gold · 39/50</span>
+          <span style="font-family:var(--mono);font-size:8.5px;color:var(--dim);margin-left:auto;">★ Why it matters despite #4 placement</span>
+        </div>
+        <details class="co-expand">
+          <summary style="font-family:var(--sans);font-size:12px;font-weight:500;color:var(--muted);">The AGI-Neutral Hyperscaler — can sign OpenAI, Meta, ByteDance simultaneously ↓</summary>
+          <div class="co-expand-inner" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-top:8px;">
+            <div>
+              <div style="font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);margin-bottom:4px;">Why unique</div>
+              <div style="font-size:12px;color:var(--muted);line-height:1.5;">Only hyperscaler with no in-house AGI program — structurally neutral. 60%+ of US Stargate ($300B+ OpenAI deal). Fastest DC deployment. Best support SLA. 45 global regions.</div>
+            </div>
+            <div>
+              <div style="font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);margin-bottom:4px;">Why placed #4 here</div>
+              <div style="font-size:12px;color:var(--muted);line-height:1.5;">Oracle Linux friction for Ubuntu-native AI teams. RoCE not InfiniBand — Azure wins for >256-GPU allreduce. Enterprise AI teams filter on compliance + IB first.</div>
+            </div>
+          </div>
+        </details>
+      </div>
+</div>
+
+<!-- ══ S9 — NEOCLOUD DEEP DIVE ══ -->
+<div class="slide" id="s9">
+  <div class="slide-chrome">
+    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title" style="color:var(--n);">Neocloud · Deep Dive</div></div>
+    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
+  </div>
+  <div class="slide-body">
+    <div class="deepdive-wrap">
+      <div class="dd-left">
+        <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:8px;" class="anim anim-1">
+          <div style="font-family:var(--display);font-size:52px;line-height:.9;color:var(--n);">N</div>
+          <div>
+            <div style="font-family:var(--display);font-size:28px;line-height:1;color:var(--n);">NEOCLOUD</div>
+            <div style="font-family:var(--mono);font-size:8.5px;color:var(--dim);letter-spacing:.12em;text-transform:uppercase;">CoreWeave · Nebius · FluidStack · Crusoe</div>
+          </div>
+        </div>
+        <div class="dd-diff-box anim anim-2" style="border-left-color:var(--n);background:var(--n-dim);">
+          <div class="dd-diff-label">What they compete on</div>
+          <div class="dd-diff-text">Cluster quality at the hardware layer — InfiniBand fabric, SonK orchestration maturity, and how fast the team catches and remediates failing GPU nodes.</div>
+        </div>
+        <div class="dd-kpi-row anim anim-3">
+          <div class="dd-kpi" style="border-color:rgba(16,185,129,.25);"><div class="dd-kpi-label">Pricing vs hyperscaler</div><div class="dd-kpi-value" style="color:var(--n);">−15–30%</div></div>
+          <div class="dd-kpi" style="border-color:rgba(16,185,129,.25);"><div class="dd-kpi-label">Capital intensity</div><div class="dd-kpi-value" style="color:var(--n);">High</div></div>
+        </div>
+        <div class="anim anim-4">
+          <div class="dd-section-label">Stack Ownership</div>
+          <div class="dd-stack-strip">
+            <div class="dd-ss-cell partial" style="background:#e74c3c;" title="L-1 Energy: partial — Crusoe (stranded gas) owns this; most others use colo power">L−1</div>
+            <div class="dd-ss-cell none" style="background:#94a3b8;" title="L0 Silicon: none — procures NVIDIA/AMD GPUs from the open market; does not design chips">L0</div>
+            <div class="dd-ss-cell full" style="background:#e8c840;" title="L1 Physical: fully owned — HGX GPU nodes, InfiniBand fabric, data center (owned or colo). This is the core asset.">L1</div>
+            <div class="dd-ss-cell partial" style="background:#5aace8;" title="L2 Firmware: partial — configures CUDA, NCCL topology.conf, BMC/IPMI. Does not build drivers from scratch.">L2</div>
+            <div class="dd-ss-cell full" style="background:#5ab86a;" title="L3 Orchestration: fully owned — K8s, Slurm, SonK. This is the #1 differentiator by ClusterMAX scoring.">L3</div>
+            <div class="dd-ss-cell limited" style="background:#9b59b6;" title="L4 Execution: limited — neocloud provides the GPU. The customer installs and runs all ML frameworks (PyTorch, vLLM, Megatron). No managed training or inference service.">L4</div>
+            <div class="dd-ss-cell partial" style="background:#e67e22;" title="L5 Data: partial — VAST/Weka POSIX storage owned; object storage available. No model-serving API or inference endpoints.">L5</div>
+            <div class="dd-ss-cell partial" style="background:#e84393;" title="L6 Control: partial — DCGM monitoring and health checks vary per provider (CoreWeave 5/5; some Gold providers 1/5). SOC2 compliance generally present. No FinOps/model-routing layer.">L6</div>
+            <div class="dd-ss-cell none" style="background:#8e44ad;" title="L7 Application: none — no end-user apps, no chat UI, no API products.">L7</div>
+          </div>
+          <div class="stk-legend">
+            <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#e74c3c;"></div><div class="stk-leg-label">L−1<br>Energy</div></div>
+            <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#94a3b8;"></div><div class="stk-leg-label">L0<br>Silicon</div></div>
+            <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#e8c840;"></div><div class="stk-leg-label">L1<br>Physical</div></div>
+            <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#5aace8;"></div><div class="stk-leg-label">L2<br>Firmware</div></div>
+            <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#5ab86a;"></div><div class="stk-leg-label">L3<br>Orch</div></div>
+            <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#9b59b6;"></div><div class="stk-leg-label">L4<br>Exec</div></div>
+            <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#e67e22;"></div><div class="stk-leg-label">L5<br>Data</div></div>
+            <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#e84393;"></div><div class="stk-leg-label">L6<br>Control</div></div>
+            <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#8e44ad;"></div><div class="stk-leg-label">L7<br>App</div></div>
+          </div>
+          <div style="font-family:var(--mono);font-size:7.5px;color:var(--dim2);margin-top:4px;">Full=owned · Partial=configures/operates · Limited=provides substrate only · None=absent. L4–L7: customer manages all ML software above the GPU.</div>
+        </div>
+        <div class="dim-grid anim anim-5">
+
+
+
+
+        </div>
+      </div>
+      <div class="dd-right">
+        <div class="dd-section-label anim anim-1">What Makes Neoclouds Different From Each Other</div>
+        <div class="edge-list anim anim-2">
+          <div class="edge-item"><div class="edge-dot" style="background:#475569;"></div><div><strong>CoreWeave (Platinum):</strong> <span class="tip" data-tip="SUNK: CoreWeave's proprietary SonK. Co-schedules Slurm+K8s jobs on the same physical GPU pool. Production-proven at 32K+ GPUs simultaneously. Licensed to third parties.">SUNK</span> is the gold standard. <span class="tip" data-tip="LOTA: Local Object Transfer Accelerator. Transparent distributed NVMe cache achieving >7 GB/s read per GPU on Blackwell. No other neocloud has this.">LOTA NVMe cache</span> (7 GB/s). <span class="tip" data-tip="BlueField-3 DPU: offloads network packet processing from CPU. Provides hyperscaler-grade tenant isolation, preventing noisy-neighbour effects between workloads.">BlueField-3 DPU isolation</span>. Commands 10–15% pricing premium because TCO is demonstrably lower.</div></div>
+          <div class="edge-item"><div class="edge-dot" style="background:var(--gold);"></div><div><strong>Nebius (Gold):</strong> <span class="tip" data-tip="Soperator: Nebius's open-source SonK operator on GitHub. Used by Gcore and Voltage Park too. Full roadmap transparency.">Soperator</span> (open source). KubeVirt VM approach delivers bare-metal performance confirmed by MLPerf v5.1 on GB200 NVL72. Only Gold-tier neocloud with spot/preemptible market. Publicly traded (NBIS). $17.4B Microsoft deal.</div></div>
+          <div class="edge-item"><div class="edge-dot" style="background:var(--gold);"></div><div><strong>FluidStack (Gold):</strong> Zero owned hardware yet achieves Gold tier — the only provider that converts partner DC infrastructure into Gold-tier customer experience through forward-deployed engineering. Google-backstopped capacity. Meta, Poolside, Blackforest Labs customers.</div></div>
+          <div class="edge-item"><div class="edge-dot" style="background:var(--gold);"></div><div><strong>Crusoe (Gold):</strong> Pioneered <span class="tip" data-tip="Digital Flare Mitigation: captures methane gas from oil wells that would otherwise be flared, powering GPU clusters. Very low energy cost. Reduces GHG emissions.">stranded-gas compute</span>. Oracle Abilene JV (1.2GW, US Stargate). Hardware-neutral: AMD MI355X + NVIDIA. SonK early-stage — cloud product focus is shifting toward DC infrastructure.</div></div>
+        </div>
+        <div class="moat-risk anim anim-3">
+          <div class="moat-card"><div class="moat-label">Moat</div><div class="moat-list">GPU procurement relationships (H100/B200/GB200 allocation) · IB fabric engineering depth · SonK orchestration quality · Long-term customer RPO commitments · Collectively $400B+ RPOs post-ClusterMAX 1.0</div></div>
+          <div class="moat-card" style="border-color:rgba(239,68,68,0.2);"><div class="moat-label" style="color:#b91c1c;">Risk</div><div class="moat-list">Margin compression as GPU supply normalises · Heavy debt load for GPU procurement · Customer concentration (CoreWeave: OpenAI = 62% revenue at IPO) · Blackwell transition timing risk</div></div>
+        </div>
+        <div class="anim anim-4" style="margin-top:4px;">
+          <div class="dd-section-label">Typical Buyer Profiles</div>
+          <div class="buyer-profiles">
+            <div class="bp-row"><div class="bp-tag">AI Research Lab</div><div class="bp-text">256–32K+ GPU distributed training runs. Needs bare-metal InfiniBand performance, production-grade SonK, and 99%+ node availability SLA. Willing to reserve 12–36 months for TCO reduction.</div></div>
+            <div class="bp-row"><div class="bp-tag">Growth AI Startup</div><div class="bp-text">Scaling beyond cloud-native (spot GPU is too unreliable). Needs reliable 50–500 GPU cluster at competitive $/hr. Reserved pricing to manage burn rate. Often sources from Nebius or FluidStack.</div></div>
+            <div class="bp-row"><div class="bp-tag">Enterprise ML Platform</div><div class="bp-text">Building internal training/fine-tuning infrastructure. Needs SOC2, dedicated capacity, and support SLA. Often comparison-shops between CoreWeave and hyperscalers on total TCO basis.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ S10 — NEOCLOUD TOP 3 ══ -->
+<div class="slide" id="s10">
+  <div class="slide-chrome">
+    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title" style="color:var(--n);">Neocloud · Top Providers by Score</div></div>
+    <div class="chrome-right"><span class="chrome-note">Platinum + Gold tier · max 50pts</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
+  </div>
+  <div class="slide-body" style="flex-direction:column;">
+    <div class="top3-wrap">
+      <div class="top3-header"><div class="top3-title" style="color:var(--n);">Neocloud Rankings</div><div class="top3-sub">ClusterMAX 2.0 · Platinum + Gold tier</div></div>
+      <div class="company-cards">
+        <!-- CoreWeave — platinum: dark slate monogram, visible on light bg -->
+        <div class="co-card anim anim-1" style="border-top:2px solid #64748b;background:linear-gradient(135deg,rgba(100,116,139,0.06),transparent);">
+          <div class="co-rank">1</div>
+          <div class="co-top"><div class="co-monogram" style="background:#334155;color:#e2e8f0;border:1px solid #475569;">CW</div><div class="co-name-wrap"><div class="co-name">CoreWeave</div><span class="tbadge pt">Platinum</span></div></div>
+          <div class="co-score-row"><div class="co-total" style="color:#334155;">46</div><div class="co-total-label">/ 50 · Industry Benchmark</div></div>
+          <html:not(.light)><div class="co-total" style="color:#cbd5e1;">46</div></html:not(.light)>
+          <div class="co-radar-wrap" id="radar-coreweave"></div>
+          <div class="co-usp">The only Platinum-tier provider. SUNK SonK is production-proven at 32K+ GPUs. LOTA NVMe cache (7 GB/s). BlueField-3 DPU tenant isolation. W&B natively integrated (acquired 2025). Commands pricing premium because TCO is demonstrably lower.</div>
+          <div class="co-highlights">
+            <div class="co-hl"><div class="co-hl-dot" style="background:#475569;"></div><span class="tip" data-tip="SHARP in-network allreduce at scale: only neocloud with this. Critical for large distributed training (>256 GPUs) where communication is the bottleneck.">IB + SHARP</span>: only neocloud with in-network allreduce; H100 SXM: $6.16/hr</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#475569;"></div>Custom NVML exporters expose thermal sensors DCGM doesn't surface — pre-failure detection</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#b91c1c;"></div>No spot/preemptible · Reservation-only · Limited short-term rentals</div>
+          </div>
+          <div class="co-spec">
+            <div class="cs-row"><span class="cs-k">CM Score</span><span class="cs-v cs-score">46/50 · Platinum · Sole member</span></div>
+            <div class="cs-row"><span class="cs-k">Pricing</span><span class="cs-v"><span class="price-dots"><span class="pd on" style="background:#475569;"></span><span class="pd on" style="background:#475569;"></span><span class="pd on" style="background:#475569;"></span><span class="pd on" style="background:#475569;"></span><span class="pd off" style="background:#475569;"></span></span>High · $6.16/hr H100 SXM (premium justified by TCO)</span></div>
+            <div class="cs-row"><span class="cs-k">Type</span><span class="cs-v">$/GPU-hr (reservation)</span></div>
+            <div class="cs-row"><span class="cs-k">Contract</span><span class="cs-v bad">12–36mo reservation only · No on-demand</span></div>
+            <div class="cs-row"><span class="cs-k">Orch</span><span class="cs-v good">SUNK: K8s + Slurm co-scheduled (production-grade)</span></div>
+            <div class="cs-row"><span class="cs-k">Egress</span><span class="cs-v warn">Metered</span></div>
+          </div>
+        </div>
+        <!-- Nebius -->
+        <div class="co-card anim anim-2" style="border-top:2px solid #b45309;">
+          <div class="co-rank">2</div>
+          <div class="co-top"><div class="co-monogram" style="background:rgba(180,83,9,0.12);color:#92400e;border:1px solid rgba(180,83,9,0.35);">NB</div><div class="co-name-wrap"><div class="co-name">Nebius</div><span class="tbadge gold">Gold</span></div></div>
+          <div class="co-score-row"><div class="co-total" style="color:#92400e;">37</div><div class="co-total-label">/ 50 · #1 Gold Neocloud</div></div>
+          <div class="co-radar-wrap" id="radar-nebius"></div>
+          <div class="co-usp">CoreWeave's closest rival. MLPerf v5.1-validated bare-metal performance on GB200 NVL72. Only Gold-tier neocloud with real spot/preemptible market. Open-source Soperator used by 3 other clouds. $17.4B Microsoft deal validates quality.</div>
+          <div class="co-highlights">
+            <div class="co-hl"><div class="co-hl-dot" style="background:#b45309;"></div>H100 on-demand: $2.95/hr · 1yr reserved: $2.00/hr · Spot: ~$1.60/hr</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#b45309;"></div>YDB-backed storage: container pull from 10+ min → 2–3 min via block storage primitives</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#b91c1c;"></div>Monitoring behind CoreWeave · DC acquisition constraints · Russian-origin perception risk</div>
+          </div>
+          <div class="co-spec">
+            <div class="cs-row"><span class="cs-k">CM Score</span><span class="cs-v cs-score">37/50 · Gold · #1 Gold neocloud</span></div>
+            <div class="cs-row"><span class="cs-k">Pricing</span><span class="cs-v"><span class="price-dots"><span class="pd on" style="background:#b45309;"></span><span class="pd on" style="background:#b45309;"></span><span class="pd on" style="background:#b45309;"></span><span class="pd off" style="background:#b45309;"></span><span class="pd off" style="background:#b45309;"></span></span>Medium · $2.00–2.95/hr H100</span></div>
+            <div class="cs-row"><span class="cs-k">Type</span><span class="cs-v">$/GPU-hr (on-demand + spot)</span></div>
+            <div class="cs-row"><span class="cs-k">Contract</span><span class="cs-v good">Hourly on-demand · Spot · 1yr reserved</span></div>
+            <div class="cs-row"><span class="cs-k">Orch</span><span class="cs-v good">Soperator: K8s + Slurm co-sched (OSS)</span></div>
+            <div class="cs-row"><span class="cs-k">Egress</span><span class="cs-v warn">Metered</span></div>
+          </div>
+        </div>
+        <!-- FluidStack -->
+        <div class="co-card anim anim-3" style="border-top:2px solid #b45309;">
+          <div class="co-rank">3</div>
+          <div class="co-top"><div class="co-monogram" style="background:rgba(180,83,9,0.12);color:#92400e;border:1px solid rgba(180,83,9,0.35);">FS</div><div class="co-name-wrap"><div class="co-name">FluidStack</div><span class="tbadge gold">Gold</span></div></div>
+          <div class="co-score-row"><div class="co-total" style="color:#92400e;">36</div><div class="co-total-label">/ 50 · Operator-as-a-Service</div></div>
+          <div class="co-radar-wrap" id="radar-fluidstack"></div>
+          <div class="co-usp">Zero owned hardware — yet achieves Gold tier. Converts partner DC infrastructure into Gold-tier experiences via forward-deployed engineering. CVE patched within minutes of notification. Google-backstopped via Terawulf/Cipher. Meta, Poolside, Blackforest Labs customers.</div>
+          <div class="co-highlights">
+            <div class="co-hl"><div class="co-hl-dot" style="background:#b45309;"></div>H100: ~$2.50/hr · ArgoCD IaC repos shared with customers for full transparency</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#b45309;"></div>HPC-X added to base image within 24 hours of customer request — fastest iteration tested</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#b91c1c;"></div>Quality varies by underlying DC partner · No permanent owned infrastructure</div>
+          </div>
+          <div class="co-spec">
+            <div class="cs-row"><span class="cs-k">CM Score</span><span class="cs-v cs-score">36/50 · Gold · Operator-as-a-Service</span></div>
+            <div class="cs-row"><span class="cs-k">Pricing</span><span class="cs-v"><span class="price-dots"><span class="pd on" style="background:#b45309;"></span><span class="pd on" style="background:#b45309;"></span><span class="pd on" style="background:#b45309;"></span><span class="pd off" style="background:#b45309;"></span><span class="pd off" style="background:#b45309;"></span></span>Medium · ~$2.50/hr H100 (enterprise opaque)</span></div>
+            <div class="cs-row"><span class="cs-k">Type</span><span class="cs-v">$/GPU-hr (hourly + multi-month)</span></div>
+            <div class="cs-row"><span class="cs-k">Contract</span><span class="cs-v">Hourly · Multi-month agreements available</span></div>
+            <div class="cs-row"><span class="cs-k">Orch</span><span class="cs-v good">K8s (ArgoCD managed) + Slurm per cluster</span></div>
+            <div class="cs-row"><span class="cs-k">Egress</span><span class="cs-v">Partner-dependent (varies by DC)</span></div>
+          </div>
+        </div>
+      </div>
+      <div style="font-family:var(--mono);font-size:8px;color:var(--dim2);">Crusoe (Gold, est. ~34/50) rounds out the Gold tier with Stargate JV energy differentiation but early-stage SonK. Lambda (Silver, ~26/50) is the most established hybrid neocloud/orchestrator, rated Silver with strong HPC firmware expertise.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ S11 — ORCHESTRATOR DEEP DIVE ══ -->
+<div class="slide" id="s11">
+  <div class="slide-chrome">
+    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title" style="color:var(--o);">Orchestrator · Deep Dive</div></div>
+    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
+  </div>
+  <div class="slide-body">
+    <div class="deepdive-wrap">
+      <div class="dd-left">
+        <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:8px;" class="anim anim-1">
+          <div style="font-family:var(--display);font-size:52px;line-height:.9;color:var(--o);">O</div>
+          <div>
+            <div style="font-family:var(--display);font-size:28px;line-height:1;color:var(--o);">ORCHESTRATOR</div>
+            <div style="font-family:var(--mono);font-size:8.5px;color:var(--dim);letter-spacing:.12em;text-transform:uppercase;">Together AI · Lambda · Modal · Run:ai</div>
+          </div>
+        </div>
+        <div class="dd-diff-box anim anim-2" style="border-left-color:var(--o);background:var(--o-dim);">
+          <div class="dd-diff-label">What they compete on</div>
+          <div class="dd-diff-text">Developer workflow and inference kernel depth — not hardware. The moat is FlashAttention-class engineering, framework integrations, and agentic tooling above the GPU substrate.</div>
+        </div>
+        <div class="dd-kpi-row anim anim-3">
+          <div class="dd-kpi" style="border-color:rgba(168,85,247,.25);"><div class="dd-kpi-label">Pricing model</div><div class="dd-kpi-value" style="color:var(--o);font-size:16px;">Per-token</div></div>
+          <div class="dd-kpi" style="border-color:rgba(168,85,247,.25);"><div class="dd-kpi-label">Capital intensity</div><div class="dd-kpi-value" style="color:var(--o);">Low–Med</div></div>
+        </div>
+        <div class="anim anim-4">
+          <div class="dd-section-label">Stack Ownership</div>
+          <div class="dd-stack-strip">
+            <div class="dd-ss-cell none" style="background:#e74c3c;" title="L-1 Energy: none">L−1</div>
+            <div class="dd-ss-cell none" style="background:#94a3b8;" title="L0 Silicon: none — leases from neoclouds/hyperscalers">L0</div>
+            <div class="dd-ss-cell limited" style="background:#e8c840;" title="L1 Physical: limited — hybrid orchestrators (Together AI, Lambda) own partial GPU capacity; pure orchestrators own nothing">L1</div>
+            <div class="dd-ss-cell limited" style="background:#5aace8;" title="L2 Firmware: limited — uses provider firmware; may configure inference-specific settings">L2</div>
+            <div class="dd-ss-cell full" style="background:#5ab86a;" title="L3 Orchestration: core — scheduling, quota, multi-cloud federation">L3</div>
+            <div class="dd-ss-cell full" style="background:#9b59b6;" title="L4 Execution: core — inference engine optimization, fine-tune pipelines, training run management">L4</div>
+            <div class="dd-ss-cell full" style="background:#e67e22;" title="L5 Data: core — model store, inference endpoints, API gateway, semantic cache">L5</div>
+            <div class="dd-ss-cell full" style="background:#e84393;" title="L6 Control: core — cost attribution, experiment tracking, observability, model routing">L6</div>
+            <div class="dd-ss-cell full" style="background:#8e44ad;" title="L7 App: core — developer API, fine-tune studio, model marketplace">L7</div>
+          </div>
+          <div class="stk-legend">
+            <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#e74c3c;"></div><div class="stk-leg-label">L−1<br>Energy</div></div>
+            <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#94a3b8;"></div><div class="stk-leg-label">L0<br>Silicon</div></div>
+            <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#e8c840;"></div><div class="stk-leg-label">L1<br>Physical</div></div>
+            <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#5aace8;"></div><div class="stk-leg-label">L2<br>Firmware</div></div>
+            <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#5ab86a;"></div><div class="stk-leg-label">L3<br>Orch</div></div>
+            <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#9b59b6;"></div><div class="stk-leg-label">L4<br>Exec</div></div>
+            <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#e67e22;"></div><div class="stk-leg-label">L5<br>Data</div></div>
+            <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#e84393;"></div><div class="stk-leg-label">L6<br>Control</div></div>
+            <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#8e44ad;"></div><div class="stk-leg-label">L7<br>App</div></div>
+          </div>
+          <div style="font-family:var(--mono);font-size:7.5px;color:var(--dim2);margin-top:4px;">Core layers L3–L7 owned. L1 limited/partial for hybrid orchestrators (Together AI, Lambda) only. Zero silicon ownership.</div>
+        </div>
+        <div class="dim-grid anim anim-5">
+
+
+
+          <div class="dim-card"><div class="dim-label">Key Risk</div><div class="dim-value">Commoditisation</div><div class="dim-sub">As vLLM/SGLang mature, providers self-host inference. Inference API margin faces open-source pressure.</div></div>
+        </div>
+      </div>
+      <div class="dd-right">
+        <div class="dd-section-label anim anim-1">Pure vs Hybrid Orchestrator</div>
+        <div class="edge-list anim anim-2">
+          <div class="edge-item"><div class="edge-dot" style="background:var(--o);"></div><div><strong>Pure Orchestrators</strong> (Modal, Run:ai, W&B): Zero hardware. Scheduling intelligence, <span class="tip" data-tip="Experiment tracking: records hyperparameters, metrics, model checkpoints, code versions per training run. Enables reproducibility and HPO. W&B and MLflow are the dominant tools.">experiment tracking</span>, multi-cloud federation, developer APIs on top of any provider. 100% software margin.</div></div>
+          <div class="edge-item"><div class="edge-dot" style="background:var(--o);"></div><div><strong>Hybrid Orchestrators</strong> (Together AI, Lambda): Own GPU capacity AND provide a software platform. Subsidise the software layer with hardware revenue. Together AI maintains GPU clusters with custom inference kernels (<span class="tip" data-tip="FlashAttention: custom CUDA kernel for attention computation with O(N) memory. Together AI's team are primary maintainers. Enables fast long-context inference and training.">FlashAttention</span> maintainers) while offering fine-tuning + inference APIs.</div></div>
+          <div class="edge-item"><div class="edge-dot" style="background:var(--o);"></div><div><strong>Inference API Specialists</strong> (Together AI, Fireworks AI): Focus on token-level serving of open models with custom kernels. Claims sub-50ms TTFT on Llama 3 70B. Software-margin-only bet — own inference engine without large hardware base.</div></div>
+        </div>
+        <div class="dd-section-label anim anim-3" style="margin-top:6px;">Acquired Orchestrators — Market Consolidation</div>
+        <div class="edge-list anim anim-4">
+          <div class="edge-item"><div class="edge-dot" style="background:#a855f7;"></div><strong>Run:ai (NVIDIA, 2024):</strong> Enterprise GPU scheduling and quota management platform. Now embedded inside NVIDIA AI Enterprise. Manages K8s GPU resource allocation at the cluster level across teams and priorities.</div>
+          <div class="edge-item"><div class="edge-dot" style="background:#a855f7;"></div><strong>W&B / Weights &amp; Biases (CoreWeave, 2025):</strong> The dominant experiment tracking platform. Now natively integrated into CoreWeave clusters — XID/AER events feed directly into researcher dashboards. This acquisition closed the biggest monitoring gap in CoreWeave's stack.</div>
+        </div>
+        <div class="moat-risk anim anim-5">
+          <div class="moat-card"><div class="moat-label">Moat</div><div class="moat-list">Inference kernel engineering depth (FlashAttention) · Developer ecosystem lock-in · Framework integration (LangChain, HF) · Agentic workflow tooling · Open-model catalogue breadth</div></div>
+          <div class="moat-card" style="border-color:rgba(239,68,68,0.2);"><div class="moat-label" style="color:#b91c1c;">Risk</div><div class="moat-list">OSS vLLM/SGLang commoditises inference serving · Providers self-host as models commoditise · Inference API margin thins · Upstream dependency on NVIDIA for kernel surfaces</div></div>
+        </div>
+        <div style="margin-top:6px;">
+          <div class="dd-section-label">Typical Buyer Profiles</div>
+          <div class="buyer-profiles">
+            <div class="bp-row"><div class="bp-tag">ML Inference Teams</div><div class="bp-text">Production teams serving open-weight models (Llama, Mistral, Qwen) at scale. Need low latency, high throughput, and per-token pricing without managing GPU infrastructure. Together AI and Fireworks AI are primary choices.</div></div>
+            <div class="bp-row"><div class="bp-tag">AI-Native Startups</div><div class="bp-text">Early-stage teams needing fine-tuning pipelines + inference endpoints from one vendor. Prefer the simplicity of a single API over managing separate neocloud clusters. Modal, Together AI, and Lambda are typical entry points.</div></div>
+            <div class="bp-row"><div class="bp-tag">Enterprise ML Platforms</div><div class="bp-text">Internal ML teams building training + serving pipelines. Need experiment tracking (W&B), multi-user quota management (Run:ai), and inference serving in one workflow. Often layer an orchestrator on top of a neocloud.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ S12 — ORCHESTRATOR TOP 3 ══ -->
+<div class="slide" id="s12">
+  <div class="slide-chrome">
+    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title" style="color:var(--o);">Orchestrator · Leading Providers</div></div>
+    <div class="chrome-right"><span class="chrome-note">Together AI 31/50 Silver · Lambda 30/50 Silver · Lightning.ai 22/50 Bronze — all criteria matrix · strategy_competitor_intelligence.html</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
+  </div>
+  <div class="slide-body" style="flex-direction:column;">
+    <div class="top3-wrap">
+      <div class="top3-header"><div class="top3-title" style="color:var(--o);">Orchestrator Rankings</div><div class="top3-sub">Ratings from strategy_competitor_intelligence.html · criteria matrix confirmed · model='Orchestrator' per live file</div></div>
+      <div class="company-cards">
+        <!-- Together AI -->
+        <div class="co-card anim anim-1" style="border-top:2px solid var(--o);">
+          <div class="co-rank">1</div>
+          <div class="co-top"><div class="co-monogram" style="background:var(--o-dim);color:var(--o);border:1px solid rgba(168,85,247,0.35);">TG</div><div class="co-name-wrap"><div class="co-name">Together AI</div><span class="tbadge silver">Silver</span></div></div>
+          <div class="co-score-row"><div class="co-total" style="color:var(--o);">31</div><div class="co-total-label">/ 50 · Silver · Criteria matrix confirmed</div></div>
+          <div class="co-radar-wrap" id="radar-together"></div>
+          <div class="co-usp">Hybrid orchestrator with owned GPU capacity + inference kernel depth. FlashAttention maintainers. First inference provider optimised for structured output and tool-call workflows. Together Compute building proprietary inference hardware for long-term silicon independence.</div>
+          <div class="co-highlights">
+            <div class="co-hl"><div class="co-hl-dot" style="background:var(--o);"></div>FlashAttention: Together's research team maintains the dominant fast-attention implementation</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:var(--o);"></div>Largest open-model catalogue of any inference API provider</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#b91c1c;"></div>Small owned GPU cluster vs neoclouds · Limited for large training runs</div>
+          </div>
+          <div class="co-spec">
+            <div class="cs-row"><span class="cs-k">CM Score</span><span class="cs-v cs-score">31/50 · Silver · Criteria matrix confirmed</span></div>
+            <div class="cs-row"><span class="cs-k">Pricing</span><span class="cs-v"><span class="price-dots"><span class="pd on" style="background:#5b21b6;"></span><span class="pd on" style="background:#5b21b6;"></span><span class="pd on" style="background:#5b21b6;"></span><span class="pd off" style="background:#5b21b6;"></span><span class="pd off" style="background:#5b21b6;"></span></span>Medium · $2.95/hr cluster; per-token API</span></div>
+            <div class="cs-row"><span class="cs-k">Type</span><span class="cs-v">$/GPU-hr · $/M tokens (dual model)</span></div>
+            <div class="cs-row"><span class="cs-k">Contract</span><span class="cs-v">Hourly on-demand · API: pay-as-you-go</span></div>
+            <div class="cs-row"><span class="cs-k">Orch</span><span class="cs-v">K8s + partial Slurm (Instant Clusters)</span></div>
+            <div class="cs-row"><span class="cs-k">Egress</span><span class="cs-v good">Free (inference API tier)</span></div>
+          </div>
+        </div>
+        <!-- Lambda -->
+        <div class="co-card anim anim-2" style="border-top:2px solid #5b21b6;">
+          <div class="co-rank">2</div>
+          <div class="co-top"><div class="co-monogram" style="background:rgba(91,33,182,0.12);color:#5b21b6;border:1px solid rgba(91,33,182,0.35);">LM</div><div class="co-name-wrap"><div class="co-name">Lambda Labs</div><span class="tbadge silver">Silver</span></div></div>
+          <div class="co-score-row"><div class="co-total" style="color:#5b21b6;">30</div><div class="co-total-label">/ 50 · Silver · Criteria matrix confirmed</div></div>
+          <div class="co-radar-wrap" id="radar-lambda"></div>
+          <div class="co-usp">Pioneer GPU cloud since 2012. Exceptional HPC and firmware expertise. VAST storage integrated. Largest on-demand H100/H200 fleet when available. Microsoft $1.5B validation. Lambda Chat LLM products. Straddles neocloud and orchestrator — infrastructure depth with platform ambition.</div>
+          <div class="co-highlights">
+            <div class="co-hl"><div class="co-hl-dot" style="background:#5b21b6;"></div>On-demand H100: $2.49–$2.99/hr · No reservation required (when available)</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#5b21b6;"></div>Deep rack-level/IB/firmware expertise from decade of HPC deployments</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#b91c1c;"></div>Frequent H100 sellouts · Support inconsistency across regions</div>
+          </div>
+          <div class="co-spec">
+            <div class="cs-row"><span class="cs-k">CM Score</span><span class="cs-v cs-score">30/50 · Silver · Criteria matrix confirmed</span></div>
+            <div class="cs-row"><span class="cs-k">Pricing</span><span class="cs-v"><span class="price-dots"><span class="pd on" style="background:#5b21b6;"></span><span class="pd on" style="background:#5b21b6;"></span><span class="pd on" style="background:#5b21b6;"></span><span class="pd off" style="background:#5b21b6;"></span><span class="pd off" style="background:#5b21b6;"></span></span>Medium · $2.49–2.99/hr H100 on-demand</span></div>
+            <div class="cs-row"><span class="cs-k">Type</span><span class="cs-v">$/GPU-hr (hourly, no reservation needed)</span></div>
+            <div class="cs-row"><span class="cs-k">Contract</span><span class="cs-v good">Hourly on-demand · No long-term commitment</span></div>
+            <div class="cs-row"><span class="cs-k">Orch</span><span class="cs-v">K8s + Slurm (1-Click Clusters)</span></div>
+            <div class="cs-row"><span class="cs-k">Egress</span><span class="cs-v warn">Metered</span></div>
+          </div>
+        </div>
+        <!-- Lightning.ai — Bronze 22/50 · model:'Orchestrator' per live file -->
+        <div class="co-card anim anim-3" style="border-top:2px solid #d97706;">
+          <div class="co-rank">3</div>
+          <div class="co-top"><div class="co-monogram" style="background:rgba(217,119,6,0.12);color:#92400e;border:1px solid rgba(217,119,6,0.35);">LA</div><div class="co-name-wrap"><div class="co-name">Lightning.ai</div><span class="tbadge bronze">Bronze</span></div></div>
+          <div class="co-score-row"><div class="co-total" style="color:#92400e;">22</div><div class="co-total-label">/ 50 · Bronze · Criteria matrix confirmed</div></div>
+          <div class="co-radar-wrap" id="radar-lightningai"></div>
+          <div style="background:var(--bg3);border-radius:7px;padding:9px 11px;font-family:var(--mono);font-size:8px;color:var(--dim);line-height:1.5;">Model<div style="font-size:9px;color:var(--muted);margin-top:2px;">Workflow-first ML orchestrator. Notebook-to-production tooling. Brokered multi-cloud GPU supply. model=&#39;Orchestrator&#39; in criteria matrix.</div></div>
+          <div class="co-usp">Software-first ML platform: polished notebook and studio UX with strong developer workflow ergonomics. Spend controls (attach/detach, auto-sleep) improve cost governance. Brokered multi-cloud capacity means no direct infrastructure ownership — supply reliability depends on underlying broker. Highest scoring pure Orchestrator in the Bronze tier per the criteria matrix.</div>
+          <div class="co-highlights">
+            <div class="co-hl"><div class="co-hl-dot" style="background:#92400e;"></div>Orchestration:3 + Lifecycle:3 — strongest non-Silver orchestrator scores in the criteria matrix</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#92400e;"></div>Studio UX + auto-sleep cost governance — developer-productivity leader at Bronze tier</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#b91c1c;"></div>Brokered supply · Security:2 · no direct cluster defensibility · margin layering at scale</div>
+          </div>
+          <div class="co-spec">
+            <div class="cs-row"><span class="cs-k">CM Score</span><span class="cs-v cs-score">22/50 · Bronze · model=&#39;Orchestrator&#39;</span></div>
+            <div class="cs-row"><span class="cs-k">Pricing</span><span class="cs-v"><span class="price-dots"><span class="pd on" style="background:#92400e;"></span><span class="pd on" style="background:#92400e;"></span><span class="pd off" style="background:#92400e;"></span><span class="pd off" style="background:#92400e;"></span><span class="pd off" style="background:#92400e;"></span></span>Medium · per-seat + brokered GPU-hr</span></div>
+            <div class="cs-row"><span class="cs-k">Type</span><span class="cs-v">Per-seat + $/GPU-hr (broker-routed)</span></div>
+            <div class="cs-row"><span class="cs-k">Contract</span><span class="cs-v good">Hourly on-demand · No long-term commitment</span></div>
+            <div class="cs-row"><span class="cs-k">Orch</span><span class="cs-v">Studio + notebook workflows · brokered K8s</span></div>
+            <div class="cs-row"><span class="cs-k">Egress</span><span class="cs-v">Provider-dependent (brokered)</span></div>
+          </div>
+        </div>
+      </div>
+      </div>
+      <div style="font-family:var(--mono);font-size:8px;color:var(--dim2);">Run:ai (NVIDIA-acquired 2024) — enterprise GPU scheduling platform, now embedded in NVIDIA AI Enterprise · W&B (CoreWeave-acquired 2025) — natively integrated in CoreWeave clusters · RunPod (20/50 Bronze) — moved to Aggregator slide, model='Aggregator' in live file · Fireworks AI / Modal — unrated in intelligence file</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ S13 — AGGREGATOR DEEP DIVE ══ -->
+<div class="slide" id="s13">
+  <div class="slide-chrome">
+    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title" style="color:var(--a);">Aggregator · Deep Dive</div></div>
+    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
+  </div>
+  <div class="slide-body">
+    <div class="deepdive-wrap">
+      <div class="dd-left">
+        <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:8px;" class="anim anim-1">
+          <div style="font-family:var(--display);font-size:52px;line-height:.9;color:var(--a);">A</div>
+          <div>
+            <div style="font-family:var(--display);font-size:28px;line-height:1;color:var(--a);">AGGREGATOR</div>
+            <div style="font-family:var(--mono);font-size:8.5px;color:var(--dim);letter-spacing:.12em;text-transform:uppercase;">Shadeform · Vast.ai · RunPod</div>
+          </div>
+        </div>
+        <div class="dd-diff-box anim anim-2" style="border-left-color:var(--a);background:var(--a-dim);">
+          <div class="dd-diff-label">What they compete on</div>
+          <div class="dd-diff-text">Price discovery and zero capex. Revenue is the spread between what the buyer pays and what the underlying provider charges. Vulnerability: supply tightens → both pricing leverage and allocation priority collapse simultaneously.</div>
+        </div>
+        <div class="dd-kpi-row anim anim-3">
+          <div class="dd-kpi" style="border-color:rgba(245,158,11,.25);"><div class="dd-kpi-label">Pricing vs reserved</div><div class="dd-kpi-value" style="color:var(--a);font-size:16px;">−40–70%</div></div>
+          <div class="dd-kpi" style="border-color:rgba(245,158,11,.25);"><div class="dd-kpi-label">Capital intensity</div><div class="dd-kpi-value" style="color:var(--a);">Very Low</div></div>
+        </div>
+        <div class="anim anim-4">
+          <div class="dd-section-label">Stack Ownership</div>
+          <div class="dd-stack-strip">
+            <div class="dd-ss-cell none" style="background:#e74c3c;" title="L-1 Energy: none">L−1</div>
+            <div class="dd-ss-cell none" style="background:#94a3b8;" title="L0 Silicon: none">L0</div>
+            <div class="dd-ss-cell none" style="background:#e8c840;" title="L1 Physical: none — zero hardware ownership">L1</div>
+            <div class="dd-ss-cell none" style="background:#5aace8;" title="L2 Firmware: none">L2</div>
+            <div class="dd-ss-cell limited" style="background:#5ab86a;" title="L3 Orch: limited — federation and routing layer (not scheduling); routes to provider not manages it">L3</div>
+            <div class="dd-ss-cell none" style="background:#9b59b6;" title="L4 Execution: none — customer manages all ML software">L4</div>
+            <div class="dd-ss-cell limited" style="background:#e67e22;" title="L5 Data: limited — unified API routing layer only; storage is on underlying provider">L5</div>
+            <div class="dd-ss-cell full" style="background:#e84393;" title="L6 Control: owns — billing, marketplace, cost comparison, provider selection">L6</div>
+            <div class="dd-ss-cell full" style="background:#8e44ad;" title="L7 App: owns — unified API, spot bidding interface, provider catalogue">L7</div>
+          </div>
+          <div class="stk-legend">
+            <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#e74c3c;"></div><div class="stk-leg-label">L−1<br>Energy</div></div>
+            <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#94a3b8;"></div><div class="stk-leg-label">L0<br>Silicon</div></div>
+            <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#e8c840;"></div><div class="stk-leg-label">L1<br>Physical</div></div>
+            <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#5aace8;"></div><div class="stk-leg-label">L2<br>Firmware</div></div>
+            <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#5ab86a;"></div><div class="stk-leg-label">L3<br>Orch</div></div>
+            <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#9b59b6;"></div><div class="stk-leg-label">L4<br>Exec</div></div>
+            <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#e67e22;"></div><div class="stk-leg-label">L5<br>Data</div></div>
+            <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#e84393;"></div><div class="stk-leg-label">L6<br>Control</div></div>
+            <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#8e44ad;"></div><div class="stk-leg-label">L7<br>App</div></div>
+          </div>
+          <div style="font-family:var(--mono);font-size:7.5px;color:var(--dim2);margin-top:4px;">Only L6 (billing/marketplace) and L7 (unified API) owned. Everything below is someone else's problem.</div>
+        </div>
+        <div class="dim-grid anim anim-5">
+
+
+
+          <div class="dim-card"><div class="dim-label">SLA Posture</div><div class="dim-value">None / Soft</div><div class="dim-sub">No hardware SLA. Quality varies by which underlying provider is assigned per request.</div></div>
+        </div>
+      </div>
+      <div class="dd-right">
+        <div class="dd-section-label anim anim-1">Who Uses Aggregators — and Why</div>
+        <div class="edge-list anim anim-2">
+          <div class="edge-item"><div class="edge-dot" style="background:var(--a);"></div><div><strong>Price-sensitive research labs:</strong> Academic teams with limited budgets for fine-tuning or evaluation runs. Spot market pricing at 40–70% discount is the primary draw. Preemption risk is acceptable for non-production workloads.</div></div>
+          <div class="edge-item"><div class="edge-dot" style="background:var(--a);"></div><div><strong>GPU availability hedging:</strong> Teams with a primary neocloud reservation using aggregators for overflow capacity. Dual-sourcing strategy rather than primary infrastructure.</div></div>
+          <div class="edge-item"><div class="edge-dot" style="background:var(--a);"></div><div><strong>Early-stage startups:</strong> Zero long-term commitment. No account setup friction. Stripe/Coinbase payment. Start running in minutes. Entry point before graduating to a proper neocloud or hyperscaler.</div></div>
+        </div>
+        <div class="anim anim-3" style="margin-top:6px;padding:9px 12px;border-radius:6px;border:1px solid rgba(245,158,11,.25);background:rgba(245,158,11,.06);">
+          <div style="font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:var(--a);margin-bottom:5px;">On-Demand vs Reserved — most aggregators offer both</div>
+          <div style="font-size:11.5px;color:var(--muted);line-height:1.55;">Most aggregators (Shadeform, Vast.ai, RunPod) offer both on-demand (hourly spot) and time-scheduled reservations ("7 days starting next Tuesday"). The key difference from a neocloud reservation: <strong>no cluster SLA</strong> in either case. You have the compute window, but hardware quality and continuity depend on the underlying provider — not the aggregator. Reserved aggregator = guaranteed schedule. Reserved neocloud = guaranteed schedule + SLA + health checks.</div>
+        </div>
+        <div class="dd-section-label anim anim-3" style="margin-top:6px;">Aggregator vs Orchestrator — Key Distinction</div>
+        <div class="edge-list anim anim-4">
+          <div class="edge-item"><div class="edge-dot" style="background:rgba(128,128,128,0.4);"></div><div><strong>Aggregator</strong> routes at the GPU level. You get hardware from some provider. Your team manages everything above L3. The aggregator's job ends at provisioning.</div></div>
+          <div class="edge-item"><div class="edge-dot" style="background:rgba(128,128,128,0.4);"></div><div><strong>Orchestrator</strong> manages the software layer above the GPU. Provides scheduling, experiment tracking, inference serving, developer APIs. The underlying GPU may be from an aggregated pool, but the value-add is in L4–L7 software.</div></div>
+        </div>
+        <div class="moat-risk anim anim-5">
+          <div class="moat-card"><div class="moat-label">Moat</div><div class="moat-list">Supply breadth (more providers = better price discovery) · Unified billing · Developer trust and marketplace network effects · Zero capex = fast unit economics</div></div>
+          <div class="moat-card" style="border-color:rgba(239,68,68,0.2);"><div class="moat-label" style="color:#b91c1c;">Risk</div><div class="moat-list">Supply tightens → pricing leverage collapses · "Russian roulette" cluster quality · No SLA = enterprise customers can't build production on aggregated spot · Hyperscalers undercut with reserved pricing</div></div>
+        </div>
+        <div style="margin-top:6px;">
+          <div class="dd-section-label">Typical Buyer Profiles</div>
+          <div class="buyer-profiles">
+            <div class="bp-row"><div class="bp-tag">Academic / Research</div><div class="bp-text">University labs and independent researchers with limited budgets. Spot pricing at 40–70% discount justifies preemption risk for batch evaluation jobs. Vast.ai's consumer GPU diversity is particularly attractive for smaller-scale experimentation.</div></div>
+            <div class="bp-row"><div class="bp-tag">Burst / Overflow Users</div><div class="bp-text">Teams with a primary neocloud reservation using aggregators for overflow capacity when their reserved cluster is fully utilized. Aggregators serve as the elastic tier in a hybrid strategy rather than a primary provider.</div></div>
+            <div class="bp-row"><div class="bp-tag">Bootstrapped Startups</div><div class="bp-text">Zero-commitment access with Stripe/Coinbase payment and no enterprise contract overhead. Entry point to GPU compute before a startup has the scale or credit history for a neocloud reservation. Shadeform's provider transparency helps teams graduate to the right underlying provider.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ S14 — AGGREGATOR TOP 3 ══ -->
+<div class="slide" id="s14">
+  <div class="slide-chrome">
+    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title" style="color:var(--a);">Aggregator · Leading Providers</div></div>
+    <div class="chrome-right"><span class="chrome-note">Shadeform 24/50 · Vast.ai 20/50 · RunPod 20/50 — all Bronze · criteria matrix confirmed · model=Aggregator per live file · strategy_competitor_intelligence.html</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
+  </div>
+  <div class="slide-body" style="flex-direction:column;">
+    <div class="top3-wrap">
+      <div class="top3-header"><div class="top3-title" style="color:var(--a);">Aggregator Rankings</div><div class="top3-sub">All three Bronze · criteria matrix confirmed · model='Aggregator' (Shadeform, RunPod, Vast.ai) per live file</div></div>
+      <div class="company-cards">
+        <!-- Shadeform — Silver (BM Comparison) -->
+        <div class="co-card anim anim-1" style="border-top:2px solid var(--a);">
+          <div class="co-rank">1</div>
+          <div class="co-top"><div class="co-monogram" style="background:var(--a-dim);color:var(--a);border:1px solid rgba(245,158,11,0.35);">SF</div><div class="co-name-wrap"><div class="co-name">Shadeform</div><span class="tbadge bronze">Bronze</span></div></div>
+          <div class="co-score-row"><div class="co-total" style="color:var(--a);">24</div><div class="co-total-label">/ 50 · Bronze · Criteria matrix confirmed</div></div>
+          <div class="co-radar-wrap" id="radar-shadeform"></div>
+          <div style="background:var(--bg3);border-radius:7px;padding:9px 11px;font-family:var(--mono);font-size:8px;color:var(--dim);line-height:1.5;">Model<div style="font-size:9px;color:var(--muted);margin-top:2px;">Pure aggregator + wholesale bare-metal broker. 23+ underlying providers. NVIDIA Brev exclusive partner.</div></div>
+          <div class="co-usp">Largest provider catalogue (23+ neoclouds, including Nebius, Lambda, Voltage Park). Exposes underlying provider per instance with compliance certifications. Pivoting to wholesale bare-metal brokerage for large clusters (APAC — Taiwan, Japan, India). NVIDIA Brev's only marketplace partner. Rated Silver in the intelligence file's business model comparison tab.</div>
+          <div class="co-highlights">
+            <div class="co-hl"><div class="co-hl-dot" style="background:var(--a);"></div>23+ providers — widest catalogue; shows underlying provider + compliance certifications per instance</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:var(--a);"></div>Pivoting to wholesale bare-metal brokerage (APAC) + NVIDIA Brev exclusive partnership</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#b91c1c;"></div>Bronze for cluster infra per ClusterMAX 2.0 (no Slurm/K8s product tested)</div>
+          </div>
+          <div class="co-spec">
+            <div class="cs-row"><span class="cs-k">CM Score</span><span class="cs-v cs-score">24/50 · Bronze · Criteria matrix confirmed</span></div>
+            <div class="cs-row"><span class="cs-k">Pricing</span><span class="cs-v"><span class="price-dots"><span class="pd on" style="background:#92400e;"></span><span class="pd on" style="background:#92400e;"></span><span class="pd off" style="background:#92400e;"></span><span class="pd off" style="background:#92400e;"></span><span class="pd off" style="background:#92400e;"></span></span>Low–Med · $1.50–3.00/hr aggregated</span></div>
+            <div class="cs-row"><span class="cs-k">Type</span><span class="cs-v">$/GPU-hr (spot, provider-routed)</span></div>
+            <div class="cs-row"><span class="cs-k">Contract</span><span class="cs-v good">Hourly on-demand · No commitment</span></div>
+            <div class="cs-row"><span class="cs-k">Orch</span><span class="cs-v">Provider-dependent (no own stack)</span></div>
+            <div class="cs-row"><span class="cs-k">Egress</span><span class="cs-v">Provider-dependent</span></div>
+          </div>
+        </div>
+        <!-- Vast.ai — Bronze 20/50 · criteria matrix confirmed -->
+        <div class="co-card anim anim-2" style="border-top:2px solid #d97706;">
+          <div class="co-rank">2</div>
+          <div class="co-top"><div class="co-monogram" style="background:rgba(217,119,6,0.12);color:#92400e;border:1px solid rgba(217,119,6,0.35);">VA</div><div class="co-name-wrap"><div class="co-name">Vast.ai</div><span class="tbadge bronze">Bronze</span></div></div>
+          <div class="co-score-row"><div class="co-total" style="color:#92400e;">20</div><div class="co-total-label">/ 50 · Bronze · Criteria matrix confirmed</div></div>
+          <div class="co-radar-wrap" id="radar-vastai-s11"></div>
+          <div style="background:var(--bg3);border-radius:7px;padding:9px 11px;font-family:var(--mono);font-size:8px;color:var(--dim);line-height:1.5;">Model<div style="font-size:9px;color:var(--muted);margin-top:2px;">P2P GPU marketplace. Hosts list idle capacity. Real-time bidding. Pricing:5 — highest in full criteria matrix.</div></div>
+          <div class="co-oneliner">Pricing:5 — the highest pricing score in the entire criteria matrix. RTX 4090 at $0.30/hr. Crypto-miner crossover supply creates unique spot liquidity. Every other criterion scores 1/5.</div>
+          <div class="co-vs"><strong>vs Shadeform:</strong> Vast.ai wins on absolute price floor and consumer GPU diversity; Shadeform wins on supply transparency and enterprise sourcing.</div>
+          <details class="co-expand">
+            <summary>Strengths, gaps & access model</summary>
+            <div class="co-expand-inner">
+              <div class="co-highlights">
+                <div class="co-hl"><div class="co-hl-dot" style="background:#92400e;"></div>Pricing:5 (highest in matrix) · RTX 4090 at $0.30/hr — unique consumer GPU depth</div>
+                <div class="co-hl"><div class="co-hl-dot" style="background:#92400e;"></div>On-demand (real-time bid) only; no time-scheduled reserved capacity</div>
+                <div class="co-hl"><div class="co-hl-dot" style="background:#b91c1c;"></div>Security / Orch / Storage / Reliability / Monitoring all 1/5 · No SLA · Peer quality variance</div>
+              </div>
+            </div>
+          </details>
+        </div>
+        <!-- RunPod — Bronze 20/50 · model:'Aggregator' per live file -->
+        <div class="co-card anim anim-3" style="border-top:2px solid #d97706;">
+          <div class="co-rank">3</div>
+          <div class="co-top"><div class="co-monogram" style="background:rgba(217,119,6,0.12);color:#92400e;border:1px solid rgba(217,119,6,0.35);">RP</div><div class="co-name-wrap"><div class="co-name">RunPod</div><span class="tbadge bronze">Bronze</span></div></div>
+          <div class="co-score-row"><div class="co-total" style="color:#92400e;">20</div><div class="co-total-label">/ 50 · Bronze · Criteria matrix confirmed</div></div>
+          <div class="co-radar-wrap" id="radar-runpod"></div>
+          <div style="background:var(--bg3);border-radius:7px;padding:9px 11px;font-family:var(--mono);font-size:8px;color:var(--dim);line-height:1.5;">Model<div style="font-size:9px;color:var(--muted);margin-top:2px;">model=&#39;Aggregator&#39; per live file. Container-first P2P platform. 20k+ GPU fleet across Secure + Community tiers.</div></div>
+          <div class="co-usp">Classified as Aggregator in the live intelligence file. 20,000+ GPUs globally across Secure Cloud (vetted Tier 3/4 partners, SOC 2) and Community Cloud (P2P marketplace). Container-centric architecture limits enterprise cluster depth — Slurm in beta. Pricing:4 and Availability:4 are the strengths; Security:1, Orchestration:1, Storage:1, Reliability:1, Monitoring:1 are the gaps.</div>
+          <div class="co-highlights">
+            <div class="co-hl"><div class="co-hl-dot" style="background:#92400e;"></div>Pricing:4 + Availability:4 — largest accessible fleet with strong price-performance for developers</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#92400e;"></div>SOC 2 certified Secure Cloud tier · responsive engineering team · 20k+ GPUs accessible</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#b91c1c;"></div>Security / Orch / Storage / Reliability / Monitoring all 1/5 · Container pod limits enterprise HPC</div>
+          </div>
+          <div class="co-spec">
+            <div class="cs-row"><span class="cs-k">CM Score</span><span class="cs-v cs-score">20/50 · Bronze · model=&#39;Aggregator&#39;</span></div>
+            <div class="cs-row"><span class="cs-k">Pricing</span><span class="cs-v"><span class="price-dots"><span class="pd on" style="background:#92400e;"></span><span class="pd on" style="background:#92400e;"></span><span class="pd off" style="background:#92400e;"></span><span class="pd off" style="background:#92400e;"></span><span class="pd off" style="background:#92400e;"></span></span>Low–Med · Community cheapest; Secure higher</span></div>
+            <div class="cs-row"><span class="cs-k">Type</span><span class="cs-v">$/GPU-hr (pod billing)</span></div>
+            <div class="cs-row"><span class="cs-k">Contract</span><span class="cs-v good">Hourly on-demand · No long-term commitment</span></div>
+            <div class="cs-row"><span class="cs-k">Orch</span><span class="cs-v warn">Container/pod model · Slurm in beta</span></div>
+            <div class="cs-row"><span class="cs-k">Egress</span><span class="cs-v">Varies by underlying provider</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ S15 — BUSINESS MODEL SUMMARY ══ -->
+<div class="slide" id="s15">
+  <div class="slide-chrome">
+    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Four Models · Side-by-Side</div></div>
+    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
+  </div>
+  <div class="summary-wrap">
+    <div style="font-family:var(--mono);font-size:9px;color:var(--dim);padding-bottom:8px;">How the four archetypes compare across the dimensions that determine market position, defensibility, and startup relevance.</div>
+    <div class="summary-grid">
+      <!-- Hyperscaler -->
+      <div class="sum-col anim anim-1" style="border-color:rgba(99,102,241,.25);background:var(--h-dim);">
+        <div class="sum-model" style="color:var(--h);">H</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--h);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Hyperscaler</div>
+        <div class="sum-tagline">Full-stack compliance machine. Wins on breadth, not raw GPU performance.</div>
+        <div class="sum-kv">
+          <div class="sum-k">Key differentiator</div>
+          <div class="sum-v accent">Compliance portfolio + ISV ecosystem</div>
+        </div>
+        <div class="sum-kv">
+          <div class="sum-k">Capital intensity</div>
+          <div class="sum-v">Extreme · $200B+/yr across AWS/Azure/GCP</div>
+        </div>
+        <div class="sum-kv">
+          <div class="sum-k">Moat</div>
+          <div class="sum-v">FedRAMP / SOC2 / HIPAA · 200+ managed services · enterprise switching cost</div>
+        </div>
+        <div class="sum-kv">
+          <div class="sum-k">Pricing vs neocloud</div>
+          <div class="sum-v accent">+30–50%</div>
+        </div>
+        <div class="sum-kv">
+          <div class="sum-k">Capacity model</div>
+          <div class="sum-v">On-demand + reserved (1–3yr) + spot</div>
+        </div>
+        <div class="sum-score-range" style="color:var(--h);">29–39<span style="font-family:var(--mono);font-size:11px;color:var(--dim);"> / 50</span></div>
+        <div class="sum-risk">Risk: GPU allocation rationed outside anchor accounts</div>
+      </div>
+      <!-- Neocloud -->
+      <div class="sum-col anim anim-2" style="border-color:rgba(16,185,129,.25);background:var(--n-dim);">
+        <div class="sum-model" style="color:var(--n);">N</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--n);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Neocloud</div>
+        <div class="sum-tagline">The infrastructure bet. Wins on cluster quality and SonK orchestration depth.</div>
+        <div class="sum-kv">
+          <div class="sum-k">Key differentiator</div>
+          <div class="sum-v accent">SonK maturity · IB fabric engineering · health check depth</div>
+        </div>
+        <div class="sum-kv">
+          <div class="sum-k">Capital intensity</div>
+          <div class="sum-v">High · $1B+ GPU procurement debt common</div>
+        </div>
+        <div class="sum-kv">
+          <div class="sum-k">Moat</div>
+          <div class="sum-v">GPU allocation relationships · 12–36 month RPO commitments · ops depth</div>
+        </div>
+        <div class="sum-kv">
+          <div class="sum-k">Pricing vs hyperscaler</div>
+          <div class="sum-v accent">−15–30%</div>
+        </div>
+        <div class="sum-kv">
+          <div class="sum-k">Capacity model</div>
+          <div class="sum-v">Mostly reserved · limited on-demand · Nebius has spot</div>
+        </div>
+        <div class="sum-score-range" style="color:var(--n);">30–46<span style="font-family:var(--mono);font-size:11px;color:var(--dim);"> / 50</span></div>
+        <div class="sum-risk">Risk: debt load + customer concentration + Blackwell transition</div>
+      </div>
+      <!-- Orchestrator -->
+      <div class="sum-col anim anim-3" style="border-color:rgba(168,85,247,.25);background:var(--o-dim);">
+        <div class="sum-model" style="color:var(--o);">O</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--o);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Orchestrator</div>
+        <div class="sum-tagline">The software layer. Wins on developer experience and kernel engineering.</div>
+        <div class="sum-kv">
+          <div class="sum-k">Key differentiator</div>
+          <div class="sum-v accent">Inference kernel depth (FlashAttention) · workflow DX</div>
+        </div>
+        <div class="sum-kv">
+          <div class="sum-k">Capital intensity</div>
+          <div class="sum-v">Low–Medium · software-first; hybrids add GPU capex</div>
+        </div>
+        <div class="sum-kv">
+          <div class="sum-k">Moat</div>
+          <div class="sum-v">Kernel engineering · LangChain / HF ecosystem lock-in · agentic tooling</div>
+        </div>
+        <div class="sum-kv">
+          <div class="sum-k">Pricing model</div>
+          <div class="sum-v accent">Per-token / per-job · software margin</div>
+        </div>
+        <div class="sum-kv">
+          <div class="sum-k">Capacity model</div>
+          <div class="sum-v">On-demand (no reservation) · API-first</div>
+        </div>
+        <div class="sum-score-range" style="color:var(--o);">22–31<span style="font-family:var(--mono);font-size:11px;color:var(--dim);"> / 50</span></div>
+        <div class="sum-risk">Risk: OSS vLLM/SGLang commoditises the inference layer</div>
+      </div>
+      <!-- Aggregator -->
+      <div class="sum-col anim anim-4" style="border-color:rgba(245,158,11,.25);background:var(--a-dim);">
+        <div class="sum-model" style="color:var(--a);">A</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--a);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Aggregator</div>
+        <div class="sum-tagline">The arbitrage play. Wins on price discovery and zero capex.</div>
+        <div class="sum-kv">
+          <div class="sum-k">Key differentiator</div>
+          <div class="sum-v accent">Supply breadth · price transparency · zero lock-in</div>
+        </div>
+        <div class="sum-kv">
+          <div class="sum-k">Capital intensity</div>
+          <div class="sum-v">Very low · revenue = spread · no hardware ownership</div>
+        </div>
+        <div class="sum-kv">
+          <div class="sum-k">Moat</div>
+          <div class="sum-v">Network effects (more providers → better price discovery) · developer trust</div>
+        </div>
+        <div class="sum-kv">
+          <div class="sum-k">Pricing model</div>
+          <div class="sum-v accent">Spot spread · both on-demand and reserved available</div>
+        </div>
+        <div class="sum-kv">
+          <div class="sum-k">Capacity model</div>
+          <div class="sum-v">On-demand + time-scheduled reserved (no cluster SLA either way)</div>
+        </div>
+        <div class="sum-score-range" style="color:var(--a);">20–24<span style="font-family:var(--mono);font-size:11px;color:var(--dim);"> / 50</span></div>
+        <div class="sum-risk">Risk: supply tightens → pricing leverage + priority both collapse</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ S16 — DEPIN ══ -->
+<div class="slide" id="s16">
+  <div class="slide-chrome">
+    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">What About Crypto? · DePIN GPU Networks</div></div>
+    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
+  </div>
+  <div class="depin-wrap">
+    <p class="depin-intro anim anim-1"><strong>DePIN (Decentralised Physical Infrastructure Networks)</strong> uses crypto-economic incentives to recruit idle GPU capacity from individual owners — gaming rigs, mining farms, enterprise idle servers. The thesis: aggregate the long tail of compute that centralized neoclouds ignore. In practice, quality variance, lack of InfiniBand, and no enterprise compliance constrain the use case to dev/batch/inference-only work.</p>
+    <div class="depin-grid">
+      <div class="dp-card anim anim-1" style="border-color:rgba(249,115,22,.25);">
+        <div class="dp-name">Vast.ai</div>
+        <div class="dp-model">Quasi-DePIN · Centralised billing</div>
+        <div class="dp-diff">The original GPU spot marketplace. Not crypto-native but the same thesis: peer-to-peer capacity with real-time bidding. 100k+ GPUs including consumer RTX-class cards from miners during low-profitability periods. Centralised billing reduces trust risk vs pure DePIN. CM Bronze: Pricing:5 (highest in matrix), but Security/Orch/Reliability all 1/5.</div>
+        <div class="dp-note">Best for: lowest-cost inference · non-critical batch · dev experimentation</div>
+      </div>
+      <div class="dp-card anim anim-2" style="border-color:rgba(99,102,241,.25);">
+        <div class="dp-name">Akash Network</div>
+        <div class="dp-model">Crypto-native DePIN · on-chain auctions</div>
+        <div class="dp-diff">Cosmos blockchain-based GPU marketplace. Providers stake AKT tokens as collateral; buyers lease via on-chain reverse auctions. Open-source SDL (Stack Definition Language) for reproducible deployments. ~10k GPUs, mostly A100/H100 from data centers. Permissionless — anyone can list capacity. Reputation system still maturing.</div>
+        <div class="dp-note">Best for: blockchain-native teams · permissionless access · cost-sensitive inference</div>
+      </div>
+      <div class="dp-card anim anim-3" style="border-color:rgba(16,185,129,.25);">
+        <div class="dp-name">Salad.com</div>
+        <div class="dp-model">Idle consumer GPU · gaming PC network</div>
+        <div class="dp-diff">Turns idle gaming PCs into an inference network. 5M+ registered machines (RTX 3060/4090). Users earn Salad Credits for compute time; platform provides containerised ML inference jobs. No InfiniBand — single-GPU only. Extremely cheap ($0.10–0.50/hr RTX 4090). Primarily used for stable diffusion, LLM inference, and video processing at very small batch sizes.</div>
+        <div class="dp-note">Best for: consumer GPU inference · media AI · small batch diffusion</div>
+      </div>
+      <div class="dp-card anim anim-4" style="border-color:rgba(245,215,139,.25);">
+        <div class="dp-name">io.net</div>
+        <div class="dp-model">DePIN cluster aggregation</div>
+        <div class="dp-diff">Attempts to aggregate GPU resources into clusters via the IO blockchain. Claims 1M+ GPUs but active available supply is much smaller. Differentiator: tries to create multi-GPU clusters from distributed machines, solving the single biggest DePIN weakness. In practice, WAN latency between nodes (vs InfiniBand microsecond latency) makes this impractical for distributed training. Works for embarrassingly parallel inference.</div>
+        <div class="dp-note">Best for: parallel inference jobs · image gen at scale · fine-tuning small models</div>
+      </div>
+      <div class="dp-card anim anim-5" style="border-color:rgba(90,172,232,.25);">
+        <div class="dp-name">Render Network</div>
+        <div class="dp-model">GPU rendering + AI inference</div>
+        <div class="dp-diff">Originally built for 3D rendering (Blender, Cinema 4D). Expanding into AI inference via RNDR token incentives. Strong in media/entertainment GPU workloads. Less relevant for LLM training. Native integration with Octane render engine is unique — most DePIN networks have no vertical specialisation. Demonstrates that DePIN can succeed in niche verticals with specific software lock-in.</div>
+        <div class="dp-note">Best for: 3D/VFX rendering · media AI · creative GPU workloads</div>
+      </div>
+      <div class="dp-card anim anim-6" style="border-color:rgba(232,67,147,.25);">
+        <div class="dp-name">The fundamental limit</div>
+        <div class="dp-model" style="color:#b91c1c;">Why DePIN can't replace neoclouds</div>
+        <div class="dp-diff">No InfiniBand = no distributed training beyond a single node. Consumer GPUs lack ECC memory and NVLINK — unusable for long multi-day runs. No SLA means production services can't build on DePIN. No compliance (HIPAA, SOC2, FedRAMP). The use case ceiling is: single-GPU inference, batch jobs tolerant of interruption, and experiments where 50% failure rate is acceptable.</div>
+        <div class="dp-note" style="color:#b91c1c;border-color:rgba(239,68,68,.2);background:rgba(239,68,68,.05);">Complementary to, not a substitute for, the 4 main archetypes</div>
+      </div>
+    </div>
+    <div class="depin-vs anim anim-7">
+      <div class="depin-vs-title">DePIN vs Aggregator (e.g. Vast.ai vs Shadeform)</div>
+      <div class="depin-vs-row">
+        <div class="depin-vs-cell"><strong>Supply source</strong>Consumer GPU owners / miners</div>
+        <div class="depin-vs-cell"><strong>Trust model</strong>Crypto collateral / ratings</div>
+        <div class="depin-vs-cell"><strong>Price floor</strong>$0.05–0.40/hr (RTX class)</div>
+        <div class="depin-vs-cell"><strong>Enterprise fit</strong>None — no compliance, no SLA, no IB</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ S17 — GO DEEPER ══ -->
+<div class="slide" id="s17">
+  <div class="slide-chrome">
+    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Go Deeper · Competitor Intelligence Dashboard</div></div>
+    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
+  </div>
+  <div class="slide-body" style="flex-direction:column;gap:10px;padding:12px 0 0;">
+    <div style="padding:0 44px 4px;font-family:var(--mono);font-size:9.5px;color:var(--muted);">All data in this deck has a live interactive version in the <strong style="color:var(--text);">strategy_competitor_intelligence.html</strong> dashboard. Below are the six key views and the direct links to each source file.</div>
+    <div class="dash-wrap" style="padding-top:0;">
+      <div class="dash-feature anim anim-1" style="border-left:3px solid var(--h);">
+        <div class="dash-feat-label">Tab 1</div>
+        <div class="dash-feat-title">Business Model Comparison</div>
+        <div class="dash-feat-desc">Filterable provider table: tier, pricing tier, contract length, egress policy, region, K8s/Slurm/both. Expandable rows with software posture, buyer tags, differentiators.</div>
+        <div class="dash-feat-examples">"Show all Gold/Silver providers with hourly contracts + free egress in EU" · "Which providers have both K8s and Slurm with co-scheduling?"</div>
+      </div>
+      <div class="dash-feature anim anim-2" style="border-left:3px solid var(--n);">
+        <div class="dash-feat-label">Tab 2</div>
+        <div class="dash-feat-title">Criteria Matrix</div>
+        <div class="dash-feat-desc">Full 10-criteria scoring matrix for all rated providers. Toggle qualitative / numeric (1–5). Click any criterion header to see full rubric and what earns a 5 vs a 1.</div>
+        <div class="dash-feat-examples">"How does CoreWeave score on Monitoring vs Nebius?" · "Which providers score 4+ on Orchestration AND Reliability simultaneously?"</div>
+      </div>
+      <div class="dash-feature anim anim-3" style="border-left:3px solid var(--o);">
+        <div class="dash-feat-label">Tab 3</div>
+        <div class="dash-feat-title">Stack Coverage</div>
+        <div class="dash-feat-desc">L−1→L7 layer-by-layer coverage map for every provider at the specific node level — InfiniBand, NCCL, KV cache, DCGM, SOC2. Full / partial / partner / limited / none.</div>
+        <div class="dash-feat-examples">"Show all providers with full InfiniBand AND production SonK" · "Which own both POSIX storage AND model serving?"</div>
+      </div>
+      <div class="dash-feature anim anim-4" style="border-left:3px solid var(--a);">
+        <div class="dash-feat-label">Tab 4</div>
+        <div class="dash-feat-title">Head-to-Head Comparison</div>
+        <div class="dash-feat-desc">Select any two providers for radar chart overlay, strength/weakness breakdown, and "lean toward X when…" strategic decision guide. All 190+ provider pairs pre-loaded.</div>
+        <div class="dash-feat-examples">"CoreWeave vs Nebius — when to choose each?" · "Hyperscaler vs Neocloud for 1,000-GPU production training?"</div>
+      </div>
+      <div class="dash-feature anim anim-5" style="border-left:3px solid #f87171;">
+        <div class="dash-feat-label">Tab 5</div>
+        <div class="dash-feat-title">Competitive Space</div>
+        <div class="dash-feat-desc">2D/3D scatter plot positioning all providers on any two criteria axes. Who clusters together, who has unique positioning, where the gaps are. Configurable X/Y/Z from all 10 criteria + derived metrics.</div>
+        <div class="dash-feat-examples">"Plot all providers on Pricing vs Orchestration" · "Where is the Monitoring gap by tier and business model?"</div>
+      </div>
+      <div class="dash-feature anim anim-6" style="border-left:3px solid #34d399;">
+        <div class="dash-feat-label">Tab 6</div>
+        <div class="dash-feat-title">Abstraction Taxonomy</div>
+        <div class="dash-feat-desc">BMaaS/GPUaaS/MLaaS/WaaS framework mapping. Connects each provider to the abstraction layers they serve and buyer personas at each layer.</div>
+        <div class="dash-feat-examples">"Which providers serve the MLaaS layer for enterprise ML platforms?" · "Map abstraction layer coverage gaps for a new entrant targeting mid-market AI teams"</div>
+      </div>
+    </div>
+    <div class="link-row" style="padding:0 44px 8px;">
+      <a class="dash-link" href="https://jskifterj.github.io/gpu_industry/strategy_competitor_intelligence.html" target="_blank">↗ Competitor Intelligence</a>
+      <a class="dash-link" href="https://jskifterj.github.io/gpu_industry/strategy_value_chain_master.html" target="_blank">↗ Value Chain Master</a>
+      <a class="dash-link" href="https://jskifterj.github.io/gpu_industry/index" target="_blank">↗ Index / All Tools</a>
+    </div>
+  </div>
+</div>
+
+<!-- ══ S18 — EMERGING MODELS ══ -->
+<div class="slide" id="s18">
+  <div class="slide-chrome">
+    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Emerging Business Models · Next Archetypes</div></div>
+    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
+  </div>
+  <div class="slide-body" style="flex-direction:column;padding-top:0;">
+    <div class="emerging-wrap">
+      <div style="padding-top:8px;font-family:var(--mono);font-size:9px;color:var(--dim);">As inference workloads mature and agentic systems proliferate, five new archetypes are emerging that don't fit cleanly into the four current models — the stepping stones toward Deck 3 startup positioning.</div>
+      <div class="emerging-grid">
+        <div class="em-card anim anim-1" style="border-top:3px solid var(--h);">
+          <div style="font-size:20px;">🏛️</div>
+          <div class="em-title">Sovereign AI Cloud</div>
+          <div class="em-stage" style="background:var(--h-dim);color:var(--h);">Early · Growing Fast</div>
+          <div class="em-desc">Government-owned or government-contracted GPU infrastructure. Nations building AI compute independence. France (OVHcloud), Saudi Arabia (Humain/SoftBank), UAE (G42), India (Neysa/NTT Telangana 400MW MoU).</div>
+          <div class="em-driver">Driver: AI becoming strategic infrastructure. EU AI Act + data sovereignty laws force local compute. Governments cannot rely on US hyperscalers for sensitive workloads.</div>
+        </div>
+        <div class="em-card anim anim-2" style="border-top:3px solid var(--n);">
+          <div style="font-size:20px;">🔬</div>
+          <div class="em-title">Vertical AI Stack</div>
+          <div class="em-stage" style="background:var(--n-dim);color:var(--n);">Emerging</div>
+          <div class="em-desc">Full-stack AI provider with compliant compute, domain models, and workflow integration for a single vertical: healthcare (HIPAA+BAA+clinical LLMs), legal, or financial services. Removes 80% of enterprise compliance friction.</div>
+          <div class="em-driver">Driver: Regulated industries can't use public APIs for sensitive data. Domain models outperform general models. Bundling is the key to enterprise stickiness.</div>
+        </div>
+        <div class="em-card anim anim-3" style="border-top:3px solid var(--a);">
+          <div style="font-size:20px;">⚡</div>
+          <div class="em-title">Inference-First Cloud</div>
+          <div class="em-stage" style="background:var(--a-dim);color:var(--a);">Now · Rapid Growth</div>
+          <div class="em-desc">Infrastructure purpose-built for <span class="tip" data-tip="Agentic inference: multi-step AI pipelines with tool-calling and planning. Generates 5–30x more tokens per user session than Q&A, creating fundamentally different infrastructure requirements vs training.">agentic inference</span>, not training. <span class="tip" data-tip="Prefill-decode disaggregation: sends compute-intensive prompt processing to one GPU cluster and autoregressive token generation to another, matching hardware type to the bottleneck.">P/D disaggregated</span> clusters. Hardware mix of GB200 UltraServers (inference) + H100 SXM (training) in same facility.</div>
+          <div class="em-driver">Driver: Inference is already 65–80% of GPU-hours. Agentic workloads multiply tokens-per-task. Training-optimised clusters waste 40%+ efficiency on serving.</div>
+        </div>
+        <div class="em-card anim anim-4" style="border-top:3px solid var(--o);">
+          <div style="font-size:20px;">🔗</div>
+          <div class="em-title">Compute Finance</div>
+          <div class="em-stage" style="background:var(--o-dim);color:var(--o);">Nascent · High Potential</div>
+          <div class="em-desc">GPU compute as a financial asset. Compute leasing, <span class="tip" data-tip="RPO-backed debt: CoreWeave and others use signed customer contracts (Remaining Performance Obligations) as collateral for debt financing. Allows GPU procurement without equity dilution.">RPO-backed debt</span>, GPU futures, and institutional asset management. Private credit funds specialising in AI infrastructure.</div>
+          <div class="em-driver">Driver: Top neoclouds hold $400B+ collective RPOs. GPU assets are now institutional-grade collateral. Morgan Stanley, BlackRock actively underwriting GPU infrastructure debt.</div>
+        </div>
+        <div class="em-card anim anim-5" style="border-top:3px solid #06b6d4;">
+          <div style="font-size:20px;">🌐</div>
+          <div class="em-title">Edge AI Fabric</div>
+          <div class="em-stage" style="background:rgba(6,182,212,0.10);color:#0e7490;">Speculative · 3–5yr</div>
+          <div class="em-desc">Distributed inference at network edge — telco PoPs, CDN nodes, enterprise on-prem interconnected into a unified inference fabric. Sub-20ms latency for real-time AI (AR/VR, autonomous systems, live translation).</div>
+          <div class="em-driver">Driver: Cloud inference adds 50–200ms round-trip. Real-time AI requires &lt;20ms. 5G enables edge compute economics. Telcos have fibre + PoP estate but lack AI expertise.</div>
+        </div>
+        <div class="em-card anim anim-6" style="border-top:3px solid #f97316;">
+          <div style="font-size:20px;">📊</div>
+          <div class="em-title">Compute Market Infrastructure</div>
+          <div class="em-stage" style="background:rgba(249,115,22,0.10);color:#c2410c;">Live · Early Liquidity</div>
+          <div class="em-desc">Ornn Compute and peers are building the financial plumbing for GPU compute: standardised compute units (akin to a barrel of oil), futures contracts, securitised hardware purchases, and RPO-backed debt facilities. The goal is a liquid, exchange-traded market for GPU capacity across time horizons — not just spot.</div>
+          <div class="em-driver">Driver: Newest silicon (B200, Rubin) remains rationed to hyperscalers and governments — creating information asymmetry that a liquid market could resolve. CoreWeave IPO and $400B+ collective RPOs validate compute as an institutional asset class. Ornn futures went live in 2025.</div>
+        </div>
+        <div class="em-card anim anim-7" style="border-top:3px solid #84cc16;">
+          <div style="font-size:20px;">🤝</div>
+          <div class="em-title">Strategic VC Compute Club</div>
+          <div class="em-stage" style="background:rgba(132,204,22,0.10);color:#4d7c0f;">Live · Niche</div>
+          <div class="em-desc">Andromeda (NFDG/AI Grant portfolio) pioneered the model: a VC-backed entity procures GPU capacity from neoclouds on behalf of portfolio startups, deploying Slurm-on-Kubernetes with light namespace isolation between tenants. Startups get compute access as part of the investment — competing directly with hyperscaler and NVIDIA startup programs.</div>
+          <div class="em-driver">Driver: Startup GPU access is gated by credit history and enterprise contracts — barriers that VC vehicles can circumvent. Hyperscalers and CoreWeave offer startup programs; Andromeda bets that portfolio trust enables shared tenancy that a stranger marketplace cannot. Future unclear as NFDG founders joined Meta.</div>
+        </div>
+      </div>
+      <div style="font-family:var(--mono);font-size:8px;color:var(--dim2);">These archetypes share one thread: specialisation, compliance bundling, or financial/structural differentiation create moats that commodity GPU access cannot replicate. Ornn Compute and Andromeda represent two ends of the same insight — GPU compute needs financial rails (Ornn) and trusted procurement networks (Andromeda) that pure marketplaces cannot yet provide. This is the lens for Deck 3.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ S19 — BRIDGE ══ -->
+<div class="slide" id="s19">
+  <div class="bg-grid"></div>
+  <div style="position:absolute;inset:0;z-index:0;">
+    <div style="position:absolute;bottom:0;left:0;width:50%;height:60%;background:radial-gradient(ellipse,rgba(168,85,247,0.08),transparent 70%);"></div>
+    <div style="position:absolute;top:0;right:0;width:50%;height:55%;background:radial-gradient(ellipse,rgba(245,158,11,0.07),transparent 70%);"></div>
+  </div>
+  <div class="slide-chrome" style="position:relative;z-index:10;">
+    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">What Comes Next · Deck 3 Preview</div></div>
+    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
+  </div>
+  <div style="position:relative;z-index:2;display:flex;flex:1;align-items:center;padding-bottom:52px;">
+    <div style="padding:0 80px;max-width:860px;">
+      <p class="eyebrow anim anim-1" style="margin-bottom:16px;">ClusterMAX Intelligence Series · Deck 3 of 3</p>
+      <div style="font-family:var(--display);font-size:clamp(34px,4.5vw,60px);line-height:.94;letter-spacing:.04em;margin-bottom:18px;" class="anim anim-2">
+        The landscape is clear.<br><span style="color:var(--o);">Now: where does</span><br><span style="color:var(--a);">a new entrant fit?</span>
+      </div>
+      <p class="anim anim-3" style="font-size:13.5px;color:var(--muted);line-height:1.6;font-weight:300;max-width:580px;">The competitive landscape establishes <em>what exists</em>. Deck 3 analyses <em>what's missing</em>, <em>what it costs to compete</em>, and <em>which emerging archetype offers the most defensible startup opportunity</em> given current market dynamics.</p>
+      <div class="anim anim-4" style="display:flex;flex-direction:column;gap:9px;margin-top:22px;max-width:580px;">
+        <div style="font-family:var(--mono);font-size:8.5px;color:var(--dim);letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px;">Next Steps · Deck 3 of 3</div>
+        <div style="display:flex;gap:12px;align-items:flex-start;"><div style="font-family:var(--display);font-size:20px;color:var(--o);line-height:1;min-width:26px;">01</div><div style="font-size:12.5px;color:var(--muted);line-height:1.6;font-weight:300;"><strong style="color:var(--text);">Market trends</strong> — inference scaling, agentic token multiplier, sovereign AI buildouts, and how each trend reshapes which layer of the stack captures value.</div></div>
+        <div style="display:flex;gap:12px;align-items:flex-start;"><div style="font-family:var(--display);font-size:20px;color:var(--o);line-height:1;min-width:26px;">02</div><div style="font-size:12.5px;color:var(--muted);line-height:1.6;font-weight:300;"><strong style="color:var(--text);">Positioning opportunities</strong> — where the four models fail specific buyer segments, what a wedge product looks like, and which emerging archetype offers the most defensible startup entry point.</div></div>
+        <div style="display:flex;gap:12px;align-items:flex-start;"><div style="font-family:var(--display);font-size:20px;color:var(--a);line-height:1;min-width:26px;">03</div><div style="font-size:12.5px;color:var(--muted);line-height:1.6;font-weight:300;"><strong style="color:var(--text);">Strategic landscape</strong> — to follow; not included in this deck.</div></div>
+      </div>
+      <div class="anim anim-5 link-row" style="margin-top:20px;">
+        <a class="dash-link" href="https://jskifterj.github.io/gpu_industry/strategy_competitor_intelligence.html" target="_blank">↗ Competitor Intelligence</a>
+        <a class="dash-link" href="https://jskifterj.github.io/gpu_industry/strategy_value_chain_master.html" target="_blank">↗ Value Chain</a>
+        <a class="dash-link" href="https://jskifterj.github.io/gpu_industry/index" target="_blank">↗ Index</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── THEME ──────────────────────────────────────────────
+// Default is light (set on html element). Toggle stores preference.
+(function(){
+  const t=localStorage.getItem('deckTheme2');
+  if(t==='dark'){document.documentElement.classList.remove('light');document.querySelectorAll('.tl').forEach(e=>e.textContent='Light');}
+  else{document.querySelectorAll('.tl').forEach(e=>e.textContent='Dark');}
+})();
+function toggleTheme(){
+  const isLight=document.documentElement.classList.contains('light');
+  if(isLight){document.documentElement.classList.remove('light');localStorage.setItem('deckTheme2','dark');document.querySelectorAll('.tl').forEach(e=>e.textContent='Light');}
+  else{document.documentElement.classList.add('light');localStorage.setItem('deckTheme2','light');document.querySelectorAll('.tl').forEach(e=>e.textContent='Dark');}
+  // Re-render visible radars for correct colors
+  renderRadarsForSlide(cur);
+}
+
+// ── RADAR ──────────────────────────────────────────────
+function radar(id,scores,color,labels){
+  const el=document.getElementById(id);if(!el)return;
+  const isLight=document.documentElement.classList.contains('light');
+  const n=scores.length,sz=120,cx=sz/2,cy=sz/2,r=sz/2-17,maxS=5;
+  const gridStroke=isLight?'rgba(0,0,0,0.14)':'rgba(200,210,220,0.18)';
+  const axisStroke=isLight?'rgba(0,0,0,0.10)':'rgba(200,210,220,0.12)';
+  const labelColor=isLight?'rgba(20,40,60,0.72)':'rgba(200,215,230,0.70)';
+  let g='';
+  [0.25,0.5,0.75,1].forEach(f=>{
+    const pts=scores.map((_,i)=>{const a=(2*Math.PI*i/n)-Math.PI/2;return `${cx+f*r*Math.cos(a)},${cy+f*r*Math.sin(a)}`;}).join(' ');
+    g+=`<polygon points="${pts}" fill="none" stroke="${gridStroke}" stroke-width="0.7"/>`;
+  });
+  const ax=scores.map((_,i)=>{const a=(2*Math.PI*i/n)-Math.PI/2;return `<line x1="${cx}" y1="${cy}" x2="${cx+r*Math.cos(a)}" y2="${cy+r*Math.sin(a)}" stroke="${axisStroke}" stroke-width="0.6"/>`;}).join('');
+  const sp=scores.map((s,i)=>{const a=(2*Math.PI*i/n)-Math.PI/2,sr=r*(s/maxS);return `${cx+sr*Math.cos(a)},${cy+sr*Math.sin(a)}`;}).join(' ');
+  const fillColor=isLight?color+'30':color+'28';
+  const lb=labels.map((l,i)=>{const a=(2*Math.PI*i/n)-Math.PI/2,lr=r+12;const x=cx+lr*Math.cos(a),y=cy+lr*Math.sin(a);const ta=Math.cos(a)>0.1?'start':Math.cos(a)<-0.1?'end':'middle';return `<text x="${x}" y="${y}" text-anchor="${ta}" dominant-baseline="middle" font-size="6.5" font-family="JetBrains Mono,monospace" fill="${labelColor}" font-weight="500">${l.slice(0,5)}</text>`;}).join('');
+  el.innerHTML=`<svg viewBox="0 0 ${sz} ${sz}" width="${sz}" height="${sz}">${g}${ax}<polygon points="${sp}" fill="${fillColor}" stroke="${color}" stroke-width="1.8" stroke-linejoin="round"/>${lb}</svg>`;
+}
+
+const CRIT=['Sec','Lifecy','Orch','Store','Net','Rely','Monit','Price','Part','Avail'];
+const SCORES={
+  // All scores confirmed from live file https://raw.githubusercontent.com/jskifterj/gpu_industry/main/strategy_competitor_intelligence.html
+  oracle:    [4,3,4,4,3,4,3,4,5,5],  // 39 Gold
+  azure:     [5,3,3,4,4,3,3,2,4,3],  // 34 Gold
+  gcp:       [4,3,5,4,3,3,4,2,4,4],  // 36 Silver (fast-tracking to Gold)
+  aws:       [4,1,2,4,2,3,2,2,4,5],  // 29 Silver
+  coreweave: [5,5,5,5,5,5,5,2,5,4],  // 46 Platinum
+  nebius:    [3,4,4,4,4,4,3,4,3,4],  // 37 Gold
+  fluidstack:[3,4,4,3,4,3,4,4,4,3],  // 36 Gold
+  lambda:    [3,2,3,3,3,3,2,3,4,4],  // 30 Silver
+  together:  [3,3,4,3,3,2,3,4,3,3],  // 31 Silver
+  shadeform: [2,3,1,1,2,2,1,4,4,4],  // 24 Bronze
+  runpod:    [1,2,1,1,2,1,1,4,3,4],  // 20 Bronze
+  vastai:    [1,2,1,1,1,1,1,5,3,4],  // 20 Bronze · confirmed live file 2026-03
+  lightningai:[2,3,3,2,2,2,2,2,2,2],  // 22 Bronze · model:'Orchestrator' · confirmed live file 2026-03
+};
+// Separate platinum monogram score color for light/dark
+function cwColor(){return document.documentElement.classList.contains('light')?'#334155':'#94a3b8';}
+
+function renderRadarsForSlide(n){
+  if(n===7){
+    radar('radar-oracle',SCORES.oracle,document.documentElement.classList.contains('light')?'#3730a3':'#6366f1',CRIT);
+    radar('radar-azure', SCORES.azure, '#0891B2',CRIT);
+    radar('radar-gcp',   SCORES.gcp,   document.documentElement.classList.contains('light')?'#065f46':'#10b981',CRIT);
+  }
+  if(n===9){
+    const cwC=document.documentElement.classList.contains('light')?'#334155':'#94a3b8';
+    const golC=document.documentElement.classList.contains('light')?'#92400e':'#f59e0b';
+    radar('radar-coreweave', SCORES.coreweave, cwC, CRIT);
+    radar('radar-nebius',    SCORES.nebius,    golC,CRIT);
+    radar('radar-fluidstack',SCORES.fluidstack,golC,CRIT);
+  }
+  if(n===13){
+    const aC=document.documentElement.classList.contains('light')?'#92400e':'#f59e0b';
+    const brC=document.documentElement.classList.contains('light')?'#78350f':'#cd7f32';
+    // S11 Aggregators: Shadeform (24) · Vast.ai (20) · RunPod (20)
+    if(SCORES.shadeform)    radar('radar-shadeform',    SCORES.shadeform,   aC,  CRIT);
+    if(SCORES.vastai)       radar('radar-vastai-s11',   SCORES.vastai,      brC, CRIT);
+    if(SCORES.runpod)       radar('radar-runpod',       SCORES.runpod,      brC, CRIT);
+  }
+  if(n===11){
+    const oC=document.documentElement.classList.contains('light')?'#5b21b6':'#a855f7';
+    const brC=document.documentElement.classList.contains('light')?'#78350f':'#cd7f32';
+    // S9 Orchestrators: Together AI (31) · Lambda (30) · Lightning.ai (22)
+    radar('radar-together',   SCORES.together,    oC,   CRIT);
+    radar('radar-lambda',     SCORES.lambda,      document.documentElement.classList.contains('light')?'#3730a3':'#6366f1', CRIT);
+    if(SCORES.lightningai) radar('radar-lightningai', SCORES.lightningai, brC, CRIT);
+  }
+}
+
+// ── NAVIGATION ──────────────────────────────────────────
+const TOTAL=19;
+let cur=0;
+const slides=document.querySelectorAll('.slide');
+const dotsEl=document.getElementById('dots');
+const prog=document.getElementById('progress');
+const btnPrev=document.getElementById('btn-prev');
+const btnNext=document.getElementById('btn-next');
+const ccur=document.getElementById('ccur');
+const COLORS=['#3730a3','#475569','#e8c840','#3730a3','#3730a3','#0284c7','#3730a3','#3730a3','#065f46','#065f46','#5b21b6','#5b21b6','#92400e','#92400e','#6366f1','#7c3aed','#10b981','#c084fc','#5b21b6'];
+
+for(let i=0;i<TOTAL;i++){const d=document.createElement('div');d.className='dot'+(i===0?' active':'');d.onclick=()=>go(i);dotsEl.appendChild(d);}
+
+function go(n){
+  if(n<0||n>=TOTAL)return;
+  const old=cur;cur=n;
+  slides[old].classList.remove('active');slides[old].classList.add('prev');
+  const os=slides[old];setTimeout(()=>os.classList.remove('prev'),700);
+  slides[cur].classList.add('active');
+  document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===cur));
+  prog.style.width=((cur+1)/TOTAL*100)+'%';
+  prog.style.background=COLORS[cur]||'#3730a3';
+  ccur.textContent=String(cur+1).padStart(2,'0');
+  btnPrev.disabled=cur===0;btnNext.disabled=cur===TOTAL-1;
+  renderRadarsForSlide(cur);
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();go(cur+1);}
+  else if(e.key==='ArrowLeft'){e.preventDefault();go(cur-1);}
+  else if(e.key==='Home')go(0);
+  else if(e.key==='End')go(TOTAL-1);
+});
+let tsx=0;
+document.addEventListener('touchstart',e=>{tsx=e.touches[0].clientX;});
+document.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-tsx;if(Math.abs(dx)>50)go(dx<0?cur+1:cur-1);});
+btnPrev.disabled=true;
+// Render radars for initial slide if needed
+renderRadarsForSlide(cur);
+</script>
+</body>
+</html>

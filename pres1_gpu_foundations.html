@@ -1280,7 +1280,8 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
 @keyframes glBarPulse{0%,100%{filter:brightness(1);}50%{filter:brightness(1.35);}}
 </style>
 <div class="slide" id="sGenLoop" data-slide="0">
-  <div class="slide-chrome">
+  <div style="display:flex;flex-direction:column;flex:1;min-height:0;">
+    <div class="slide-chrome">
     <div class="chrome-left">
       <div class="chrome-logo">GPU & AI Foundations</div>
       <div class="chrome-sep"></div>
@@ -1301,7 +1302,7 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
     </div>
 
     <!-- Two-column main -->
-    <div class="anim anim-2" style="display:grid;grid-template-columns:1.25fr 0.85fr;gap:12px;flex:1;min-height:0;">
+    <div class="anim anim-2" style="display:grid;grid-template-columns:1.25fr 0.85fr;gap:12px;">
 
       <!-- ── LEFT: Generation Loop ──────────────────────────── -->
       <div style="display:flex;flex-direction:column;gap:10px;background:var(--bg2);border:1.5px solid var(--border);border-radius:6px;padding:20px 22px 18px 22px;align-self:start;box-shadow:0 2px 10px 0 rgba(0,0,0,0.04);max-width:99%;">
@@ -1366,7 +1367,7 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
 
       <!-- ── RIGHT: Q/K/V + KV-in-HBM ──────────────────────── -->
       <div style="display:flex;flex-direction:column;gap:10px;">
-
+        
         <!-- K and V explainer chips -->
         <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:12px 14px;flex-shrink:0;">
           <div style="font-family:var(--mono);font-size:7.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-bottom:9px;">What are K and V?</div>
@@ -1639,6 +1640,7 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
       <button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="nav-counter">Light</span></button>
       <span class="nav-counter">05 / 13</span>
     </div>
+  </div>
   </div>
 
   <div class="slide-body" style="gap:12px;">
@@ -3430,23 +3432,11 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
       </div>
     </div>
 
-    <!-- Three result cards -->
-    <div class="anim anim-3" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;order:2;">
-      <div id="econ-card-pcie" style="background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--llm);border-radius:4px;padding:12px;"></div>
-      <div id="econ-card-dgxh100" style="background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--blue);border-radius:4px;padding:12px;"></div>
-      <div id="econ-card-dgxb200" style="background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--hw);border-radius:4px;padding:12px;"></div>
-    </div>
-
     <!-- Visual analytics (v10-inspired): cost component bars + scale line chart -->
     <div class="anim anim-4" style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:10px 14px;display:grid;grid-template-columns:1.05fr 1fr;gap:12px;align-items:start;order:1;">
       <div style="background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:9px 10px;">
         <div style="font-family:var(--mono);font-size:8px;color:var(--dim);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;">Cost stack per 1M output tokens</div>
-        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:6px;font-family:var(--mono);font-size:7px;color:var(--dim);">
-          <span style="display:flex;align-items:center;gap:4px;"><span style="width:7px;height:7px;border-radius:50%;background:var(--sw);"></span>tensor compute</span>
-          <span style="display:flex;align-items:center;gap:4px;"><span style="width:7px;height:7px;border-radius:50%;background:var(--hw);"></span>all-reduce transfer</span>
-          <span style="display:flex;align-items:center;gap:4px;"><span style="width:7px;height:7px;border-radius:50%;background:var(--llm);"></span>energy</span>
-          <span style="display:flex;align-items:center;gap:4px;"><span style="width:7px;height:7px;border-radius:50%;background:var(--blue);"></span>rack</span>
-        </div>
+
         <div style="height:232px;min-height:232px;max-height:232px;background:var(--bg2);border:1px solid var(--border);border-radius:3px;padding:6px;">
           <canvas id="econ-cost-chart" style="width:100%;height:100%;display:block;"></canvas>
         </div>
@@ -3686,70 +3676,6 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
       el.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">'
         +'<div style="font-family:var(--mono);font-size:9px;color:'+cfg.color+';font-weight:600;">'+cfg.name+'</div>'
         +'<div style="font-family:var(--mono);font-size:7.5px;color:var(--dim);">'+result.n_gpus+' GPU'+(result.n_gpus>1?'s':'')+'</div></div>'
-        // Graphs first
-        +'<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px;">'
-          +'<div style="background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:6px 7px;">'
-            +'<div style="font-family:var(--mono);font-size:7px;color:var(--dim);margin-bottom:4px;text-transform:uppercase;">HBM profile</div>'
-            +'<div style="background:var(--bg4);border-radius:2px;height:11px;overflow:hidden;display:flex;">'
-              +'<div style="width:'+modelPct.toFixed(1)+'%;background:var(--hw);"></div>'
-              +'<div style="width:'+kvPct.toFixed(1)+'%;background:var(--blue);opacity:0.85;"></div>'
-            +'</div>'
-            +'<div style="display:flex;justify-content:space-between;gap:4px;margin-top:3px;font-family:var(--mono);font-size:6.8px;color:var(--dim2);">'
-              +'<span>W '+result.model_gb.toFixed(0)+'GB</span>'
-              +'<span>KV '+result.kv_total_gb.toFixed(1)+'GB</span>'
-              +'<span>'+usedPct.toFixed(0)+'% used</span>'
-            +'</div>'
-            +'<div style="margin-top:4px;font-family:var(--mono);font-size:6.7px;color:var(--dim2);">'
-              +'<span>Target zone: weights 20-35% · total HBM 85-95%</span>'
-            +'</div>'
-            +'<div style="margin-top:2px;font-family:var(--mono);font-size:6.9px;color:'+hbmStatusColor+';">'+hbmStatusText+'</div>'
-          +'</div>'
-
-          +'<div style="background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:6px 7px;">'
-            +'<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px;">'
-              +'<div style="font-family:var(--mono);font-size:7px;color:var(--dim);text-transform:uppercase;">Cost mix</div>'
-              +'<div style="font-family:var(--mono);font-size:7px;color:var(--muted);">'+fmtCost(result.cost_per_mtok)+'/1M</div>'
-            +'</div>'
-            +'<div style="background:var(--bg4);border-radius:2px;height:11px;overflow:hidden;display:flex;">'
-              +'<div style="width:'+computePct.toFixed(1)+'%;background:var(--sw);"></div>'
-              +'<div style="width:'+energyPct.toFixed(1)+'%;background:var(--llm);"></div>'
-              +'<div style="width:'+rackPct.toFixed(1)+'%;background:var(--blue);"></div>'
-            +'</div>'
-            +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin-top:3px;font-family:var(--mono);font-size:6.7px;color:var(--dim2);">'
-              +'<span>C '+fmtCost(result.compute_cost)+'</span>'
-              +'<span>E '+fmtCost(result.energy_cost)+'</span>'
-              +'<span>R '+fmtCost(result.rack_cost)+'</span>'
-            +'</div>'
-          +'</div>'
-
-          +'<div style="background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:6px 7px;">'
-            +'<div style="font-family:var(--mono);font-size:7px;color:var(--dim);margin-bottom:4px;text-transform:uppercase;">Performance profile</div>'
-            +'<div style="display:flex;flex-direction:column;gap:4px;">'
-              +'<div style="display:grid;grid-template-columns:44px 1fr 40px;gap:5px;align-items:center;font-family:var(--mono);font-size:6.8px;color:var(--dim2);">'
-                +'<span>Tok/s</span>'
-                +'<div style="height:8px;background:var(--bg4);border-radius:2px;overflow:hidden;"><div style="height:100%;width:'+tpsBarPct.toFixed(1)+'%;background:'+cfg.color+';"></div></div>'
-                +'<span style="text-align:right;color:var(--muted);">'+result.toks_per_sec.toFixed(0)+'</span>'
-              +'</div>'
-              +'<div style="display:grid;grid-template-columns:44px 1fr 40px;gap:5px;align-items:center;font-family:var(--mono);font-size:6.8px;color:var(--dim2);">'
-                +'<span>TTFT</span>'
-                +'<div style="height:8px;background:var(--bg4);border-radius:2px;overflow:hidden;"><div style="height:100%;width:'+ttftBarPct.toFixed(1)+'%;background:'+cfg.color+';opacity:0.78;"></div></div>'
-                +'<span style="text-align:right;color:var(--muted);">'+fmtMs(result.ttft_ms)+'</span>'
-              +'</div>'
-            +'</div>'
-          +'</div>'
-        +'</div>'
-
-        // Stats below graphs
-        +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:5px;">'
-          +'<div style="background:var(--bg3);border-radius:3px;padding:6px 7px;">'
-            +'<div style="font-family:var(--mono);font-size:6.8px;color:var(--dim);text-transform:uppercase;">Cost / 1M</div>'
-            +'<div style="font-family:var(--mono);font-size:10px;color:'+cfg.color+';font-weight:600;">'+fmtCost(result.cost_per_mtok)+'</div>'
-          +'</div>'
-          +'<div style="background:var(--bg3);border-radius:3px;padding:6px 7px;">'
-            +'<div style="font-family:var(--mono);font-size:6.8px;color:var(--dim);text-transform:uppercase;">MFU</div>'
-            +'<div style="font-family:var(--mono);font-size:10px;color:'+(result.mfu<10?'var(--red)':result.mfu<30?'var(--llm)':'var(--sw)')+';font-weight:600;">'+result.mfu.toFixed(1)+'%</div>'
-          +'</div>'
-        +'</div>'
         +'<div style="font-family:var(--mono);font-size:7px;color:var(--dim);line-height:1.6;">'
           +'Decode <span style="color:var(--muted);">'+result.decode_step_ms.toFixed(2)+'ms/step</span>'
           +' · Comms <span style="color:'+(result.comms_ms>0.5?'var(--red)':'var(--sw)')+';">'+result.comms_ms.toFixed(2)+'ms</span>'
@@ -3875,7 +3801,7 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
             { label:'All-reduce transfer penalty', data:computeTransferData, backgroundColor:'#7c3aedcc', borderColor:'#7c3aed', borderWidth:1.1, stack:'cost', borderRadius:4 },
             { label:'Energy', data:energyData, backgroundColor:'#b45309cc', borderColor:'#b45309', borderWidth:1.1, stack:'cost', borderRadius:4 },
             { label:'Rack', data:rackData, backgroundColor:'#2563ebcc', borderColor:'#2563eb', borderWidth:1.1, stack:'cost', borderRadius:4 },
-            { label:'Time / 1M out tok (hours)', data:timePer1MHours, type:'line', yAxisID:'y1', borderColor:'#6b7280', backgroundColor:'#6b728022', pointRadius:3, pointHoverRadius:4, tension:0.3, borderWidth:1.8, spanGaps:true }
+            { label:'Time / 1M out tok (min)', data:timePer1MHours, type:'line', yAxisID:'y1', borderColor:'#6b7280', backgroundColor:'#6b728022', pointRadius:3, pointHoverRadius:4, tension:0.3, borderWidth:1.8, spanGaps:true }
           ]
         },
         options: {
@@ -3894,7 +3820,7 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
             tooltip: {
               callbacks: {
                 label: function(ctx){
-                  if(ctx.dataset.yAxisID === 'y1') return ctx.dataset.label + ': ' + (ctx.raw == null ? 'N/A' : ctx.raw.toFixed(2) + 'h');
+                  if(ctx.dataset.yAxisID === 'y1') return ctx.dataset.label + ': ' + (ctx.raw == null ? 'N/A' : (ctx.raw * 60).toFixed(0) + ' min');
                   return ctx.dataset.label + ': ' + fmtCost(ctx.raw);
                 }
               }
@@ -3911,7 +3837,7 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
               ticks: {
                 color:'#647580',
                 font:{ family:'JetBrains Mono', size:10 },
-                callback: function(v){ return '$' + fmtCompact(v); }
+                callback: function(v){ return '$' + v.toFixed(2); }
               },
               grid: { color:'rgba(0,0,0,0.08)' },
               title: {
@@ -3926,12 +3852,12 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
               ticks: {
                 color:'#647580',
                 font:{ family:'JetBrains Mono', size:10 },
-                callback: function(v){ return v.toFixed(1) + 'h'; }
+                callback: function(v){ return (v * 60).toFixed(0) + ' min'; }
               },
               grid: { drawOnChartArea:false },
               title: {
                 display: true,
-                text: 'Time / 1M output tokens',
+                text: 'Time / 1M tokens (min)',
                 color:'#647580',
                 font:{ family:'JetBrains Mono', size:10 }
               }
@@ -3941,37 +3867,56 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
       });
 
       if(summary){
+        var maxToks = 1, maxTTFT = 1;
+        order.forEach(function(k){
+          var r = results[k];
+          if(r && !r.oom){ maxToks = Math.max(maxToks, r.toks_per_sec); maxTTFT = Math.max(maxTTFT, r.ttft_ms); }
+        });
+
+        summary.style.flexDirection = 'row';
+        summary.style.gap = '6px';
         summary.innerHTML = order.map(function(k){
           var cfg = CFGS[k], r = results[k];
           if(!r || r.oom){
-            return '<div style="font-family:var(--mono);font-size:7.5px;color:var(--red);">'+cfg.name+': OOM for this scenario</div>';
+            return '<div style="flex:1;background:rgba(0,0,0,0.05);border-radius:4px;padding:6px 7px;font-family:var(--mono);font-size:7.5px;">'
+              +'<div style="color:'+cfg.color+';font-weight:700;margin-bottom:4px;">'+cfg.name+'</div>'
+              +'<span style="color:var(--red);">OOM — model does not fit</span>'
+              +'</div>';
           }
-          var noCommsBatchMs = Math.max(1e-6, r.ttft_ms + Math.max(0, (outputTok || 0) * Math.max(r.mem_ms, r.comp_ms)));
-          var actualBatchMs = Math.max(1e-6, r.ttft_ms + Math.max(0, (outputTok || 0) * r.decode_step_ms));
-          var baseRatio = Math.max(0, Math.min(1, noCommsBatchMs / actualBatchMs));
-          var computeTotal = r.total_cost > 0 ? (r.cost_per_mtok * (r.compute_cost / r.total_cost)) : 0;
-          var computeMath = computeTotal * baseRatio;
-          var computeTransfer = r.cost_per_mtok * (1 - baseRatio);
-          var timePer1M = r.toks_per_sec > 0 ? (1000000 / r.toks_per_sec) / 3600 : 0;
+          var cap = r.node_capacity_gb;
+          var wPct  = Math.min(100, r.model_gb / cap * 100);
+          var kvPct = Math.min(100 - wPct, r.kv_total_gb / cap * 100);
+          var hbmUsedPct = (r.model_gb + r.kv_total_gb) / cap * 100;
+          var toksPct = Math.min(100, r.toks_per_sec / maxToks * 100);
+          var ttftPct = Math.min(100, r.ttft_ms / maxTTFT * 100);
+          var mfuColor = r.mfu < 10 ? 'var(--red)' : r.mfu < 30 ? 'var(--llm)' : 'var(--sw)';
 
-          var compPct = r.total_cost > 0 ? (r.compute_cost / r.total_cost * 100) : 0;
-          var xferPct = computeTotal > 0 ? (computeTransfer / computeTotal * 100) : 0;
-          var enerPct = r.total_cost > 0 ? (r.energy_cost / r.total_cost * 100) : 0;
-          var rackPct = r.total_cost > 0 ? (r.rack_cost / r.total_cost * 100) : 0;
-
-          var bottleneck = 'HBM bandwidth-leaning';
-          if(r.comms_ms > r.comp_ms * 0.85) bottleneck = 'Interconnect transfer-limited';
-          else if(r.comp_ms >= r.mem_ms) bottleneck = 'TFLOPS-leaning';
-
-          return '<div style="font-family:var(--mono);font-size:7.5px;color:var(--dim);line-height:1.5;">'
-            +'<strong style="color:'+cfg.color+';">'+cfg.name+'</strong>: '
-            +fmtCost(r.cost_per_mtok)
-            +' (<span style="color:var(--sw);">tensor '+fmtCost(computeMath)+'</span>, '
-            +'<span style="color:var(--hw);">xfer penalty '+fmtCost(computeTransfer)+' ('+xferPct.toFixed(0)+'% of compute)</span>, '
-            +'<span style="color:var(--sw);">compute '+compPct.toFixed(0)+'%</span>, '
-            +'<span style="color:var(--llm);">energy '+enerPct.toFixed(0)+'%</span>, '
-            +'<span style="color:var(--blue);">rack '+rackPct.toFixed(0)+'%</span>)'
-            +'<span style="color:var(--dim2);"> · '+bottleneck+' · '+timePer1M.toFixed(2)+'h / 1M tok</span>'
+          return '<div style="flex:1;background:rgba(0,0,0,0.04);border-radius:4px;padding:6px 7px;font-family:var(--mono);font-size:7.5px;">'
+            +'<div style="color:'+cfg.color+';font-weight:700;margin-bottom:5px;">'+cfg.name+' <span style="color:var(--dim2);font-weight:400;">('+r.n_gpus+' GPU'+(r.n_gpus>1?'s':'')+')</span></div>'
+            +'<div style="color:var(--dim);font-size:6.5px;text-transform:uppercase;margin-bottom:2px;">HBM — '+hbmUsedPct.toFixed(0)+'% used</div>'
+            +'<div style="height:7px;border-radius:3px;background:rgba(0,0,0,0.08);overflow:hidden;display:flex;">'
+              +'<div style="width:'+wPct.toFixed(1)+'%;background:var(--hw);height:100%;"></div>'
+              +'<div style="width:'+kvPct.toFixed(1)+'%;background:var(--sw);height:100%;"></div>'
+            +'</div>'
+            +'<div style="display:flex;justify-content:space-between;font-size:6px;margin-top:2px;margin-bottom:5px;">'
+              +'<span style="color:var(--hw);">W '+r.model_gb.toFixed(0)+'GB</span>'
+              +'<span style="color:var(--sw);">KV '+r.kv_total_gb.toFixed(1)+'GB</span>'
+              +'<span style="color:var(--dim2);">/ '+cap.toFixed(0)+'GB</span>'
+            +'</div>'
+            +'<div style="color:var(--dim);font-size:6.5px;text-transform:uppercase;margin-bottom:2px;">Throughput</div>'
+            +'<div style="height:5px;border-radius:2px;background:rgba(0,0,0,0.08);overflow:hidden;">'
+              +'<div style="width:'+toksPct.toFixed(1)+'%;background:#16a34a;height:100%;border-radius:2px;"></div>'
+            +'</div>'
+            +'<div style="color:var(--dim2);font-size:6px;margin-top:2px;margin-bottom:5px;">'+fmtCompact(r.toks_per_sec)+' tok/s</div>'
+            +'<div style="color:var(--dim);font-size:6.5px;text-transform:uppercase;margin-bottom:2px;">TTFT</div>'
+            +'<div style="height:5px;border-radius:2px;background:rgba(0,0,0,0.08);overflow:hidden;">'
+              +'<div style="width:'+ttftPct.toFixed(1)+'%;background:var(--llm);height:100%;border-radius:2px;"></div>'
+            +'</div>'
+            +'<div style="color:var(--dim2);font-size:6px;margin-top:2px;margin-bottom:5px;">'+fmtMs(r.ttft_ms)+'</div>'
+            +'<div style="display:flex;align-items:baseline;gap:4px;">'
+              +'<span style="font-family:var(--display);font-size:15px;font-weight:700;color:'+mfuColor+';">'+r.mfu.toFixed(0)+'%</span>'
+              +'<span style="color:var(--dim);font-size:6.5px;">MFU</span>'
+            +'</div>'
             +'</div>';
         }).join('');
       }
@@ -4177,6 +4122,7 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
 
     <div class="anim anim-3 grid-3 stagger" style="flex:1;">
 
+
       <div>
         <div style="font-family:var(--mono);font-size:8.5px;color:var(--sw);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);">Track A · Learning</div>
         <div style="display:flex;flex-direction:column;gap:8px;">
@@ -4213,6 +4159,7 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
           <a href="https://jskifterj.github.io/gpu_industry/strategy_competitor_intelligence.html" target="_blank" class="link-card">
             <div class="link-card-title">Competitor Intelligence</div>
             <div class="link-card-desc">Detailed scoring of every major GPU cloud provider. CoreWeave, Nebius, AWS, GCP, Azure, and 20+ others.</div>
+          </a>
         </div>
       </div>
 
