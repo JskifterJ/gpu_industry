@@ -47,7 +47,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg);
 
 .deck {
   position: fixed;
-  inset: 24px 0 0 0;
+  inset: 0;
   font-family: var(--sans);
 }
 
@@ -84,20 +84,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg);
 .slide.active .a3 { animation-delay: 0.25s; }
 .slide.active .a4 { animation-delay: 0.35s; }
 
-.back-nav-strip {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 24px;
-  z-index: 6000;
-  display: flex;
-  align-items: center;
-  padding: 0 10px;
-  background: var(--chrome-bg);
-  border-bottom: 1px solid var(--line);
-  backdrop-filter: blur(8px);
-}
+
 
 .back-nav-link {
   text-decoration: none;

@@ -514,6 +514,9 @@ table.stk td.grp-border-l{border-left:2px solid var(--border-ll)!important;}
 }
 </style>
 </head>
+<div class="back-nav-strip" style="position: fixed; top: 0; left: 0; right: 0; height: 24px; z-index: 5000; display: flex; align-items: center; padding: 0 10px; background: rgba(12, 17, 24, 0.94); border-bottom: 1px solid rgba(255, 255, 255, 0.16); backdrop-filter: blur(8px);">
+  <a class="back-nav-link" href="index.html" style="text-decoration: none; font-family: 'JetBrains Mono', 'IBM Plex Mono', 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.05em; text-transform: uppercase; color: #e6edf8;">Back to navigation menu</a>
+</div>
 <body>
 <div class="back-nav-strip"><a class="back-nav-link" href="index.html">Back to navigation menu</a></div>
 <header class="hdr">
@@ -542,7 +545,7 @@ table.stk td.grp-border-l{border-left:2px solid var(--border-ll)!important;}
   <button class="tab" onclick="switchTab('taxonomy',this)">Abstraction Taxonomy</button>
 </nav>
 
-<div class="main">
+<div class="main" style="padding-top: 24px;">
 
 <!-- BUSINESS MODEL COMPARISON -->
 <div id="tab-comparison" class="panel">

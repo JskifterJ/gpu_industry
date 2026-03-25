@@ -70,7 +70,7 @@ html.dark {
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{width:100%;height:100%;overflow:auto;background:var(--bg);color:var(--text);}
 
-.deck{position:fixed;inset:0;font-family:var(--sans);}
+.deck{inset:0;font-family:var(--sans);}
 .slide{
   position:absolute;inset:0;
   display:flex;flex-direction:column;
@@ -3450,8 +3450,10 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
         </div>
       </div>
 
+      <div id="econ-topo" style="grid-column:1 / -1;"></div>
+
       <div style="grid-column:1 / -1;font-family:var(--mono);font-size:7.5px;color:var(--dim2);line-height:1.7;">
-        Cost accounting shown explicitly as <strong style="color:var(--text);">compute + energy + rack</strong>. The line chart isolates scaling behavior so you can see when adding GPUs improves throughput versus when interconnect overhead flattens gains.
+        Cost stack splits <strong style="color:var(--text);">compute + intra-node comms (NVLink/PCIe) + inter-node fabric (InfiniBand) + energy + rack</strong>. Scale chart extends to 64 GPUs (8 nodes); the shaded multi-node region shows where IB replaces NVLink and all-reduce cost spikes. Dashed lines = comms overhead % of decode step time.
       </div>
     </div>
   </div>
@@ -3462,21 +3464,24 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
     var CFGS = {
       pcie: {
         name:'H100 PCIe', color:'var(--llm)',
-        n:8, vram:80, bw:2000, tflops:756, ic_bw:64, ic_lat:5, ic_type:'pcie',
+        n:64, gpus_per_node:8, vram:80, bw:2000, tflops:756, ic_bw:64, ic_lat:5, ic_type:'pcie',
         tdp:350, price:3.33,
-        ic_eff:{1:1.0, 2:0.55, 4:0.30, 8:0.18}
+        ic_eff:{1:1.0, 2:0.55, 4:0.30, 8:0.18},
+        inter_node_bw:200, inter_node_lat:5   // IB HDR200 between PCIe nodes
       },
       dgxh100: {
         name:'DGX H100', color:'var(--blue)',
-        n:8, vram:80, bw:3350, tflops:989, ic_bw:900, ic_lat:0.8, ic_type:'nvlink',
+        n:64, gpus_per_node:8, vram:80, bw:3350, tflops:989, ic_bw:900, ic_lat:0.8, ic_type:'nvlink',
         tdp:700, price:2.99,
-        ic_eff:{1:1.0, 2:0.95, 4:0.92, 8:0.90}
+        ic_eff:{1:1.0, 2:0.95, 4:0.92, 8:0.90},
+        inter_node_bw:400, inter_node_lat:2   // IB NDR400 between DGX H100 nodes
       },
       dgxb200: {
         name:'DGX B200', color:'var(--hw)',
-        n:8, vram:192, bw:8000, tflops:4500, ic_bw:1800, ic_lat:0.5, ic_type:'nvlink',
+        n:64, gpus_per_node:8, vram:192, bw:8000, tflops:4500, ic_bw:1800, ic_lat:0.5, ic_type:'nvlink',
         tdp:1000, price:8.00,
-        ic_eff:{1:1.0, 2:0.95, 4:0.92, 8:0.90}
+        ic_eff:{1:1.0, 2:0.95, 4:0.92, 8:0.90},
+        inter_node_bw:800, inter_node_lat:1   // IB NDR800 between DGX B200 nodes
       }
     };
 
@@ -3502,6 +3507,37 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
       agentic:   {label:'Agentic long context', model:'70B', prec:'BF16', batch:16,  input:20000, output:900},
       throughput:{label:'Batch throughput', model:'moe', prec:'FP8', batch:128, input:1500, output:350}
     };
+
+    // ── Multi-node comms helper ─────────────────────────────────────
+    // Returns intra-node (NVLink/PCIe) + inter-node (InfiniBand) all-reduce cost.
+    // ar_bytes = total bytes for all all-reduces across all layers per decode step.
+    // layers  = number of transformer layers (used for latency accumulation).
+    function commsCalc(cfg, n_gpus, ar_bytes, layers){
+      var gpn   = cfg.gpus_per_node || 8;
+      var nodes = Math.ceil(n_gpus / gpn);
+      var gpus_in_node = Math.min(n_gpus, gpn);
+
+      // Intra-node ring all-reduce (NVLink or PCIe within the node)
+      var eff_key    = [1,2,4,8].reduce(function(best,k){ return gpus_in_node>=k ? k : best; }, 1);
+      var ic_eff     = cfg.ic_eff[eff_key] || 0.18;
+      var eff_ic_bw  = cfg.ic_bw * ic_eff;
+      var intra_bw_ms  = gpus_in_node > 1 ? (2*(gpus_in_node-1)/gpus_in_node * ar_bytes) / (eff_ic_bw * 1e9) * 1000 : 0;
+      var intra_lat_ms = gpus_in_node > 1 ? 2 * layers * cfg.ic_lat / 1000 : 0;
+      var intra_ms     = intra_bw_ms + intra_lat_ms;
+
+      // Inter-node ring all-reduce (InfiniBand / cross-node fabric)
+      var inter_ms = 0;
+      if(nodes > 1){
+        var ib_bw  = cfg.inter_node_bw  || 400; // GB/s (e.g. IB NDR400)
+        var ib_lat = cfg.inter_node_lat || 2;   // μs per hop
+        var inter_bw_ms  = (2*(nodes-1)/nodes * ar_bytes) / (ib_bw * 1e9) * 1000;
+        var inter_lat_ms = 2 * layers * ib_lat / 1000;
+        inter_ms = inter_bw_ms + inter_lat_ms;
+      }
+
+      return { intra: intra_ms, inter: inter_ms, total: intra_ms + inter_ms,
+               nodes: nodes, ic_eff: ic_eff };
+    }
 
     // ── Render buttons ─────────────────────────────────────────────
     function renderModelBtns(){
@@ -3566,27 +3602,22 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
       var kv_total_gb = kv_per_user_gb * batch;
       var total_mem = model_gb + kv_total_gb + model_gb * 0.1; // +10% overhead
       var n_gpus = Math.ceil(total_mem / (cfg.vram * 0.92));
-      n_gpus = Math.min(n_gpus, cfg.n);
+      n_gpus = Math.min(n_gpus, cfg.n);  // cfg.n = 64 max (8 nodes × 8 GPUs)
       var oom = total_mem > cfg.vram * cfg.n * 0.92;
 
       var node_bw = cfg.bw * n_gpus;  // aggregate GB/s
 
-      // Interconnect efficiency
-      var eff_key = [1,2,4,8].reduce(function(best, k){ return n_gpus >= k ? k : best; }, 1);
-      var ic_eff = cfg.ic_eff[eff_key] || 0.18;
-      var eff_ic_bw = cfg.ic_bw * ic_eff;
-
-      // Decode: memory-bound time per step (processes entire batch in one pass)
+      // Decode: memory-bound time per step
       var mem_ms = (model_gb / node_bw) * 1000;
 
       // Compute time per step for this batch
       var comp_ms = (2 * batch * m.params * 1e9) / (cfg.tflops * n_gpus * 1e12) * 1000;
 
-      // All-reduce comms overhead per step (ring allreduce, 70B: 5.12 MB)
-      var ar_bytes = 2 * m.hidden * 2 * 2 * m.layers; // 2×hidden×BF16×2×layers = full round trip
-      var bw_ms = n_gpus > 1 ? (2*(n_gpus-1)/n_gpus * ar_bytes) / (eff_ic_bw * 1e9) * 1000 : 0;
-      var lat_ms = n_gpus > 1 ? 2 * m.layers * cfg.ic_lat / 1000 : 0;
-      var comms_ms = bw_ms + lat_ms;
+      // All-reduce: intra-node (NVLink/PCIe) + inter-node (InfiniBand) when multi-node
+      var ar_bytes = 2 * m.hidden * 2 * 2 * m.layers;
+      var cc = commsCalc(cfg, n_gpus, ar_bytes, m.layers);
+      var ic_eff   = cc.ic_eff;
+      var comms_ms = cc.total;
 
       var decode_step_ms = Math.max(mem_ms, comp_ms) + comms_ms;
 
@@ -3616,10 +3647,11 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
       var cost_per_mtok = oom ? null : (total_cost / outputTok / batch) * 1e6;
 
       return {
-        oom: oom, n_gpus: n_gpus, model_gb: model_gb, kv_total_gb: kv_total_gb,
+        oom: oom, n_gpus: n_gpus, nodes: cc.nodes, model_gb: model_gb, kv_total_gb: kv_total_gb,
         total_mem: total_mem, node_capacity_gb: cfg.vram * cfg.n * 0.92,
         ttft_ms: ttft_ms, total_ms: total_ms, decode_step_ms: decode_step_ms,
         mem_ms: mem_ms, comp_ms: comp_ms, comms_ms: comms_ms,
+        intra_comms_ms: cc.intra, inter_comms_ms: cc.inter,
         toks_per_sec: toks_per_sec, mfu: mfu, cost_per_mtok: cost_per_mtok,
         compute_cost: compute_cost, energy_cost: energy_cost, rack_cost: rack_cost,
         total_cost: total_cost
@@ -3700,17 +3732,12 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
       }
 
       var node_bw = cfg.bw * n_gpus;
-      var eff_key = [1,2,4,8].reduce(function(best, k){ return n_gpus >= k ? k : best; }, 1);
-      var ic_eff = cfg.ic_eff[eff_key] || 0.18;
-      var eff_ic_bw = cfg.ic_bw * ic_eff;
-
-      var mem_ms = (model_gb / node_bw) * 1000;
+      var mem_ms  = (model_gb / node_bw) * 1000;
       var comp_ms = (2 * batch * m.params * 1e9) / (cfg.tflops * n_gpus * 1e12) * 1000;
 
       var ar_bytes = 2 * m.hidden * 2 * 2 * m.layers;
-      var bw_ms = n_gpus > 1 ? (2*(n_gpus-1)/n_gpus * ar_bytes) / (eff_ic_bw * 1e9) * 1000 : 0;
-      var lat_ms = n_gpus > 1 ? 2 * m.layers * cfg.ic_lat / 1000 : 0;
-      var comms_ms = bw_ms + lat_ms;
+      var cc = commsCalc(cfg, n_gpus, ar_bytes, m.layers);
+      var comms_ms = cc.total;
 
       var decode_step_ms = Math.max(mem_ms, comp_ms) + comms_ms;
       var prefill_flops = 2 * inputTok * m.params * 1e9;
@@ -3729,10 +3756,11 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
       var cost_per_mtok = (total_cost / outputTok / batch) * 1e6;
 
       return {
-        oom: false, n_gpus: n_gpus, model_gb: model_gb, kv_total_gb: kv_total_gb,
+        oom: false, n_gpus: n_gpus, nodes: cc.nodes, model_gb: model_gb, kv_total_gb: kv_total_gb,
         total_mem: total_mem, node_capacity_gb: cfg.vram * n_gpus * 0.92,
         ttft_ms: ttft_ms, decode_step_ms: decode_step_ms,
         mem_ms: mem_ms, comp_ms: comp_ms, comms_ms: comms_ms,
+        intra_comms_ms: cc.intra, inter_comms_ms: cc.inter,
         toks_per_sec: toks_per_sec, cost_per_mtok: cost_per_mtok,
         compute_cost: compute_cost, energy_cost: energy_cost, rack_cost: rack_cost,
         total_cost: total_cost
@@ -3761,13 +3789,23 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
         var computeTotal = r.cost_per_mtok * (r.compute_cost / r.total_cost);
         return computeTotal * baseRatio;
       });
-      var computeTransferData = order.map(function(k){
-        var r = results[k];
-        if(!r || r.oom || !r.total_cost) return 0;
-        var noCommsBatchMs = Math.max(1e-6, r.ttft_ms + Math.max(0, (outputTok || 0) * Math.max(r.mem_ms, r.comp_ms)));
-        var actualBatchMs = Math.max(1e-6, r.ttft_ms + Math.max(0, (outputTok || 0) * r.decode_step_ms));
+      // Split comms penalty into intra-node (NVLink/PCIe) and inter-node (InfiniBand)
+      function commsPenalty(r, frac){
+        if(!r || r.oom || !r.total_cost || !r.comms_ms) return 0;
+        var noCommsBatchMs = Math.max(1e-6, r.ttft_ms + Math.max(0, (outputTok||0) * Math.max(r.mem_ms, r.comp_ms)));
+        var actualBatchMs  = Math.max(1e-6, r.ttft_ms + Math.max(0, (outputTok||0) * r.decode_step_ms));
         var baseRatio = Math.max(0, Math.min(1, noCommsBatchMs / actualBatchMs));
-        return r.cost_per_mtok * (1 - baseRatio);
+        return r.cost_per_mtok * (1 - baseRatio) * frac;
+      }
+      var intraCommsData = order.map(function(k){
+        var r = results[k];
+        var frac = (r && r.comms_ms > 0) ? r.intra_comms_ms / r.comms_ms : 1.0;
+        return commsPenalty(r, frac);
+      });
+      var interCommsData = order.map(function(k){
+        var r = results[k];
+        var frac = (r && r.comms_ms > 0) ? r.inter_comms_ms / r.comms_ms : 0.0;
+        return commsPenalty(r, frac);
       });
       var energyData = order.map(function(k){
         var r = results[k];
@@ -3798,7 +3836,8 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
           labels: labels,
           datasets: [
             { label:'Tensor compute', data:computeMathData, backgroundColor:'#0d9488cc', borderColor:'#0d9488', borderWidth:1.1, stack:'cost', borderRadius:4 },
-            { label:'All-reduce transfer penalty', data:computeTransferData, backgroundColor:'#7c3aedcc', borderColor:'#7c3aed', borderWidth:1.1, stack:'cost', borderRadius:4 },
+            { label:'Intra-node comms (NVLink/PCIe)', data:intraCommsData, backgroundColor:'#7c3aed99', borderColor:'#7c3aed', borderWidth:1.1, stack:'cost', borderRadius:4 },
+            { label:'Inter-node fabric (InfiniBand)', data:interCommsData, backgroundColor:'#dc2626cc', borderColor:'#dc2626', borderWidth:1.1, stack:'cost', borderRadius:4 },
             { label:'Energy', data:energyData, backgroundColor:'#b45309cc', borderColor:'#b45309', borderWidth:1.1, stack:'cost', borderRadius:4 },
             { label:'Rack', data:rackData, backgroundColor:'#2563ebcc', borderColor:'#2563eb', borderWidth:1.1, stack:'cost', borderRadius:4 },
             { label:'Time / 1M out tok (min)', data:timePer1MHours, type:'line', yAxisID:'y1', borderColor:'#6b7280', backgroundColor:'#6b728022', pointRadius:3, pointHoverRadius:4, tension:0.3, borderWidth:1.8, spanGaps:true }
@@ -3926,8 +3965,12 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
       var chartEl = document.getElementById('econ-scale-chart');
       if(!chartEl || !window.Chart) return;
 
-      var xs = [1, 2, 4, 8];
-      var labels = xs.map(function(n){ return n + ' GPU' + (n > 1 ? 's' : ''); });
+      // 1–8 GPUs = single node (NVLink/PCIe); 16–64 GPUs = multi-node (+ InfiniBand)
+      var xs = [1, 2, 4, 8, 16, 32, 64];
+      var labels = xs.map(function(n){
+        if(n <= 8) return n + (n === 1 ? ' GPU' : ' GPUs');
+        return n + ' GPUs\n(' + (n/8) + ' nodes)';
+      });
 
       function seriesFor(key){
         return xs.map(function(g){
@@ -3935,16 +3978,53 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
           return (!r || r.oom) ? null : Number(r.toks_per_sec.toFixed(1));
         });
       }
+      // Comms overhead % per GPU count — shows IB penalty kicking in
+      function commsOverheadFor(key){
+        return xs.map(function(g){
+          var r = calcForGpuCount(key, _model, _prec, batch, inputTok, outputTok, g);
+          if(!r || r.oom || !r.decode_step_ms) return null;
+          return Number(((r.comms_ms / r.decode_step_ms) * 100).toFixed(1));
+        });
+      }
+
+      // Custom plugin: shade multi-node region, draw boundary line
+      var multiNodePlugin = {
+        id: 'multiNodeBand',
+        beforeDraw: function(chart){
+          var ctx = chart.ctx;
+          var xa  = chart.scales.x;
+          var ca  = chart.chartArea;
+          if(!xa || !ca || xa.ticks.length < 5) return;
+          // boundary sits between tick 3 (8 GPUs) and tick 4 (16 GPUs)
+          var x0 = (xa.getPixelForTick(3) + xa.getPixelForTick(4)) / 2;
+          ctx.save();
+          ctx.fillStyle = 'rgba(220,38,38,0.05)';
+          ctx.fillRect(x0, ca.top, ca.right - x0, ca.bottom - ca.top);
+          ctx.strokeStyle = 'rgba(220,38,38,0.35)';
+          ctx.setLineDash([4,3]);
+          ctx.lineWidth = 1.2;
+          ctx.beginPath(); ctx.moveTo(x0, ca.top); ctx.lineTo(x0, ca.bottom); ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.fillStyle = 'rgba(220,38,38,0.75)';
+          ctx.font = '8px JetBrains Mono, monospace';
+          ctx.fillText('multi-node ▶ (InfiniBand)', x0 + 4, ca.top + 11);
+          ctx.restore();
+        }
+      };
 
       if(econScaleChart) econScaleChart.destroy();
       econScaleChart = new Chart(chartEl.getContext('2d'), {
         type: 'line',
+        plugins: [multiNodePlugin],
         data: {
           labels: labels,
           datasets: [
-            { label:'H100 PCIe', data:seriesFor('pcie'), borderColor:'#b45309', backgroundColor:'#b4530922', tension:0.32, pointRadius:3, pointHoverRadius:4, borderWidth:2.2, spanGaps:true },
-            { label:'DGX H100', data:seriesFor('dgxh100'), borderColor:'#2563eb', backgroundColor:'#2563eb22', tension:0.32, pointRadius:3, pointHoverRadius:4, borderWidth:2.2, spanGaps:true },
-            { label:'DGX B200', data:seriesFor('dgxb200'), borderColor:'#7c3aed', backgroundColor:'#7c3aed22', tension:0.32, pointRadius:3, pointHoverRadius:4, borderWidth:2.2, spanGaps:true }
+            { label:'H100 PCIe', data:seriesFor('pcie'), borderColor:'#b45309', backgroundColor:'#b4530922', tension:0.25, pointRadius:3, pointHoverRadius:4, borderWidth:2.2, spanGaps:true, yAxisID:'y' },
+            { label:'DGX H100', data:seriesFor('dgxh100'), borderColor:'#2563eb', backgroundColor:'#2563eb22', tension:0.25, pointRadius:3, pointHoverRadius:4, borderWidth:2.2, spanGaps:true, yAxisID:'y' },
+            { label:'DGX B200', data:seriesFor('dgxb200'), borderColor:'#7c3aed', backgroundColor:'#7c3aed22', tension:0.25, pointRadius:3, pointHoverRadius:4, borderWidth:2.2, spanGaps:true, yAxisID:'y' },
+            { label:'PCIe comms %', data:commsOverheadFor('pcie'), borderColor:'#b4530966', backgroundColor:'transparent', tension:0.25, pointRadius:2, borderWidth:1.2, borderDash:[3,3], spanGaps:true, yAxisID:'y1' },
+            { label:'DGX H100 comms %', data:commsOverheadFor('dgxh100'), borderColor:'#2563eb66', backgroundColor:'transparent', tension:0.25, pointRadius:2, borderWidth:1.2, borderDash:[3,3], spanGaps:true, yAxisID:'y1' },
+            { label:'DGX B200 comms %', data:commsOverheadFor('dgxb200'), borderColor:'#7c3aed66', backgroundColor:'transparent', tension:0.25, pointRadius:2, borderWidth:1.2, borderDash:[3,3], spanGaps:true, yAxisID:'y1' }
           ]
         },
         options: {
@@ -3954,14 +4034,16 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
             legend: {
               labels: {
                 color:'#647580',
-                font:{ family:'JetBrains Mono', size:10 },
-                boxWidth:16
+                font:{ family:'JetBrains Mono', size:9 },
+                boxWidth:12,
+                filter: function(item){ return !item.text.includes('comms %'); }
               }
             },
             tooltip: {
               callbacks: {
                 label: function(ctx){
-                  if(ctx.raw === null) return ctx.dataset.label + ': model does not fit';
+                  if(ctx.dataset.yAxisID === 'y1') return ctx.dataset.label + ': ' + (ctx.raw == null ? 'N/A' : ctx.raw + '% comms overhead');
+                  if(ctx.raw === null) return ctx.dataset.label + ': OOM';
                   return ctx.dataset.label + ': ' + fmtCompact(ctx.raw) + ' tok/s';
                 }
               }
@@ -3969,22 +4051,20 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
           },
           scales: {
             x: {
-              ticks: { color:'#647580', font:{ family:'JetBrains Mono', size:10 } },
+              ticks: { color:'#647580', font:{ family:'JetBrains Mono', size:9 }, maxRotation:0 },
               grid: { color:'rgba(0,0,0,0.07)' }
             },
             y: {
-              ticks: {
-                color:'#647580',
-                font:{ family:'JetBrains Mono', size:10 },
-                callback: function(v){ return fmtCompact(v); }
-              },
+              ticks: { color:'#647580', font:{ family:'JetBrains Mono', size:10 }, callback: function(v){ return fmtCompact(v); } },
               grid: { color:'rgba(0,0,0,0.08)' },
-              title: {
-                display: true,
-                text: 'Tokens / second',
-                color:'#647580',
-                font:{ family:'JetBrains Mono', size:10 }
-              }
+              title: { display:true, text:'Tokens / second', color:'#647580', font:{ family:'JetBrains Mono', size:10 } }
+            },
+            y1: {
+              position: 'right',
+              ticks: { color:'rgba(100,117,128,0.7)', font:{ family:'JetBrains Mono', size:9 }, callback: function(v){ return v + '%'; } },
+              grid: { drawOnChartArea:false },
+              title: { display:true, text:'Comms overhead', color:'rgba(100,117,128,0.7)', font:{ family:'JetBrains Mono', size:9 } },
+              min: 0, max: 100
             }
           }
         }
@@ -4013,7 +4093,73 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
       renderCard('econ-card-dgxb200', 'dgxb200', results.dgxb200, CFGS.dgxb200);
       drawCostStackChart(results, outputTok);
       drawScaleChart(batch, inputTok, outputTok);
+      drawTopoViz(results);
     };
+
+    // ── Topology visualization ─────────────────────────────────────
+    function drawTopoViz(results){
+      var wrap = document.getElementById('econ-topo');
+      if(!wrap) return;
+
+      var order = ['pcie','dgxh100','dgxb200'];
+      var cfgMeta = {
+        pcie:    { intraLabel:'PCIe 64 GB/s',  interLabel:'IB HDR200 ~200 GB/s', intraColor:'#b45309' },
+        dgxh100: { intraLabel:'NVLink 900 GB/s', interLabel:'IB NDR ~400 GB/s',   intraColor:'#2563eb' },
+        dgxb200: { intraLabel:'NVLink 1800 GB/s', interLabel:'IB NDR ~800 GB/s',   intraColor:'#7c3aed' }
+      };
+
+      wrap.innerHTML = '<div style="display:flex;gap:6px;margin-bottom:4px;">'
+        + order.map(function(k){
+          var r = results[k];
+          var cfg = CFGS[k];
+          var meta = cfgMeta[k];
+          if(!r || r.oom) return '<div style="flex:1;background:rgba(220,38,38,0.06);border:1px solid rgba(220,38,38,0.2);border-radius:4px;padding:6px 8px;font-family:var(--mono);font-size:7px;color:var(--dim2);">'
+            +'<span style="color:'+cfg.color+';font-weight:700;">'+cfg.name+'</span> — OOM</div>';
+
+          var nodes = r.nodes || 1;
+          var gpn = cfg.gpus_per_node || 8;
+          var isMulti = nodes > 1;
+          var intraPct = r.decode_step_ms > 0 ? (r.intra_comms_ms / r.decode_step_ms * 100) : 0;
+          var interPct = r.decode_step_ms > 0 ? (r.inter_comms_ms / r.decode_step_ms * 100) : 0;
+
+          // Build node boxes
+          var nodeBoxes = '';
+          for(var ni = 0; ni < nodes; ni++){
+            var gpusThisNode = (ni < nodes - 1) ? gpn : (r.n_gpus - (nodes-1)*gpn);
+            if(gpusThisNode <= 0) gpusThisNode = gpn;
+            if(ni > 0){
+              nodeBoxes += '<div style="display:flex;flex-direction:column;align-items:center;padding:0 3px;">'
+                + '<div style="width:24px;height:2px;background:linear-gradient(to right,'+meta.intraColor+',#dc2626);border-radius:1px;"></div>'
+                + '<div style="font-size:5.5px;color:#dc2626;margin-top:1px;white-space:nowrap;">IB</div>'
+                + '</div>';
+            }
+            var gpuDots = '';
+            for(var gi = 0; gi < Math.min(gpusThisNode, 8); gi++){
+              gpuDots += '<div style="width:6px;height:6px;border-radius:1px;background:'+meta.intraColor+';opacity:0.8;"></div>';
+            }
+            nodeBoxes += '<div style="background:rgba(0,0,0,0.06);border:1px solid '+meta.intraColor+'44;border-radius:3px;padding:3px 4px;">'
+              + '<div style="display:grid;grid-template-columns:repeat(4,6px);gap:2px;margin-bottom:2px;">'+gpuDots+'</div>'
+              + '<div style="font-size:5.5px;color:'+meta.intraColor+';text-align:center;white-space:nowrap;">'+meta.intraLabel+'</div>'
+              + '</div>';
+          }
+
+          return '<div style="flex:1;background:rgba(0,0,0,0.04);border:1px solid var(--border);border-radius:4px;padding:5px 7px;">'
+            + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">'
+              + '<span style="font-family:var(--mono);font-size:7px;color:'+cfg.color+';font-weight:700;">'+cfg.name+'</span>'
+              + '<span style="font-family:var(--mono);font-size:6.5px;color:'+(isMulti?'#dc2626':'var(--sw)')+';">'
+                + nodes + (nodes===1?' node':' nodes') + ' · ' + r.n_gpus + ' GPUs'
+              + '</span>'
+            + '</div>'
+            + '<div style="display:flex;align-items:center;overflow:hidden;gap:0;margin-bottom:4px;">'+nodeBoxes+'</div>'
+            + '<div style="display:flex;gap:6px;font-family:var(--mono);font-size:6px;">'
+              + '<span style="color:var(--dim);">Intra: <span style="color:'+meta.intraColor+';">'+r.intra_comms_ms.toFixed(2)+'ms</span> ('+intraPct.toFixed(0)+'%)</span>'
+              + (isMulti ? '<span style="color:var(--dim);">Inter (IB): <span style="color:#dc2626;">'+r.inter_comms_ms.toFixed(2)+'ms</span> ('+interPct.toFixed(0)+'%)</span>' : '<span style="color:var(--dim2);">Single node — no IB penalty</span>')
+            + '</div>'
+            + (isMulti ? '<div style="margin-top:2px;font-family:var(--mono);font-size:5.5px;color:#dc2626;">⚠ '+meta.interLabel+' between nodes vs '+meta.intraLabel+' within</div>' : '')
+            + '</div>';
+        }).join('')
+        + '</div>';
+    }
 
     renderModelBtns();
     renderPrecBtns();
