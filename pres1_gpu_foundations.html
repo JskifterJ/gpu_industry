@@ -2866,88 +2866,114 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
     </div>
   </div>
 
-  <div class="slide-body" style="gap:12px;">
+  <div class="slide-body" style="gap:10px;">
 
     <div class="anim anim-1">
       <div class="section-label">Two physical realities</div>
       <div style="font-family:var(--display);font-size:26px;line-height:1.05;color:var(--text);">Every inference request competes for the same pool of HBM.<br><span style="color:var(--sw);">Two things must fit: the model weights and the context.</span></div>
     </div>
 
-    <div class="anim anim-2" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+    <div class="anim anim-2" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
 
-      <!-- CONTEXT CARD -->
-      <div style="background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--llm);border-radius:5px;padding:14px 16px;">
-        <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:10px;">
-          <div style="font-family:var(--display);font-size:30px;color:var(--llm);opacity:0.25;line-height:1;">01</div>
-          <div style="font-family:var(--mono);font-size:11px;color:var(--llm);font-weight:600;">The Context Window</div>
+      <!-- MODEL CARD -->
+      <div style="background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--blue);border-radius:5px;padding:12px 14px;">
+        <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:8px;">
+          <div style="font-family:var(--display);font-size:28px;color:var(--blue);opacity:0.25;line-height:1;">01</div>
+          <div style="font-family:var(--mono);font-size:10.5px;color:var(--blue);font-weight:600;">The Model Weights</div>
         </div>
-        <svg viewBox="0 0 240 50" style="width:100%;margin-bottom:10px;" xmlns="http://www.w3.org/2000/svg">
-          <rect x="2"   y="4" width="36" height="18" rx="2" fill="rgba(180,83,9,0.15)" stroke="var(--llm)" stroke-width="0.9"/>
-          <text x="20"  y="16" font-family="JetBrains Mono, monospace" font-size="6.5" fill="var(--llm)" text-anchor="middle">prompt</text>
-          <rect x="42"  y="4" width="30" height="18" rx="2" fill="rgba(180,83,9,0.12)" stroke="var(--llm)" stroke-width="0.9"/>
-          <text x="57"  y="16" font-family="JetBrains Mono, monospace" font-size="6.5" fill="var(--llm)" text-anchor="middle">docs</text>
-          <rect x="76"  y="4" width="42" height="18" rx="2" fill="rgba(180,83,9,0.10)" stroke="var(--llm)" stroke-width="0.9"/>
-          <text x="97"  y="16" font-family="JetBrains Mono, monospace" font-size="6.5" fill="var(--llm)" text-anchor="middle">history</text>
-          <rect x="122" y="4" width="52" height="18" rx="2" fill="rgba(180,83,9,0.07)" stroke="var(--llm)" stroke-width="0.9" stroke-dasharray="3,2"/>
-          <text x="148" y="16" font-family="JetBrains Mono, monospace" font-size="6.5" fill="var(--llm)" text-anchor="middle">output ···</text>
-          <rect x="2"   y="28" width="172" height="14" rx="2" fill="rgba(180,83,9,0.07)" stroke="var(--llm)" stroke-width="0.7" stroke-dasharray="3,2"/>
-          <text x="88"  y="38" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--llm)" text-anchor="middle">KV cache · grows with every token · ∝ L × d × tokens</text>
+        <svg viewBox="0 0 240 48" style="width:100%;margin-bottom:8px;" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2"  y="4" width="42" height="19" rx="2" fill="rgba(37,99,235,0.12)" stroke="var(--blue)" stroke-width="0.8"/>
+          <text x="23" y="12" font-family="JetBrains Mono, monospace" font-size="5.5" fill="var(--blue)" text-anchor="middle" font-weight="600">L layers</text>
+          <text x="23" y="19.5" font-family="JetBrains Mono, monospace" font-size="5" fill="var(--blue)" text-anchor="middle">e.g. 80</text>
+          <text x="50" y="15.5" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--dim)" text-anchor="middle">×</text>
+          <rect x="56" y="4" width="42" height="19" rx="2" fill="rgba(37,99,235,0.10)" stroke="var(--blue)" stroke-width="0.8"/>
+          <text x="77" y="12" font-family="JetBrains Mono, monospace" font-size="5.5" fill="var(--blue)" text-anchor="middle" font-weight="600">12 × d²</text>
+          <text x="77" y="19.5" font-family="JetBrains Mono, monospace" font-size="5" fill="var(--blue)" text-anchor="middle">width²</text>
+          <text x="103" y="15.5" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--dim)" text-anchor="middle">×</text>
+          <rect x="109" y="4" width="46" height="19" rx="2" fill="rgba(37,99,235,0.10)" stroke="var(--blue)" stroke-width="0.8"/>
+          <text x="132" y="12" font-family="JetBrains Mono, monospace" font-size="5.5" fill="var(--blue)" text-anchor="middle" font-weight="600">precision</text>
+          <text x="132" y="19.5" font-family="JetBrains Mono, monospace" font-size="5" fill="var(--blue)" text-anchor="middle">2B / 1B / 0.5B</text>
+          <text x="161" y="15.5" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--dim)" text-anchor="middle">=</text>
+          <rect x="167" y="4" width="70" height="19" rx="2" fill="rgba(37,99,235,0.18)" stroke="var(--blue)" stroke-width="1.1"/>
+          <text x="202" y="12" font-family="JetBrains Mono, monospace" font-size="5.5" fill="var(--blue)" text-anchor="middle" font-weight="700">weight GB</text>
+          <text x="202" y="19.5" font-family="JetBrains Mono, monospace" font-size="5" fill="var(--blue)" text-anchor="middle">fixed at startup</text>
+          <text x="120" y="41" font-family="JetBrains Mono, monospace" font-size="5" fill="var(--dim2)" text-anchor="middle">Loaded once — same cost for every request, regardless of volume</text>
         </svg>
-        <div style="display:flex;flex-direction:column;gap:5px;font-family:var(--mono);font-size:9.5px;color:var(--muted);">
-          <div><span style="color:var(--llm);">→ </span>The prompt, attached documents, and RAG-retrieved context</div>
-          <div><span style="color:var(--llm);">→ </span>Full chat history the model must attend to</div>
-          <div><span style="color:var(--llm);">→ </span>Output tokens being generated one by one</div>
-          <div style="border-top:1px solid var(--border);margin-top:4px;padding-top:6px;font-size:9px;color:var(--dim);line-height:1.5;">Memory cost varies per request. A 128k-token context on an 80-layer model can consume ~50 GB of KV cache alone.</div>
+        <div style="display:flex;flex-direction:column;gap:4px;font-family:var(--mono);font-size:9px;color:var(--muted);">
+          <div><span style="color:var(--blue);">→ </span>Parameters = L × 12 × d² (layers × width²)</div>
+          <div><span style="color:var(--blue);">→ </span>Precision: FP32 (4 B) · BF16 (2 B) · INT8 (1 B) · FP4 (0.5 B)</div>
+          <div><span style="color:var(--blue);">→ </span>Dense vs. MoE changes active parameter count per token</div>
+          <div style="border-top:1px solid var(--border);margin-top:3px;padding-top:5px;font-size:8.5px;color:var(--dim);line-height:1.5;">Llama 3 70B at BF16 = 140 GB. Needs 2× H100 SXM5 minimum — before any context.</div>
         </div>
       </div>
 
-      <!-- MODEL CARD -->
-      <div style="background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--blue);border-radius:5px;padding:14px 16px;">
-        <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:10px;">
-          <div style="font-family:var(--display);font-size:30px;color:var(--blue);opacity:0.25;line-height:1;">02</div>
-          <div style="font-family:var(--mono);font-size:11px;color:var(--blue);font-weight:600;">The Model Weights</div>
+      <!-- CONTEXT / KV CARD -->
+      <div style="background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--llm);border-radius:5px;padding:12px 14px;">
+        <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:8px;">
+          <div style="font-family:var(--display);font-size:28px;color:var(--llm);opacity:0.25;line-height:1;">02</div>
+          <div style="font-family:var(--mono);font-size:10.5px;color:var(--llm);font-weight:600;">The Context Window & KV Cache</div>
         </div>
-        <svg viewBox="0 0 240 50" style="width:100%;margin-bottom:10px;" xmlns="http://www.w3.org/2000/svg">
-          <rect x="2"  y="4" width="42" height="20" rx="2" fill="rgba(37,99,235,0.12)" stroke="var(--blue)" stroke-width="0.9"/>
-          <text x="23" y="13" font-family="JetBrains Mono, monospace" font-size="7" fill="var(--blue)" text-anchor="middle" font-weight="600">L layers</text>
-          <text x="23" y="21" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--blue)" text-anchor="middle">e.g. 80</text>
-          <text x="50" y="17" font-family="JetBrains Mono, monospace" font-size="11" fill="var(--dim)" text-anchor="middle">×</text>
-          <rect x="56" y="4" width="42" height="20" rx="2" fill="rgba(37,99,235,0.10)" stroke="var(--blue)" stroke-width="0.9"/>
-          <text x="77" y="13" font-family="JetBrains Mono, monospace" font-size="7" fill="var(--blue)" text-anchor="middle" font-weight="600">12 × d²</text>
-          <text x="77" y="21" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--blue)" text-anchor="middle">width²</text>
-          <text x="103" y="17" font-family="JetBrains Mono, monospace" font-size="11" fill="var(--dim)" text-anchor="middle">×</text>
-          <rect x="109" y="4" width="46" height="20" rx="2" fill="rgba(37,99,235,0.10)" stroke="var(--blue)" stroke-width="0.9"/>
-          <text x="132" y="13" font-family="JetBrains Mono, monospace" font-size="7" fill="var(--blue)" text-anchor="middle" font-weight="600">precision</text>
-          <text x="132" y="21" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--blue)" text-anchor="middle">2B / 1B / 0.5B</text>
-          <text x="161" y="17" font-family="JetBrains Mono, monospace" font-size="11" fill="var(--dim)" text-anchor="middle">=</text>
-          <rect x="167" y="4" width="70" height="20" rx="2" fill="rgba(37,99,235,0.18)" stroke="var(--blue)" stroke-width="1.2"/>
-          <text x="202" y="13" font-family="JetBrains Mono, monospace" font-size="7" fill="var(--blue)" text-anchor="middle" font-weight="700">weight GB</text>
-          <text x="202" y="21" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--blue)" text-anchor="middle">fixed at startup</text>
-          <text x="120" y="44" font-family="JetBrains Mono, monospace" font-size="6.5" fill="var(--dim2)" text-anchor="middle">Loaded once — same cost for every request, regardless of volume</text>
+        <svg viewBox="0 0 240 48" style="width:100%;margin-bottom:8px;" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2"   y="4" width="36" height="17" rx="2" fill="rgba(180,83,9,0.15)" stroke="var(--llm)" stroke-width="0.8"/>
+          <text x="20"  y="14.5" font-family="JetBrains Mono, monospace" font-size="5.5" fill="var(--llm)" text-anchor="middle">prompt</text>
+          <rect x="42"  y="4" width="30" height="17" rx="2" fill="rgba(180,83,9,0.12)" stroke="var(--llm)" stroke-width="0.8"/>
+          <text x="57"  y="14.5" font-family="JetBrains Mono, monospace" font-size="5.5" fill="var(--llm)" text-anchor="middle">docs</text>
+          <rect x="76"  y="4" width="42" height="17" rx="2" fill="rgba(180,83,9,0.10)" stroke="var(--llm)" stroke-width="0.8"/>
+          <text x="97"  y="14.5" font-family="JetBrains Mono, monospace" font-size="5.5" fill="var(--llm)" text-anchor="middle">history</text>
+          <rect x="122" y="4" width="52" height="17" rx="2" fill="rgba(180,83,9,0.07)" stroke="var(--llm)" stroke-width="0.8" stroke-dasharray="3,2"/>
+          <text x="148" y="14.5" font-family="JetBrains Mono, monospace" font-size="5.5" fill="var(--llm)" text-anchor="middle">output ···</text>
+          <rect x="2"   y="27" width="172" height="13" rx="2" fill="rgba(180,83,9,0.07)" stroke="var(--llm)" stroke-width="0.6" stroke-dasharray="3,2"/>
+          <text x="88"  y="36" font-family="JetBrains Mono, monospace" font-size="5" fill="var(--llm)" text-anchor="middle">KV cache · grows with every token · ∝ L × d × tokens</text>
         </svg>
-        <div style="display:flex;flex-direction:column;gap:5px;font-family:var(--mono);font-size:9.5px;color:var(--muted);">
-          <div><span style="color:var(--blue);">→ </span>Number of parameters driven by L (layers) and d (hidden width)</div>
-          <div><span style="color:var(--blue);">→ </span>Precision: FP32 (4 B/param) · BF16 (2 B) · INT8 (1 B) · FP4 (0.5 B)</div>
-          <div><span style="color:var(--blue);">→ </span>Architecture: dense vs. MoE changes active parameter count per token</div>
-          <div style="border-top:1px solid var(--border);margin-top:4px;padding-top:6px;font-size:9px;color:var(--dim);line-height:1.5;">Llama 3 70B at BF16 = 140 GB. Needs two H100 SXM5 (80 GB each) at minimum — before any context at all.</div>
+        <div style="display:flex;flex-direction:column;gap:4px;font-family:var(--mono);font-size:9px;color:var(--muted);">
+          <div><span style="color:var(--llm);">→ </span>Prompt, attached documents, RAG-retrieved context</div>
+          <div><span style="color:var(--llm);">→ </span>Full chat history the model must attend to</div>
+          <div><span style="color:var(--llm);">→ </span>Output tokens being generated one by one</div>
+          <div style="border-top:1px solid var(--border);margin-top:3px;padding-top:5px;font-size:8.5px;color:var(--dim);line-height:1.5;">A 128k-token context on an 80-layer model consumes ~50 GB of KV cache alone.</div>
         </div>
       </div>
 
     </div>
 
-    <!-- Bridge punchline -->
-    <div class="anim anim-3" style="background:linear-gradient(135deg,rgba(180,83,9,0.05),rgba(37,99,235,0.05));border:1px solid var(--border);border-radius:5px;padding:14px 20px;display:flex;align-items:center;gap:24px;">
-      <div style="flex:1;">
-        <div style="font-family:var(--mono);font-size:8.5px;color:var(--dim);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:6px;">The core deployment question</div>
-        <div style="font-family:var(--display);font-size:21px;color:var(--text);line-height:1.25;">Model weights and KV cache must both live in HBM simultaneously.<br><span style="color:var(--sw);">So: how do we size and configure a system to hold both?</span></div>
+    <!-- Memory fit visualization — interactive -->
+    <div class="anim anim-3" style="background:var(--bg2);border:1px solid var(--border);border-radius:5px;padding:12px 16px;">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;flex-wrap:wrap;gap:4px;">
+        <div style="font-family:var(--mono);font-size:8px;color:var(--dim);text-transform:uppercase;letter-spacing:0.12em;">How both chunks pack into a GPU node — example: 8×H100 SXM5 · 640 GB HBM total</div>
+        <div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">Llama 3 70B BF16 · 128k context per user · click bar to load users</div>
       </div>
-      <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0;font-family:var(--mono);font-size:9px;text-align:center;">
-        <div style="padding:4px 12px;border-radius:3px;background:rgba(180,83,9,0.10);color:var(--llm);border:1px solid rgba(180,83,9,0.25);">context (variable)</div>
-        <div style="font-size:18px;color:var(--dim);line-height:1.1;">+</div>
-        <div style="padding:4px 12px;border-radius:3px;background:rgba(37,99,235,0.10);color:var(--blue);border:1px solid rgba(37,99,235,0.25);">model weights (fixed)</div>
-        <div style="font-size:18px;color:var(--dim);line-height:1.1;">≤</div>
-        <div style="padding:4px 12px;border-radius:3px;background:rgba(13,148,136,0.10);color:var(--sw);border:1px solid var(--sw);font-weight:600;">available HBM</div>
-      </div>
+
+      <!-- Interactive memory bar SVG -->
+      <!-- Scale: 640 GB = 560px → 1 GB ≈ 0.875px | model 140 GB = 122px | per user 50 GB = 44px | max 10 users -->
+      <svg id="cm-mem-bar" data-users="0" viewBox="0 0 560 68" style="width:100%;display:block;margin-bottom:4px;cursor:pointer;border-radius:2px;" onclick="cmAddUser()" xmlns="http://www.w3.org/2000/svg">
+
+        <!-- ── static: model weights (0 → 122px) ── -->
+        <rect x="0" y="18" width="122" height="26" rx="0" fill="rgba(37,99,235,0.22)" stroke="none"/>
+        <text x="61" y="28" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--blue)" text-anchor="middle" font-weight="700">Model weights</text>
+        <text x="61" y="37" font-family="JetBrains Mono, monospace" font-size="5.5" fill="var(--blue)" text-anchor="middle">140 GB</text>
+        <text x="61" y="60" font-family="JetBrains Mono, monospace" font-size="5" fill="var(--blue)" text-anchor="middle" opacity="0.7">22% of node</text>
+
+        <!-- ── dynamic groups (populated by cmRenderBar) ── -->
+        <g id="cm-kv-bracket"></g>
+        <g id="cm-kv-group"></g>
+        <g id="cm-free-group"></g>
+
+        <!-- ── outer border (always on top) ── -->
+        <rect x="0" y="18" width="560" height="26" rx="2" fill="none" stroke="var(--border)" stroke-width="1" pointer-events="none"/>
+
+        <!-- ── dynamic dividers ── -->
+        <g id="cm-dividers"></g>
+
+        <!-- ── bottom bracket ── -->
+        <line x1="0" y1="50" x2="560" y2="50" stroke="var(--border)" stroke-width="0.6"/>
+        <line x1="0" y1="50" x2="0" y2="46" stroke="var(--border)" stroke-width="0.8"/>
+        <line x1="560" y1="50" x2="560" y2="46" stroke="var(--border)" stroke-width="0.8"/>
+        <text x="280" y="60" font-family="JetBrains Mono, monospace" font-size="5.5" fill="var(--dim2)" text-anchor="middle">640 GB total HBM · 8 × H100 SXM5 · 3,350 GB/s per GPU</text>
+
+      </svg>
+
+      <div id="cm-user-counter" style="font-family:var(--mono);font-size:7.5px;color:var(--dim2);text-align:center;margin-bottom:8px;cursor:pointer;letter-spacing:0.05em;" onclick="cmAddUser()">click bar to add concurrent users →</div>
+
+      <div style="font-family:var(--display);font-size:18px;color:var(--text);line-height:1.3;">Model and context must coexist in HBM at the same time.<br><span style="color:var(--sw);font-size:16px;">So: how do we size and configure a system to hold both?</span></div>
     </div>
 
   </div>
@@ -2983,7 +3009,7 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
     <div class="anim anim-2" style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:12px 16px;">
       <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:6px;">
         <div>
-          <div style="font-family:var(--mono);font-size:8.5px;color:var(--sw);letter-spacing:0.14em;text-transform:uppercase;">Memory &amp; Capacity Configurator — 8×H100 · Llama 70B FP8</div>
+          <div id="s7-conf-title" style="font-family:var(--mono);font-size:8.5px;color:var(--sw);letter-spacing:0.14em;text-transform:uppercase;">Memory &amp; Capacity Configurator — 8×H100 · Llama 70B FP8</div>
           <div style="font-family:var(--mono);font-size:9px;color:var(--dim);margin-top:2px;" id="s7-sub">Adjust context and users to see node memory fill, max capacity, and corrected MFU</div>
         </div>
         <!-- Hardware picker -->
@@ -2997,45 +3023,70 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
 
         <!-- LEFT: sliders -->
-        <div style="display:flex;flex-direction:column;gap:7px;">
-          <div style="font-family:var(--mono);font-size:8px;color:var(--dim);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:2px;">Context breakdown</div>
+        <div style="display:flex;flex-direction:column;gap:0;">
 
-          <div style="display:flex;align-items:center;gap:8px;">
-            <label style="font-family:var(--mono);font-size:8px;color:var(--muted);width:110px;flex-shrink:0;">System prompt</label>
-            <input type="range" id="s7-sl-sys" min="0" max="4000" value="500" step="100" style="flex:1;accent-color:var(--hw);" oninput="s7Calc()">
-            <span id="s7-vl-sys" style="font-family:var(--mono);font-size:8px;color:var(--hw);width:55px;text-align:right;">500 tok</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <label style="font-family:var(--mono);font-size:8px;color:var(--muted);width:110px;flex-shrink:0;">User message</label>
-            <input type="range" id="s7-sl-msg" min="50" max="2000" value="200" step="50" style="flex:1;accent-color:var(--blue);" oninput="s7Calc()">
-            <span id="s7-vl-msg" style="font-family:var(--mono);font-size:8px;color:var(--blue);width:55px;text-align:right;">200 tok</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <label style="font-family:var(--mono);font-size:8px;color:var(--muted);width:110px;flex-shrink:0;">RAG / documents</label>
-            <input type="range" id="s7-sl-rag" min="0" max="50000" value="8000" step="500" style="flex:1;accent-color:var(--llm);" oninput="s7Calc()">
-            <span id="s7-vl-rag" style="font-family:var(--mono);font-size:8px;color:var(--llm);width:55px;text-align:right;">8,000 tok</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <label style="font-family:var(--mono);font-size:8px;color:var(--muted);width:110px;flex-shrink:0;">Chat history</label>
-            <input type="range" id="s7-sl-hist" min="0" max="10000" value="2000" step="200" style="flex:1;accent-color:var(--sw);" oninput="s7Calc()">
-            <span id="s7-vl-hist" style="font-family:var(--mono);font-size:8px;color:var(--sw);width:55px;text-align:right;">2,000 tok</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <label style="font-family:var(--mono);font-size:8px;color:var(--muted);width:110px;flex-shrink:0;">Max output</label>
-            <input type="range" id="s7-sl-out" min="100" max="4000" value="1000" step="100" style="flex:1;accent-color:var(--green);" oninput="s7Calc()">
-            <span id="s7-vl-out" style="font-family:var(--mono);font-size:8px;color:var(--green);width:55px;text-align:right;">1,000 tok</span>
+          <!-- ── LEVER 1: Model Size ───────────────────────── -->
+          <div style="padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:8px;">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+              <span style="font-family:var(--mono);font-size:7px;font-weight:700;background:var(--sw);color:#fff;border-radius:3px;padding:1px 5px;letter-spacing:0.06em;flex-shrink:0;">LEVER 1</span>
+              <span style="font-family:var(--mono);font-size:9px;color:var(--text);font-weight:600;text-transform:uppercase;letter-spacing:0.1em;">Model Size</span>
+            </div>
+            <div style="display:flex;gap:4px;flex-wrap:wrap;">
+              <button onclick="s7SelModel('llama8b')"   id="s7-mdl-llama8b"   style="font-family:var(--mono);font-size:7.5px;padding:3px 8px;border-radius:3px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--dim);">Llama 8B</button>
+              <button onclick="s7SelModel('llama70b')"  id="s7-mdl-llama70b"  style="font-family:var(--mono);font-size:7.5px;padding:3px 8px;border-radius:3px;cursor:pointer;border:1px solid var(--sw);background:rgba(13,148,136,0.15);color:var(--sw);">Llama 70B</button>
+              <button onclick="s7SelModel('llama405b')" id="s7-mdl-llama405b" style="font-family:var(--mono);font-size:7.5px;padding:3px 8px;border-radius:3px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--dim);">Llama 405B</button>
+              <button onclick="s7SelModel('dsr1')"      id="s7-mdl-dsr1"      style="font-family:var(--mono);font-size:7.5px;padding:3px 8px;border-radius:3px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--dim);">DeepSeek R1 671B</button>
+            </div>
+            <div id="s7-model-note" style="font-family:var(--mono);font-size:7px;color:var(--dim2);margin-top:4px;">70B params · 70 GB FP8 · KV 0.156 MB/tok</div>
           </div>
 
-          <div style="border-top:1px solid var(--border);padding-top:7px;margin-top:2px;">
-            <div style="font-family:var(--mono);font-size:8px;color:var(--dim);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:5px;">Concurrent users (batch size)</div>
+          <!-- ── LEVER 2: Context Window ───────────────────── -->
+          <div style="padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:8px;display:flex;flex-direction:column;gap:6px;">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span style="font-family:var(--mono);font-size:7px;font-weight:700;background:var(--blue);color:#fff;border-radius:3px;padding:1px 5px;letter-spacing:0.06em;flex-shrink:0;">LEVER 2</span>
+              <span style="font-family:var(--mono);font-size:9px;color:var(--text);font-weight:600;text-transform:uppercase;letter-spacing:0.1em;">Context Window (KV cache)</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <label style="font-family:var(--mono);font-size:8px;color:var(--muted);width:110px;flex-shrink:0;">System prompt</label>
+              <input type="range" id="s7-sl-sys" min="0" max="4000" value="500" step="100" style="flex:1;accent-color:var(--hw);" oninput="s7Calc()">
+              <span id="s7-vl-sys" style="font-family:var(--mono);font-size:8px;color:var(--hw);width:55px;text-align:right;">500 tok</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <label style="font-family:var(--mono);font-size:8px;color:var(--muted);width:110px;flex-shrink:0;">User message</label>
+              <input type="range" id="s7-sl-msg" min="50" max="2000" value="200" step="50" style="flex:1;accent-color:var(--blue);" oninput="s7Calc()">
+              <span id="s7-vl-msg" style="font-family:var(--mono);font-size:8px;color:var(--blue);width:55px;text-align:right;">200 tok</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <label style="font-family:var(--mono);font-size:8px;color:var(--muted);width:110px;flex-shrink:0;">RAG / documents</label>
+              <input type="range" id="s7-sl-rag" min="0" max="50000" value="8000" step="500" style="flex:1;accent-color:var(--llm);" oninput="s7Calc()">
+              <span id="s7-vl-rag" style="font-family:var(--mono);font-size:8px;color:var(--llm);width:55px;text-align:right;">8,000 tok</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <label style="font-family:var(--mono);font-size:8px;color:var(--muted);width:110px;flex-shrink:0;">Chat history</label>
+              <input type="range" id="s7-sl-hist" min="0" max="10000" value="2000" step="200" style="flex:1;accent-color:var(--sw);" oninput="s7Calc()">
+              <span id="s7-vl-hist" style="font-family:var(--mono);font-size:8px;color:var(--sw);width:55px;text-align:right;">2,000 tok</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <label style="font-family:var(--mono);font-size:8px;color:var(--muted);width:110px;flex-shrink:0;">Max output</label>
+              <input type="range" id="s7-sl-out" min="100" max="4000" value="1000" step="100" style="flex:1;accent-color:var(--green);" oninput="s7Calc()">
+              <span id="s7-vl-out" style="font-family:var(--mono);font-size:8px;color:var(--green);width:55px;text-align:right;">1,000 tok</span>
+            </div>
+          </div>
+
+          <!-- ── LEVER 3: Concurrent Users ─────────────────── -->
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span style="font-family:var(--mono);font-size:7px;font-weight:700;background:var(--llm);color:#fff;border-radius:3px;padding:1px 5px;letter-spacing:0.06em;flex-shrink:0;">LEVER 3</span>
+              <span style="font-family:var(--mono);font-size:9px;color:var(--text);font-weight:600;text-transform:uppercase;letter-spacing:0.1em;">Concurrent Users (Batch Size)</span>
+            </div>
             <div style="display:flex;align-items:center;gap:8px;">
               <button onclick="s7AdjUsers(-1)" style="font-family:var(--mono);font-size:12px;width:22px;height:22px;border-radius:3px;border:1px solid var(--border);background:var(--bg3);cursor:pointer;color:var(--text);display:flex;align-items:center;justify-content:center;flex-shrink:0;">−</button>
-              <input type="range" id="s7-sl-users" min="1" max="256" value="8" step="1" style="flex:1;accent-color:var(--sw);" oninput="s7SetUsers(this.value)">
+              <input type="range" id="s7-sl-users" min="1" max="256" value="8" step="1" style="flex:1;accent-color:var(--llm);" oninput="s7SetUsers(this.value)">
               <button onclick="s7AdjUsers(1)" style="font-family:var(--mono);font-size:12px;width:22px;height:22px;border-radius:3px;border:1px solid var(--border);background:var(--bg3);cursor:pointer;color:var(--text);display:flex;align-items:center;justify-content:center;flex-shrink:0;">+</button>
               <span id="s7-user-count" style="font-family:var(--mono);font-size:13px;font-weight:600;color:var(--text);width:30px;text-align:center;">8</span>
               <span id="s7-fit-msg" style="font-family:var(--mono);font-size:8px;color:var(--green);"></span>
             </div>
-            <div style="display:flex;gap:5px;margin-top:5px;">
+            <div style="display:flex;gap:5px;margin-top:1px;">
               <button onclick="s7SetUsers(1)"   style="font-family:var(--mono);font-size:8px;padding:2px 8px;border-radius:2px;border:1px solid var(--border);background:var(--bg3);cursor:pointer;color:var(--dim);">1</button>
               <button onclick="s7SetUsers(8)"   style="font-family:var(--mono);font-size:8px;padding:2px 8px;border-radius:2px;border:1px solid var(--border);background:var(--bg3);cursor:pointer;color:var(--dim);">8</button>
               <button onclick="s7SetUsers(32)"  style="font-family:var(--mono);font-size:8px;padding:2px 8px;border-radius:2px;border:1px solid var(--border);background:var(--bg3);cursor:pointer;color:var(--dim);">32</button>
@@ -3043,6 +3094,7 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
               <button onclick="s7SetUsers(128)" style="font-family:var(--mono);font-size:8px;padding:2px 8px;border-radius:2px;border:1px solid var(--border);background:var(--bg3);cursor:pointer;color:var(--dim);">128</button>
             </div>
           </div>
+
         </div>
 
         <!-- RIGHT: live results -->
@@ -3113,11 +3165,33 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
       H200:{ mem:141, gpus:8, bwGBs:4800,  tflops:1979,  nvlink:true  },
       B200:{ mem:192, gpus:8, bwGBs:8000,  tflops:4500,  nvlink:true  }
     };
-    var _hw   = 'H100';
+    var _hw    = 'H100';
     var _users = 8;
-    // KV per token: Llama 70B GQA BF16 = 80 layers × 2 × 8 KV-heads × 128 dim × 2 bytes = 327,680 B = 0.3125 MB/tok
-    var KV_PER_TOK_MB = 0.3125;
-    var MODEL_GB = 70; // FP8
+    var _model = 'llama70b';
+    // Model catalogue: modelGB = FP8 weight footprint; kvMB = KV cache per token in MB (GQA BF16)
+    // Llama 8B:   32L × 2 × 8 KV-heads × 128 dim × 2B = 0.125 MB/tok
+    // Llama 70B:  80L × 2 × 8 × 128 × 2B = 0.3125 MB/tok
+    // Llama 405B: 126L × 2 × 8 × 128 × 2B = 0.492 MB/tok
+    // DeepSeek R1 671B: MLA compressed KV ≈ 61L × 576B × 2 ≈ 0.067 MB/tok
+    var MODELS = {
+      'llama8b':   { name:'Llama 3 8B',             params:8e9,   modelGB:8,   kvMB:0.125  },
+      'llama70b':  { name:'Llama 3 70B',            params:70e9,  modelGB:70,  kvMB:0.3125 },
+      'llama405b': { name:'Llama 3 405B',           params:405e9, modelGB:405, kvMB:0.492  },
+      'dsr1':      { name:'DeepSeek R1 671B (MoE)', params:671e9, modelGB:336, kvMB:0.067  }
+    };
+
+    window.s7SelModel = function(key){
+      _model = key;
+      Object.keys(MODELS).forEach(function(k){
+        var b = el('s7-mdl-'+k);
+        if(!b) return;
+        if(k === key){ b.style.borderColor='var(--sw)'; b.style.background='rgba(13,148,136,0.15)'; b.style.color='var(--sw)'; }
+        else { b.style.borderColor='var(--border)'; b.style.background='transparent'; b.style.color='var(--dim)'; }
+      });
+      var n = el('s7-model-note');
+      if(n){ var m = MODELS[key]; n.textContent = m.name+' · '+m.modelGB+' GB FP8 · KV '+m.kvMB+' MB/tok'; }
+      s7Calc();
+    };
 
     function el(id){ return document.getElementById(id); }
     function fmt(n){ return n >= 1000 ? (n/1000).toFixed(n%1000===0?0:1)+'k' : String(n); }
@@ -3178,6 +3252,9 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
 
     window.s7Calc = function(){
       var spec  = HW[_hw];
+      var mdl   = MODELS[_model];
+      var MODEL_GB      = mdl.modelGB;
+      var KV_PER_TOK_MB = mdl.kvMB;
       var nodeGB = spec.mem * spec.gpus;
       var bwTotal  = spec.bwGBs * spec.gpus; // aggregate GB/s
       var tflTotal = spec.tflops * spec.gpus; // aggregate TFLOPS
@@ -3213,7 +3290,7 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
       // B* = memory_time / compute_time_per_user  (crossover batch)
       // MFU = min(compute_time_batch / memory_time, 1) × peak_achievable
       var memTime  = MODEL_GB / bwTotal;               // seconds
-      var compPerU = 2 * 70e9 / (tflTotal * 1e12);     // seconds per user
+      var compPerU = 2 * mdl.params / (tflTotal * 1e12); // seconds per user
       var bStar    = Math.round(memTime / compPerU);
       var mfu, bottleneck;
       if(oom){
@@ -3224,6 +3301,10 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
         mfu = (_users / bStar) * 84; // linear up to 84% at B*
         bottleneck = 'memory-BW limited (B < '+bStar+')';
       }
+
+      // Update configurator title
+      var ct = el('s7-conf-title');
+      if(ct) ct.textContent = 'Memory & Capacity Configurator — '+spec.gpus+'\u00d7'+_hw+' \u00b7 '+mdl.name+' FP8';
 
       // GPU bars
       // Per-GPU: weights/gpu = MODEL_GB/gpus, kv/gpu = kvTotal/gpus
@@ -3595,6 +3676,9 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
 </div>
 
 
+<!-- ═══════════════════════════════════════════════════════════
+  DGX vs HGX slide: turnkey system vs OEM reference architecture, feature comparison table, and workload fit guide
+═══════════════════════════════════════════════════════════ -->
 <div class="slide" id="sDGX" data-slide="12">
   <div class="slide-chrome">
     <div class="chrome-left">
@@ -3729,6 +3813,9 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
 </div>
 
 
+<!-- ═══════════════════════════════════════════════════════════
+Inference economics slide: interactive roofline model to explore cost per token across H100 PCIe, DGX H100, and DGX B200, with decision rules and practical tips for maximizing MFU in different workload scenarios
+═══════════════════════════════════════════════════════════ -->
 <div class="slide" id="sEcon" data-slide="13">
   <div class="slide-chrome">
     <div class="chrome-left">
@@ -4221,10 +4308,10 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
             legend: {
               labels: {
                 color: '#647580',
-                font: { family:'JetBrains Mono', size:10 },
+                font: { family:'JetBrains Mono', size:9 },
                 boxWidth: 10,
-                usePointStyle: true,
-                pointStyle: 'rectRounded'
+                boxHeight: 10,
+                usePointStyle: false
               }
             },
             tooltip: {
@@ -4239,14 +4326,14 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
           scales: {
             x: {
               stacked: true,
-              ticks: { color:'#647580', font:{ family:'JetBrains Mono', size:10 } },
+              ticks: { color:'#647580', font:{ family:'JetBrains Mono', size:9 } },
               grid: { color:'rgba(0,0,0,0.07)' }
             },
             y: {
               stacked: true,
               ticks: {
                 color:'#647580',
-                font:{ family:'JetBrains Mono', size:10 },
+                font:{ family:'JetBrains Mono', size:9 },
                 callback: function(v){ return '$' + v.toFixed(2); }
               },
               grid: { color:'rgba(0,0,0,0.08)' },
@@ -4254,14 +4341,14 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
                 display: true,
                 text: '$ per 1M output tokens',
                 color: '#647580',
-                font: { family:'JetBrains Mono', size:10 }
+                font: { family:'JetBrains Mono', size:9 }
               }
             },
             y1: {
               position: 'right',
               ticks: {
                 color:'#647580',
-                font:{ family:'JetBrains Mono', size:10 },
+                font:{ family:'JetBrains Mono', size:9 },
                 callback: function(v){ return (v * 60).toFixed(0) + ' min'; }
               },
               grid: { drawOnChartArea:false },
@@ -4269,7 +4356,7 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
                 display: true,
                 text: 'Time / 1M tokens (min)',
                 color:'#647580',
-                font:{ family:'JetBrains Mono', size:10 }
+                font:{ family:'JetBrains Mono', size:9 }
               }
             }
           }
@@ -4406,7 +4493,9 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
               labels: {
                 color:'#647580',
                 font:{ family:'JetBrains Mono', size:9 },
-                boxWidth:12,
+                boxWidth: 10,
+                boxHeight: 10,
+                usePointStyle: false,
                 filter: function(item){ return !item.text.includes('comms %'); }
               }
             },
@@ -4426,15 +4515,15 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
               grid: { color:'rgba(0,0,0,0.07)' }
             },
             y: {
-              ticks: { color:'#647580', font:{ family:'JetBrains Mono', size:10 }, callback: function(v){ return fmtCompact(v); } },
+              ticks: { color:'#647580', font:{ family:'JetBrains Mono', size:9 }, callback: function(v){ return fmtCompact(v); } },
               grid: { color:'rgba(0,0,0,0.08)' },
-              title: { display:true, text:'Tokens / second', color:'#647580', font:{ family:'JetBrains Mono', size:10 } }
+              title: { display:true, text:'Tokens / second', color:'#647580', font:{ family:'JetBrains Mono', size:9 } }
             },
             y1: {
               position: 'right',
-              ticks: { color:'rgba(100,117,128,0.7)', font:{ family:'JetBrains Mono', size:9 }, callback: function(v){ return v + '%'; } },
+              ticks: { color:'#647580', font:{ family:'JetBrains Mono', size:9 }, callback: function(v){ return v + '%'; } },
               grid: { drawOnChartArea:false },
-              title: { display:true, text:'Comms overhead', color:'rgba(100,117,128,0.7)', font:{ family:'JetBrains Mono', size:9 } },
+              title: { display:true, text:'Comms overhead', color:'#647580', font:{ family:'JetBrains Mono', size:9 } },
               min: 0, max: 100
             }
           }
@@ -4540,6 +4629,10 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
   </script>
 
 </div>
+
+<!-- ═══════════════════════════════════════════════════════════
+    Wrap-up
+═══════════════════════════════════════════════════════════ -->
 <div class="slide" id="sWrap" data-slide="12">
   <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;background:var(--bg);gap:24px;padding:60px;">
     <div style="font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:0.28em;text-transform:uppercase;">Closing Section</div>
@@ -4599,8 +4692,8 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
         <div class="flex-col" style="gap:7px;">
           <div style="font-size:12px;color:var(--text);line-height:1.45;font-weight:500;">Multi-GPU serving: capacity vs bandwidth limits</div>
           <div style="font-size:12px;color:var(--text);line-height:1.45;font-weight:500;">Utilization and MFU as efficiency metrics</div>
-          <div style="font-size:12px;color:var(--text);line-height:1.45;font-weight:500;">Hardware generation comparison</div>
           <div style="font-size:12px;color:var(--text);line-height:1.45;font-weight:500;">Cost per token and operator economics</div>
+          <div style="font-size:12px;color:var(--text);line-height:1.45;font-weight:500;">Hardware generation comparison</div>
         </div>
       </div>
     </div>
@@ -4630,12 +4723,9 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
     </div>
 
     <div class="anim anim-1" style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--sw);border-radius:4px;padding:9px 12px;font-size:11px;color:var(--muted);line-height:1.6;max-width:760px;">
-      <strong style="color:var(--text);">Exit takeaway:</strong> use this deck for first principles, then use the linked dashboards for scenario analysis, sourcing choices, and operator-level decisions.
+      <strong style="color:var(--text);">Exit takeaway:</strong> You now understand why GPUs run AI, how model size translates to memory requirements, why quantization matters, how batching fills the pipe, and what the hardware roadmap looks like. The dashboards below go much further on each of these topics.
     </div>
 
-    <div class="anim anim-2 body-text" style="max-width:680px;">
-      You now understand why GPUs run AI, how model size translates to memory requirements, why quantization matters, how batching fills the pipe, and what the hardware roadmap looks like. The dashboards below go much further on each of these topics.
-    </div>
 
     <div class="anim anim-3 grid-3 stagger" style="flex:1;">
 
@@ -4713,7 +4803,7 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
 </div><!-- end deck -->
 
 <script>
-const slideOrder = ['s0','sD1','s1','s5','sDGX','sD2','s2','sEmb','sGenLoop','sModel','s6','sD3','sContextModel','s7','s8','sEcon','sWrap','s9','s10'];
+const slideOrder = ['s0','sD1','s1','s5','sDGX','sD2','s2','sEmb','sGenLoop','sModel','s6','sD3','sContextModel','s7','sEcon','s8','sWrap','s9','s10'];
 const SLIDES = slideOrder.map(id => document.getElementById(id)).filter(Boolean);
 const TOTAL  = SLIDES.length;
 let current  = 0;
@@ -4753,6 +4843,8 @@ function goTo(n) {
   if (n < 0 || n >= TOTAL) return;
   // Reset s2 bullish step when leaving that slide
   if (SLIDES[current] && SLIDES[current].id === 's2') s2ShowStep(0);
+  // Reset sContextModel memory bar when leaving that slide
+  if (SLIDES[current] && SLIDES[current].id === 'sContextModel') { var cmb = document.getElementById('cm-mem-bar'); if (cmb) { cmb.dataset.users = '0'; cmRenderBar(0); } }
   SLIDES[current].classList.remove('active');
   SLIDES[current].classList.add('prev');
   if (n < current) {
@@ -4780,6 +4872,77 @@ function goTo(n) {
 }
 
 function navigate(dir) { goTo(current + dir); }
+
+// ── sContextModel: interactive HBM memory bar ──
+// Scale: 640 GB = 560px | model 140 GB = 122px | per-user KV 50 GB = 44px | max 10 users
+function cmAddUser() {
+  var svg = document.getElementById('cm-mem-bar');
+  if (!svg) return;
+  var users = parseInt(svg.dataset.users || '0');
+  users = users >= 10 ? 0 : users + 1;
+  svg.dataset.users = users;
+  cmRenderBar(users);
+}
+function cmRenderBar(users) {
+  var modelW = 122, userW = 44, totalW = 560, barY = 18, barH = 26;
+  var kvEnd = modelW + users * userW;
+  var freeW = totalW - kvEnd;
+  var opacities = [0.30, 0.24, 0.19, 0.15, 0.12, 0.10, 0.09, 0.08, 0.07, 0.06];
+  function setG(id, html) { var g = document.getElementById(id); if (g) g.innerHTML = html; }
+
+  // KV blocks
+  var kv = '';
+  for (var i = 0; i < users; i++) {
+    var x = modelW + i * userW;
+    kv += '<rect x="'+x+'" y="'+barY+'" width="'+userW+'" height="'+barH+'" fill="rgba(180,83,9,'+opacities[i]+')" stroke="none"/>';
+    if (i > 0) kv += '<line x1="'+x+'" y1="'+barY+'" x2="'+x+'" y2="'+(barY+barH)+'" stroke="rgba(180,83,9,0.25)" stroke-width="0.8"/>';
+    kv += '<text x="'+(x+userW/2)+'" y="'+(barY+barH-5)+'" font-family="JetBrains Mono, monospace" font-size="5" fill="var(--llm)" text-anchor="middle">U'+(i+1)+'</text>';
+  }
+  setG('cm-kv-group', kv);
+
+  // KV bracket above blocks
+  var br = '';
+  if (users > 0) {
+    var bx = modelW + (users * userW) / 2;
+    br = '<line x1="'+modelW+'" y1="14" x2="'+kvEnd+'" y2="14" stroke="var(--llm)" stroke-width="0.7"/>'
+       + '<line x1="'+modelW+'" y1="14" x2="'+modelW+'" y2="18" stroke="var(--llm)" stroke-width="0.7"/>'
+       + '<line x1="'+kvEnd+'" y1="14" x2="'+kvEnd+'" y2="18" stroke="var(--llm)" stroke-width="0.7"/>'
+       + '<text x="'+bx+'" y="10" font-family="JetBrains Mono, monospace" font-size="5.5" fill="var(--llm)" text-anchor="middle">'
+       + 'KV cache \u00b7 '+users+' user'+(users>1?'s':'')+' \u00d7 50 GB = '+(users*50)+' GB</text>';
+  }
+  setG('cm-kv-bracket', br);
+
+  // Free headroom segment
+  var fr = '';
+  if (freeW > 8) {
+    var freeGB = Math.round(freeW / totalW * 640);
+    var ftx = kvEnd + freeW / 2;
+    var msg = users >= 10 ? 'node fully allocated \u2014 click to reset'
+                          : 'room for '+(10-users)+' more user'+(10-users>1?'s':'')+' \u00b7 click to add';
+    var fs1 = freeW > 100 ? 6 : 5, fs2 = freeW > 140 ? 5.5 : 4.5;
+    fr = '<rect x="'+kvEnd+'" y="'+barY+'" width="'+freeW+'" height="'+barH+'" fill="rgba(100,116,139,0.07)" stroke="none"/>'
+       + '<text x="'+ftx+'" y="'+(barY+10)+'" font-family="JetBrains Mono, monospace" font-size="'+fs1+'" fill="var(--dim)" text-anchor="middle">Available headroom</text>'
+       + '<text x="'+ftx+'" y="'+(barY+19)+'" font-family="JetBrains Mono, monospace" font-size="'+fs2+'" fill="var(--dim2)" text-anchor="middle">~'+freeGB+' GB \u2014 '+msg+'</text>';
+  } else if (users >= 10) {
+    fr = '<text x="'+(totalW-40)+'" y="33" font-family="JetBrains Mono, monospace" font-size="5" fill="var(--red)" text-anchor="middle">FULL \u00b7 click reset</text>';
+  }
+  setG('cm-free-group', fr);
+
+  // Segment dividers
+  var dv = '<line x1="'+modelW+'" y1="'+barY+'" x2="'+modelW+'" y2="'+(barY+barH)+'" stroke="var(--bg2)" stroke-width="1.5"/>';
+  if (users > 0) dv += '<line x1="'+kvEnd+'" y1="'+barY+'" x2="'+kvEnd+'" y2="'+(barY+barH)+'" stroke="var(--bg2)" stroke-width="1.5"/>';
+  setG('cm-dividers', dv);
+
+  // Counter hint below bar
+  var ctr = document.getElementById('cm-user-counter');
+  if (ctr) {
+    if (users === 0)      ctr.textContent = 'click bar to add concurrent users \u2192';
+    else if (users >= 10) ctr.textContent = '10 users \u2014 node fully allocated \u00b7 click to reset';
+    else                  ctr.textContent = users+' user'+(users>1?'s':'')+' loaded \u00b7 '+(10-users)+' slots remain \u00b7 click to add more';
+  }
+}
+// Initialize bar at 0 users on page load
+(function(){ if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', function(){ cmRenderBar(0); }); } else { cmRenderBar(0); } })();
 
 // ── Slide s2: NVIDIA bullish scenario step ──
 var s2Step = 0;
