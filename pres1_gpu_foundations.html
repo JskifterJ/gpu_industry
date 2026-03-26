@@ -2518,7 +2518,6 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
 
 </div>
 
-
 <!-- ═══════════════════════════════════════════════════════════
      SLIDE 3 — INSIDE THE GPU SERVER
 ════════════════════════════════════════════════════════════ -->
@@ -2849,6 +2848,113 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
     </div>
   </div>
 </div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     SLIDE 2c — CONTEXT + MODEL BRIDGE
+═══════════════════════════════════════════════════════════ -->
+<div class="slide" id="sContextModel">
+  <div class="slide-chrome">
+    <div class="chrome-left">
+      <div class="chrome-logo">GPU & AI Foundations</div>
+      <div class="chrome-sep"></div>
+      <div class="chrome-title">Context and Model: The Two Memory Consumers at Inference Time</div>
+    </div>
+    <div class="chrome-right">
+      <button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="nav-counter">Light</span></button>
+      <span class="nav-counter">– / –</span>
+    </div>
+  </div>
+
+  <div class="slide-body" style="gap:12px;">
+
+    <div class="anim anim-1">
+      <div class="section-label">Two physical realities</div>
+      <div style="font-family:var(--display);font-size:26px;line-height:1.05;color:var(--text);">Every inference request competes for the same pool of HBM.<br><span style="color:var(--sw);">Two things must fit: the model weights and the context.</span></div>
+    </div>
+
+    <div class="anim anim-2" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+
+      <!-- CONTEXT CARD -->
+      <div style="background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--llm);border-radius:5px;padding:14px 16px;">
+        <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:10px;">
+          <div style="font-family:var(--display);font-size:30px;color:var(--llm);opacity:0.25;line-height:1;">01</div>
+          <div style="font-family:var(--mono);font-size:11px;color:var(--llm);font-weight:600;">The Context Window</div>
+        </div>
+        <svg viewBox="0 0 240 50" style="width:100%;margin-bottom:10px;" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2"   y="4" width="36" height="18" rx="2" fill="rgba(180,83,9,0.15)" stroke="var(--llm)" stroke-width="0.9"/>
+          <text x="20"  y="16" font-family="JetBrains Mono, monospace" font-size="6.5" fill="var(--llm)" text-anchor="middle">prompt</text>
+          <rect x="42"  y="4" width="30" height="18" rx="2" fill="rgba(180,83,9,0.12)" stroke="var(--llm)" stroke-width="0.9"/>
+          <text x="57"  y="16" font-family="JetBrains Mono, monospace" font-size="6.5" fill="var(--llm)" text-anchor="middle">docs</text>
+          <rect x="76"  y="4" width="42" height="18" rx="2" fill="rgba(180,83,9,0.10)" stroke="var(--llm)" stroke-width="0.9"/>
+          <text x="97"  y="16" font-family="JetBrains Mono, monospace" font-size="6.5" fill="var(--llm)" text-anchor="middle">history</text>
+          <rect x="122" y="4" width="52" height="18" rx="2" fill="rgba(180,83,9,0.07)" stroke="var(--llm)" stroke-width="0.9" stroke-dasharray="3,2"/>
+          <text x="148" y="16" font-family="JetBrains Mono, monospace" font-size="6.5" fill="var(--llm)" text-anchor="middle">output ···</text>
+          <rect x="2"   y="28" width="172" height="14" rx="2" fill="rgba(180,83,9,0.07)" stroke="var(--llm)" stroke-width="0.7" stroke-dasharray="3,2"/>
+          <text x="88"  y="38" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--llm)" text-anchor="middle">KV cache · grows with every token · ∝ L × d × tokens</text>
+        </svg>
+        <div style="display:flex;flex-direction:column;gap:5px;font-family:var(--mono);font-size:9.5px;color:var(--muted);">
+          <div><span style="color:var(--llm);">→ </span>The prompt, attached documents, and RAG-retrieved context</div>
+          <div><span style="color:var(--llm);">→ </span>Full chat history the model must attend to</div>
+          <div><span style="color:var(--llm);">→ </span>Output tokens being generated one by one</div>
+          <div style="border-top:1px solid var(--border);margin-top:4px;padding-top:6px;font-size:9px;color:var(--dim);line-height:1.5;">Memory cost varies per request. A 128k-token context on an 80-layer model can consume ~50 GB of KV cache alone.</div>
+        </div>
+      </div>
+
+      <!-- MODEL CARD -->
+      <div style="background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--blue);border-radius:5px;padding:14px 16px;">
+        <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:10px;">
+          <div style="font-family:var(--display);font-size:30px;color:var(--blue);opacity:0.25;line-height:1;">02</div>
+          <div style="font-family:var(--mono);font-size:11px;color:var(--blue);font-weight:600;">The Model Weights</div>
+        </div>
+        <svg viewBox="0 0 240 50" style="width:100%;margin-bottom:10px;" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2"  y="4" width="42" height="20" rx="2" fill="rgba(37,99,235,0.12)" stroke="var(--blue)" stroke-width="0.9"/>
+          <text x="23" y="13" font-family="JetBrains Mono, monospace" font-size="7" fill="var(--blue)" text-anchor="middle" font-weight="600">L layers</text>
+          <text x="23" y="21" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--blue)" text-anchor="middle">e.g. 80</text>
+          <text x="50" y="17" font-family="JetBrains Mono, monospace" font-size="11" fill="var(--dim)" text-anchor="middle">×</text>
+          <rect x="56" y="4" width="42" height="20" rx="2" fill="rgba(37,99,235,0.10)" stroke="var(--blue)" stroke-width="0.9"/>
+          <text x="77" y="13" font-family="JetBrains Mono, monospace" font-size="7" fill="var(--blue)" text-anchor="middle" font-weight="600">12 × d²</text>
+          <text x="77" y="21" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--blue)" text-anchor="middle">width²</text>
+          <text x="103" y="17" font-family="JetBrains Mono, monospace" font-size="11" fill="var(--dim)" text-anchor="middle">×</text>
+          <rect x="109" y="4" width="46" height="20" rx="2" fill="rgba(37,99,235,0.10)" stroke="var(--blue)" stroke-width="0.9"/>
+          <text x="132" y="13" font-family="JetBrains Mono, monospace" font-size="7" fill="var(--blue)" text-anchor="middle" font-weight="600">precision</text>
+          <text x="132" y="21" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--blue)" text-anchor="middle">2B / 1B / 0.5B</text>
+          <text x="161" y="17" font-family="JetBrains Mono, monospace" font-size="11" fill="var(--dim)" text-anchor="middle">=</text>
+          <rect x="167" y="4" width="70" height="20" rx="2" fill="rgba(37,99,235,0.18)" stroke="var(--blue)" stroke-width="1.2"/>
+          <text x="202" y="13" font-family="JetBrains Mono, monospace" font-size="7" fill="var(--blue)" text-anchor="middle" font-weight="700">weight GB</text>
+          <text x="202" y="21" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--blue)" text-anchor="middle">fixed at startup</text>
+          <text x="120" y="44" font-family="JetBrains Mono, monospace" font-size="6.5" fill="var(--dim2)" text-anchor="middle">Loaded once — same cost for every request, regardless of volume</text>
+        </svg>
+        <div style="display:flex;flex-direction:column;gap:5px;font-family:var(--mono);font-size:9.5px;color:var(--muted);">
+          <div><span style="color:var(--blue);">→ </span>Number of parameters driven by L (layers) and d (hidden width)</div>
+          <div><span style="color:var(--blue);">→ </span>Precision: FP32 (4 B/param) · BF16 (2 B) · INT8 (1 B) · FP4 (0.5 B)</div>
+          <div><span style="color:var(--blue);">→ </span>Architecture: dense vs. MoE changes active parameter count per token</div>
+          <div style="border-top:1px solid var(--border);margin-top:4px;padding-top:6px;font-size:9px;color:var(--dim);line-height:1.5;">Llama 3 70B at BF16 = 140 GB. Needs two H100 SXM5 (80 GB each) at minimum — before any context at all.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bridge punchline -->
+    <div class="anim anim-3" style="background:linear-gradient(135deg,rgba(180,83,9,0.05),rgba(37,99,235,0.05));border:1px solid var(--border);border-radius:5px;padding:14px 20px;display:flex;align-items:center;gap:24px;">
+      <div style="flex:1;">
+        <div style="font-family:var(--mono);font-size:8.5px;color:var(--dim);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:6px;">The core deployment question</div>
+        <div style="font-family:var(--display);font-size:21px;color:var(--text);line-height:1.25;">Model weights and KV cache must both live in HBM simultaneously.<br><span style="color:var(--sw);">So: how do we size and configure a system to hold both?</span></div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0;font-family:var(--mono);font-size:9px;text-align:center;">
+        <div style="padding:4px 12px;border-radius:3px;background:rgba(180,83,9,0.10);color:var(--llm);border:1px solid rgba(180,83,9,0.25);">context (variable)</div>
+        <div style="font-size:18px;color:var(--dim);line-height:1.1;">+</div>
+        <div style="padding:4px 12px;border-radius:3px;background:rgba(37,99,235,0.10);color:var(--blue);border:1px solid rgba(37,99,235,0.25);">model weights (fixed)</div>
+        <div style="font-size:18px;color:var(--dim);line-height:1.1;">≤</div>
+        <div style="padding:4px 12px;border-radius:3px;background:rgba(13,148,136,0.10);color:var(--sw);border:1px solid var(--sw);font-weight:600;">available HBM</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+
 
 
 <!-- ═══════════════════════════════════════════════════════════
@@ -4607,7 +4713,7 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
 </div><!-- end deck -->
 
 <script>
-const slideOrder = ['s0','sD1','s1','s5','sDGX','sD2','s2','sEmb','sGenLoop','sModel','s6','sD3','s7','s8','sEcon','sWrap','s9','s10'];
+const slideOrder = ['s0','sD1','s1','s5','sDGX','sD2','s2','sEmb','sGenLoop','sModel','s6','sD3','sContextModel','s7','s8','sEcon','sWrap','s9','s10'];
 const SLIDES = slideOrder.map(id => document.getElementById(id)).filter(Boolean);
 const TOTAL  = SLIDES.length;
 let current  = 0;
