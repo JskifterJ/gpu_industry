@@ -1,0 +1,77 @@
+{
+  "metadata": {
+    "title": "Inference workloads could make up more than 40 percent of data center demand in 2030, growing 35 percent CAGR until 2030.",
+    "subtitle": "Global data center demand by workload, 2025–30",
+    "unit": "gigawatts",
+    "source": "McKinsey Data Center Demand Model",
+    "publisher": "McKinsey & Company",
+    "notes": [
+      "Includes all provider types.",
+      "¹Per annum."
+    ]
+  },
+  "cagr_2025_to_2030": {
+    "overall_total": "22%",
+    "by_workload": {
+      "ai_training": "22%",
+      "ai_inference": "35%",
+      "non_ai": "11%"
+    }
+  },
+  "data": [
+    {
+      "year": 2025,
+      "total_demand": 82.3,
+      "workload_breakdown": {
+        "non_ai": 38.3,
+        "ai_inference": 20.9,
+        "ai_training": 23.1
+      }
+    },
+    {
+      "year": 2026,
+      "total_demand": 102.8,
+      "workload_breakdown": {
+        "non_ai": 40.4,
+        "ai_inference": 31.2,
+        "ai_training": 31.2
+      }
+    },
+    {
+      "year": 2027,
+      "total_demand": 128.1,
+      "workload_breakdown": {
+        "non_ai": 44.9,
+        "ai_inference": 43.7,
+        "ai_training": 39.5
+      }
+    },
+    {
+      "year": 2028,
+      "total_demand": 152.6,
+      "workload_breakdown": {
+        "non_ai": 50.2,
+        "ai_inference": 56.3,
+        "ai_training": 46.1
+      }
+    },
+    {
+      "year": 2029,
+      "total_demand": 180.5,
+      "workload_breakdown": {
+        "non_ai": 56.2,
+        "ai_inference": 71.5,
+        "ai_training": 52.8
+      }
+    },
+    {
+      "year": 2030,
+      "total_demand": 219.0,
+      "workload_breakdown": {
+        "non_ai": 63.5,
+        "ai_inference": 93.3,
+        "ai_training": 62.2
+      }
+    }
+  ]
+}
