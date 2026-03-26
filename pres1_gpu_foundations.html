@@ -1097,7 +1097,7 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
         <div style="font-family:var(--mono);font-size:11px;background:var(--bg3);padding:6px 9px;border-radius:3px;margin-bottom:6px;min-height:30px;line-height:1.6;"><span id="sEmb-prompt-text"></span><span id="sEmb-cursor" style="display:inline-block;width:2px;height:12px;background:var(--llm);vertical-align:text-bottom;margin-left:1px;opacity:1;"></span></div>
         <div style="font-size:10px;color:var(--muted);line-height:1.55;">The model reads your prompt as context and must predict the next token.</div>
       </div>
-      <div class="card-sm" style="border-left:3px solid var(--sw);">
+      <div class="card-sm" id="sEmb-step1" style="border-left:3px solid var(--sw);">
         <div style="font-family:var(--mono);font-size:8px;letter-spacing:0.12em;text-transform:uppercase;color:var(--sw);margin-bottom:5px;">Step 1 · Tokenization</div>
         <!-- Prompt text with token-level color highlights -->
         <div style="font-family:var(--mono);font-size:10px;background:var(--bg3);padding:5px 7px;border-radius:3px;margin-bottom:5px;line-height:1.8;letter-spacing:0.01em;">
@@ -1119,7 +1119,7 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
         </div>
         <div style="font-size:9.5px;color:var(--muted);line-height:1.55;">Text → integer IDs from a ~128k vocabulary. Sub-words, not words.</div>
       </div>
-      <div class="card-sm" style="border-left:3px solid var(--hw);">
+      <div class="card-sm" id="sEmb-step2" style="border-left:3px solid var(--hw);">
         <div style="font-family:var(--mono);font-size:8px;letter-spacing:0.12em;text-transform:uppercase;color:var(--hw);margin-bottom:6px;">Step 2 · ID → embedding vector</div>
         <div style="font-family:var(--mono);font-size:8px;color:var(--text);background:var(--bg3);padding:6px 8px;border-radius:3px;margin-bottom:6px;line-height:1.5;">#4881 → [0.18, -0.44, 0.07, ...] (of 8,192 dims)</div>
         <div style="font-size:10px;color:var(--muted);line-height:1.55;">Each token gets a coordinate in high-dimensional meaning space.</div>
@@ -1565,24 +1565,49 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
       window.setEmb3dLayer(1, false);
     }, 100);
 
-    // ── Step 0 typewriter ──
+    
+    // ── Step 0 typewriter & sequenced reveals ──
     var SEMB_PROMPT_STR = '"The capital of France is ___"';
-    var sEmbTW = { timer: 10000, blinkTimer: null, pos: 0, blinkOn: true };
+    // We added "step" and "isTyping" to track our exact position in the animation sequence
+    var sEmbTW = { timer: null, blinkTimer: null, pos: 0, blinkOn: true, step: 0, isTyping: false };
+
+    function resetSEmbSteps() {
+      clearInterval(sEmbTW.timer);
+      clearInterval(sEmbTW.blinkTimer);
+      sEmbTW.pos = 0;
+      sEmbTW.step = 0;
+      sEmbTW.isTyping = false;
+      
+      var textEl = byId('sEmb-prompt-text');
+      if (textEl) textEl.textContent = '';
+      
+      var step1 = byId('sEmb-step1');
+      var step2 = byId('sEmb-step2');
+      if (step1) { step1.style.opacity = '0'; step1.style.transition = 'opacity 0.4s ease'; }
+      if (step2) { step2.style.opacity = '0'; step2.style.transition = 'opacity 0.4s ease'; }
+    }
 
     function sEmbRunTypewriter() {
       var el = byId('sEmb-prompt-text');
       var cur = byId('sEmb-cursor');
       if (!el) return;
+      
       clearInterval(sEmbTW.timer);
       clearInterval(sEmbTW.blinkTimer);
       el.textContent = '';
       sEmbTW.pos = 0;
-      if (cur) { cur.style.opacity = '1'; }
+      sEmbTW.isTyping = true; // Lock out the right-arrow while typing
+      if (cur) cur.style.opacity = '1'; 
+      
       sEmbTW.timer = setInterval(function() {
         if (sEmbTW.pos < SEMB_PROMPT_STR.length) {
           el.textContent = SEMB_PROMPT_STR.slice(0, ++sEmbTW.pos);
         } else {
+          // Typing finished
           clearInterval(sEmbTW.timer);
+          sEmbTW.isTyping = false;
+          sEmbTW.step = 1; // Advance our internal state so the NEXT right-click shows Step 1
+          
           sEmbTW.blinkTimer = setInterval(function() {
             if (cur) cur.style.opacity = (sEmbTW.blinkOn = !sEmbTW.blinkOn) ? '1' : '0';
           }, 530);
@@ -1593,15 +1618,53 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
     var sEmbSlideEl = byId('sEmb');
     if (sEmbSlideEl) {
       var sEmbTWObs = new MutationObserver(function() {
-        if (sEmbSlideEl.classList.contains('active')) {
-          setTimeout(sEmbRunTypewriter, 350);
+        if (!sEmbSlideEl.classList.contains('active')) {
+          resetSEmbSteps();
         } else {
-          clearInterval(sEmbTW.timer);
-          clearInterval(sEmbTW.blinkTimer);
+          resetSEmbSteps();
         }
       });
       sEmbTWObs.observe(sEmbSlideEl, { attributes: true, attributeFilter: ['class'] });
-      if (sEmbSlideEl.classList.contains('active')) setTimeout(sEmbRunTypewriter, 350);
+
+      resetSEmbSteps(); // Initial reset
+
+      // 2. Intercept Right Arrow to cycle through the steps
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight' && sEmbSlideEl.classList.contains('active')) {
+          
+          // If the typewriter is currently animating, ignore the arrow key completely
+          if (sEmbTW.isTyping) {
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+          }
+
+          // Step 0 -> Start typing
+          if (sEmbTW.step === 0) {
+            e.preventDefault();
+            e.stopPropagation();
+            sEmbRunTypewriter();
+          } 
+          // Step 1 -> Fade in the Tokenization card
+          else if (sEmbTW.step === 1) {
+            e.preventDefault();
+            e.stopPropagation();
+            var step1 = byId('sEmb-step1');
+            if (step1) step1.style.opacity = '1';
+            sEmbTW.step = 2; // Advance state
+          } 
+          // Step 2 -> Fade in the Embedding Vector card
+          else if (sEmbTW.step === 2) {
+            e.preventDefault();
+            e.stopPropagation();
+            var step2 = byId('sEmb-step2');
+            if (step2) step2.style.opacity = '1';
+            sEmbTW.step = 3; // Sequence complete!
+          }
+          // If step is 3, we do nothing and let the event pass through, 
+          // which allows your slide deck to move to Slide 6.
+        }
+      }, true); 
     }
   })();
   </script>
