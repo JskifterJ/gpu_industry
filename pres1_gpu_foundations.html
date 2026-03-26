@@ -647,16 +647,20 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
 
     <div class="anim anim-1">
       <div class="section-label">The GPU opportunity by workload</div>
-      <div style="font-family:var(--display);font-size:32px;color:var(--text);line-height:1.0;">One chip. Every AI workload.<br><span style="color:var(--sw);">Inference demand growing 35% CAGR through 2030.</span></div>
+      <div style="font-family:var(--display);font-size:24px;color:var(--text);line-height:1.0;">One chip. Every AI workload.<br><span style="color:var(--sw);">Inference demand growing 35% CAGR through 2030.</span></div>
     </div>
 
     <!-- McKinsey stacked bar chart -->
-    <div class="anim anim-2 card" style="padding:10px 14px;">
-      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">
-        <div class="card-title">Global data center demand by workload · GW · 2025–2030</div>
-        <div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">Source: McKinsey Data Center Demand Model</div>
+    <div class="anim anim-2 card" style="padding:6px 10px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;flex-wrap:wrap;gap:4px;">
+        <div id="s2-chart-title" class="card-title">Global data center demand by workload · GW · 2025–2030</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span id="s2-scenario-badge" style="font-family:var(--mono);font-size:6.5px;padding:2px 7px;border-radius:10px;background:rgba(100,116,139,0.12);color:var(--dim);border:1px solid var(--border);transition:all 0.4s ease;">McKinsey base case · press → for NVIDIA bullish</span>
+          <div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">Source: McKinsey / NVIDIA</div>
+        </div>
       </div>
-      <svg viewBox="0 0 580 148" style="width:100%;height:auto;display:block;" xmlns="http://www.w3.org/2000/svg">
+      <div style="position:relative;">
+      <svg id="s2-chart-base" viewBox="0 0 580 148" style="width:100%;height:auto;display:block;transition:opacity 0.5s ease;" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <marker id="cagr-arr-teal" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto" markerUnits="userSpaceOnUse">
             <path d="M0,0 L0,6 L6,3 Z" fill="#0d9488" opacity="0.8"/>
@@ -676,7 +680,7 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
           <line x1="44" y1="23" x2="394" y2="23"/>
         </g>
         <!-- Y-axis labels (GW) -->
-        <g font-family="JetBrains Mono, monospace" font-size="6.5" fill="var(--dim2)" text-anchor="end">
+        <g font-family="JetBrains Mono, monospace" font-size="5" fill="var(--dim2)" text-anchor="end">
           <text x="40" y="125">0</text>
           <text x="40" y="100">50</text>
           <text x="40" y="76">100</text>
@@ -691,89 +695,227 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
         <rect x="44" y="103.1" width="50" height="18.9" fill="#64748b" opacity="0.4"/>
         <rect x="44" y="91.7"  width="50" height="11.4" fill="#6366f1" opacity="0.75"/>
         <rect x="44" y="81.4"  width="50" height="10.3" fill="#0d9488" opacity="0.85"/>
-        <text x="69" y="133" font-family="JetBrains Mono, monospace" font-size="7" fill="var(--dim2)" text-anchor="middle">2025</text>
-        <text x="69" y="79"  font-family="JetBrains Mono, monospace" font-size="6" fill="var(--dim)" text-anchor="middle">82</text>
+        <text x="69" y="133" font-family="JetBrains Mono, monospace" font-size="5" fill="var(--dim2)" text-anchor="middle">2025</text>
+        <text x="69" y="79"  font-family="JetBrains Mono, monospace" font-size="5" fill="var(--dim)" text-anchor="middle">82</text>
 
         <!-- ── 2026 ── x=104, center=129 -->
         <rect x="104" y="102.1" width="50" height="19.9" fill="#64748b" opacity="0.4"/>
         <rect x="104" y="86.7"  width="50" height="15.4" fill="#6366f1" opacity="0.75"/>
         <rect x="104" y="71.3"  width="50" height="15.4" fill="#0d9488" opacity="0.85"/>
-        <text x="129" y="133" font-family="JetBrains Mono, monospace" font-size="7" fill="var(--dim2)" text-anchor="middle">2026</text>
-        <text x="129" y="69"  font-family="JetBrains Mono, monospace" font-size="6" fill="var(--dim)" text-anchor="middle">103</text>
+        <text x="129" y="133" font-family="JetBrains Mono, monospace" font-size="5" fill="var(--dim2)" text-anchor="middle">2026</text>
+        <text x="129" y="69"  font-family="JetBrains Mono, monospace" font-size="5" fill="var(--dim)" text-anchor="middle">103</text>
 
         <!-- ── 2027 ── x=164, center=189 -->
         <rect x="164" y="99.9" width="50" height="22.1" fill="#64748b" opacity="0.4"/>
         <rect x="164" y="80.4" width="50" height="19.5" fill="#6366f1" opacity="0.75"/>
         <rect x="164" y="58.9" width="50" height="21.5" fill="#0d9488" opacity="0.85"/>
-        <text x="189" y="133" font-family="JetBrains Mono, monospace" font-size="7" fill="var(--dim2)" text-anchor="middle">2027</text>
-        <text x="189" y="57"  font-family="JetBrains Mono, monospace" font-size="6" fill="var(--dim)" text-anchor="middle">128</text>
+        <text x="189" y="133" font-family="JetBrains Mono, monospace" font-size="5" fill="var(--dim2)" text-anchor="middle">2027</text>
+        <text x="189" y="57"  font-family="JetBrains Mono, monospace" font-size="5" fill="var(--dim)" text-anchor="middle">128</text>
 
         <!-- ── 2028 ── x=224, center=249 -->
         <rect x="224" y="97.2" width="50" height="24.8" fill="#64748b" opacity="0.4"/>
         <rect x="224" y="74.5" width="50" height="22.7" fill="#6366f1" opacity="0.75"/>
         <rect x="224" y="46.7" width="50" height="27.8" fill="#0d9488" opacity="0.85"/>
-        <text x="249" y="133" font-family="JetBrains Mono, monospace" font-size="7" fill="var(--dim2)" text-anchor="middle">2028</text>
-        <text x="249" y="45"  font-family="JetBrains Mono, monospace" font-size="6" fill="var(--dim)" text-anchor="middle">153</text>
+        <text x="249" y="133" font-family="JetBrains Mono, monospace" font-size="5" fill="var(--dim2)" text-anchor="middle">2028</text>
+        <text x="249" y="45"  font-family="JetBrains Mono, monospace" font-size="5" fill="var(--dim)" text-anchor="middle">153</text>
 
         <!-- ── 2029 ── x=284, center=309 -->
         <rect x="284" y="94.3" width="50" height="27.7" fill="#64748b" opacity="0.4"/>
         <rect x="284" y="68.3" width="50" height="26.0" fill="#6366f1" opacity="0.75"/>
         <rect x="284" y="33.0" width="50" height="35.3" fill="#0d9488" opacity="0.85"/>
-        <text x="309" y="133" font-family="JetBrains Mono, monospace" font-size="7" fill="var(--dim2)" text-anchor="middle">2029</text>
-        <text x="309" y="31"  font-family="JetBrains Mono, monospace" font-size="6" fill="var(--dim)" text-anchor="middle">181</text>
+        <text x="309" y="133" font-family="JetBrains Mono, monospace" font-size="5" fill="var(--dim2)" text-anchor="middle">2029</text>
+        <text x="309" y="31"  font-family="JetBrains Mono, monospace" font-size="5" fill="var(--dim)" text-anchor="middle">181</text>
 
         <!-- ── 2030 ── x=344, center=369 (highlighted) -->
         <rect x="344" y="90.7" width="50" height="31.3" fill="#64748b" opacity="0.5"/>
         <rect x="344" y="60.0" width="50" height="30.7" fill="#6366f1" opacity="0.85"/>
         <rect x="344" y="14.0" width="50" height="46.0" fill="#0d9488" opacity="0.92"/>
         <rect x="344" y="14.0" width="50" height="108" fill="none" stroke="#0d9488" stroke-width="1.5" stroke-dasharray="3 2" opacity="0.5"/>
-        <text x="369" y="133" font-family="JetBrains Mono, monospace" font-size="7" fill="var(--dim)" text-anchor="middle" font-weight="600">2030</text>
-        <text x="369" y="12"  font-family="JetBrains Mono, monospace" font-size="6.5" fill="var(--sw)" text-anchor="middle" font-weight="700">219 GW</text>
+        <text x="369" y="133" font-family="JetBrains Mono, monospace" font-size="5" fill="var(--dim)" text-anchor="middle" font-weight="600">2030</text>
+        <text x="369" y="12"  font-family="JetBrains Mono, monospace" font-size="5" fill="var(--sw)" text-anchor="middle" font-weight="700">219 GW</text>
 
         <!-- ── CAGR growth arrows 2025→2030 ── -->
         <!-- Inference (teal): top-center 2025 → top-center 2030 -->
         <line x1="69" y1="81.4" x2="340" y2="16.2" stroke="#0d9488" stroke-width="0.9" stroke-dasharray="3.5 2.5" opacity="0.55" marker-end="url(#cagr-arr-teal)"/>
         <rect x="191" y="43.5" width="29" height="11" rx="5.5" fill="var(--bg2)" stroke="#0d9488" stroke-width="0.8"/>
-        <text x="205.5" y="51.5" font-family="JetBrains Mono, monospace" font-size="7" fill="#0d9488" text-anchor="middle" font-weight="700">+35%</text>
+        <text x="205.5" y="51.5" font-family="JetBrains Mono, monospace" font-size="5" fill="#0d9488" text-anchor="middle" font-weight="700">+35%</text>
 
         <!-- Training (indigo): top-center 2025 → top-center 2030 -->
         <line x1="69" y1="91.7" x2="340" y2="61.7" stroke="#6366f1" stroke-width="0.9" stroke-dasharray="3.5 2.5" opacity="0.55" marker-end="url(#cagr-arr-indigo)"/>
         <rect x="191" y="71.2" width="29" height="11" rx="5.5" fill="var(--bg2)" stroke="#6366f1" stroke-width="0.8"/>
-        <text x="205.5" y="79.2" font-family="JetBrains Mono, monospace" font-size="7" fill="#6366f1" text-anchor="middle" font-weight="700">+22%</text>
+        <text x="205.5" y="79.2" font-family="JetBrains Mono, monospace" font-size="5" fill="#6366f1" text-anchor="middle" font-weight="700">+22%</text>
 
         <!-- Non-AI (gray): top-center 2025 → top-center 2030 -->
         <line x1="69" y1="103.1" x2="340" y2="91.5" stroke="#64748b" stroke-width="0.9" stroke-dasharray="3.5 2.5" opacity="0.45" marker-end="url(#cagr-arr-gray)"/>
         <rect x="191" y="92.3" width="29" height="11" rx="5.5" fill="var(--bg2)" stroke="#64748b" stroke-width="0.8"/>
-        <text x="205.5" y="100.3" font-family="JetBrains Mono, monospace" font-size="7" fill="#64748b" text-anchor="middle" font-weight="700">+11%</text>
+        <text x="205.5" y="100.3" font-family="JetBrains Mono, monospace" font-size="5" fill="#64748b" text-anchor="middle" font-weight="700">+11%</text>
 
         <!-- ── CAGR PANEL (right) ── x=415–575 -->
-        <text x="415" y="22" font-family="JetBrains Mono, monospace" font-size="7" fill="var(--dim)" letter-spacing="0.5">CAGR 2025→2030¹</text>
+        <text x="415" y="22" font-family="JetBrains Mono, monospace" font-size="5" fill="var(--dim)" letter-spacing="0.5">CAGR 2025→2030¹</text>
 
         <!-- AI Inference -->
         <rect x="415" y="30" width="8" height="8" rx="1" fill="#0d9488" opacity="0.85"/>
-        <text x="427" y="38" font-family="JetBrains Mono, monospace" font-size="7" fill="var(--muted)">AI Inference</text>
-        <text x="575" y="38" font-family="JetBrains Mono, monospace" font-size="10" fill="#0d9488" font-weight="700" text-anchor="end">35%</text>
+        <text x="427" y="38" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--muted)">AI Inference</text>
+        <text x="575" y="38" font-family="JetBrains Mono, monospace" font-size="6" fill="#0d9488" font-weight="700" text-anchor="end">35%</text>
 
         <!-- AI Training -->
         <rect x="415" y="48" width="8" height="8" rx="1" fill="#6366f1" opacity="0.85"/>
-        <text x="427" y="56" font-family="JetBrains Mono, monospace" font-size="7" fill="var(--muted)">AI Training</text>
-        <text x="575" y="56" font-family="JetBrains Mono, monospace" font-size="10" fill="#6366f1" font-weight="700" text-anchor="end">22%</text>
+        <text x="427" y="56" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--muted)">AI Training</text>
+        <text x="575" y="56" font-family="JetBrains Mono, monospace" font-size="6" fill="#6366f1" font-weight="700" text-anchor="end">22%</text>
 
         <!-- Non-AI -->
         <rect x="415" y="66" width="8" height="8" rx="1" fill="#64748b" opacity="0.6"/>
-        <text x="427" y="74" font-family="JetBrains Mono, monospace" font-size="7" fill="var(--muted)">Non-AI</text>
-        <text x="575" y="74" font-family="JetBrains Mono, monospace" font-size="10" fill="var(--dim)" font-weight="700" text-anchor="end">11%</text>
+        <text x="427" y="74" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--muted)">Non-AI</text>
+        <text x="575" y="74" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--dim)" font-weight="700" text-anchor="end">11%</text>
 
         <!-- Divider + total -->
         <line x1="415" y1="83" x2="578" y2="83" stroke="var(--border)" stroke-width="0.8"/>
-        <text x="427" y="94" font-family="JetBrains Mono, monospace" font-size="7" fill="var(--muted)">Overall total</text>
-        <text x="575" y="94" font-family="JetBrains Mono, monospace" font-size="10" fill="var(--text)" font-weight="700" text-anchor="end">22%</text>
+        <text x="427" y="94" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--muted)">Overall total</text>
+        <text x="575" y="94" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--text)" font-weight="700" text-anchor="end">22%</text>
 
         <!-- Note -->
-        <text x="415" y="110" font-family="JetBrains Mono, monospace" font-size="6.5" fill="var(--dim2)">¹Per annum.</text>
-        <text x="415" y="120" font-family="JetBrains Mono, monospace" font-size="6.5" fill="var(--dim2)">Inference &gt;40% of demand</text>
-        <text x="415" y="129" font-family="JetBrains Mono, monospace" font-size="6.5" fill="var(--dim2)">by 2030.</text>
+        <text x="415" y="110" font-family="JetBrains Mono, monospace" font-size="5" fill="var(--dim2)">¹Per annum.</text>
+        <text x="415" y="120" font-family="JetBrains Mono, monospace" font-size="5" fill="var(--dim2)">Inference &gt;40% of demand</text>
+        <text x="415" y="129" font-family="JetBrains Mono, monospace" font-size="5" fill="var(--dim2)">by 2030.</text>
       </svg>
+
+      <!-- ── NVIDIA Bullish scenario SVG (hidden by default, fades in on right-arrow) ── -->
+      <!-- Scale: 350 GW max; 1 GW = 0.3086 px; y_baseline = 122 -->
+      <!-- Inference 55% CAGR · Training 28% · Non-AI 11% -->
+      <svg id="s2-chart-bull" viewBox="0 0 580 148" style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;transition:opacity 0.5s ease;" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="bull-arr-teal" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto" markerUnits="userSpaceOnUse">
+            <path d="M0,0 L0,6 L6,3 Z" fill="#0d9488" opacity="0.9"/>
+          </marker>
+          <marker id="bull-arr-indigo" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto" markerUnits="userSpaceOnUse">
+            <path d="M0,0 L0,6 L6,3 Z" fill="#6366f1" opacity="0.8"/>
+          </marker>
+          <marker id="bull-arr-gray" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto" markerUnits="userSpaceOnUse">
+            <path d="M0,0 L0,6 L6,3 Z" fill="#64748b" opacity="0.7"/>
+          </marker>
+        </defs>
+        <!-- Y-axis grid lines -->
+        <g stroke="var(--border)" stroke-width="0.6" opacity="0.5">
+          <line x1="44" y1="91" x2="394" y2="91"/>
+          <line x1="44" y1="60" x2="394" y2="60"/>
+          <line x1="44" y1="29" x2="394" y2="29"/>
+        </g>
+        <!-- Y-axis labels (0–350 GW) -->
+        <g font-family="JetBrains Mono, monospace" font-size="5" fill="var(--dim2)" text-anchor="end">
+          <text x="40" y="125">0</text>
+          <text x="40" y="94">100</text>
+          <text x="40" y="63">200</text>
+          <text x="40" y="32">300 GW</text>
+        </g>
+        <!-- Axis lines -->
+        <line x1="44" y1="14" x2="44" y2="122" stroke="var(--border)" stroke-width="0.8"/>
+        <line x1="44" y1="122" x2="394" y2="122" stroke="var(--border)" stroke-width="0.8"/>
+
+        <!-- McKinsey baseline ghost (re-projected on 350 GW scale) -->
+        <polyline points="69,96.6 129,90.3 189,82.5 249,74.9 309,66.3 369,54.4"
+          fill="none" stroke="var(--dim2)" stroke-width="1" stroke-dasharray="4 3" opacity="0.55"/>
+        <text x="390" y="53" font-family="JetBrains Mono, monospace" font-size="5" fill="var(--dim2)">McKinsey</text>
+        <text x="390" y="60" font-family="JetBrains Mono, monospace" font-size="5" fill="var(--dim2)">219 GW</text>
+
+        <!-- ── 2025 (same actuals, re-scaled) ── -->
+        <rect x="44" y="110.2" width="50" height="11.8" fill="#64748b" opacity="0.4"/>
+        <rect x="44" y="103.1" width="50" height="7.1"  fill="#6366f1" opacity="0.75"/>
+        <rect x="44" y="96.6"  width="50" height="6.5"  fill="#0d9488" opacity="0.85"/>
+        <text x="69" y="133" font-family="JetBrains Mono, monospace" font-size="5" fill="var(--dim2)" text-anchor="middle">2025</text>
+        <text x="69" y="94"   font-family="JetBrains Mono, monospace" font-size="5" fill="var(--dim)" text-anchor="middle">82</text>
+
+        <!-- ── 2026 ── -->
+        <rect x="104" y="108.9" width="50" height="13.1" fill="#64748b" opacity="0.4"/>
+        <rect x="104" y="99.8"  width="50" height="9.1"  fill="#6366f1" opacity="0.75"/>
+        <rect x="104" y="89.8"  width="50" height="10.0" fill="#0d9488" opacity="0.85"/>
+        <text x="129" y="133" font-family="JetBrains Mono, monospace" font-size="5" fill="var(--dim2)" text-anchor="middle">2026</text>
+        <text x="129" y="88"  font-family="JetBrains Mono, monospace" font-size="5" fill="var(--dim)" text-anchor="middle">105</text>
+
+        <!-- ── 2027 ── -->
+        <rect x="164" y="107.4" width="50" height="14.6" fill="#64748b" opacity="0.4"/>
+        <rect x="164" y="95.7"  width="50" height="11.7" fill="#6366f1" opacity="0.75"/>
+        <rect x="164" y="80.2"  width="50" height="15.5" fill="#0d9488" opacity="0.85"/>
+        <text x="189" y="133" font-family="JetBrains Mono, monospace" font-size="5" fill="var(--dim2)" text-anchor="middle">2027</text>
+        <text x="189" y="78"  font-family="JetBrains Mono, monospace" font-size="5" fill="var(--dim)" text-anchor="middle">135</text>
+
+        <!-- ── 2028 ── -->
+        <rect x="224" y="105.8" width="50" height="16.2" fill="#64748b" opacity="0.4"/>
+        <rect x="224" y="90.8"  width="50" height="15.0" fill="#6366f1" opacity="0.75"/>
+        <rect x="224" y="66.8"  width="50" height="24.0" fill="#0d9488" opacity="0.85"/>
+        <text x="249" y="133" font-family="JetBrains Mono, monospace" font-size="5" fill="var(--dim2)" text-anchor="middle">2028</text>
+        <text x="249" y="65"  font-family="JetBrains Mono, monospace" font-size="5" fill="var(--dim)" text-anchor="middle">179</text>
+
+        <!-- ── 2029 ── -->
+        <rect x="284" y="104.0" width="50" height="18.0" fill="#64748b" opacity="0.4"/>
+        <rect x="284" y="84.8"  width="50" height="19.2" fill="#6366f1" opacity="0.75"/>
+        <rect x="284" y="47.6"  width="50" height="37.2" fill="#0d9488" opacity="0.85"/>
+        <text x="309" y="133" font-family="JetBrains Mono, monospace" font-size="5" fill="var(--dim2)" text-anchor="middle">2029</text>
+        <text x="309" y="46"  font-family="JetBrains Mono, monospace" font-size="5" fill="var(--dim)" text-anchor="middle">241</text>
+
+        <!-- ── 2030 (highlighted) ── -->
+        <rect x="344" y="102.1" width="50" height="19.9" fill="#64748b" opacity="0.5"/>
+        <rect x="344" y="77.6"  width="50" height="24.5" fill="#6366f1" opacity="0.85"/>
+        <rect x="344" y="19.9"  width="50" height="57.7" fill="#0d9488" opacity="0.92"/>
+        <rect x="344" y="19.9"  width="50" height="102.1" fill="none" stroke="#0d9488" stroke-width="1.5" stroke-dasharray="3 2" opacity="0.5"/>
+        <text x="369" y="133" font-family="JetBrains Mono, monospace" font-size="5" fill="var(--dim)" text-anchor="middle" font-weight="600">2030</text>
+        <text x="369" y="17"  font-family="JetBrains Mono, monospace" font-size="5" fill="#0d9488" text-anchor="middle" font-weight="700">331 GW</text>
+
+        <!-- CAGR growth arrows -->
+        <line x1="69" y1="96.6" x2="340" y2="21.6" stroke="#0d9488" stroke-width="0.9" stroke-dasharray="3.5 2.5" opacity="0.6" marker-end="url(#bull-arr-teal)"/>
+        <rect x="185" y="52" width="32" height="11" rx="5.5" fill="var(--bg2)" stroke="#0d9488" stroke-width="0.8"/>
+        <text x="201" y="60" font-family="JetBrains Mono, monospace" font-size="5" fill="#0d9488" text-anchor="middle" font-weight="700">+55%</text>
+
+        <line x1="69" y1="103.1" x2="340" y2="78.3" stroke="#6366f1" stroke-width="0.9" stroke-dasharray="3.5 2.5" opacity="0.55" marker-end="url(#bull-arr-indigo)"/>
+        <rect x="185" y="87" width="32" height="11" rx="5.5" fill="var(--bg2)" stroke="#6366f1" stroke-width="0.8"/>
+        <text x="201" y="95" font-family="JetBrains Mono, monospace" font-size="5" fill="#6366f1" text-anchor="middle" font-weight="700">+28%</text>
+
+        <line x1="69" y1="110.2" x2="340" y2="102.8" stroke="#64748b" stroke-width="0.9" stroke-dasharray="3.5 2.5" opacity="0.45" marker-end="url(#bull-arr-gray)"/>
+        <rect x="185" y="105" width="32" height="11" rx="5.5" fill="var(--bg2)" stroke="#64748b" stroke-width="0.8"/>
+        <text x="201" y="113" font-family="JetBrains Mono, monospace" font-size="5" fill="#64748b" text-anchor="middle" font-weight="700">+11%</text>
+
+        <!-- CAGR comparison panel -->
+        <text x="415" y="18" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--dim)" letter-spacing="0.4">CAGR comparison</text>
+        <text x="500" y="18" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--dim2)" text-anchor="end">Base</text>
+        <text x="578" y="18" font-family="JetBrains Mono, monospace" font-size="6" fill="#0d9488" text-anchor="end" font-weight="600">Bullish</text>
+
+        <rect x="415" y="25" width="7" height="7" rx="1" fill="#0d9488" opacity="0.85"/>
+        <text x="425" y="32" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--muted)">AI Inference</text>
+        <text x="500" y="32" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--dim2)" font-weight="600" text-anchor="end">35%</text>
+        <text x="510" y="32" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--dim2)">→</text>
+        <text x="578" y="32" font-family="JetBrains Mono, monospace" font-size="6" fill="#0d9488" font-weight="700" text-anchor="end">55%</text>
+
+        <rect x="415" y="40" width="7" height="7" rx="1" fill="#6366f1" opacity="0.85"/>
+        <text x="425" y="47" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--muted)">AI Training</text>
+        <text x="500" y="47" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--dim2)" font-weight="600" text-anchor="end">22%</text>
+        <text x="510" y="47" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--dim2)">→</text>
+        <text x="578" y="47" font-family="JetBrains Mono, monospace" font-size="6" fill="#6366f1" font-weight="700" text-anchor="end">28%</text>
+
+        <rect x="415" y="55" width="7" height="7" rx="1" fill="#64748b" opacity="0.6"/>
+        <text x="425" y="62" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--muted)">Non-AI</text>
+        <text x="500" y="62" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--dim2)" font-weight="600" text-anchor="end">11%</text>
+        <text x="510" y="62" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--dim2)">→</text>
+        <text x="578" y="62" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--dim)" font-weight="700" text-anchor="end">11%</text>
+
+        <line x1="415" y1="70" x2="578" y2="70" stroke="var(--border)" stroke-width="0.8"/>
+
+        <text x="425" y="80" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--muted)">Total (2030)</text>
+        <text x="500" y="80" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--dim2)" font-weight="600" text-anchor="end">219 GW</text>
+        <text x="510" y="80" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--dim2)">→</text>
+        <text x="578" y="80" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--sw)" font-weight="700" text-anchor="end">331 GW</text>
+
+        <rect x="415" y="86" width="7" height="7" rx="1" fill="#0d9488" opacity="0.85"/>
+        <text x="425" y="93" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--muted)">Inference only</text>
+        <text x="500" y="93" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--dim2)" font-weight="600" text-anchor="end">93 GW</text>
+        <text x="510" y="93" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--dim2)">→</text>
+        <text x="578" y="93" font-family="JetBrains Mono, monospace" font-size="6" fill="#0d9488" font-weight="700" text-anchor="end">187 GW</text>
+        <text x="578" y="103" font-family="JetBrains Mono, monospace" font-size="6" fill="#0d9488" text-anchor="end">(+100%)</text>
+
+        <line x1="415" y1="109" x2="578" y2="109" stroke="var(--border)" stroke-width="0.8"/>
+        <text x="415" y="117" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--dim2)">Assumes: agentic AI, sovereign build-outs,</text>
+        <text x="415" y="126" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--dim2)">continuous model scaling + test-time compute.</text>
+        <text x="415" y="135" font-family="JetBrains Mono, monospace" font-size="6" fill="var(--dim2)">Press ← to return to McKinsey base case.</text>
+      </svg>
+      </div><!-- end position:relative wrapper -->
     </div>
 
     <!-- Use-case grid — 3 columns -->
@@ -1425,7 +1567,7 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
 
     // ── Step 0 typewriter ──
     var SEMB_PROMPT_STR = '"The capital of France is ___"';
-    var sEmbTW = { timer: null, blinkTimer: null, pos: 0, blinkOn: true };
+    var sEmbTW = { timer: 10000, blinkTimer: null, pos: 0, blinkOn: true };
 
     function sEmbRunTypewriter() {
       var el = byId('sEmb-prompt-text');
@@ -4403,10 +4545,6 @@ details.expand .drop{padding:12px 16px;font-size:11.5px;color:var(--muted);line-
             <div class="link-card-title">Inference Compute Deep Dive · v10</div>
             <div class="link-card-desc">The full technical explainer: memory math, batching behaviour, pipeline internals, MFU charts. The most comprehensive walkthrough.</div>
           </a>
-          <a href="https://jskifterj.github.io/gpu_industry/learning_inference_business_red_thread_v1.html" target="_blank" class="link-card">
-            <div class="link-card-title">Inference Red Thread Deck</div>
-            <div class="link-card-desc">Business-first narrative: workload mix → infrastructure choices → MFU → cost per output token.</div>
-          </a>
           <a href="https://jskifterj.github.io/gpu_industry/learning_stack_inference_matrix.html" target="_blank" class="link-card">
             <div class="link-card-title">Stack × Inference Matrix</div>
             <div class="link-card-desc">Cross-reference of every stack layer vs inference stage. See which software owns what.</div>
@@ -4507,6 +4645,8 @@ updateSlideCounters();
 
 function goTo(n) {
   if (n < 0 || n >= TOTAL) return;
+  // Reset s2 bullish step when leaving that slide
+  if (SLIDES[current] && SLIDES[current].id === 's2') s2ShowStep(0);
   SLIDES[current].classList.remove('active');
   SLIDES[current].classList.add('prev');
   if (n < current) {
@@ -4535,9 +4675,50 @@ function goTo(n) {
 
 function navigate(dir) { goTo(current + dir); }
 
+// ── Slide s2: NVIDIA bullish scenario step ──
+var s2Step = 0;
+function s2ShowStep(n) {
+  s2Step = n;
+  var base  = document.getElementById('s2-chart-base');
+  var bull  = document.getElementById('s2-chart-bull');
+  var badge = document.getElementById('s2-scenario-badge');
+  if (!base || !bull) return;
+  if (n === 0) {
+    base.style.opacity = '1';
+    bull.style.opacity = '0';
+    if (badge) {
+      badge.textContent = 'McKinsey base case · press → for NVIDIA bullish';
+      badge.style.background = 'rgba(100,116,139,0.12)';
+      badge.style.color = 'var(--dim)';
+      badge.style.borderColor = 'var(--border)';
+    }
+  } else {
+    base.style.opacity = '0';
+    bull.style.opacity = '1';
+    if (badge) {
+      badge.textContent = 'NVIDIA Bullish Scenario · press ← for McKinsey base';
+      badge.style.background = 'rgba(13,148,136,0.12)';
+      badge.style.color = '#0d9488';
+      badge.style.borderColor = '#0d9488';
+    }
+  }
+}
+function s2StepForward() {
+  if (SLIDES[current] && SLIDES[current].id === 's2' && s2Step < 1) {
+    s2ShowStep(1); return true;
+  }
+  return false;
+}
+function s2StepBack() {
+  if (SLIDES[current] && SLIDES[current].id === 's2' && s2Step > 0) {
+    s2ShowStep(0); return true;
+  }
+  return false;
+}
+
 document.addEventListener('keydown', e => {
-  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') navigate(1);
-  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   navigate(-1);
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { if (!s2StepForward()) navigate(1); }
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   { if (!s2StepBack())    navigate(-1); }
 });
 
 // Swipe support
