@@ -294,12 +294,21 @@ html.light .hm-pill.limited{background:rgba(194,65,12,.08);color:#c2410c;}
 .cmi-star-badge{font-family:var(--mono);font-size:7px;background:rgba(16,185,129,.15);color:#059669;border:1px solid rgba(16,185,129,.3);border-radius:2px;padding:1px 5px;letter-spacing:.04em;}
 .cmi-method-note{margin-top:10px;padding:8px 12px;border-radius:5px;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);font-size:10px;color:var(--muted);line-height:1.5;}
 /* ── COMPETITIVE SPACE SLIDE ── */
-.cs-wrap{display:flex;flex:1;flex-direction:column;padding:6px 44px 0;overflow-y:auto;}
-.cs-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;}
-.cs-legend{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
-.cs-leg-item{display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:8px;color:var(--dim);}
-.cs-leg-dot{width:10px;height:10px;border-radius:50%;}
-#cs-canvas{width:100%;flex:1;display:block;}
+.cs-wrap{display:flex;flex:1;flex-direction:column;padding:6px 44px 4px;overflow:hidden;}
+.cs-ctrl-bar{display:flex;align-items:center;gap:5px;padding:2px 0 6px;flex-shrink:0;flex-wrap:wrap;}
+.cs-btn{font-family:var(--mono);font-size:8px;padding:2px 10px;border-radius:3px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;letter-spacing:.05em;transition:all .15s;}
+.cs-btn:hover{border-color:var(--h);color:var(--h);}
+.cs-btn.cs-btn-active{background:var(--h);color:#fff;border-color:var(--h);}
+.cs-sel-wrap{display:flex;align-items:center;gap:3px;}
+.cs-sel-lbl{font-family:var(--mono);font-size:7.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;}
+.cs-sel{font-family:var(--mono);font-size:8px;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:1px 4px;border-radius:3px;cursor:pointer;outline:none;}
+.cs-sep{width:1px;height:14px;background:var(--border);margin:0 2px;flex-shrink:0;}
+.cs-leg-inline{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-left:auto;}
+.cs-leg-item{display:flex;align-items:center;gap:4px;font-family:var(--mono);font-size:7.5px;color:var(--dim);}
+.cs-leg-dot{width:9px;height:9px;border-radius:50%;}
+.cs-canvas-wrap{flex:1;position:relative;min-height:0;}
+#cs-canvas{width:100%;height:100%;display:block;cursor:default;}
+#cs-tooltip{position:fixed;pointer-events:none;display:none;background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:6px 10px;font-family:var(--mono);font-size:8.5px;color:var(--text);line-height:1.65;z-index:9999;max-width:210px;}
 .tier-legend{display:flex;flex-direction:column;gap:6px;margin-top:4px;}
 .tier-leg-row{display:flex;align-items:center;gap:10px;}
 .tier-leg-badge{font-family:var(--mono);font-size:9px;font-weight:700;padding:3px 9px;border-radius:3px;min-width:70px;text-align:center;}
@@ -1722,27 +1731,27 @@ details[open].co-expand summary::before{content:'▾';}
 <!-- ══ S17 — COMPETITIVE SPACE ══ -->
 <div class="slide" id="s17">
   <div class="slide-chrome">
-    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Competitive Space · Score vs Orchestration</div></div>
+    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title" id="cs-slide-title">Competitive Space</div></div>
     <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
   </div>
   <div class="cs-wrap">
-    <div class="cs-head">
-      <div>
-        <div style="font-size:12px;color:var(--muted);line-height:1.5;max-width:580px;">Each bubble is a provider. <strong style="color:var(--text);">X axis</strong> = total ClusterMAX score (overall quality). <strong style="color:var(--text);">Y axis</strong> = orchestration score — the dimension SemiAnalysis identifies as the primary differentiator. Color indicates tier.</div>
-      </div>
-      <div class="cs-legend">
-        <div class="cs-leg-item"><div class="cs-leg-dot" style="background:rgba(226,195,107,0.9);border:2px solid #b8960a;"></div>Platinum</div>
-        <div class="cs-leg-item"><div class="cs-leg-dot" style="background:rgba(245,158,11,0.7);border:2px solid #d97706;"></div>Gold</div>
-        <div class="cs-leg-item"><div class="cs-leg-dot" style="background:rgba(148,163,184,0.7);border:2px solid #64748b;"></div>Silver</div>
-        <div class="cs-leg-item"><div class="cs-leg-dot" style="background:rgba(184,115,51,0.6);border:2px solid #92400e;"></div>Bronze</div>
-        <div style="width:1px;height:14px;background:var(--border);margin:0 4px;"></div>
-        <div class="cs-leg-item"><div style="width:10px;height:10px;border-radius:2px;background:rgba(99,102,241,.15);border:2px solid #6366f1;"></div>Hyperscaler</div>
-        <div class="cs-leg-item"><div style="width:10px;height:10px;border-radius:50%;background:rgba(16,185,129,.15);border:2px solid #10b981;"></div>Neocloud</div>
-        <div class="cs-leg-item"><div style="width:10px;height:10px;border-radius:50%;background:rgba(168,85,247,.15);border:2px solid #a855f7;"></div>Orchestrator</div>
-        <div class="cs-leg-item"><div style="width:10px;height:10px;border-radius:50%;background:rgba(245,158,11,.15);border:2px solid #f59e0b;"></div>Aggregator</div>
-      </div>
+    <div class="cs-ctrl-bar">
+      <button class="cs-btn cs-btn-active" id="cs-btn-2d" onclick="setCSMode('2d')">2D</button>
+      <button class="cs-btn" id="cs-btn-3d" onclick="setCSMode('3d')">3D</button>
+      <div class="cs-sep"></div>
+      <div class="cs-sel-wrap"><span class="cs-sel-lbl">X</span><select class="cs-sel" id="cs-x-sel"></select></div>
+      <div class="cs-sel-wrap"><span class="cs-sel-lbl">Y</span><select class="cs-sel" id="cs-y-sel"></select></div>
+      <div class="cs-sel-wrap" id="cs-z-wrap" style="display:none;"><span class="cs-sel-lbl">Z</span><select class="cs-sel" id="cs-z-sel"></select></div>
+      <div class="cs-sep"></div>
+      <div class="cs-sel-wrap"><span class="cs-sel-lbl">Color</span><select class="cs-sel" id="cs-color-sel"><option value="tier">Tier</option><option value="model">Business Model</option></select></div>
+      <div class="cs-sep"></div>
+      <div id="cs-leg-inline" class="cs-leg-inline"></div>
     </div>
-    <canvas id="cs-canvas" style="flex:1;width:100%;"></canvas>
+    <div class="cs-canvas-wrap">
+      <canvas id="cs-canvas"></canvas>
+      <div id="cs-tooltip"></div>
+      <div id="cs-3d-hint" style="display:none;position:absolute;bottom:8px;right:12px;font-family:var(--mono);font-size:7.5px;color:var(--dim);pointer-events:none;letter-spacing:.04em;">drag to rotate · scroll to zoom</div>
+    </div>
   </div>
 </div>
 
@@ -1931,7 +1940,7 @@ const SCORES={
 function cwColor(){return document.documentElement.classList.contains('light')?'#334155':'#94a3b8';}
 
 function renderRadarsForSlide(n){
-  if(n===16){ renderCompetitiveSpace(); return; }
+  if(n===16){ initCSControls(); renderCompetitiveSpace(); return; }
   if(n===7){
     radar('radar-gcp',    SCORES.gcp,    document.documentElement.classList.contains('light')?'#065f46':'#10b981',CRIT);
     radar('radar-oracle', SCORES.oracle, document.documentElement.classList.contains('light')?'#92400e':'#f59e0b',CRIT);
@@ -2017,157 +2026,367 @@ function go(n,direct){
 }
 
 // ── COMPETITIVE SPACE CANVAS ────────────────────────────
-const CS_PROVIDERS=[
-  {id:'coreweave', mono:'CW', score:46, orch:5, tier:'platinum', model:'Neocloud'},
-  {id:'oracle',    mono:'OR', score:39, orch:4, tier:'gold',     model:'Hyperscaler'},
-  {id:'nebius',    mono:'NB', score:37, orch:4, tier:'gold',     model:'Neocloud'},
-  {id:'gcp',       mono:'GCP',score:36, orch:5, tier:'silver',   model:'Hyperscaler'},
-  {id:'fluidstack',mono:'FS', score:36, orch:4, tier:'gold',     model:'Neocloud'},
-  {id:'together',  mono:'TG', score:31, orch:4, tier:'silver',   model:'Orchestrator'},
-  {id:'lambda',    mono:'LM', score:30, orch:3, tier:'silver',   model:'Orchestrator'},
-  {id:'aws',       mono:'AWS',score:29, orch:2, tier:'silver',   model:'Hyperscaler'},
-  {id:'azure',     mono:'AZ', score:34, orch:3, tier:'gold',     model:'Hyperscaler'},
-  {id:'lightningai',mono:'LA',score:22, orch:3, tier:'bronze',   model:'Orchestrator'},
-  {id:'shadeform', mono:'SF', score:24, orch:1, tier:'bronze',   model:'Aggregator'},
-  {id:'runpod',    mono:'RP', score:20, orch:1, tier:'bronze',   model:'Aggregator'},
-  {id:'vastai',    mono:'VA', score:20, orch:1, tier:'bronze',   model:'Aggregator'},
+const CS_ALL=[
+  {id:'coreweave',   name:'CoreWeave',      mono:'CW',  tier:'platinum',model:'Neocloud',    scores:{Security:5,Lifecycle:5,Orchestration:5,Storage:5,Networking:5,Reliability:5,Monitoring:5,Pricing:2,Partnerships:5,Availability:4}},
+  {id:'nebius',      name:'Nebius',         mono:'NB',  tier:'gold',    model:'Neocloud',    scores:{Security:3,Lifecycle:4,Orchestration:4,Storage:4,Networking:4,Reliability:4,Monitoring:3,Pricing:4,Partnerships:3,Availability:4}},
+  {id:'oracle',      name:'Oracle',         mono:'OR',  tier:'gold',    model:'Hyperscaler', scores:{Security:4,Lifecycle:3,Orchestration:4,Storage:4,Networking:3,Reliability:4,Monitoring:3,Pricing:4,Partnerships:5,Availability:5}},
+  {id:'azure',       name:'Azure',          mono:'AZ',  tier:'gold',    model:'Hyperscaler', scores:{Security:5,Lifecycle:3,Orchestration:3,Storage:4,Networking:4,Reliability:3,Monitoring:3,Pricing:2,Partnerships:4,Availability:3}},
+  {id:'fluidstack',  name:'FluidStack',     mono:'FS',  tier:'gold',    model:'Neocloud',    scores:{Security:3,Lifecycle:4,Orchestration:4,Storage:3,Networking:4,Reliability:3,Monitoring:4,Pricing:4,Partnerships:4,Availability:3}},
+  {id:'crusoe',      name:'Crusoe',         mono:'CR',  tier:'gold',    model:'Neocloud',    scores:{Security:3,Lifecycle:3,Orchestration:2,Storage:3,Networking:3,Reliability:3,Monitoring:3,Pricing:3,Partnerships:4,Availability:4}},
+  {id:'gcp',         name:'Google Cloud',   mono:'GCP', tier:'silver',  model:'Hyperscaler', scores:{Security:4,Lifecycle:3,Orchestration:5,Storage:4,Networking:3,Reliability:3,Monitoring:4,Pricing:2,Partnerships:4,Availability:4}},
+  {id:'aws',         name:'AWS',            mono:'AWS', tier:'silver',  model:'Hyperscaler', scores:{Security:4,Lifecycle:1,Orchestration:2,Storage:4,Networking:2,Reliability:3,Monitoring:2,Pricing:2,Partnerships:4,Availability:5}},
+  {id:'together',    name:'Together.ai',    mono:'TG',  tier:'silver',  model:'Orchestrator',scores:{Security:3,Lifecycle:3,Orchestration:4,Storage:3,Networking:3,Reliability:2,Monitoring:3,Pricing:4,Partnerships:3,Availability:3}},
+  {id:'lambda',      name:'Lambda',         mono:'LM',  tier:'silver',  model:'Neocloud',    scores:{Security:3,Lifecycle:2,Orchestration:3,Storage:3,Networking:3,Reliability:3,Monitoring:2,Pricing:3,Partnerships:4,Availability:4}},
+  {id:'scaleway',    name:'Scaleway',       mono:'SC',  tier:'silver',  model:'Neocloud',    scores:{Security:3,Lifecycle:3,Orchestration:2,Storage:2,Networking:3,Reliability:3,Monitoring:3,Pricing:3,Partnerships:2,Availability:2}},
+  {id:'gcore',       name:'GCORE',          mono:'GC',  tier:'silver',  model:'Neocloud',    scores:{Security:4,Lifecycle:3,Orchestration:3,Storage:3,Networking:3,Reliability:3,Monitoring:1,Pricing:3,Partnerships:3,Availability:3}},
+  {id:'vultr',       name:'Vultr',          mono:'VL',  tier:'silver',  model:'Neocloud',    scores:{Security:2,Lifecycle:3,Orchestration:2,Storage:3,Networking:3,Reliability:2,Monitoring:2,Pricing:3,Partnerships:4,Availability:4}},
+  {id:'voltagep',    name:'Voltage Park',   mono:'VP',  tier:'silver',  model:'Neocloud',    scores:{Security:2,Lifecycle:3,Orchestration:3,Storage:3,Networking:3,Reliability:2,Monitoring:1,Pricing:5,Partnerships:2,Availability:2}},
+  {id:'datacrunch',  name:'DataCrunch',     mono:'DC',  tier:'bronze',  model:'Neocloud',    scores:{Security:3,Lifecycle:3,Orchestration:4,Storage:3,Networking:3,Reliability:2,Monitoring:3,Pricing:4,Partnerships:2,Availability:3}},
+  {id:'tensorwave',  name:'TensorWave',     mono:'TW',  tier:'bronze',  model:'Neocloud',    scores:{Security:2,Lifecycle:2,Orchestration:2,Storage:2,Networking:2,Reliability:1,Monitoring:1,Pricing:3,Partnerships:4,Availability:2}},
+  {id:'buzz',        name:'BUZZ HPC',       mono:'BZ',  tier:'bronze',  model:'Neocloud',    scores:{Security:2,Lifecycle:2,Orchestration:1,Storage:1,Networking:1,Reliability:1,Monitoring:1,Pricing:3,Partnerships:2,Availability:2}},
+  {id:'qubrid',      name:'Qubrid AI',      mono:'QB',  tier:'bronze',  model:'Aggregator',  scores:{Security:2,Lifecycle:2,Orchestration:1,Storage:2,Networking:2,Reliability:2,Monitoring:1,Pricing:2,Partnerships:2,Availability:2}},
+  {id:'gmi',         name:'GMI',            mono:'GM',  tier:'bronze',  model:'Neocloud',    scores:{Security:3,Lifecycle:1,Orchestration:1,Storage:2,Networking:3,Reliability:1,Monitoring:1,Pricing:3,Partnerships:2,Availability:2}},
+  {id:'stn',         name:'STN',            mono:'ST',  tier:'bronze',  model:'Neocloud',    scores:{Security:2,Lifecycle:1,Orchestration:1,Storage:2,Networking:2,Reliability:1,Monitoring:1,Pricing:2,Partnerships:2,Availability:2}},
+  {id:'primeintellect',name:'Prime Intellect',mono:'PI',tier:'bronze',  model:'Aggregator',  scores:{Security:2,Lifecycle:3,Orchestration:2,Storage:2,Networking:2,Reliability:2,Monitoring:1,Pricing:3,Partnerships:2,Availability:2}},
+  {id:'neysa',       name:'Neysa',          mono:'NY',  tier:'bronze',  model:'Neocloud',    scores:{Security:1,Lifecycle:2,Orchestration:1,Storage:2,Networking:2,Reliability:1,Monitoring:1,Pricing:3,Partnerships:2,Availability:2}},
+  {id:'hyperstack',  name:'Hyperstack',     mono:'HS',  tier:'bronze',  model:'Neocloud',    scores:{Security:2,Lifecycle:2,Orchestration:1,Storage:2,Networking:2,Reliability:1,Monitoring:1,Pricing:3,Partnerships:2,Availability:2}},
+  {id:'atlascloud',  name:'Atlas Cloud',    mono:'AC',  tier:'bronze',  model:'Neocloud',    scores:{Security:1,Lifecycle:1,Orchestration:1,Storage:1,Networking:1,Reliability:1,Monitoring:1,Pricing:2,Partnerships:1,Availability:1}},
+  {id:'shadeform',   name:'Shadeform',      mono:'SHD', tier:'bronze',  model:'Aggregator',  scores:{Security:2,Lifecycle:3,Orchestration:1,Storage:1,Networking:2,Reliability:2,Monitoring:1,Pricing:4,Partnerships:4,Availability:4}},
+  {id:'runpod',      name:'RunPod',         mono:'RP',  tier:'bronze',  model:'Aggregator',  scores:{Security:1,Lifecycle:2,Orchestration:1,Storage:1,Networking:2,Reliability:1,Monitoring:1,Pricing:4,Partnerships:3,Availability:4}},
+  {id:'digitalocean',name:'DigitalOcean',   mono:'DO',  tier:'bronze',  model:'Hyperscaler', scores:{Security:2,Lifecycle:1,Orchestration:1,Storage:1,Networking:1,Reliability:1,Monitoring:1,Pricing:3,Partnerships:2,Availability:1}},
+  {id:'ibmcloud',    name:'IBM Cloud',      mono:'IBM', tier:'bronze',  model:'Hyperscaler', scores:{Security:3,Lifecycle:1,Orchestration:1,Storage:2,Networking:2,Reliability:1,Monitoring:1,Pricing:2,Partnerships:3,Availability:1}},
+  {id:'hotaisle',    name:'Hot Aisle',      mono:'HA',  tier:'bronze',  model:'Neocloud',    scores:{Security:1,Lifecycle:1,Orchestration:1,Storage:1,Networking:1,Reliability:1,Monitoring:1,Pricing:3,Partnerships:1,Availability:1}},
+  {id:'vastai',      name:'Vast.ai',        mono:'VA',  tier:'bronze',  model:'Aggregator',  scores:{Security:1,Lifecycle:2,Orchestration:1,Storage:1,Networking:1,Reliability:1,Monitoring:1,Pricing:5,Partnerships:3,Availability:4}},
+  {id:'cudocompute', name:'CUDO Compute',   mono:'CD',  tier:'bronze',  model:'Aggregator',  scores:{Security:3,Lifecycle:3,Orchestration:1,Storage:2,Networking:2,Reliability:2,Monitoring:1,Pricing:3,Partnerships:2,Availability:3}},
+  {id:'lightningai', name:'Lightning.ai',   mono:'LA',  tier:'bronze',  model:'Orchestrator',scores:{Security:2,Lifecycle:3,Orchestration:3,Storage:2,Networking:2,Reliability:2,Monitoring:2,Pricing:2,Partnerships:2,Availability:2}},
+  {id:'latitudesh',  name:'Latitude.sh',    mono:'LS',  tier:'bronze',  model:'Neocloud',    scores:{Security:2,Lifecycle:2,Orchestration:1,Storage:1,Networking:2,Reliability:1,Monitoring:1,Pricing:3,Partnerships:2,Availability:2}},
+  {id:'denvr',       name:'Denvr',          mono:'DV',  tier:'bronze',  model:'Neocloud',    scores:{Security:1,Lifecycle:1,Orchestration:1,Storage:1,Networking:1,Reliability:1,Monitoring:1,Pricing:2,Partnerships:1,Availability:1}},
 ];
+CS_ALL.forEach(p=>{ p.total=Object.values(p.scores).reduce((a,b)=>a+b,0); });
+
 const CS_TIER_COLORS={
   platinum:{fill:'rgba(226,195,107,0.22)',stroke:'#b8960a',text:'#92700a'},
-  gold:    {fill:'rgba(245,158,11,0.18)', stroke:'#d97706',text:'#92400e'},
-  silver:  {fill:'rgba(148,163,184,0.18)',stroke:'#64748b',text:'#475569'},
+  gold:    {fill:'rgba(245,158,11,0.20)', stroke:'#d97706',text:'#92400e'},
+  silver:  {fill:'rgba(148,163,184,0.20)',stroke:'#64748b',text:'#475569'},
   bronze:  {fill:'rgba(184,115,51,0.18)', stroke:'#92400e',text:'#7c2d12'},
 };
-const CS_MODEL_SHAPES={
-  Hyperscaler:'square', Neocloud:'circle', Orchestrator:'circle', Aggregator:'circle'
+const CS_MODEL_COLORS={
+  Hyperscaler: {fill:'rgba(99,102,241,0.20)', stroke:'#6366f1',text:'#4338ca'},
+  Neocloud:    {fill:'rgba(16,185,129,0.18)', stroke:'#10b981',text:'#047857'},
+  Orchestrator:{fill:'rgba(168,85,247,0.18)', stroke:'#a855f7',text:'#7c3aed'},
+  Aggregator:  {fill:'rgba(245,158,11,0.18)', stroke:'#f59e0b',text:'#b45309'},
 };
-const CS_MODEL_BORDER={
-  Hyperscaler:'#6366f1', Neocloud:'#10b981', Orchestrator:'#a855f7', Aggregator:'#f59e0b'
-};
+
+let csMode='2d';
+let csColorBy='tier';
+let csRotX=22, csRotY=32, csZoom=1;
+let csDrag=null;
+let csInitialized=false;
+let csBubbles=[];
+
+function csGetVal(p,dim){ return dim==='Total' ? p.total : (p.scores[dim]||0); }
+function csGetColor(p){ return csColorBy==='tier' ? CS_TIER_COLORS[p.tier] : CS_MODEL_COLORS[p.model]; }
+
+function updateCSLegend(){
+  const el=document.getElementById('cs-leg-inline');
+  if(!el) return;
+  if(csColorBy==='tier'){
+    const tiers=[['platinum','rgba(226,195,107,.9)','#b8960a'],['gold','rgba(245,158,11,.7)','#d97706'],['silver','rgba(148,163,184,.7)','#64748b'],['bronze','rgba(184,115,51,.6)','#92400e']];
+    el.innerHTML=tiers.map(([t,bg,bd])=>
+      `<div class="cs-leg-item"><div class="cs-leg-dot" style="background:${bg};border:2px solid ${bd};"></div>${t[0].toUpperCase()+t.slice(1)}</div>`
+    ).join('');
+  } else {
+    const models=[['Hyperscaler','#6366f1','rgba(99,102,241,.15)','2px'],['Neocloud','#10b981','rgba(16,185,129,.15)','50%'],['Orchestrator','#a855f7','rgba(168,85,247,.15)','50%'],['Aggregator','#f59e0b','rgba(245,158,11,.15)','50%']];
+    el.innerHTML=models.map(([m,bd,bg,r])=>
+      `<div class="cs-leg-item"><div style="width:9px;height:9px;border-radius:${r};background:${bg};border:2px solid ${bd};"></div>${m}</div>`
+    ).join('');
+  }
+}
+
+function setCSMode(mode){
+  csMode=mode;
+  document.getElementById('cs-btn-2d').classList.toggle('cs-btn-active',mode==='2d');
+  document.getElementById('cs-btn-3d').classList.toggle('cs-btn-active',mode==='3d');
+  const zWrap=document.getElementById('cs-z-wrap');
+  const hint=document.getElementById('cs-3d-hint');
+  if(zWrap) zWrap.style.display=mode==='3d'?'flex':'none';
+  if(hint) hint.style.display=mode==='3d'?'block':'none';
+  const canvas=document.getElementById('cs-canvas');
+  if(canvas) canvas.style.cursor=mode==='3d'?'grab':'default';
+  updateCSTitle();
+  renderCompetitiveSpace();
+}
+
+function updateCSTitle(){
+  const el=document.getElementById('cs-slide-title');
+  if(!el) return;
+  const xS=document.getElementById('cs-x-sel');
+  const yS=document.getElementById('cs-y-sel');
+  const zS=document.getElementById('cs-z-sel');
+  const xL=xS?xS.value:'Total', yL=yS?yS.value:'Orchestration';
+  if(csMode==='3d'){
+    const zL=zS?zS.value:'Pricing';
+    el.textContent=`Competitive Space · ${xL} × ${yL} × ${zL}`;
+  } else {
+    el.textContent=`Competitive Space · ${xL} vs ${yL}`;
+  }
+}
+
+function initCSControls(){
+  if(csInitialized) return;
+  csInitialized=true;
+  const dims=['Total','Security','Lifecycle','Orchestration','Storage','Networking','Reliability','Monitoring','Pricing','Partnerships','Availability'];
+  ['cs-x-sel','cs-y-sel','cs-z-sel'].forEach((sid,i)=>{
+    const sel=document.getElementById(sid);
+    if(!sel) return;
+    dims.forEach(d=>{
+      const o=document.createElement('option');
+      o.value=d; o.textContent=d;
+      if(i===0&&d==='Total') o.selected=true;
+      if(i===1&&d==='Orchestration') o.selected=true;
+      if(i===2&&d==='Pricing') o.selected=true;
+      sel.appendChild(o);
+    });
+    sel.addEventListener('change',()=>{ updateCSTitle(); renderCompetitiveSpace(); });
+  });
+  const colorSel=document.getElementById('cs-color-sel');
+  if(colorSel) colorSel.addEventListener('change',e=>{ csColorBy=e.target.value; updateCSLegend(); renderCompetitiveSpace(); });
+  updateCSLegend();
+  updateCSTitle();
+
+  const canvas=document.getElementById('cs-canvas');
+  if(!canvas) return;
+  canvas.addEventListener('mousedown',e=>{
+    if(csMode!=='3d') return;
+    csDrag={sx:e.clientX,sy:e.clientY,rx:csRotX,ry:csRotY};
+    canvas.style.cursor='grabbing';
+  });
+  window.addEventListener('mousemove',e=>{
+    if(!csDrag) return;
+    csRotY=csDrag.ry+(e.clientX-csDrag.sx)*0.45;
+    csRotX=Math.max(-65,Math.min(80,csDrag.rx+(e.clientY-csDrag.sy)*0.45));
+    renderCompetitiveSpace();
+  });
+  window.addEventListener('mouseup',()=>{
+    if(csDrag){ csDrag=null; if(csMode==='3d') canvas.style.cursor='grab'; }
+  });
+  canvas.addEventListener('wheel',e=>{
+    if(csMode!=='3d') return;
+    e.preventDefault();
+    csZoom=Math.max(0.35,Math.min(3.2,csZoom*(e.deltaY<0?1.08:0.93)));
+    renderCompetitiveSpace();
+  },{passive:false});
+  canvas.addEventListener('mousemove',e=>{
+    const rect=canvas.getBoundingClientRect();
+    const scaleX=canvas.width/rect.width, scaleY=canvas.height/rect.height;
+    const dpr=window.devicePixelRatio||1;
+    const mx=(e.clientX-rect.left)*scaleX/dpr;
+    const my=(e.clientY-rect.top)*scaleY/dpr;
+    csHandleHover(mx,my,e.clientX,e.clientY);
+  });
+  canvas.addEventListener('mouseleave',()=>{
+    const tt=document.getElementById('cs-tooltip');
+    if(tt) tt.style.display='none';
+  });
+}
+
+function csHandleHover(mx,my,cx,cy){
+  const tt=document.getElementById('cs-tooltip');
+  if(!tt) return;
+  let hit=null;
+  for(const b of csBubbles){
+    if((mx-b.x)*(mx-b.x)+(my-b.y)*(my-b.y)<=b.r*b.r){ hit=b.p; break; }
+  }
+  if(hit){
+    const scoreRows=Object.entries(hit.scores).map(([k,v])=>`${k}: ${v}/5`).join('<br>');
+    tt.innerHTML=`<strong>${hit.name}</strong><br>${hit.tier[0].toUpperCase()+hit.tier.slice(1)} · ${hit.model}<br>Total: ${hit.total}/50<br><span style="color:var(--dim);">──────────</span><br>${scoreRows}`;
+    tt.style.display='block';
+    const W=window.innerWidth,H=window.innerHeight,tw=tt.offsetWidth,th=tt.offsetHeight;
+    let tx=cx+14,ty=cy-th/2;
+    if(tx+tw>W-10) tx=cx-tw-14;
+    if(ty<8) ty=8;
+    if(ty+th>H-8) ty=H-th-8;
+    tt.style.left=tx+'px'; tt.style.top=ty+'px';
+  } else {
+    tt.style.display='none';
+  }
+}
+
+function csRoundRect(ctx,x,y,w,h,r){
+  ctx.moveTo(x+r,y);
+  ctx.lineTo(x+w-r,y); ctx.arcTo(x+w,y,x+w,y+r,r);
+  ctx.lineTo(x+w,y+h-r); ctx.arcTo(x+w,y+h,x+w-r,y+h,r);
+  ctx.lineTo(x+r,y+h); ctx.arcTo(x,y+h,x,y+h-r,r);
+  ctx.lineTo(x,y+r); ctx.arcTo(x,y,x+r,y,r);
+  ctx.closePath();
+}
 
 function renderCompetitiveSpace(){
   const canvas=document.getElementById('cs-canvas');
   if(!canvas) return;
-  const isLight=document.documentElement.classList.contains('light');
-  const dpr=window.devicePixelRatio||1;
-  const W=canvas.clientWidth, H=canvas.clientHeight;
+  const wrap=canvas.parentElement;
+  const W=wrap.clientWidth, H=wrap.clientHeight;
   if(W<10||H<10) return;
+  const dpr=window.devicePixelRatio||1;
   canvas.width=W*dpr; canvas.height=H*dpr;
   const ctx=canvas.getContext('2d');
   ctx.scale(dpr,dpr);
+  csBubbles=[];
+  if(csMode==='3d') drawCS3D(ctx,W,H);
+  else drawCS2D(ctx,W,H);
+}
 
-  const pad={t:30,r:30,b:50,l:58};
+function drawCS2D(ctx,W,H){
+  const xDim=document.getElementById('cs-x-sel')?.value||'Total';
+  const yDim=document.getElementById('cs-y-sel')?.value||'Orchestration';
+  const isLight=document.documentElement.classList.contains('light');
+  const dim   =isLight?'rgba(0,0,0,0.15)':'rgba(200,215,230,0.15)';
+  const dim2  =isLight?'rgba(0,0,0,0.40)':'rgba(200,215,230,0.55)';
+  const muted =isLight?'rgba(30,40,60,0.40)':'rgba(200,215,230,0.40)';
+
+  const pad={t:22,r:20,b:46,l:52};
   const pw=W-pad.l-pad.r, ph=H-pad.t-pad.b;
 
-  const xMin=15,xMax=50,yMin=0.5,yMax=5.5;
-  function toX(v){ return pad.l + (v-xMin)/(xMax-xMin)*pw; }
-  function toY(v){ return pad.t + ph - (v-yMin)/(yMax-yMin)*ph; }
+  const xIsTotal=xDim==='Total', yIsTotal=yDim==='Total';
+  const xMin=xIsTotal?7:0.5, xMax=xIsTotal?52:5.5;
+  const yMin=yIsTotal?7:0.5, yMax=yIsTotal?52:5.5;
+  const toX=v=>pad.l+(v-xMin)/(xMax-xMin)*pw;
+  const toY=v=>pad.t+ph-(v-yMin)/(yMax-yMin)*ph;
 
-  const dim  = isLight?'rgba(0,0,0,0.22)':'rgba(200,215,230,0.22)';
-  const dim2 = isLight?'rgba(0,0,0,0.40)':'rgba(200,215,230,0.55)';
-  const mutedText = isLight?'rgba(30,40,60,0.55)':'rgba(200,215,230,0.55)';
-  const bgFill = isLight?'rgba(99,102,241,0.04)':'rgba(99,102,241,0.04)';
-
-  // Grid lines
+  // Grid
   ctx.strokeStyle=dim; ctx.lineWidth=0.5;
-  for(let x=15;x<=50;x+=5){
-    ctx.beginPath(); ctx.moveTo(toX(x),pad.t); ctx.lineTo(toX(x),pad.t+ph); ctx.stroke();
-  }
-  for(let y=1;y<=5;y++){
-    ctx.beginPath(); ctx.moveTo(pad.l,toY(y)); ctx.lineTo(pad.l+pw,toY(y)); ctx.stroke();
-  }
-
-  // Quadrant background shading
-  const qX=toX(32), qY=toY(3);
-  ctx.fillStyle=isLight?'rgba(16,185,129,0.04)':'rgba(16,185,129,0.05)';
-  ctx.fillRect(qX,pad.t,pw-(qX-pad.l),qY-pad.t); // top-right: high score + high orch
-  ctx.fillStyle=isLight?'rgba(239,68,68,0.03)':'rgba(239,68,68,0.04)';
-  ctx.fillRect(pad.l,qY,qX-pad.l,ph-(qY-pad.t)); // bottom-left: low score + low orch
-
-  // Quadrant labels
-  ctx.font=`italic 9px var(--mono, monospace)`; ctx.fillStyle=mutedText;
-  ctx.fillText('Premium performance', toX(36), pad.t+14);
-  ctx.fillText('Budget / experimental', pad.l+6, pad.t+ph-6);
+  const xTicks=xIsTotal?[10,15,20,25,30,35,40,45,50]:[1,2,3,4,5];
+  const yTicks=yIsTotal?[10,15,20,25,30,35,40,45,50]:[1,2,3,4,5];
+  xTicks.forEach(x=>{ ctx.beginPath();ctx.moveTo(toX(x),pad.t);ctx.lineTo(toX(x),pad.t+ph);ctx.stroke(); });
+  yTicks.forEach(y=>{ ctx.beginPath();ctx.moveTo(pad.l,toY(y));ctx.lineTo(pad.l+pw,toY(y));ctx.stroke(); });
 
   // Axes
   ctx.strokeStyle=dim2; ctx.lineWidth=1;
-  ctx.beginPath(); ctx.moveTo(pad.l,pad.t); ctx.lineTo(pad.l,pad.t+ph); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(pad.l,pad.t+ph); ctx.lineTo(pad.l+pw,pad.t+ph); ctx.stroke();
+  ctx.beginPath();ctx.moveTo(pad.l,pad.t);ctx.lineTo(pad.l,pad.t+ph);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(pad.l,pad.t+ph);ctx.lineTo(pad.l+pw,pad.t+ph);ctx.stroke();
+
+  // Tick labels
+  ctx.font='600 8px var(--mono,monospace)'; ctx.fillStyle=dim2; ctx.textAlign='center';
+  xTicks.forEach(x=>ctx.fillText(x,toX(x),pad.t+ph+13));
+  ctx.textAlign='right';
+  yTicks.forEach(y=>ctx.fillText(y,pad.l-5,toY(y)+3.5));
 
   // Axis labels
-  ctx.font=`600 9px var(--mono, monospace)`; ctx.fillStyle=dim2; ctx.textAlign='center';
-  for(let x=15;x<=50;x+=5){
-    ctx.fillText(x, toX(x), pad.t+ph+16);
-  }
-  ctx.fillText('Total ClusterMAX Score →', pad.l+pw/2, pad.t+ph+30);
+  ctx.textAlign='center';
+  ctx.fillText(xDim+' →',pad.l+pw/2,pad.t+ph+30);
+  ctx.save();ctx.translate(12,pad.t+ph/2);ctx.rotate(-Math.PI/2);
+  ctx.fillText(yDim+' →',0,0);ctx.restore();
 
-  ctx.save(); ctx.translate(pad.l-42, pad.t+ph/2); ctx.rotate(-Math.PI/2);
-  ctx.fillText('Orchestration Score →', 0, 0);
-  ctx.restore();
-  ctx.textAlign='right';
-  for(let y=1;y<=5;y++){
-    ctx.fillText(y, pad.l-8, toY(y)+4);
-  }
-
-  // Draw providers
-  const R=16;
-  CS_PROVIDERS.forEach(p=>{
-    const x=toX(p.score), y=toY(p.orch);
-    const tc=CS_TIER_COLORS[p.tier];
-    const modelBorder=CS_MODEL_BORDER[p.model];
-    const isSquare=CS_MODEL_SHAPES[p.model]==='square';
+  // Bubbles
+  const R=12;
+  CS_ALL.forEach(p=>{
+    const x=toX(csGetVal(p,xDim)), y=toY(csGetVal(p,yDim));
+    const tc=csGetColor(p), isSquare=p.model==='Hyperscaler';
+    csBubbles.push({x,y,r:R+5,p});
 
     ctx.save();
-    // Outer model-type border ring
-    ctx.strokeStyle=modelBorder; ctx.lineWidth=2; ctx.globalAlpha=0.4;
+    ctx.strokeStyle=CS_MODEL_COLORS[p.model].stroke; ctx.lineWidth=1.5; ctx.globalAlpha=0.3;
     ctx.beginPath();
-    if(isSquare){
-      const ro=R+3, rr=5;
-      ctx.moveTo(x-ro+rr,y-ro);ctx.lineTo(x+ro-rr,y-ro);ctx.arcTo(x+ro,y-ro,x+ro,y-ro+rr,rr);
-      ctx.lineTo(x+ro,y+ro-rr);ctx.arcTo(x+ro,y+ro,x+ro-rr,y+ro,rr);
-      ctx.lineTo(x-ro+rr,y+ro);ctx.arcTo(x-ro,y+ro,x-ro,y+ro-rr,rr);
-      ctx.lineTo(x-ro,y-ro+rr);ctx.arcTo(x-ro,y-ro,x-ro+rr,y-ro,rr);
-      ctx.closePath();
-    } else {
-      ctx.arc(x,y,R+3,0,Math.PI*2);
-    }
-    ctx.stroke();
-    ctx.globalAlpha=1;
+    if(isSquare) csRoundRect(ctx,x-(R+3),y-(R+3),(R+3)*2,(R+3)*2,5);
+    else ctx.arc(x,y,R+3,0,Math.PI*2);
+    ctx.stroke(); ctx.globalAlpha=1;
 
-    // Bubble fill
     ctx.fillStyle=tc.fill; ctx.strokeStyle=tc.stroke; ctx.lineWidth=1.5;
     ctx.beginPath();
-    if(isSquare){
-      const r2=4;
-      ctx.moveTo(x-R+r2,y-R);ctx.lineTo(x+R-r2,y-R);ctx.arcTo(x+R,y-R,x+R,y-R+r2,r2);
-      ctx.lineTo(x+R,y+R-r2);ctx.arcTo(x+R,y+R,x+R-r2,y+R,r2);
-      ctx.lineTo(x-R+r2,y+R);ctx.arcTo(x-R,y+R,x-R,y+R-r2,r2);
-      ctx.lineTo(x-R,y-R+r2);ctx.arcTo(x-R,y-R,x-R+r2,y-R,r2);
-      ctx.closePath();
-    } else {
-      ctx.arc(x,y,R,0,Math.PI*2);
-    }
+    if(isSquare) csRoundRect(ctx,x-R,y-R,R*2,R*2,4);
+    else ctx.arc(x,y,R,0,Math.PI*2);
     ctx.fill(); ctx.stroke();
 
-    // Monogram
     ctx.fillStyle=tc.text; ctx.textAlign='center';
-    ctx.font=`700 ${p.mono.length>2?7.5:9}px var(--mono, monospace)`;
-    ctx.fillText(p.mono, x, y+3.5);
+    ctx.font=`700 ${p.mono.length>2?6.5:8}px var(--mono,monospace)`;
+    ctx.fillText(p.mono,x,y+3);
     ctx.restore();
   });
 
-  // Score annotations on hover is not feasible on canvas without event listeners here,
-  // so show provider names offset from their bubbles
-  CS_PROVIDERS.forEach(p=>{
-    const x=toX(p.score), y=toY(p.orch);
-    ctx.font='8.5px var(--sans, sans-serif)';
-    ctx.fillStyle=dim2; ctx.textAlign='center';
-    // Position label above bubble, with tier badge color
-    const tc=CS_TIER_COLORS[p.tier];
-    ctx.fillStyle=tc.text;
-    // Smart label placement to avoid overlap
-    const labelY = (p.orch>=4) ? y-R-5 : y+R+11;
-    ctx.fillText(p.id==='lightningai'?'Lightning.ai':p.id.charAt(0).toUpperCase()+p.id.slice(1), x, labelY);
+  // Name labels (above or below based on y position)
+  const midY=pad.t+ph/2;
+  CS_ALL.forEach(p=>{
+    const x=toX(csGetVal(p,xDim)), y=toY(csGetVal(p,yDim));
+    const tc=csGetColor(p);
+    ctx.font='7px var(--sans,sans-serif)'; ctx.fillStyle=muted; ctx.textAlign='center';
+    ctx.fillText(p.name, x, y<midY ? y-R-3 : y+R+9);
+  });
+}
+
+function drawCS3D(ctx,W,H){
+  const xDim=document.getElementById('cs-x-sel')?.value||'Total';
+  const yDim=document.getElementById('cs-y-sel')?.value||'Orchestration';
+  const zDim=document.getElementById('cs-z-sel')?.value||'Pricing';
+  const isLight=document.documentElement.classList.contains('light');
+  const dim2=isLight?'rgba(0,0,0,0.32)':'rgba(200,215,230,0.38)';
+
+  const cx=W/2, cy=H/2;
+  const scale=Math.min(W,H)*0.34*csZoom;
+  const rx=csRotX*Math.PI/180, ry=csRotY*Math.PI/180;
+
+  function normVal(p,dim){
+    const v=csGetVal(p,dim);
+    const isT=dim==='Total';
+    return (v-(isT?8:1))/((isT?50:5)-(isT?8:1));
+  }
+  function project(nx,ny,nz){
+    const x3=nx-0.5, y3=ny-0.5, z3=nz-0.5;
+    const x2=x3*Math.cos(ry)+z3*Math.sin(ry);
+    const z2=-x3*Math.sin(ry)+z3*Math.cos(ry);
+    const y2=y3*Math.cos(rx)-z2*Math.sin(rx);
+    const z3f=y3*Math.sin(rx)+z2*Math.cos(rx);
+    const fov=2.8, pz=z3f+fov;
+    return {px:cx+x2*scale/pz, py:cy-y2*scale/pz, depth:pz};
+  }
+
+  // Axes
+  ctx.strokeStyle=dim2; ctx.lineWidth=1;
+  ctx.font='600 8px var(--mono,monospace)'; ctx.fillStyle=dim2;
+  [[1,0,0,xDim],[0,1,0,yDim],[0,0,1,zDim]].forEach(([ax,ay,az,lbl])=>{
+    const p0=project(0,0,0), p1=project(ax,ay,az);
+    ctx.beginPath();ctx.moveTo(p0.px,p0.py);ctx.lineTo(p1.px,p1.py);ctx.stroke();
+    const ex=p1.px+(p1.px-p0.px)*0.12, ey=p1.py+(p1.py-p0.py)*0.12;
+    ctx.textAlign='center'; ctx.fillText(lbl+' →',ex,ey);
+  });
+
+  // Grid lines on floor (y=0 plane)
+  ctx.strokeStyle=isLight?'rgba(0,0,0,0.08)':'rgba(200,215,230,0.08)'; ctx.lineWidth=0.5;
+  for(let i=0;i<=4;i++){
+    const t=i/4;
+    const p0=project(t,0,0), p1=project(t,0,1);
+    ctx.beginPath();ctx.moveTo(p0.px,p0.py);ctx.lineTo(p1.px,p1.py);ctx.stroke();
+    const q0=project(0,0,t), q1=project(1,0,t);
+    ctx.beginPath();ctx.moveTo(q0.px,q0.py);ctx.lineTo(q1.px,q1.py);ctx.stroke();
+  }
+
+  // Sort by depth (painter's algorithm)
+  const sorted=CS_ALL
+    .map(p=>({p, proj:project(normVal(p,xDim),normVal(p,yDim),normVal(p,zDim))}))
+    .sort((a,b)=>b.proj.depth-a.proj.depth);
+
+  const R=10;
+  sorted.forEach(({p,proj})=>{
+    const {px,py}=proj;
+    const tc=csGetColor(p), isSquare=p.model==='Hyperscaler';
+    csBubbles.push({x:px,y:py,r:R+5,p});
+
+    ctx.save();
+    ctx.strokeStyle=CS_MODEL_COLORS[p.model].stroke; ctx.lineWidth=1.5; ctx.globalAlpha=0.28;
+    ctx.beginPath();
+    if(isSquare) csRoundRect(ctx,px-(R+3),py-(R+3),(R+3)*2,(R+3)*2,5);
+    else ctx.arc(px,py,R+3,0,Math.PI*2);
+    ctx.stroke(); ctx.globalAlpha=1;
+
+    ctx.fillStyle=tc.fill; ctx.strokeStyle=tc.stroke; ctx.lineWidth=1.5;
+    ctx.beginPath();
+    if(isSquare) csRoundRect(ctx,px-R,py-R,R*2,R*2,4);
+    else ctx.arc(px,py,R,0,Math.PI*2);
+    ctx.fill(); ctx.stroke();
+
+    ctx.fillStyle=tc.text; ctx.textAlign='center';
+    ctx.font=`700 ${p.mono.length>2?6.5:8}px var(--mono,monospace)`;
+    ctx.fillText(p.mono,px,py+3);
+    ctx.restore();
   });
 }
 
