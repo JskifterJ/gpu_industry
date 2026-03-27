@@ -782,6 +782,14 @@ table.stk td.grp-border-l{border-left:2px solid var(--border-ll)!important;}
         <select id="space-z" class="space-sel" onchange="renderSpacePlot()"></select>
       </div>
 
+        <div class="space-ctrl">
+          <label class="space-lbl" for="space-legend-mode">Legend/Color by</label>
+          <select id="space-legend-mode" class="space-sel" onchange="renderSpacePlot()">
+            <option value="tier">ClusterMAX Category</option>
+            <option value="model">Business Model</option>
+          </select>
+        </div>
+
       <div class="space-hint" id="space-hint"></div>
     </div>
 
@@ -1733,6 +1741,30 @@ const SPACE_TIER_COLOR = {
   bronze:'#d97706'
 };
 
+// Business model color palette (plain, clear, accessible)
+const SPACE_MODEL_COLOR = {
+  Hyperscaler: '#2563EB',
+  Neocloud: '#059669',
+  Aggregator: '#D97706',
+  Orchestrator: '#7C3AED',
+  'Hybrid Enterprise': '#475569',
+  'Inference API / Model Provider': '#0891B2',
+  Other: '#64748b'
+};
+
+function getProviderModel(provider) {
+  // Normalize model for legend/color
+  let m = provider.model || provider.Model || provider.businessModel || 'Other';
+  // Map common variants
+  if (m === 'Orchestrator / ML Platform') return 'Orchestrator';
+  if (m === 'Hybrid Enterprise') return 'Hybrid Enterprise';
+  if (m === 'Inference API / Model Provider') return 'Inference API / Model Provider';
+  if (m === 'Aggregator') return 'Aggregator';
+  if (m === 'Neocloud') return 'Neocloud';
+  if (m === 'Hyperscaler') return 'Hyperscaler';
+  return m;
+}
+
 const ARCHETYPES = [
   {
     code:'H', name:'Hyperscaler', color:'#2563EB',
@@ -2126,7 +2158,10 @@ function switchTab(name,btn){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   btn.classList.add('active');
   document.getElementById('tab-'+name).classList.add('active');
-  if(name==='space') renderSpacePlot();
+  if(name==='space') {
+    buildSpaceAxisSelects();
+    renderSpacePlot();
+  }
 }
 
 // ═══════════════════════════════════════════════════════
@@ -2308,6 +2343,9 @@ function buildSpaceAxisSelects(){
   selX.value = 'total';
   selY.value = 'stackPath';
   selZ.value = 'reliability';
+  // Also reset legend mode to default (ClusterMAX Category)
+  const legendSel = document.getElementById('space-legend-mode');
+  if(legendSel) legendSel.value = 'tier';
 }
 
 function renderSpacePlot(){
@@ -2317,6 +2355,8 @@ function renderSpacePlot(){
   const selZ = document.getElementById('space-z');
   const hintEl = document.getElementById('space-hint');
   const titleEl = document.getElementById('space-title');
+  const legendModeSel = document.getElementById('space-legend-mode');
+  const legendMode = legendModeSel ? legendModeSel.value : 'tier';
   if(!plotEl || !selX || !selY || !selZ || !window.Plotly) return;
 
   const xAxis = selX.value;
@@ -2334,88 +2374,109 @@ function renderSpacePlot(){
   }
 
   const traces = [];
-  if(spaceMode==='2d'){
-    const block = build2DBlockPoints(xAxis, yAxis);
-    const yStep = spaceAxisStep(yAxis);
-    const tiers = ['platinum','gold','silver','bronze'];
-    tiers.forEach(tier=>{
-      const pts = block.points.filter(p=>p.provider.tier===tier);
-      if(pts.length===0) return;
-      traces.push({
-        type:'scatter',
-        mode:'markers+text',
-        name:tier.charAt(0).toUpperCase()+tier.slice(1),
-        x:pts.map(p=>p.xPlot),
-        y:pts.map(p=>p.yPlot),
-        text:pts.map(p=>p.occupancy>1 ? providerLogoBadge(p.provider) : p.provider.name),
-        textposition:'top center',
-        textfont:{size:9,color:'#0f172a'},
-        marker:{
-          color:SPACE_TIER_COLOR[tier],
-          size:pts.map(p=>8 + (axisValueForProvider(p.provider,'total')/50)*9),
-          line:{color:'rgba(15,23,42,0.6)',width:1},
-          opacity:0.95
-        },
-        customdata:pts.map(p=>[
-          p.provider.name,
-          p.provider.tier.toUpperCase(),
-          axisValueForProvider(p.provider,'total'),
-          p.xRaw,
-          p.yRaw,
-          p.xBlock,
-          p.yBlock,
-          p.occupancy,
-          providerLayerOccupancyLabel(p.provider),
-          providerLayerBoxesHtml(p.provider)
-        ]),
-        hovertemplate:
-          `<b>%{customdata[0]}</b> · %{customdata[1]}<br>Total: %{customdata[2]}/50` +
-          `<br>${spaceAxisLabel(xAxis)} (raw): %{customdata[3]}` +
-          `<br>${spaceAxisLabel(yAxis)} (raw): %{customdata[4]}` +
-          `<br>Block: (%{customdata[5]}, %{customdata[6]}) · Occupancy: %{customdata[7]}` +
-          `<br>Occupied layers: %{customdata[8]}` +
-          `<br>%{customdata[9]}<extra></extra>`
+    if(spaceMode==='2d'){
+      const block = build2DBlockPoints(xAxis, yAxis);
+      const yStep = spaceAxisStep(yAxis);
+      // Determine grouping: by tier or by model
+      let groups = [];
+      let groupColor = {};
+      let groupLabel = {};
+      if(legendMode==='model'){
+        // Unique business models in PROVIDERS
+        const allModels = Array.from(new Set(PROVIDERS.map(getProviderModel)));
+        groups = allModels;
+        allModels.forEach(m=>{
+          groupColor[m] = SPACE_MODEL_COLOR[m] || '#64748b';
+          groupLabel[m] = m;
+        });
+      } else {
+        groups = ['platinum','gold','silver','bronze'];
+        groups.forEach(tier=>{
+          groupColor[tier] = SPACE_TIER_COLOR[tier];
+          groupLabel[tier] = tier.charAt(0).toUpperCase()+tier.slice(1);
+        });
+      }
+      groups.forEach(group=>{
+        const pts = block.points.filter(p=>{
+          if(legendMode==='model') return getProviderModel(p.provider)===group;
+          return p.provider.tier===group;
+        });
+        if(pts.length===0) return;
+        traces.push({
+          type:'scatter',
+          mode:'markers+text',
+          name:groupLabel[group],
+          x:pts.map(p=>p.xPlot),
+          y:pts.map(p=>p.yPlot),
+          text:pts.map(p=>p.occupancy>1 ? providerLogoBadge(p.provider) : p.provider.name),
+          textposition:'top center',
+          textfont:{size:9,color:'#0f172a'},
+          marker:{
+            color:groupColor[group],
+            size:pts.map(p=>8 + (axisValueForProvider(p.provider,'total')/50)*9),
+            line:{color:'rgba(15,23,42,0.6)',width:1},
+            opacity:0.95
+          },
+          customdata:pts.map(p=>[
+            p.provider.name,
+            legendMode==='model' ? getProviderModel(p.provider) : p.provider.tier.toUpperCase(),
+            axisValueForProvider(p.provider,'total'),
+            p.xRaw,
+            p.yRaw,
+            p.xBlock,
+            p.yBlock,
+            p.occupancy,
+            providerLayerOccupancyLabel(p.provider),
+            providerLayerBoxesHtml(p.provider)
+          ]),
+          hovertemplate:
+            `<b>%{customdata[0]}</b> · %{customdata[1]}<br>Total: %{customdata[2]}/50` +
+            `<br>${spaceAxisLabel(xAxis)} (raw): %{customdata[3]}` +
+            `<br>${spaceAxisLabel(yAxis)} (raw): %{customdata[4]}` +
+            `<br>Block: (%{customdata[5]}, %{customdata[6]}) · Occupancy: %{customdata[7]}` +
+            `<br>Occupied layers: %{customdata[8]}` +
+            `<br>%{customdata[9]}<extra></extra>`
+        });
+
+        traces.push({
+          type:'scatter',
+          mode:'text',
+          showlegend:false,
+          hoverinfo:'skip',
+          x:pts.map(p=>p.xPlot),
+          y:pts.map(p=>p.yPlot - yStep * 0.22),
+          text:pts.map(p=>providerLayerOccupancyLabel(p.provider)),
+          textposition:'middle center',
+          textfont:{size:8,color:'#64748b'}
+        });
       });
 
-      traces.push({
-        type:'scatter',
-        mode:'text',
-        showlegend:false,
-        hoverinfo:'skip',
-        x:pts.map(p=>p.xPlot),
-        y:pts.map(p=>p.yPlot - yStep * 0.22),
-        text:pts.map(p=>providerLayerOccupancyLabel(p.provider)),
-        textposition:'middle center',
-        textfont:{size:8,color:'#64748b'}
-      });
-    });
-
-    if(block.clusters.length){
-      traces.push({
-        type:'scatter',
-        mode:'markers',
-        name:'Shared coordinate',
-        x:block.clusters.map(c=>c.x),
-        y:block.clusters.map(c=>c.y),
-        marker:{
-          color:'rgba(15,23,42,0)',
-          line:{color:'rgba(15,23,42,0.85)',width:1.4},
-          symbol:'circle-open',
-          size:block.clusters.map(c=>10 + Math.min(8,c.count*1.4))
-        },
-        customdata:block.clusters.map(c=>[
-          c.count,
-          c.names.map(n=>`- ${n}`).join('<br>')
-        ]),
-        hovertemplate:
-          `<b>Shared coordinate cluster</b><br>Competitors: %{customdata[0]}<br>%{customdata[1]}<extra></extra>`
-      });
-    }
-  } else {
+      if(block.clusters.length){
+        traces.push({
+          type:'scatter',
+          mode:'markers',
+          name:'Shared coordinate',
+          x:block.clusters.map(c=>c.x),
+          y:block.clusters.map(c=>c.y),
+          marker:{
+            color:'rgba(15,23,42,0)',
+            line:{color:'rgba(15,23,42,0.85)',width:1.4},
+            symbol:'circle-open',
+            size:block.clusters.map(c=>10 + Math.min(8,c.count*1.4))
+          },
+          customdata:block.clusters.map(c=>[
+            c.count,
+            c.names.map(n=>`- ${n}`).join('<br>')
+          ]),
+          hovertemplate:
+            `<b>Shared coordinate cluster</b><br>Competitors: %{customdata[0]}<br>%{customdata[1]}<extra></extra>`
+        });
+      }
+    } else {
     PROVIDERS.forEach(provider=>{
       const total = axisValueForProvider(provider,'total');
       const size = 10 + (total/50)*14;
-      const color = SPACE_TIER_COLOR[provider.tier] || '#38bdf8';
+        const color = legendMode==='model' ? (SPACE_MODEL_COLOR[getProviderModel(provider)] || '#64748b') : (SPACE_TIER_COLOR[provider.tier] || '#38bdf8');
 
       const stackVals = providerStackValues(provider);
       const stackLayerIdx = stackVals.map((_,i)=>i);
@@ -2430,7 +2491,7 @@ function renderSpacePlot(){
         traces.push({
           type:'scatter3d',
           mode:'lines+markers+text',
-          name:provider.name,
+            name:provider.name,
           x: dimValues(xAxis),
           y: dimValues(yAxis),
           z: dimValues(zAxis),
@@ -2445,7 +2506,7 @@ function renderSpacePlot(){
         traces.push({
           type:'scatter3d',
           mode:'markers+text',
-          name:provider.name,
+            name:provider.name,
           x:[axisValueForProvider(provider,xAxis)],
           y:[axisValueForProvider(provider,yAxis)],
           z:[axisValueForProvider(provider,zAxis)],
