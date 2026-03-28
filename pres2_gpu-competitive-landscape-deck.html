@@ -252,6 +252,9 @@ html.light .dd-ss-cell{color:rgba(0,0,0,0.30);}
 .s3-kbd{background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:1px 6px;font-size:8px;}
 .cake-arrow{font-family:var(--display);font-size:18px;color:var(--dim2);}
 .cake-eq{font-family:var(--mono);font-size:8px;color:var(--dim2);letter-spacing:.05em;}
+/* S3 step-3 tier mapping overlay */
+.s3-tier-ol{position:absolute;top:62px;left:0;right:0;bottom:0;z-index:9;background:var(--bg);display:flex;flex-direction:column;padding:6px 44px 10px;gap:6px;overflow:hidden;}
+.s3-tm-grid{display:grid;grid-template-columns:150px repeat(5,1fr);grid-template-rows:auto repeat(9,1fr);gap:2px 3px;flex:1;min-height:0;}
 
 /* ── HEATMAP ── */
 .heatmap-wrap{display:flex;flex:1;flex-direction:column;padding:8px 44px 12px;overflow-y:auto;}
@@ -633,6 +636,87 @@ details[open].co-expand summary::before{content:'▾';}
   <!-- Footnote: hidden until step 2, then revealed -->
   <div style="padding:0 44px 10px;font-family:var(--mono);font-size:8px;color:var(--dim2);" id="s3-footnote" class="huang-hidden">We extend NVIDIA's "Systems" layer into L1 (physical hardware) + L2 (firmware/drivers), and add two layers NVIDIA's frame omits: L−1 (energy &amp; connectivity) and L6 (cloud control plane). These are the layers that determine real competitive advantage in the GPU cloud market.
   <div style="margin-top:7px;display:flex;flex-wrap:wrap;gap:4px;align-items:center;"><span style="color:var(--dim);margin-right:4px;">Hugo Shi's 5 service tiers (Saturn Cloud CTO) mapped to our layers:</span><span class="hs-tier">T1 Raw Compute → L0 + L1</span><span class="hs-tier">T2 Orchestration → L3</span><span class="hs-tier">T3 Storage → L5</span><span class="hs-tier">T4 Networking → L1 + L2</span><span class="hs-tier">T5 Managed ML → L4 + L6 + L7</span></div>
+  </div>
+
+  <!-- ── S3 Step 3: Hugo Shi 5-Tier → 9-Layer mapping matrix ── -->
+  <div id="s3-tiers" class="huang-hidden s3-tier-ol">
+    <div style="font-family:var(--mono);font-size:8.5px;color:var(--dim);flex-shrink:0;"><span style="color:var(--text);font-weight:500;">Hugo Shi</span> (CTO Saturn Cloud · AI Engineering Podcast) maps GPU cloud capabilities into 5 service tiers. Higher tiers require more infrastructure depth — and command stronger enterprise contracts.</div>
+    <div class="s3-tm-grid">
+      <!-- ── Header row ── -->
+      <div></div>
+      <div style="border-radius:5px;padding:5px 8px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.22);display:flex;flex-direction:column;gap:2px;"><span style="font-family:var(--mono);font-size:8px;font-weight:700;color:#f59e0b;">T1 · Raw Compute</span><span style="font-family:var(--mono);font-size:6.5px;color:var(--dim2);line-height:1.35;">Bare GPU access. Machines + networking. No managed software above firmware.</span></div>
+      <div style="border-radius:5px;padding:5px 8px;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.22);display:flex;flex-direction:column;gap:2px;"><span style="font-family:var(--mono);font-size:8px;font-weight:700;color:#10b981;">T2 · Orchestration</span><span style="font-family:var(--mono);font-size:6.5px;color:var(--dim2);line-height:1.35;">Managed Kubernetes or Slurm clusters for distributed GPU workloads.</span></div>
+      <div style="border-radius:5px;padding:5px 8px;background:rgba(96,165,250,.08);border:1px solid rgba(96,165,250,.22);display:flex;flex-direction:column;gap:2px;"><span style="font-family:var(--mono);font-size:8px;font-weight:700;color:#60a5fa;">T3 · Storage</span><span style="font-family:var(--mono);font-size:6.5px;color:var(--dim2);line-height:1.35;">Block, NFS, object storage. High-perf options: Vast Data, Weka.</span></div>
+      <div style="border-radius:5px;padding:5px 8px;background:rgba(34,211,238,.06);border:1px solid rgba(34,211,238,.2);display:flex;flex-direction:column;gap:2px;"><span style="font-family:var(--mono);font-size:8px;font-weight:700;color:#22d3ee;">T4 · Networking</span><span style="font-family:var(--mono);font-size:6.5px;color:var(--dim2);line-height:1.35;">VPCs, private subnets, load balancers. Critical gating for enterprise security.</span></div>
+      <div style="border-radius:5px;padding:5px 8px;background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.22);display:flex;flex-direction:column;gap:2px;"><span style="font-family:var(--mono);font-size:8px;font-weight:700;color:#a855f7;">T5 · Managed ML</span><span style="font-family:var(--mono);font-size:6.5px;color:var(--dim2);line-height:1.35;">MLflow, Postgres, inference endpoints. Max abstraction — "just use it."</span></div>
+      <!-- ── L7 Application — T5 ── -->
+      <div style="display:flex;align-items:center;gap:5px;padding:0 6px;border-radius:3px;background:rgba(142,68,173,.08);border:1px solid rgba(142,68,173,.18);"><span style="font-family:var(--mono);font-size:7px;font-weight:700;color:#8e44ad;min-width:18px;">L7</span><span style="font-family:var(--mono);font-size:7.5px;color:var(--muted);">Application</span></div>
+      <div style="border-radius:3px;background:rgba(128,128,128,0.04);border:1px solid rgba(128,128,128,0.08);"></div>
+      <div style="border-radius:3px;background:rgba(128,128,128,0.04);border:1px solid rgba(128,128,128,0.08);"></div>
+      <div style="border-radius:3px;background:rgba(128,128,128,0.04);border:1px solid rgba(128,128,128,0.08);"></div>
+      <div style="border-radius:3px;background:rgba(128,128,128,0.04);border:1px solid rgba(128,128,128,0.08);"></div>
+      <div style="border-radius:3px;background:rgba(168,85,247,.22);border:1px solid rgba(168,85,247,.45);"></div>
+      <!-- ── L6 Control Plane — T5 ── -->
+      <div style="display:flex;align-items:center;gap:5px;padding:0 6px;border-radius:3px;background:rgba(232,67,147,.08);border:1px solid rgba(232,67,147,.18);"><span style="font-family:var(--mono);font-size:7px;font-weight:700;color:#e84393;min-width:18px;">L6</span><span style="font-family:var(--mono);font-size:7.5px;color:var(--muted);">Control Plane</span></div>
+      <div style="border-radius:3px;background:rgba(128,128,128,0.04);border:1px solid rgba(128,128,128,0.08);"></div>
+      <div style="border-radius:3px;background:rgba(128,128,128,0.04);border:1px solid rgba(128,128,128,0.08);"></div>
+      <div style="border-radius:3px;background:rgba(128,128,128,0.04);border:1px solid rgba(128,128,128,0.08);"></div>
+      <div style="border-radius:3px;background:rgba(128,128,128,0.04);border:1px solid rgba(128,128,128,0.08);"></div>
+      <div style="border-radius:3px;background:rgba(168,85,247,.22);border:1px solid rgba(168,85,247,.45);"></div>
+      <!-- ── L5 Data/Serving — T3 ── -->
+      <div style="display:flex;align-items:center;gap:5px;padding:0 6px;border-radius:3px;background:rgba(230,126,34,.08);border:1px solid rgba(230,126,34,.18);"><span style="font-family:var(--mono);font-size:7px;font-weight:700;color:#e67e22;min-width:18px;">L5</span><span style="font-family:var(--mono);font-size:7.5px;color:var(--muted);">Data / Serving</span></div>
+      <div style="border-radius:3px;background:rgba(128,128,128,0.04);border:1px solid rgba(128,128,128,0.08);"></div>
+      <div style="border-radius:3px;background:rgba(128,128,128,0.04);border:1px solid rgba(128,128,128,0.08);"></div>
+      <div style="border-radius:3px;background:rgba(96,165,250,.22);border:1px solid rgba(96,165,250,.45);"></div>
+      <div style="border-radius:3px;background:rgba(128,128,128,0.04);border:1px solid rgba(128,128,128,0.08);"></div>
+      <div style="border-radius:3px;background:rgba(128,128,128,0.04);border:1px solid rgba(128,128,128,0.08);"></div>
+      <!-- ── L4 Workload Execution — T5 ── -->
+      <div style="display:flex;align-items:center;gap:5px;padding:0 6px;border-radius:3px;background:rgba(155,89,182,.08);border:1px solid rgba(155,89,182,.18);"><span style="font-family:var(--mono);font-size:7px;font-weight:700;color:#9b59b6;min-width:18px;">L4</span><span style="font-family:var(--mono);font-size:7.5px;color:var(--muted);">Wkld. Execution</span></div>
+      <div style="border-radius:3px;background:rgba(128,128,128,0.04);border:1px solid rgba(128,128,128,0.08);"></div>
+      <div style="border-radius:3px;background:rgba(128,128,128,0.04);border:1px solid rgba(128,128,128,0.08);"></div>
+      <div style="border-radius:3px;background:rgba(128,128,128,0.04);border:1px solid rgba(128,128,128,0.08);"></div>
+      <div style="border-radius:3px;background:rgba(128,128,128,0.04);border:1px solid rgba(128,128,128,0.08);"></div>
+      <div style="border-radius:3px;background:rgba(168,85,247,.22);border:1px solid rgba(168,85,247,.45);"></div>
+      <!-- ── L3 Orchestration — T2 ── -->
+      <div style="display:flex;align-items:center;gap:5px;padding:0 6px;border-radius:3px;background:rgba(90,184,106,.08);border:1px solid rgba(90,184,106,.18);"><span style="font-family:var(--mono);font-size:7px;font-weight:700;color:#5ab86a;min-width:18px;">L3</span><span style="font-family:var(--mono);font-size:7.5px;color:var(--muted);">Orchestration</span></div>
+      <div style="border-radius:3px;background:rgba(128,128,128,0.04);border:1px solid rgba(128,128,128,0.08);"></div>
+      <div style="border-radius:3px;background:rgba(16,185,129,.22);border:1px solid rgba(16,185,129,.45);"></div>
+      <div style="border-radius:3px;background:rgba(128,128,128,0.04);border:1px solid rgba(128,128,128,0.08);"></div>
+      <div style="border-radius:3px;background:rgba(128,128,128,0.04);border:1px solid rgba(128,128,128,0.08);"></div>
+      <div style="border-radius:3px;background:rgba(128,128,128,0.04);border:1px solid rgba(128,128,128,0.08);"></div>
+      <!-- ── L2 FW/Drivers — T4 ── -->
+      <div style="display:flex;align-items:center;gap:5px;padding:0 6px;border-radius:3px;background:rgba(90,172,232,.08);border:1px solid rgba(90,172,232,.18);"><span style="font-family:var(--mono);font-size:7px;font-weight:700;color:#5aace8;min-width:18px;">L2</span><span style="font-family:var(--mono);font-size:7.5px;color:var(--muted);">FW / Drivers</span></div>
+      <div style="border-radius:3px;background:rgba(128,128,128,0.04);border:1px solid rgba(128,128,128,0.08);"></div>
+      <div style="border-radius:3px;background:rgba(128,128,128,0.04);border:1px solid rgba(128,128,128,0.08);"></div>
+      <div style="border-radius:3px;background:rgba(128,128,128,0.04);border:1px solid rgba(128,128,128,0.08);"></div>
+      <div style="border-radius:3px;background:rgba(34,211,238,.18);border:1px solid rgba(34,211,238,.4);"></div>
+      <div style="border-radius:3px;background:rgba(128,128,128,0.04);border:1px solid rgba(128,128,128,0.08);"></div>
+      <!-- ── L1 Physical — T1 + T4 (dual fill) ── -->
+      <div style="display:flex;align-items:center;gap:5px;padding:0 6px;border-radius:3px;background:rgba(232,200,64,.08);border:1px solid rgba(232,200,64,.18);"><span style="font-family:var(--mono);font-size:7px;font-weight:700;color:#e8c840;min-width:18px;">L1</span><span style="font-family:var(--mono);font-size:7.5px;color:var(--muted);">Physical Infra.</span></div>
+      <div style="border-radius:3px;background:rgba(245,158,11,.22);border:1px solid rgba(245,158,11,.45);"></div>
+      <div style="border-radius:3px;background:rgba(128,128,128,0.04);border:1px solid rgba(128,128,128,0.08);"></div>
+      <div style="border-radius:3px;background:rgba(128,128,128,0.04);border:1px solid rgba(128,128,128,0.08);"></div>
+      <div style="border-radius:3px;background:rgba(34,211,238,.18);border:1px solid rgba(34,211,238,.4);"></div>
+      <div style="border-radius:3px;background:rgba(128,128,128,0.04);border:1px solid rgba(128,128,128,0.08);"></div>
+      <!-- ── L0 Silicon — T1 ── -->
+      <div style="display:flex;align-items:center;gap:5px;padding:0 6px;border-radius:3px;background:rgba(148,163,184,.08);border:1px solid rgba(148,163,184,.18);"><span style="font-family:var(--mono);font-size:7px;font-weight:700;color:#94a3b8;min-width:18px;">L0</span><span style="font-family:var(--mono);font-size:7.5px;color:var(--muted);">Silicon Chain</span></div>
+      <div style="border-radius:3px;background:rgba(245,158,11,.22);border:1px solid rgba(245,158,11,.45);"></div>
+      <div style="border-radius:3px;background:rgba(128,128,128,0.04);border:1px solid rgba(128,128,128,0.08);"></div>
+      <div style="border-radius:3px;background:rgba(128,128,128,0.04);border:1px solid rgba(128,128,128,0.08);"></div>
+      <div style="border-radius:3px;background:rgba(128,128,128,0.04);border:1px solid rgba(128,128,128,0.08);"></div>
+      <div style="border-radius:3px;background:rgba(128,128,128,0.04);border:1px solid rgba(128,128,128,0.08);"></div>
+      <!-- ── L−1 Energy — below provider scope ── -->
+      <div style="display:flex;align-items:center;gap:5px;padding:0 6px;border-radius:3px;background:rgba(231,76,60,.05);border:1px solid rgba(231,76,60,.12);opacity:.55;"><span style="font-family:var(--mono);font-size:7px;font-weight:700;color:#e74c3c;min-width:18px;">L−1</span><span style="font-family:var(--mono);font-size:7.5px;color:var(--dim2);">Energy / Fiber</span></div>
+      <div style="border-radius:3px;background:rgba(128,128,128,0.03);border:1px dashed rgba(128,128,128,0.12);"></div>
+      <div style="border-radius:3px;background:rgba(128,128,128,0.03);border:1px dashed rgba(128,128,128,0.12);"></div>
+      <div style="border-radius:3px;background:rgba(128,128,128,0.03);border:1px dashed rgba(128,128,128,0.12);"></div>
+      <div style="border-radius:3px;background:rgba(128,128,128,0.03);border:1px dashed rgba(128,128,128,0.12);"></div>
+      <div style="border-radius:3px;background:rgba(128,128,128,0.03);border:1px dashed rgba(128,128,128,0.12);"></div>
+    </div>
+    <!-- insight footer -->
+    <div style="flex-shrink:0;background:rgba(56,189,248,.05);border:1px solid rgba(56,189,248,.12);border-radius:5px;padding:6px 10px;font-family:var(--mono);font-size:8px;color:var(--muted);line-height:1.55;">
+      <span style="color:var(--text);font-weight:500;">Key insight:</span> Providers who cover T4+ (VPCs / networking) unlock enterprise procurement. T5 (managed ML) is where margin is highest and clients are stickiest. Aggregators typically offer T1 only — full-service neoclouds cover T1–T4, with the leaders reaching T5. <span style="color:var(--dim2);">— Hugo Shi, Saturn Cloud CTO</span>
+    </div>
   </div>
 </div>
 
@@ -2008,11 +2092,11 @@ function radar(id,scores,color,labels){
   const ax=scores.map((_,i)=>{const a=(2*Math.PI*i/n)-Math.PI/2;return `<line x1="${cx}" y1="${cy}" x2="${cx+r*Math.cos(a)}" y2="${cy+r*Math.sin(a)}" stroke="${axisStroke}" stroke-width="0.6"/>`;}).join('');
   const sp=scores.map((s,i)=>{const a=(2*Math.PI*i/n)-Math.PI/2,sr=r*(s/maxS);return `${cx+sr*Math.cos(a)},${cy+sr*Math.sin(a)}`;}).join(' ');
   const fillColor=isLight?color+'30':color+'28';
-  const lb=labels.map((l,i)=>{const a=(2*Math.PI*i/n)-Math.PI/2,lr=r+12;const x=cx+lr*Math.cos(a),y=cy+lr*Math.sin(a);const ta=Math.cos(a)>0.1?'start':Math.cos(a)<-0.1?'end':'middle';return `<text x="${x}" y="${y}" text-anchor="${ta}" dominant-baseline="middle" font-size="6.5" font-family="JetBrains Mono,monospace" fill="${labelColor}" font-weight="500">${l.slice(0,5)}</text>`;}).join('');
-  el.innerHTML=`<svg viewBox="0 0 ${sz} ${sz}" width="${sz}" height="${sz}">${g}${ax}<polygon points="${sp}" fill="${fillColor}" stroke="${color}" stroke-width="1.8" stroke-linejoin="round"/>${lb}</svg>`;
+  const lb=labels.map((l,i)=>{const a=(2*Math.PI*i/n)-Math.PI/2,lr=r+15;const x=cx+lr*Math.cos(a),y=cy+lr*Math.sin(a);const ta=Math.cos(a)>0.1?'start':Math.cos(a)<-0.1?'end':'middle';return `<text x="${x}" y="${y}" text-anchor="${ta}" dominant-baseline="middle" font-size="6.5" font-family="JetBrains Mono,monospace" fill="${labelColor}" font-weight="500">${l}</text>`;}).join('');
+  el.innerHTML=`<svg viewBox="0 0 ${sz} ${sz}" width="${sz}" height="${sz}" overflow="visible" style="overflow:visible">${g}${ax}<polygon points="${sp}" fill="${fillColor}" stroke="${color}" stroke-width="1.8" stroke-linejoin="round"/>${lb}</svg>`;
 }
 
-const CRIT=['Sec','Lifecy','Orch','Store','Net','Rely','Monit','Price','Part','Avail'];
+const CRIT=['Security','Lifecycle','Orchestr.','Storage','Networking','Reliability','Monitoring','Pricing','Partners','Availab.'];
 const SCORES={
   // All scores confirmed from live file https://raw.githubusercontent.com/jskifterj/gpu_industry/main/strategy_competitor_intelligence.html
   oracle:    [4,3,4,4,3,4,3,4,5,5],  // 39 Gold
@@ -2084,8 +2168,10 @@ function showHuangModel(){
   document.getElementById('cake-huang').classList.add('revealed');
   document.getElementById('cake-divider-el').classList.add('revealed');
   document.getElementById('s3-footnote').classList.add('revealed');
-  document.getElementById('s3-hint').style.opacity='0';
-  // Update chrome title
+  // Update hint to signal next step
+  const h=document.getElementById('s3-hint');
+  h.querySelector('span:first-child').textContent="Hugo Shi's 5 service tiers";
+  h.style.opacity='1';
   const ct=document.querySelector('#s3 .chrome-title');
   if(ct) ct.textContent='The Stack · 9 Layers vs NVIDIA\'s AI Cake';
 }
@@ -2094,9 +2180,28 @@ function hideHuangModel(){
   document.getElementById('cake-huang').classList.remove('revealed');
   document.getElementById('cake-divider-el').classList.remove('revealed');
   document.getElementById('s3-footnote').classList.remove('revealed');
-  document.getElementById('s3-hint').style.opacity='1';
+  document.getElementById('s3-tiers').classList.remove('revealed');
+  const h=document.getElementById('s3-hint');
+  h.querySelector('span:first-child').textContent='Compare with Jensen Huang\'s view';
+  h.style.opacity='1';
   const ct=document.querySelector('#s3 .chrome-title');
   if(ct) ct.textContent='The Stack · Our 9-Layer Model';
+}
+function showTierMap(){
+  s3Step=2;
+  document.getElementById('s3-tiers').classList.add('revealed');
+  document.getElementById('s3-hint').style.opacity='0';
+  const ct=document.querySelector('#s3 .chrome-title');
+  if(ct) ct.textContent='The Stack · Hugo Shi\'s 5 Service Tiers';
+}
+function hideTierMap(){
+  s3Step=1;
+  document.getElementById('s3-tiers').classList.remove('revealed');
+  const h=document.getElementById('s3-hint');
+  h.querySelector('span:first-child').textContent="Hugo Shi's 5 service tiers";
+  h.style.opacity='1';
+  const ct=document.querySelector('#s3 .chrome-title');
+  if(ct) ct.textContent='The Stack · 9 Layers vs NVIDIA\'s AI Cake';
 }
 function showS4Spectra(){
   s4Step=1;
@@ -2119,7 +2224,9 @@ for(let i=0;i<TOTAL;i++){const d=document.createElement('div');d.className='dot'
 function go(n,direct){
   // S3 step-within-slide logic (only for sequential prev/next, not dot jumps)
   if(!direct && cur===2 && n===3 && s3Step===0){ showHuangModel(); return; }
+  if(!direct && cur===2 && n===3 && s3Step===1){ showTierMap(); return; }
   if(!direct && cur===2 && n===1 && s3Step===1){ hideHuangModel(); return; }
+  if(!direct && cur===2 && n===1 && s3Step===2){ hideTierMap(); return; }
   // S4 step-within-slide logic
   if(!direct && cur===3 && n===4 && s4Step===0){ showS4Spectra(); return; }
   if(!direct && cur===3 && n===2 && s4Step===1){ hideS4Spectra(); return; }
