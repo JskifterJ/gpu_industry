@@ -294,7 +294,19 @@ html.light .hm-pill.limited{background:rgba(194,65,12,.08);color:#c2410c;}
 .cmi-star-badge{font-family:var(--mono);font-size:7px;background:rgba(16,185,129,.15);color:#059669;border:1px solid rgba(16,185,129,.3);border-radius:2px;padding:1px 5px;letter-spacing:.04em;}
 .cmi-method-note{margin-top:10px;padding:8px 12px;border-radius:5px;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);font-size:10px;color:var(--muted);line-height:1.5;}
 /* ── COMPETITIVE SPACE SLIDE ── */
-.cs-wrap{display:flex;flex:1;flex-direction:column;padding:6px 44px 4px;overflow:hidden;}
+.cs-wrap{display:flex;flex:1;flex-direction:column;padding:6px 44px 62px;overflow:hidden;}
+/* S4 spectra */
+.s4-spec-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:8px;}
+.s4-spec-table th{text-align:center;padding:3px 6px;border-bottom:1px solid var(--border);font-weight:700;font-size:8px;}
+.s4-spec-table th:first-child{text-align:left;padding-left:0;min-width:140px;}
+.s4-spec-table td{padding:3px 6px;vertical-align:middle;}
+.s4-spec-table td:first-child{color:var(--dim2);font-size:7.5px;padding-left:0;white-space:nowrap;}
+.s4-spec-table tr:not(:last-child) td{border-bottom:1px solid rgba(128,128,128,0.07);}
+.s4-bar{height:6px;border-radius:2px;min-width:3px;}
+.s4-insight-box{background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.15);border-radius:5px;padding:7px 10px;font-size:9.5px;color:var(--muted);line-height:1.55;margin-bottom:5px;}
+/* S3 Hugo Shi tier badges */
+.hs-tier{display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:7px;padding:1px 6px;border-radius:2px;border:1px solid var(--border);color:var(--dim);margin-right:4px;margin-bottom:3px;}
+.cs-stats-panel{position:absolute;top:10px;right:10px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:8px 12px;font-family:var(--mono);font-size:8px;color:var(--text);line-height:1.75;z-index:10;pointer-events:none;display:none;min-width:170px;}
 .cs-ctrl-bar{display:flex;align-items:center;gap:5px;padding:2px 0 6px;flex-shrink:0;flex-wrap:wrap;}
 .cs-btn{font-family:var(--mono);font-size:8px;padding:2px 10px;border-radius:3px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;letter-spacing:.05em;transition:all .15s;}
 .cs-btn:hover{border-color:var(--h);color:var(--h);}
@@ -619,7 +631,9 @@ details[open].co-expand summary::before{content:'▾';}
     </div>
   </div>
   <!-- Footnote: hidden until step 2, then revealed -->
-  <div style="padding:0 44px 10px;font-family:var(--mono);font-size:8px;color:var(--dim2);" id="s3-footnote" class="huang-hidden">We extend NVIDIA's "Systems" layer into L1 (physical hardware) + L2 (firmware/drivers), and add two layers NVIDIA's frame omits: L−1 (energy &amp; connectivity) and L6 (cloud control plane). These are the layers that determine real competitive advantage in the GPU cloud market.</div>
+  <div style="padding:0 44px 10px;font-family:var(--mono);font-size:8px;color:var(--dim2);" id="s3-footnote" class="huang-hidden">We extend NVIDIA's "Systems" layer into L1 (physical hardware) + L2 (firmware/drivers), and add two layers NVIDIA's frame omits: L−1 (energy &amp; connectivity) and L6 (cloud control plane). These are the layers that determine real competitive advantage in the GPU cloud market.
+  <div style="margin-top:7px;display:flex;flex-wrap:wrap;gap:4px;align-items:center;"><span style="color:var(--dim);margin-right:4px;">Hugo Shi's 5 service tiers (Saturn Cloud CTO) mapped to our layers:</span><span class="hs-tier">T1 Raw Compute → L0 + L1</span><span class="hs-tier">T2 Orchestration → L3</span><span class="hs-tier">T3 Storage → L5</span><span class="hs-tier">T4 Networking → L1 + L2</span><span class="hs-tier">T5 Managed ML → L4 + L6 + L7</span></div>
+  </div>
 </div>
 
 <!-- ══ S4 — FOUR MODELS ══ -->
@@ -647,7 +661,7 @@ details[open].co-expand summary::before{content:'▾';}
       <div class="model-card anim anim-2" style="border-color:rgba(16,185,129,0.3);background:linear-gradient(135deg,var(--n-dim),transparent);">
         <div class="mc-code" style="color:var(--n);">N</div>
         <div class="mc-name" style="color:var(--n);">Neocloud</div>
-        <div class="mc-tagline">CoreWeave · Nebius · FluidStack · Crusoe</div>
+        <div class="mc-tagline">CoreWeave · Nebius · Crusoe · Lambda</div>
         <div class="mc-desc">GPU-first infrastructure operator. Owns the hardware (L1) and excels at cluster quality: <span class="tip" data-tip="InfiniBand NDR 400G: connects GPU nodes for distributed training. The IB fabric quality is the #1 hardware differentiator between neoclouds.">InfiniBand fabric</span> and <span class="tip" data-tip="SonK: Slurm-on-Kubernetes — runs the HPC batch scheduler and the cloud-native container orchestrator on the same physical GPU pool simultaneously.">SonK orchestration</span>.</div>
         <div style="font-family:var(--mono);font-size:7.5px;color:var(--dim);margin-bottom:2px;">STACK DEPTH</div>
         <div class="mc-strip">
@@ -655,7 +669,7 @@ details[open].co-expand summary::before{content:'▾';}
         </div>
         <div class="mc-abs"><span class="mc-ab on">BMaaS</span><span class="mc-ab on">GPUaaS</span><span class="mc-ab">MLaaS</span><span class="mc-ab">WaaS</span></div>
         <div class="mc-capex"><span class="mc-capex-label">CapEx</span><div class="mc-capex-dots"><div class="mc-capex-dot" style="background:var(--n);"></div><div class="mc-capex-dot" style="background:var(--n);"></div><div class="mc-capex-dot" style="background:var(--n);"></div><div class="mc-capex-dot" style="background:var(--n);"></div><div class="mc-capex-dot" style="background:rgba(128,128,128,0.15);"></div></div><span style="font-family:var(--mono);font-size:7.5px;color:var(--dim);">High</span></div>
-        <div class="mc-examples">CoreWeave ($CRWV) · Nebius ($NBIS) · FluidStack · Crusoe · −15–30% vs hyperscalers</div>
+        <div class="mc-examples">CoreWeave ($CRWV) · Nebius ($NBIS) · Crusoe · Lambda · −15–35% vs hyperscalers</div>
       </div>
       <div class="model-card anim anim-3" style="border-color:rgba(168,85,247,0.3);background:linear-gradient(135deg,var(--o-dim),transparent);">
         <div class="mc-code" style="color:var(--o);">O</div>
@@ -673,7 +687,7 @@ details[open].co-expand summary::before{content:'▾';}
       <div class="model-card anim anim-4" style="border-color:rgba(245,158,11,0.3);background:linear-gradient(135deg,var(--a-dim),transparent);">
         <div class="mc-code" style="color:var(--a);">A</div>
         <div class="mc-name" style="color:var(--a);">Aggregator</div>
-        <div class="mc-tagline">Vast.ai · Shadeform · TensorDock</div>
+        <div class="mc-tagline">FluidStack · Vast.ai · Shadeform · RunPod</div>
         <div class="mc-desc">Asset-light <span class="tip" data-tip="Spot-market: routes demand to cheapest available GPU capacity from many underlying providers. 40–70% below reserved rates with preemption risk.">spot-market</span> operator. Routes demand to cheapest third-party supply. Zero hardware capex; revenue is the spread.</div>
         <div style="font-family:var(--mono);font-size:7.5px;color:var(--dim);margin-bottom:2px;">STACK DEPTH</div>
         <div class="mc-strip">
@@ -681,10 +695,87 @@ details[open].co-expand summary::before{content:'▾';}
         </div>
         <div class="mc-abs"><span class="mc-ab">BMaaS</span><span class="mc-ab on">GPUaaS</span><span class="mc-ab">MLaaS</span><span class="mc-ab">WaaS</span></div>
         <div class="mc-capex"><span class="mc-capex-label">CapEx</span><div class="mc-capex-dots"><div class="mc-capex-dot" style="background:var(--a);"></div><div class="mc-capex-dot" style="background:rgba(128,128,128,0.15);"></div><div class="mc-capex-dot" style="background:rgba(128,128,128,0.15);"></div><div class="mc-capex-dot" style="background:rgba(128,128,128,0.15);"></div><div class="mc-capex-dot" style="background:rgba(128,128,128,0.15);"></div></div><span style="font-family:var(--mono);font-size:7.5px;color:var(--dim);">Very Low</span></div>
-        <div class="mc-examples">Vast.ai · Shadeform (42+ providers) · TensorDock · Cheapest GPU-hrs (spot)</div>
+        <div class="mc-examples">FluidStack · Vast.ai · Shadeform (42+ providers) · RunPod · Cheapest GPU-hrs (spot)</div>
       </div>
     </div>
     <div style="padding:6px 44px;font-family:var(--mono);font-size:8px;color:var(--dim2);">Stack strip opacity encodes ownership depth · <span style="color:#e74c3c;">■</span>L−1 Energy <span style="color:#94a3b8;">■</span>L0 Silicon <span style="color:#e8c840;">■</span>L1 Physical <span style="color:#5aace8;">■</span>L2 Firmware <span style="color:#5ab86a;">■</span>L3 Orch <span style="color:#9b59b6;">■</span>L4 Exec <span style="color:#e67e22;">■</span>L5 Data <span style="color:#e84393;">■</span>L6 Control <span style="color:#8e44ad;">■</span>L7 App</div>
+    <!-- Step hint -->
+    <div class="s3-hint" id="s4-hint"><span>Compare models across key dimensions</span><span class="s3-kbd">→</span></div>
+    <!-- Spectra reveal (step 2) -->
+    <div id="s4-spectra" class="huang-hidden" style="padding:0 44px 8px;display:flex;gap:20px;flex:0 0 auto;">
+      <div style="flex:1;min-width:0;">
+        <div style="font-family:var(--mono);font-size:7.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;border-top:1px solid var(--border);padding-top:6px;">Model characterization · five key dimensions</div>
+        <table class="s4-spec-table">
+          <thead>
+            <tr>
+              <th style="text-align:left;padding-left:0;">Dimension</th>
+              <th style="color:var(--h);">H · Hyperscaler</th>
+              <th style="color:var(--n);">N · Neocloud</th>
+              <th style="color:var(--o);">O · Orchestrator</th>
+              <th style="color:var(--a);">A · Aggregator</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Stack depth (L−1 → L7)</td>
+              <td><div class="s4-bar" style="width:100%;background:var(--h);"></div></td>
+              <td><div class="s4-bar" style="width:72%;background:var(--n);"></div></td>
+              <td><div class="s4-bar" style="width:52%;background:var(--o);"></div></td>
+              <td><div class="s4-bar" style="width:18%;background:var(--a);"></div></td>
+            </tr>
+            <tr>
+              <td>Customer operational overhead</td>
+              <td><div class="s4-bar" style="width:8%;background:var(--h);"></div></td>
+              <td><div class="s4-bar" style="width:45%;background:var(--n);"></div></td>
+              <td><div class="s4-bar" style="width:62%;background:var(--o);"></div></td>
+              <td><div class="s4-bar" style="width:95%;background:var(--a);"></div></td>
+            </tr>
+            <tr>
+              <td>Price savings vs hyperscaler</td>
+              <td style="color:var(--dim2);">0% (baseline ~$10/hr)</td>
+              <td style="color:var(--n);">−20–40% (~$2–4/hr)</td>
+              <td style="color:var(--o);">−20–40% (per-job)</td>
+              <td style="color:var(--a);">−50–80% spot (preemptible)</td>
+            </tr>
+            <tr>
+              <td>Security · VPC isolation</td>
+              <td><div class="s4-bar" style="width:100%;background:var(--h);"></div></td>
+              <td><div class="s4-bar" style="width:72%;background:var(--n);"></div></td>
+              <td><div class="s4-bar" style="width:44%;background:var(--o);"></div></td>
+              <td><div class="s4-bar" style="width:18%;background:var(--a);opacity:.5;"></div></td>
+            </tr>
+            <tr>
+              <td>Bare-metal control / configurability</td>
+              <td><div class="s4-bar" style="width:10%;background:var(--h);opacity:.3;"></div></td>
+              <td><div class="s4-bar" style="width:68%;background:var(--n);"></div></td>
+              <td><div class="s4-bar" style="width:42%;background:var(--o);"></div></td>
+              <td><div class="s4-bar" style="width:100%;background:var(--a);"></div></td>
+            </tr>
+            <tr>
+              <td>Managed ML services (T5)</td>
+              <td><div class="s4-bar" style="width:100%;background:var(--h);"></div></td>
+              <td><div class="s4-bar" style="width:20%;background:var(--n);"></div></td>
+              <td><div class="s4-bar" style="width:92%;background:var(--o);"></div></td>
+              <td><div class="s4-bar" style="width:5%;background:var(--a);opacity:.3;"></div></td>
+            </tr>
+            <tr>
+              <td style="color:var(--dim);font-style:italic;">Hugo Shi service tiers</td>
+              <td style="color:var(--dim2);">T1 T2 T3 T4 T5</td>
+              <td style="color:var(--dim2);">T1 T2 T3 T4</td>
+              <td style="color:var(--dim2);">T2 · T3 · T5</td>
+              <td style="color:var(--dim2);">T1 (aggregated)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="width:244px;flex-shrink:0;">
+        <div style="font-family:var(--mono);font-size:7.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;border-top:1px solid var(--border);padding-top:6px;">Hugo Shi · CTO Saturn Cloud · AI Engineering Podcast</div>
+        <div class="s4-insight-box">"Enterprises needing VPCs and managed services must use full-service GPU clouds. Those with light security needs can safely leverage aggregators for maximum cost savings."</div>
+        <div class="s4-insight-box">"Training stays at the hyperscaler — deep data integration, security. <em>Inference</em> moves to cheaper GPU clouds. Same model, different physics."</div>
+        <div class="s4-insight-box">"The volume of alternative GPU clouds is unsustainable. The market is heading toward rapid consolidation — mature full-service providers rivaling hyperscalers."</div>
+        <div style="font-family:var(--mono);font-size:7px;color:var(--dim2);margin-top:3px;">T1 Raw Compute · T2 Orchestration · T3 Storage · T4 Networking · T5 Managed ML</div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1745,11 +1836,14 @@ details[open].co-expand summary::before{content:'▾';}
       <div class="cs-sep"></div>
       <div class="cs-sel-wrap"><span class="cs-sel-lbl">Color</span><select class="cs-sel" id="cs-color-sel"><option value="tier">Tier</option><option value="model">Business Model</option></select></div>
       <div class="cs-sep"></div>
+      <button class="cs-btn" id="cs-btn-regr" onclick="toggleCSRegr()">Regr.</button>
+      <div class="cs-sep"></div>
       <div id="cs-leg-inline" class="cs-leg-inline"></div>
     </div>
     <div class="cs-canvas-wrap">
       <canvas id="cs-canvas"></canvas>
       <div id="cs-tooltip"></div>
+      <div id="cs-stats-panel" class="cs-stats-panel"></div>
       <div id="cs-3d-hint" style="display:none;position:absolute;bottom:8px;right:12px;font-family:var(--mono);font-size:7.5px;color:var(--dim);pointer-events:none;letter-spacing:.04em;">drag to rotate · scroll to zoom</div>
     </div>
   </div>
@@ -1976,6 +2070,7 @@ function renderRadarsForSlide(n){
 const TOTAL=20;
 let cur=0;
 let s3Step=0; // 0 = our model only, 1 = Huang model revealed
+let s4Step=0; // 0 = model cards only, 1 = spectra revealed
 const slides=document.querySelectorAll('.slide');
 const dotsEl=document.getElementById('dots');
 const prog=document.getElementById('progress');
@@ -2003,6 +2098,21 @@ function hideHuangModel(){
   const ct=document.querySelector('#s3 .chrome-title');
   if(ct) ct.textContent='The Stack · Our 9-Layer Model';
 }
+function showS4Spectra(){
+  s4Step=1;
+  document.getElementById('s4-spectra').classList.add('revealed');
+  document.getElementById('s4-hint').style.opacity='0';
+  const ct=document.querySelector('#s4 .chrome-title');
+  if(ct) ct.textContent='Four Business Models · Spectra & Industry View';
+}
+function hideS4Spectra(){
+  s4Step=0;
+  document.getElementById('s4-spectra').classList.remove('revealed');
+  const hintEl=document.getElementById('s4-hint');
+  if(hintEl) hintEl.style.opacity='1';
+  const ct=document.querySelector('#s4 .chrome-title');
+  if(ct) ct.textContent='Four Business Models';
+}
 
 for(let i=0;i<TOTAL;i++){const d=document.createElement('div');d.className='dot'+(i===0?' active':'');d.onclick=()=>go(i,true);dotsEl.appendChild(d);}
 
@@ -2010,10 +2120,15 @@ function go(n,direct){
   // S3 step-within-slide logic (only for sequential prev/next, not dot jumps)
   if(!direct && cur===2 && n===3 && s3Step===0){ showHuangModel(); return; }
   if(!direct && cur===2 && n===1 && s3Step===1){ hideHuangModel(); return; }
+  // S4 step-within-slide logic
+  if(!direct && cur===3 && n===4 && s4Step===0){ showS4Spectra(); return; }
+  if(!direct && cur===3 && n===2 && s4Step===1){ hideS4Spectra(); return; }
   if(n<0||n>=TOTAL)return;
   const old=cur;cur=n;
   // Reset s3Step when leaving s3, or when returning to s3 from a different slide
   if(old===2 || n===2) hideHuangModel();
+  // Reset s4Step when leaving s4 or jumping directly to s4
+  if(old===3 || n===3) hideS4Spectra();
   slides[old].classList.remove('active');slides[old].classList.add('prev');
   const os=slides[old];setTimeout(()=>os.classList.remove('prev'),700);
   slides[cur].classList.add('active');
@@ -2031,7 +2146,7 @@ const CS_ALL=[
   {id:'nebius',      name:'Nebius',         mono:'NB',  tier:'gold',    model:'Neocloud',    scores:{Security:3,Lifecycle:4,Orchestration:4,Storage:4,Networking:4,Reliability:4,Monitoring:3,Pricing:4,Partnerships:3,Availability:4}},
   {id:'oracle',      name:'Oracle',         mono:'OR',  tier:'gold',    model:'Hyperscaler', scores:{Security:4,Lifecycle:3,Orchestration:4,Storage:4,Networking:3,Reliability:4,Monitoring:3,Pricing:4,Partnerships:5,Availability:5}},
   {id:'azure',       name:'Azure',          mono:'AZ',  tier:'gold',    model:'Hyperscaler', scores:{Security:5,Lifecycle:3,Orchestration:3,Storage:4,Networking:4,Reliability:3,Monitoring:3,Pricing:2,Partnerships:4,Availability:3}},
-  {id:'fluidstack',  name:'FluidStack',     mono:'FS',  tier:'gold',    model:'Neocloud',    scores:{Security:3,Lifecycle:4,Orchestration:4,Storage:3,Networking:4,Reliability:3,Monitoring:4,Pricing:4,Partnerships:4,Availability:3}},
+  {id:'fluidstack',  name:'FluidStack',     mono:'FS',  tier:'gold',    model:'Aggregator',  scores:{Security:3,Lifecycle:4,Orchestration:4,Storage:3,Networking:4,Reliability:3,Monitoring:4,Pricing:4,Partnerships:4,Availability:3}},
   {id:'crusoe',      name:'Crusoe',         mono:'CR',  tier:'gold',    model:'Neocloud',    scores:{Security:3,Lifecycle:3,Orchestration:2,Storage:3,Networking:3,Reliability:3,Monitoring:3,Pricing:3,Partnerships:4,Availability:4}},
   {id:'gcp',         name:'Google Cloud',   mono:'GCP', tier:'silver',  model:'Hyperscaler', scores:{Security:4,Lifecycle:3,Orchestration:5,Storage:4,Networking:3,Reliability:3,Monitoring:4,Pricing:2,Partnerships:4,Availability:4}},
   {id:'aws',         name:'AWS',            mono:'AWS', tier:'silver',  model:'Hyperscaler', scores:{Security:4,Lifecycle:1,Orchestration:2,Storage:4,Networking:2,Reliability:3,Monitoring:2,Pricing:2,Partnerships:4,Availability:5}},
@@ -2083,6 +2198,51 @@ let csRotX=22, csRotY=32, csZoom=1;
 let csDrag=null;
 let csInitialized=false;
 let csBubbles=[];
+let csShowRegr=false;
+
+function csAxisStep(dim){ return dim==='Total'?2:1; }
+
+function csRegression(xDim,yDim){
+  const xs=CS_ALL.map(p=>csGetVal(p,xDim));
+  const ys=CS_ALL.map(p=>csGetVal(p,yDim));
+  const n=xs.length;
+  const mx=xs.reduce((a,b)=>a+b,0)/n;
+  const my=ys.reduce((a,b)=>a+b,0)/n;
+  const sxy=xs.reduce((s,x,i)=>s+(x-mx)*(ys[i]-my),0);
+  const sxx=xs.reduce((s,x)=>s+(x-mx)**2,0);
+  const syy=ys.reduce((s,y)=>s+(y-my)**2,0);
+  const slope=sxy/sxx;
+  const intercept=my-slope*mx;
+  const r=sxy/Math.sqrt(sxx*syy);
+  return {slope,intercept,r};
+}
+
+function csUpdateStatsPanel(xDim,yDim,reg){
+  const sp=document.getElementById('cs-stats-panel');
+  if(!sp) return;
+  const allDims=['Total','Security','Lifecycle','Orchestration','Storage','Networking','Reliability','Monitoring','Pricing','Partnerships','Availability'];
+  const corrs=allDims.filter(d=>d!==yDim).map(d=>{
+    const {r}=csRegression(d,yDim);
+    return {d,r};
+  }).sort((a,b)=>Math.abs(b.r)-Math.abs(a.r)).slice(0,7);
+  const rc=r=>Math.abs(r)>0.7?'#10b981':Math.abs(r)>0.4?'#f59e0b':'#ef4444';
+  const stars=r=>{const a=Math.abs(r);return a>0.8?'★★★':a>0.6?'★★':a>0.35?'★':'·';};
+  sp.innerHTML=`<div style="font-size:7px;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px;">${xDim} vs ${yDim}</div>`
+    +`<div style="font-size:11px;font-weight:700;color:${rc(reg.r)}">r = ${reg.r.toFixed(3)}</div>`
+    +`<div style="font-size:7px;color:var(--dim);margin:5px 0 2px;border-top:1px solid var(--border);padding-top:4px;">Correlates with ${yDim}:</div>`
+    +corrs.map(c=>`<div style="display:flex;justify-content:space-between;gap:10px;"><span>${c.d}</span><span style="color:${rc(c.r)}">${c.r>=0?'+':''}${c.r.toFixed(2)} ${stars(c.r)}</span></div>`).join('');
+  sp.style.display='block';
+}
+
+function toggleCSRegr(){
+  csShowRegr=!csShowRegr;
+  document.getElementById('cs-btn-regr').classList.toggle('cs-btn-active',csShowRegr);
+  if(!csShowRegr){
+    const sp=document.getElementById('cs-stats-panel');
+    if(sp) sp.style.display='none';
+  }
+  renderCompetitiveSpace();
+}
 
 function csGetVal(p,dim){ return dim==='Total' ? p.total : (p.scores[dim]||0); }
 function csGetColor(p){ return csColorBy==='tier' ? CS_TIER_COLORS[p.tier] : CS_MODEL_COLORS[p.model]; }
@@ -2240,25 +2400,52 @@ function drawCS2D(ctx,W,H){
   const xDim=document.getElementById('cs-x-sel')?.value||'Total';
   const yDim=document.getElementById('cs-y-sel')?.value||'Orchestration';
   const isLight=document.documentElement.classList.contains('light');
-  const dim   =isLight?'rgba(0,0,0,0.15)':'rgba(200,215,230,0.15)';
-  const dim2  =isLight?'rgba(0,0,0,0.40)':'rgba(200,215,230,0.55)';
-  const muted =isLight?'rgba(30,40,60,0.40)':'rgba(200,215,230,0.40)';
+  const dim       =isLight?'rgba(0,0,0,0.10)':'rgba(200,215,230,0.10)';
+  const dim2      =isLight?'rgba(0,0,0,0.40)':'rgba(200,215,230,0.55)';
+  const muted     =isLight?'rgba(30,40,60,0.42)':'rgba(200,215,230,0.42)';
+  const cellFill  =isLight?'rgba(148,163,184,0.07)':'rgba(148,163,184,0.07)';
+  const cellStroke=isLight?'rgba(148,163,184,0.30)':'rgba(148,163,184,0.18)';
 
-  const pad={t:22,r:20,b:46,l:52};
+  const pad={t:22,r:22,b:44,l:54};
   const pw=W-pad.l-pad.r, ph=H-pad.t-pad.b;
 
+  const xSt=csAxisStep(xDim), ySt=csAxisStep(yDim);
   const xIsTotal=xDim==='Total', yIsTotal=yDim==='Total';
   const xMin=xIsTotal?7:0.5, xMax=xIsTotal?52:5.5;
   const yMin=yIsTotal?7:0.5, yMax=yIsTotal?52:5.5;
   const toX=v=>pad.l+(v-xMin)/(xMax-xMin)*pw;
   const toY=v=>pad.t+ph-(v-yMin)/(yMax-yMin)*ph;
 
-  // Grid
+  // Cell size in pixels → controls blowout spread
+  const cellPxW=pw/(xMax-xMin)*xSt;
+  const cellPxH=ph/(yMax-yMin)*ySt;
+  const spreadR=Math.min(Math.min(cellPxW,cellPxH)*0.22, 26);
+
+  // Group providers into cells by rounded coordinate
+  const cellMap={};
+  CS_ALL.forEach(p=>{
+    const xv=csGetVal(p,xDim), yv=csGetVal(p,yDim);
+    const xb=Math.round(xv/xSt)*xSt, yb=Math.round(yv/ySt)*ySt;
+    const key=`${xb}|${yb}`;
+    if(!cellMap[key]) cellMap[key]={xb,yb,members:[]};
+    cellMap[key].members.push(p);
+  });
+
+  // Background grid
   ctx.strokeStyle=dim; ctx.lineWidth=0.5;
   const xTicks=xIsTotal?[10,15,20,25,30,35,40,45,50]:[1,2,3,4,5];
   const yTicks=yIsTotal?[10,15,20,25,30,35,40,45,50]:[1,2,3,4,5];
-  xTicks.forEach(x=>{ ctx.beginPath();ctx.moveTo(toX(x),pad.t);ctx.lineTo(toX(x),pad.t+ph);ctx.stroke(); });
-  yTicks.forEach(y=>{ ctx.beginPath();ctx.moveTo(pad.l,toY(y));ctx.lineTo(pad.l+pw,toY(y));ctx.stroke(); });
+  xTicks.forEach(x=>{ctx.beginPath();ctx.moveTo(toX(x),pad.t);ctx.lineTo(toX(x),pad.t+ph);ctx.stroke();});
+  yTicks.forEach(y=>{ctx.beginPath();ctx.moveTo(pad.l,toY(y));ctx.lineTo(pad.l+pw,toY(y));ctx.stroke();});
+
+  // Cell borders for crowded cells (≥2 providers)
+  Object.values(cellMap).forEach(({xb,yb,members})=>{
+    if(members.length<2) return;
+    const cx0=toX(xb-xSt*0.5), cx1=toX(xb+xSt*0.5);
+    const cy1=toY(yb+ySt*0.5), cy0=toY(yb-ySt*0.5);
+    ctx.fillStyle=cellFill; ctx.fillRect(cx0,cy1,cx1-cx0,cy0-cy1);
+    ctx.strokeStyle=cellStroke; ctx.lineWidth=1; ctx.strokeRect(cx0,cy1,cx1-cx0,cy0-cy1);
+  });
 
   // Axes
   ctx.strokeStyle=dim2; ctx.lineWidth=1;
@@ -2277,39 +2464,75 @@ function drawCS2D(ctx,W,H){
   ctx.save();ctx.translate(12,pad.t+ph/2);ctx.rotate(-Math.PI/2);
   ctx.fillText(yDim+' →',0,0);ctx.restore();
 
-  // Bubbles
-  const R=12;
-  CS_ALL.forEach(p=>{
-    const x=toX(csGetVal(p,xDim)), y=toY(csGetVal(p,yDim));
-    const tc=csGetColor(p), isSquare=p.model==='Hyperscaler';
-    csBubbles.push({x,y,r:R+5,p});
-
+  // Regression line
+  if(csShowRegr){
+    const reg=csRegression(xDim,yDim);
+    const rxMin=xMin+xSt*0.6, rxMax=xMax-xSt*0.6;
+    const ry0=Math.max(yMin,Math.min(yMax,reg.slope*rxMin+reg.intercept));
+    const ry1=Math.max(yMin,Math.min(yMax,reg.slope*rxMax+reg.intercept));
     ctx.save();
-    ctx.strokeStyle=CS_MODEL_COLORS[p.model].stroke; ctx.lineWidth=1.5; ctx.globalAlpha=0.3;
+    ctx.strokeStyle=isLight?'rgba(99,102,241,0.55)':'rgba(139,92,246,0.55)';
+    ctx.lineWidth=1.5; ctx.setLineDash([7,4]);
+    ctx.beginPath(); ctx.moveTo(toX(rxMin),toY(ry0)); ctx.lineTo(toX(rxMax),toY(ry1)); ctx.stroke();
+    ctx.setLineDash([]);
+    const rColor=Math.abs(reg.r)>0.7?'#10b981':Math.abs(reg.r)>0.4?'#f59e0b':'#ef4444';
+    ctx.font='700 9px var(--mono,monospace)'; ctx.fillStyle=rColor; ctx.textAlign='right';
+    ctx.fillText(`r = ${reg.r.toFixed(2)}`,toX(rxMax)-4,toY(ry1)-9);
+    ctx.restore();
+    csUpdateStatsPanel(xDim,yDim,reg);
+  } else {
+    const sp=document.getElementById('cs-stats-panel'); if(sp) sp.style.display='none';
+  }
+
+  // Compute blowout positions — radial rings within each cell
+  const blowPts=[];
+  Object.values(cellMap).forEach(({xb,yb,members})=>{
+    const count=members.length;
+    const cx=toX(xb), cy=toY(yb);
+    members.forEach((p,idx)=>{
+      let px,py;
+      if(count===1){ px=cx; py=cy; }
+      else {
+        const ringCap=6, ring=Math.floor(idx/ringCap), ringIdx=idx%ringCap;
+        const ringCount=Math.min(ringCap,count-ring*ringCap);
+        const angle=(2*Math.PI*ringIdx)/ringCount - Math.PI/2;
+        const radius=spreadR*(1+ring*0.75);
+        px=cx+Math.cos(angle)*radius; py=cy+Math.sin(angle)*radius;
+      }
+      blowPts.push({p,px,py});
+    });
+  });
+
+  // Draw bubbles at blowout positions
+  const R=10;
+  blowPts.forEach(({p,px,py})=>{
+    const tc=csGetColor(p), isSquare=p.model==='Hyperscaler';
+    csBubbles.push({x:px,y:py,r:R+5,p});
+    ctx.save();
+    ctx.strokeStyle=CS_MODEL_COLORS[p.model].stroke; ctx.lineWidth=1.5; ctx.globalAlpha=0.28;
     ctx.beginPath();
-    if(isSquare) csRoundRect(ctx,x-(R+3),y-(R+3),(R+3)*2,(R+3)*2,5);
-    else ctx.arc(x,y,R+3,0,Math.PI*2);
+    if(isSquare) csRoundRect(ctx,px-(R+3),py-(R+3),(R+3)*2,(R+3)*2,5);
+    else ctx.arc(px,py,R+3,0,Math.PI*2);
     ctx.stroke(); ctx.globalAlpha=1;
 
     ctx.fillStyle=tc.fill; ctx.strokeStyle=tc.stroke; ctx.lineWidth=1.5;
     ctx.beginPath();
-    if(isSquare) csRoundRect(ctx,x-R,y-R,R*2,R*2,4);
-    else ctx.arc(x,y,R,0,Math.PI*2);
+    if(isSquare) csRoundRect(ctx,px-R,py-R,R*2,R*2,4);
+    else ctx.arc(px,py,R,0,Math.PI*2);
     ctx.fill(); ctx.stroke();
 
     ctx.fillStyle=tc.text; ctx.textAlign='center';
     ctx.font=`700 ${p.mono.length>2?6.5:8}px var(--mono,monospace)`;
-    ctx.fillText(p.mono,x,y+3);
+    ctx.fillText(p.mono,px,py+3);
     ctx.restore();
   });
 
-  // Name labels (above or below based on y position)
+  // Name labels
   const midY=pad.t+ph/2;
-  CS_ALL.forEach(p=>{
-    const x=toX(csGetVal(p,xDim)), y=toY(csGetVal(p,yDim));
+  blowPts.forEach(({p,px,py})=>{
     const tc=csGetColor(p);
     ctx.font='7px var(--sans,sans-serif)'; ctx.fillStyle=muted; ctx.textAlign='center';
-    ctx.fillText(p.name, x, y<midY ? y-R-3 : y+R+9);
+    ctx.fillText(p.name, px, py<midY ? py-R-3 : py+R+9);
   });
 }
 
@@ -2339,27 +2562,58 @@ function drawCS3D(ctx,W,H){
     return {px:cx+x2*scale/pz, py:cy-y2*scale/pz, depth:pz};
   }
 
-  // Axes
-  ctx.strokeStyle=dim2; ctx.lineWidth=1;
-  ctx.font='600 8px var(--mono,monospace)'; ctx.fillStyle=dim2;
+  // Wireframe bounding box (12 edges of unit cube)
+  const wireColor=isLight?'rgba(0,0,0,0.28)':'rgba(200,215,230,0.32)';
+  const gridColor=isLight?'rgba(0,0,0,0.08)':'rgba(200,215,230,0.09)';
+  ctx.strokeStyle=wireColor; ctx.lineWidth=0.75;
+  [[0,0,0,1,0,0],[1,0,0,1,0,1],[1,0,1,0,0,1],[0,0,1,0,0,0],
+   [0,1,0,1,1,0],[1,1,0,1,1,1],[1,1,1,0,1,1],[0,1,1,0,1,0],
+   [0,0,0,0,1,0],[1,0,0,1,1,0],[1,0,1,1,1,1],[0,0,1,0,1,1]
+  ].forEach(([x0,y0,z0,x1,y1,z1])=>{
+    const a=project(x0,y0,z0), b=project(x1,y1,z1);
+    ctx.beginPath();ctx.moveTo(a.px,a.py);ctx.lineTo(b.px,b.py);ctx.stroke();
+  });
+
+  // Grid lines on 3 back faces: floor (y=0), back (z=0), left (x=0)
+  ctx.strokeStyle=gridColor; ctx.lineWidth=0.5;
+  for(let i=1;i<=3;i++){
+    const t=i/4;
+    // Floor y=0: x-lines and z-lines
+    {const a=project(t,0,0),b=project(t,0,1);ctx.beginPath();ctx.moveTo(a.px,a.py);ctx.lineTo(b.px,b.py);ctx.stroke();}
+    {const a=project(0,0,t),b=project(1,0,t);ctx.beginPath();ctx.moveTo(a.px,a.py);ctx.lineTo(b.px,b.py);ctx.stroke();}
+    // Back wall z=0: x-lines and y-lines
+    {const a=project(t,0,0),b=project(t,1,0);ctx.beginPath();ctx.moveTo(a.px,a.py);ctx.lineTo(b.px,b.py);ctx.stroke();}
+    {const a=project(0,t,0),b=project(1,t,0);ctx.beginPath();ctx.moveTo(a.px,a.py);ctx.lineTo(b.px,b.py);ctx.stroke();}
+    // Left wall x=0: z-lines and y-lines
+    {const a=project(0,0,t),b=project(0,1,t);ctx.beginPath();ctx.moveTo(a.px,a.py);ctx.lineTo(b.px,b.py);ctx.stroke();}
+    {const a=project(0,t,0),b=project(0,t,1);ctx.beginPath();ctx.moveTo(a.px,a.py);ctx.lineTo(b.px,b.py);ctx.stroke();}
+  }
+
+  // Axis arrows + labels
+  ctx.strokeStyle=wireColor; ctx.lineWidth=1.5;
+  ctx.font='600 8px var(--mono,monospace)'; ctx.fillStyle=wireColor;
   [[1,0,0,xDim],[0,1,0,yDim],[0,0,1,zDim]].forEach(([ax,ay,az,lbl])=>{
     const p0=project(0,0,0), p1=project(ax,ay,az);
     ctx.beginPath();ctx.moveTo(p0.px,p0.py);ctx.lineTo(p1.px,p1.py);ctx.stroke();
-    const ex=p1.px+(p1.px-p0.px)*0.12, ey=p1.py+(p1.py-p0.py)*0.12;
+    const ex=p1.px+(p1.px-p0.px)*0.14, ey=p1.py+(p1.py-p0.py)*0.14;
     ctx.textAlign='center'; ctx.fillText(lbl+' →',ex,ey);
   });
 
-  // Grid lines on floor (y=0 plane)
-  ctx.strokeStyle=isLight?'rgba(0,0,0,0.08)':'rgba(200,215,230,0.08)'; ctx.lineWidth=0.5;
-  for(let i=0;i<=4;i++){
-    const t=i/4;
-    const p0=project(t,0,0), p1=project(t,0,1);
-    ctx.beginPath();ctx.moveTo(p0.px,p0.py);ctx.lineTo(p1.px,p1.py);ctx.stroke();
-    const q0=project(0,0,t), q1=project(1,0,t);
-    ctx.beginPath();ctx.moveTo(q0.px,q0.py);ctx.lineTo(q1.px,q1.py);ctx.stroke();
-  }
+  // Axis tick labels at lo and hi
+  ctx.font='600 7px var(--mono,monospace)'; ctx.fillStyle=wireColor;
+  [[xDim,0],[yDim,1],[zDim,2]].forEach(([dim,ai])=>{
+    const isT=dim==='Total';
+    const lo=isT?10:1, hi=isT?50:5;
+    const nLo=(lo-(isT?8:1))/((isT?50:5)-(isT?8:1));
+    const nHi=1;
+    [[nLo,lo],[nHi,hi]].forEach(([n,label])=>{
+      const nx=ai===0?n:0, ny=ai===1?n:0, nz=ai===2?n:0;
+      const pt=project(nx,ny,nz);
+      ctx.textAlign='center'; ctx.fillText(label,pt.px,pt.py-5);
+    });
+  });
 
-  // Sort by depth (painter's algorithm)
+  // Sort by depth, draw bubbles
   const sorted=CS_ALL
     .map(p=>({p, proj:project(normVal(p,xDim),normVal(p,yDim),normVal(p,zDim))}))
     .sort((a,b)=>b.proj.depth-a.proj.depth);
