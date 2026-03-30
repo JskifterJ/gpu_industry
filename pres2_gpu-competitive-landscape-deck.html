@@ -306,6 +306,9 @@ html.light .hm-pill.limited{background:rgba(194,65,12,.08);color:#c2410c;}
 .s4-spec-table td:first-child{color:var(--dim2);font-size:7.5px;padding-left:0;white-space:nowrap;}
 .s4-spec-table tr:not(:last-child) td{border-bottom:1px solid rgba(128,128,128,0.07);}
 .s4-bar{height:6px;border-radius:2px;min-width:3px;}
+.s4-pip-row{display:flex;gap:2px;align-items:center;}
+.s4-pip{width:7px;height:7px;border-radius:1px;flex-shrink:0;}
+.s4-pip-label{font-family:var(--mono);font-size:6.5px;color:var(--dim2);margin-top:1px;}
 .s4-insight-box{background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.15);border-radius:5px;padding:7px 10px;font-size:9.5px;color:var(--muted);line-height:1.55;margin-bottom:5px;}
 /* S3 Hugo Shi tier badges */
 .hs-tier{display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:7px;padding:1px 6px;border-radius:2px;border:1px solid var(--border);color:var(--dim);margin-right:4px;margin-bottom:3px;}
@@ -727,7 +730,7 @@ details[open].co-expand summary::before{content:'▾';}
     <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Four Business Models</div></div>
     <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
   </div>
-  <div class="slide-body" style="flex-direction:column;padding:10px 0 0;">
+  <div class="slide-body" style="flex-direction:column;padding:10px 0 72px;overflow-y:auto;">
     <div style="padding:0 44px 8px;font-family:var(--mono);font-size:9px;color:var(--dim);">The GPU compute market organises into four distinct archetypes, each occupying different layers of the <span class="tip" data-tip="L−1 (Energy) through L7 (Application). Each layer adds abstraction above the raw GPU silicon. Colour-coded consistently throughout this deck.">value chain</span> and serving different buyer profiles.</div>
     <div class="models-grid">
       <div class="model-card anim anim-1" style="border-color:rgba(99,102,241,0.3);background:linear-gradient(135deg,var(--h-dim),transparent);">
@@ -803,52 +806,38 @@ details[open].co-expand summary::before{content:'▾';}
           <tbody>
             <tr>
               <td>Stack depth (L−1 → L7)</td>
-              <td><div class="s4-bar" style="width:100%;background:var(--h);"></div></td>
-              <td><div class="s4-bar" style="width:72%;background:var(--n);"></div></td>
-              <td><div class="s4-bar" style="width:52%;background:var(--o);"></div></td>
-              <td><div class="s4-bar" style="width:18%;background:var(--a);"></div></td>
+              <td><div class="s4-pip-row"><div class="s4-pip" style="background:var(--h);"></div><div class="s4-pip" style="background:var(--h);"></div><div class="s4-pip" style="background:var(--h);"></div><div class="s4-pip" style="background:var(--h);"></div><div class="s4-pip" style="background:var(--h);"></div></div><div class="s4-pip-label">Very High</div></td>
+              <td><div class="s4-pip-row"><div class="s4-pip" style="background:var(--n);"></div><div class="s4-pip" style="background:var(--n);"></div><div class="s4-pip" style="background:var(--n);"></div><div class="s4-pip" style="background:var(--n);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div></div><div class="s4-pip-label">High</div></td>
+              <td><div class="s4-pip-row"><div class="s4-pip" style="background:var(--o);"></div><div class="s4-pip" style="background:var(--o);"></div><div class="s4-pip" style="background:var(--o);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div></div><div class="s4-pip-label">Medium</div></td>
+              <td><div class="s4-pip-row"><div class="s4-pip" style="background:var(--a);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div></div><div class="s4-pip-label">Very Low</div></td>
             </tr>
             <tr>
               <td>Customer operational overhead</td>
-              <td><div class="s4-bar" style="width:8%;background:var(--h);"></div></td>
-              <td><div class="s4-bar" style="width:45%;background:var(--n);"></div></td>
-              <td><div class="s4-bar" style="width:62%;background:var(--o);"></div></td>
-              <td><div class="s4-bar" style="width:95%;background:var(--a);"></div></td>
+              <td><div class="s4-pip-row"><div class="s4-pip" style="background:var(--h);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div></div><div class="s4-pip-label">Very Low</div></td>
+              <td><div class="s4-pip-row"><div class="s4-pip" style="background:var(--n);"></div><div class="s4-pip" style="background:var(--n);"></div><div class="s4-pip" style="background:var(--n);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div></div><div class="s4-pip-label">Medium</div></td>
+              <td><div class="s4-pip-row"><div class="s4-pip" style="background:var(--o);"></div><div class="s4-pip" style="background:var(--o);"></div><div class="s4-pip" style="background:var(--o);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div></div><div class="s4-pip-label">Medium</div></td>
+              <td><div class="s4-pip-row"><div class="s4-pip" style="background:var(--a);"></div><div class="s4-pip" style="background:var(--a);"></div><div class="s4-pip" style="background:var(--a);"></div><div class="s4-pip" style="background:var(--a);"></div><div class="s4-pip" style="background:var(--a);"></div></div><div class="s4-pip-label">Very High</div></td>
             </tr>
             <tr>
               <td>Price savings vs hyperscaler</td>
-              <td style="color:var(--dim2);">0% (baseline ~$10/hr)</td>
-              <td style="color:var(--n);">−20–40% (~$2–4/hr)</td>
-              <td style="color:var(--o);">−20–40% (per-job)</td>
-              <td style="color:var(--a);">−50–80% spot (preemptible)</td>
+              <td><div class="s4-pip-row"><div class="s4-pip" style="background:var(--h);opacity:0.4;"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div></div><div class="s4-pip-label">Baseline ~$10/hr</div></td>
+              <td><div class="s4-pip-row"><div class="s4-pip" style="background:var(--n);"></div><div class="s4-pip" style="background:var(--n);"></div><div class="s4-pip" style="background:var(--n);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div></div><div class="s4-pip-label">−20–40%</div></td>
+              <td><div class="s4-pip-row"><div class="s4-pip" style="background:var(--o);"></div><div class="s4-pip" style="background:var(--o);"></div><div class="s4-pip" style="background:var(--o);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div></div><div class="s4-pip-label">−20–40%</div></td>
+              <td><div class="s4-pip-row"><div class="s4-pip" style="background:var(--a);"></div><div class="s4-pip" style="background:var(--a);"></div><div class="s4-pip" style="background:var(--a);"></div><div class="s4-pip" style="background:var(--a);"></div><div class="s4-pip" style="background:var(--a);"></div></div><div class="s4-pip-label">−50–80% spot</div></td>
             </tr>
             <tr>
               <td>Security · VPC isolation</td>
-              <td><div class="s4-bar" style="width:100%;background:var(--h);"></div></td>
-              <td><div class="s4-bar" style="width:72%;background:var(--n);"></div></td>
-              <td><div class="s4-bar" style="width:44%;background:var(--o);"></div></td>
-              <td><div class="s4-bar" style="width:18%;background:var(--a);opacity:.5;"></div></td>
+              <td><div class="s4-pip-row"><div class="s4-pip" style="background:var(--h);"></div><div class="s4-pip" style="background:var(--h);"></div><div class="s4-pip" style="background:var(--h);"></div><div class="s4-pip" style="background:var(--h);"></div><div class="s4-pip" style="background:var(--h);"></div></div><div class="s4-pip-label">Very High</div></td>
+              <td><div class="s4-pip-row"><div class="s4-pip" style="background:var(--n);"></div><div class="s4-pip" style="background:var(--n);"></div><div class="s4-pip" style="background:var(--n);"></div><div class="s4-pip" style="background:var(--n);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div></div><div class="s4-pip-label">High</div></td>
+              <td><div class="s4-pip-row"><div class="s4-pip" style="background:var(--o);"></div><div class="s4-pip" style="background:var(--o);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div></div><div class="s4-pip-label">Low</div></td>
+              <td><div class="s4-pip-row"><div class="s4-pip" style="background:var(--a);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div></div><div class="s4-pip-label">Very Low</div></td>
             </tr>
             <tr>
-              <td>Bare-metal control / configurability</td>
-              <td><div class="s4-bar" style="width:10%;background:var(--h);opacity:.3;"></div></td>
-              <td><div class="s4-bar" style="width:68%;background:var(--n);"></div></td>
-              <td><div class="s4-bar" style="width:42%;background:var(--o);"></div></td>
-              <td><div class="s4-bar" style="width:100%;background:var(--a);"></div></td>
-            </tr>
-            <tr>
-              <td>Managed ML services (T5)</td>
-              <td><div class="s4-bar" style="width:100%;background:var(--h);"></div></td>
-              <td><div class="s4-bar" style="width:20%;background:var(--n);"></div></td>
-              <td><div class="s4-bar" style="width:92%;background:var(--o);"></div></td>
-              <td><div class="s4-bar" style="width:5%;background:var(--a);opacity:.3;"></div></td>
-            </tr>
-            <tr>
-              <td style="color:var(--dim);font-style:italic;">Hugo Shi service tiers</td>
-              <td style="color:var(--dim2);">T1 T2 T3 T4 T5</td>
-              <td style="color:var(--dim2);">T1 T2 T3 T4</td>
-              <td style="color:var(--dim2);">T2 · T3 · T5</td>
-              <td style="color:var(--dim2);">T1 (aggregated)</td>
+              <td>Managed ML services</td>
+              <td><div class="s4-pip-row"><div class="s4-pip" style="background:var(--h);"></div><div class="s4-pip" style="background:var(--h);"></div><div class="s4-pip" style="background:var(--h);"></div><div class="s4-pip" style="background:var(--h);"></div><div class="s4-pip" style="background:var(--h);"></div></div><div class="s4-pip-label">Very High</div></td>
+              <td><div class="s4-pip-row"><div class="s4-pip" style="background:var(--n);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div></div><div class="s4-pip-label">Very Low</div></td>
+              <td><div class="s4-pip-row"><div class="s4-pip" style="background:var(--o);"></div><div class="s4-pip" style="background:var(--o);"></div><div class="s4-pip" style="background:var(--o);"></div><div class="s4-pip" style="background:var(--o);"></div><div class="s4-pip" style="background:var(--o);"></div></div><div class="s4-pip-label">Very High</div></td>
+              <td><div class="s4-pip-row"><div class="s4-pip" style="background:var(--a);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div></div><div class="s4-pip-label">Very Low</div></td>
             </tr>
           </tbody>
         </table>
@@ -1046,7 +1035,7 @@ details[open].co-expand summary::before{content:'▾';}
         </div>
         <div class="dd-diff-box anim anim-2" style="border-left-color:var(--h);background:var(--h-dim);">
           <div class="dd-diff-label">What they compete on</div>
-          <div class="dd-diff-text">The only model with credible end-to-end stack ownership. Wins on compliance breadth and ISV ecosystem — not raw GPU performance.</div>
+          <div class="dd-diff-text">The only model with credible end-to-end stack ownership. Wins on compliance breadth and Independent Software Vendor (ISV) ecosystem — not raw GPU performance.</div>
         </div>
         <div class="dd-kpi-row anim anim-3">
           <div class="dd-kpi" style="border-color:rgba(99,102,241,.25);"><div class="dd-kpi-label">vs CoreWeave (baseline)</div><div class="dd-kpi-value" style="color:var(--h);">+30–50%</div></div>
@@ -1120,21 +1109,20 @@ details[open].co-expand summary::before{content:'▾';}
           <div class="co-meta"><span class="co-meta-pill pub">Public · GOOGL · NASDAQ</span><span class="co-meta-pill na">HQ: US</span><span class="co-meta-pill">Global</span></div>
           <div class="co-score-row"><div class="co-total" style="color:#059669;">36</div><div class="co-total-label">/ 50 · Gold · fast-tracking</div></div>
           <div class="co-radar-wrap" id="radar-gcp"></div>
-          <div class="co-oneliner">Google Cloud leads hyperscalers on software orchestration quality (L3) — its cluster management tooling is the most mature in the category. It is also the only hyperscaler with its own AI chip alternative to NVIDIA that genuinely competes on cost, giving customers a hardware escape hatch no other hyperscaler offers.</div>
           <div class="co-diff" style="color:#059669;border-color:#059669;background:rgba(5,150,105,0.07);">Only hyperscaler with a production-viable NVIDIA alternative (<span class="tip" data-tip="TPU (Tensor Processing Unit): Google's custom AI chip, designed specifically for large-scale matrix maths in machine learning. TPU v5e delivers 30–50% better cost-per-computation than H100 for the heavy maths in modern AI training.">TPU</span>) — and the best <span class="tip" data-tip="Kubernetes (K8s): the industry-standard system for automatically managing and scheduling containerised software across GPU servers. Think of it as the air traffic control for AI workloads.">Kubernetes</span> cluster management in the category</div>
-          <div class="co-highlights">
-            <div class="co-hl"><div class="co-hl-dot" style="background:#059669;"></div>GKE Autopilot + CoMMA: best K8s + unique eBPF straggler detection for distributed training</div>
-            <div class="co-hl"><div class="co-hl-dot" style="background:#059669;"></div>TPU v5e/v5p: 30–50% better cost/FLOP vs H100 for matrix-multiply-heavy transformer training</div>
-            <div class="co-hl"><div class="co-hl-dot" style="background:#b91c1c;"></div>gIB plugin manually injected · NVL36×2 NVLink instability · Cluster Director still preview</div>
-          </div>
+          <div class="co-oneliner">Google Cloud leads hyperscalers on software orchestration quality (L3) — its cluster management tooling is the most mature in the category. It is also the only hyperscaler with its own AI chip alternative to NVIDIA that genuinely competes on cost, giving customers a hardware escape hatch no other hyperscaler offers.</div>
           <div class="co-stats">
             <div class="co-stat-item"><div class="co-stat-label">Pricing</div><div class="co-stat-bar"><div class="co-stat-pip on" style="background:#059669;"></div><div class="co-stat-pip on" style="background:#059669;"></div><div class="co-stat-pip off" style="background:#059669;"></div><div class="co-stat-pip off" style="background:#059669;"></div><div class="co-stat-pip off" style="background:#059669;"></div><span class="co-stat-val">2/5 · ~$2.80–4.80/hr H100</span></div></div>
             <div class="co-stat-item"><div class="co-stat-label">Flexibility</div><div class="co-stat-bar"><div class="co-stat-pip on" style="background:#059669;"></div><div class="co-stat-pip on" style="background:#059669;"></div><div class="co-stat-pip on" style="background:#059669;"></div><div class="co-stat-pip off" style="background:#059669;"></div><div class="co-stat-pip off" style="background:#059669;"></div><span class="co-stat-val">3/5 · On-Demand + CUD 1–3yr</span></div></div>
             <div class="co-stat-item"><div class="co-stat-label">Egress fees</div><div class="co-stat-bar"><div class="co-stat-pip egress-on" style="background:#059669;"></div><div class="co-stat-pip egress-on" style="background:#059669;"></div><div class="co-stat-pip egress-on" style="background:#059669;"></div><div class="co-stat-pip egress-off" style="background:#059669;"></div><div class="co-stat-pip egress-off" style="background:#059669;"></div><span class="co-stat-val">3/5 · Below hyperscaler avg</span></div></div>
           </div>
           <details class="co-expand">
-            <summary>Contract &amp; orchestration details</summary>
-            <div class="co-expand-inner"><div class="co-spec">
+            <summary>Strengths, gaps &amp; contract details</summary>
+            <div class="co-expand-inner"><div class="co-highlights">
+            <div class="co-hl"><div class="co-hl-dot" style="background:#059669;"></div>GKE Autopilot + CoMMA: best K8s + unique eBPF straggler detection for distributed training</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#059669;"></div>TPU v5e/v5p: 30–50% better cost/FLOP vs H100 for matrix-multiply-heavy transformer training</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#b91c1c;"></div>gIB plugin manually injected · NVL36×2 NVLink instability · Cluster Director still preview</div>
+            </div><div class="co-spec" style="margin-top:6px;">
               <div class="cs-row"><span class="cs-k">Contract</span><span class="cs-v">On-demand · Committed Use Discounts (1–3yr)</span></div>
               <div class="cs-row"><span class="cs-k">Orch</span><span class="cs-v">GKE Autopilot (best-in-class) + Cluster Director Slurm (preview)</span></div>
             </div></div>
@@ -1146,21 +1134,20 @@ details[open].co-expand summary::before{content:'▾';}
           <div class="co-meta"><span class="co-meta-pill pub">Public · ORCL · NYSE</span><span class="co-meta-pill na">HQ: US</span><span class="co-meta-pill">Global (45 regions)</span></div>
           <div class="co-score-row"><div class="co-total" style="color:#b45309;">39</div><div class="co-total-label">/ 50 · Highest CM score</div></div>
           <div class="co-radar-wrap" id="radar-oracle"></div>
-          <div class="co-oneliner">Oracle is the only hyperscaler with no stake in AI model development — meaning it can sell compute to competing AI companies at the same time without conflict of interest. It scores highest in the independent ClusterMAX benchmark and is the most cost-effective hyperscaler per GPU-hour, anchoring the US government's largest AI infrastructure commitment.</div>
           <div class="co-diff" style="color:#b45309;border-color:#b45309;background:rgba(180,83,9,0.07);">AI-neutral vendor with the highest CM score: no model bets means no conflict of interest — and the lowest price per GPU-hour among hyperscalers</div>
-          <div class="co-highlights">
-            <div class="co-hl"><div class="co-hl-dot" style="background:#b45309;"></div>60%+ of US Stargate ($300B+ OpenAI deal) · 45 global regions · fastest DC deployment</div>
-            <div class="co-hl"><div class="co-hl-dot" style="background:#b45309;"></div>Best support SLA among all hyperscalers · most cost-effective hyperscaler per GPU-hr</div>
-            <div class="co-hl"><div class="co-hl-dot" style="background:#b91c1c;"></div>Oracle Linux friction for Ubuntu AI teams · RoCE not InfiniBand · OKE SSH for kubeconfig</div>
-          </div>
+          <div class="co-oneliner">Oracle is the only hyperscaler with no stake in AI model development — meaning it can sell compute to competing AI companies at the same time without conflict of interest. It scores highest in the independent ClusterMAX benchmark and is the most cost-effective hyperscaler per GPU-hour, anchoring the US government's largest AI infrastructure commitment.</div>
           <div class="co-stats">
             <div class="co-stat-item"><div class="co-stat-label">Pricing</div><div class="co-stat-bar"><div class="co-stat-pip on" style="background:#b45309;"></div><div class="co-stat-pip on" style="background:#b45309;"></div><div class="co-stat-pip on" style="background:#b45309;"></div><div class="co-stat-pip off" style="background:#b45309;"></div><div class="co-stat-pip off" style="background:#b45309;"></div><span class="co-stat-val">3/5 · ~$2.50–4/hr H100</span></div></div>
             <div class="co-stat-item"><div class="co-stat-label">Flexibility</div><div class="co-stat-bar"><div class="co-stat-pip on" style="background:#b45309;"></div><div class="co-stat-pip on" style="background:#b45309;"></div><div class="co-stat-pip off" style="background:#b45309;"></div><div class="co-stat-pip off" style="background:#b45309;"></div><div class="co-stat-pip off" style="background:#b45309;"></div><span class="co-stat-val">2/5 · On-demand + reserved</span></div></div>
             <div class="co-stat-item"><div class="co-stat-label">Egress fees</div><div class="co-stat-bar"><div class="co-stat-pip egress-on" style="background:#b45309;"></div><div class="co-stat-pip egress-on" style="background:#b45309;"></div><div class="co-stat-pip egress-on" style="background:#b45309;"></div><div class="co-stat-pip egress-on" style="background:#b45309;"></div><div class="co-stat-pip egress-on" style="background:#b45309;"></div><span class="co-stat-val">5/5 · Free egress (advertised)</span></div></div>
           </div>
           <details class="co-expand">
-            <summary>Contract &amp; orchestration details</summary>
-            <div class="co-expand-inner"><div class="co-spec">
+            <summary>Strengths, gaps &amp; contract details</summary>
+            <div class="co-expand-inner"><div class="co-highlights">
+            <div class="co-hl"><div class="co-hl-dot" style="background:#b45309;"></div>60%+ of US Stargate ($300B+ OpenAI deal) · 45 global regions · fastest DC deployment</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#b45309;"></div>Best support SLA among all hyperscalers · most cost-effective hyperscaler per GPU-hr</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#b91c1c;"></div>Oracle Linux friction for Ubuntu AI teams · RoCE not InfiniBand · OKE SSH for kubeconfig</div>
+            </div><div class="co-spec" style="margin-top:6px;">
               <div class="cs-row"><span class="cs-k">Contract</span><span class="cs-v">On-demand · 1–3yr reserved · Enterprise agreements</span></div>
               <div class="cs-row"><span class="cs-k">Orch</span><span class="cs-v">OKE (K8s) + Bare metal HPC · No managed Slurm</span></div>
             </div></div>
@@ -1173,21 +1160,20 @@ details[open].co-expand summary::before{content:'▾';}
           <div class="co-meta"><span class="co-meta-pill pub">Public · MSFT · NASDAQ</span><span class="co-meta-pill na">HQ: US</span><span class="co-meta-pill">Global</span></div>
           <div class="co-score-row"><div class="co-total" style="color:#0891B2;">34</div><div class="co-total-label">/ 50 · Gold</div></div>
           <div class="co-radar-wrap" id="radar-azure"></div>
-          <div class="co-oneliner">Azure is the only hyperscaler that can run the most demanding multi-thousand-GPU training jobs at full network speed — it is the only one with the dedicated high-speed AI networking fabric required. It is also the only hyperscaler approved for classified US government AI work, making it mandatory for regulated and defence organisations.</div>
           <div class="co-diff" style="color:#0891B2;border-color:#0891B2;background:rgba(8,145,178,0.07);">The only hyperscaler cleared for classified US defence AI AND the only one capable of efficient large-scale distributed training (<span class="tip" data-tip="InfiniBand + SHARP: InfiniBand is a dedicated ultra-fast networking cable standard between GPUs delivering 400Gb/s per link — 10× faster than standard Ethernet. SHARP offloads collective computation into the network switches, cutting communication overhead by 10–30% at large scale. Both are mandatory above 256 GPUs for efficient training.">InfiniBand + SHARP</span>)</div>
-          <div class="co-highlights">
-            <div class="co-hl"><div class="co-hl-dot" style="background:#0891B2;"></div>IB + SHARP — critical for &gt;256-GPU allreduce; no other hyperscaler has this</div>
-            <div class="co-hl"><div class="co-hl-dot" style="background:#0891B2;"></div><span class="tip" data-tip="FedRAMP High: US government cloud security authorisation for sensitive unclassified data. DoD IL5: authorisation for classified national security AI workloads. Without these certifications, no US defence or intelligence agency can legally use a provider.">FedRAMP High / DoD IL5</span> — only option for classified US government AI workloads</div>
-            <div class="co-hl"><div class="co-hl-dot" style="background:#b91c1c;"></div>CycleCloud Slurm = no default health checks · Capacity constrained for non-OpenAI accounts</div>
-          </div>
+          <div class="co-oneliner">Azure is the only hyperscaler that can run the most demanding multi-thousand-GPU training jobs at full network speed — it is the only one with the dedicated high-speed AI networking fabric required. It is also the only hyperscaler approved for classified US government AI work, making it mandatory for regulated and defence organisations.</div>
           <div class="co-stats">
             <div class="co-stat-item"><div class="co-stat-label">Pricing</div><div class="co-stat-bar"><div class="co-stat-pip on" style="background:#0891B2;"></div><div class="co-stat-pip off" style="background:#0891B2;"></div><div class="co-stat-pip off" style="background:#0891B2;"></div><div class="co-stat-pip off" style="background:#0891B2;"></div><div class="co-stat-pip off" style="background:#0891B2;"></div><span class="co-stat-val">1/5 · ~$3–6/hr H100 (EA)</span></div></div>
             <div class="co-stat-item"><div class="co-stat-label">Flexibility</div><div class="co-stat-bar"><div class="co-stat-pip on" style="background:#0891B2;"></div><div class="co-stat-pip on" style="background:#0891B2;"></div><div class="co-stat-pip off" style="background:#0891B2;"></div><div class="co-stat-pip off" style="background:#0891B2;"></div><div class="co-stat-pip off" style="background:#0891B2;"></div><span class="co-stat-val">2/5 · Mostly reserved / EA</span></div></div>
             <div class="co-stat-item"><div class="co-stat-label">Egress fees</div><div class="co-stat-bar"><div class="co-stat-pip egress-on" style="background:#0891B2;"></div><div class="co-stat-pip egress-on" style="background:#0891B2;"></div><div class="co-stat-pip egress-off" style="background:#0891B2;"></div><div class="co-stat-pip egress-off" style="background:#0891B2;"></div><div class="co-stat-pip egress-off" style="background:#0891B2;"></div><span class="co-stat-val">2/5 · Standard hyperscaler rates</span></div></div>
           </div>
           <details class="co-expand">
-            <summary>Contract &amp; orchestration details</summary>
-            <div class="co-expand-inner"><div class="co-spec">
+            <summary>Strengths, gaps &amp; contract details</summary>
+            <div class="co-expand-inner"><div class="co-highlights">
+            <div class="co-hl"><div class="co-hl-dot" style="background:#0891B2;"></div>IB + SHARP — critical for &gt;256-GPU allreduce; no other hyperscaler has this</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#0891B2;"></div><span class="tip" data-tip="FedRAMP High: US government cloud security authorisation for sensitive unclassified data. DoD IL5: authorisation for classified national security AI workloads. Without these certifications, no US defence or intelligence agency can legally use a provider.">FedRAMP High / DoD IL5</span> — only option for classified US government AI workloads</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#b91c1c;"></div>CycleCloud Slurm = no default health checks · Capacity constrained for non-OpenAI accounts</div>
+            </div><div class="co-spec" style="margin-top:6px;">
               <div class="cs-row"><span class="cs-k">Contract</span><span class="cs-v">On-demand · 1–3yr reserved · Enterprise Agreements</span></div>
               <div class="cs-row"><span class="cs-k">Orch</span><span class="cs-v">AKS (strong) · CycleCloud/Slurm (weak)</span></div>
             </div></div>
@@ -1199,21 +1185,20 @@ details[open].co-expand summary::before{content:'▾';}
           <div class="co-meta"><span class="co-meta-pill pub">Public · AMZN · NASDAQ</span><span class="co-meta-pill na">HQ: US</span><span class="co-meta-pill">Global</span></div>
           <div class="co-score-row"><div class="co-total" style="color:#3730a3;">29</div><div class="co-total-label">/ 50 · Silver · #1 market share</div></div>
           <div class="co-radar-wrap" id="radar-aws"></div>
-          <div class="co-oneliner">AWS is the default for enterprise teams already built on Amazon's cloud — their training data is stored there, and moving it is a multi-year undertaking (L5 data layer lock-in). It has the broadest portfolio of AI-managed services and is deploying its own custom chips that bypass NVIDIA entirely, reducing long-term compute cost for customers who commit to its ecosystem.</div>
           <div class="co-diff" style="color:#3730a3;border-color:#3730a3;background:rgba(55,48,163,0.07);">Data gravity moat: most enterprise training data already lives in S3 — switching to any other cloud means a multi-year migration regardless of GPU price</div>
-          <div class="co-highlights">
-            <div class="co-hl"><div class="co-hl-dot" style="background:#3730a3;"></div><span class="tip" data-tip="Trainium2: AWS's custom AI training chip — claims 3× better performance per dollar vs H100 for select model architectures. Inferentia2: AWS's custom inference chip for cheap, high-throughput model serving. Both are NVIDIA-free, meaning zero NVIDIA margin for customers who commit to the AWS ecosystem.">Trainium2 / Inferentia2</span> — only alternative to NVIDIA ASICs at hyperscale with real deployment</div>
-            <div class="co-hl"><div class="co-hl-dot" style="background:#3730a3;"></div>S3/FSx: where most enterprise training data lives — moving is a multi-year migration project</div>
-            <div class="co-hl"><div class="co-hl-dot" style="background:#b91c1c;"></div>HyperPod Slurm took SemiAnalysis 14hrs/4 attempts · EFA opaque vs IB · monitoring near-absent</div>
-          </div>
+          <div class="co-oneliner">AWS is the default for enterprise teams already built on Amazon's cloud — their training data is stored there, and moving it is a multi-year undertaking (L5 data layer lock-in). It has the broadest portfolio of AI-managed services and is deploying its own custom chips that bypass NVIDIA entirely, reducing long-term compute cost for customers who commit to its ecosystem.</div>
           <div class="co-stats">
             <div class="co-stat-item"><div class="co-stat-label">Pricing</div><div class="co-stat-bar"><div class="co-stat-pip on" style="background:#3730a3;"></div><div class="co-stat-pip off" style="background:#3730a3;"></div><div class="co-stat-pip off" style="background:#3730a3;"></div><div class="co-stat-pip off" style="background:#3730a3;"></div><div class="co-stat-pip off" style="background:#3730a3;"></div><span class="co-stat-val">1/5 · ~$3–5/hr H100 OD</span></div></div>
             <div class="co-stat-item"><div class="co-stat-label">Flexibility</div><div class="co-stat-bar"><div class="co-stat-pip on" style="background:#3730a3;"></div><div class="co-stat-pip on" style="background:#3730a3;"></div><div class="co-stat-pip on" style="background:#3730a3;"></div><div class="co-stat-pip off" style="background:#3730a3;"></div><div class="co-stat-pip off" style="background:#3730a3;"></div><span class="co-stat-val">3/5 · On-demand + Savings Plans</span></div></div>
             <div class="co-stat-item"><div class="co-stat-label">Egress fees</div><div class="co-stat-bar"><div class="co-stat-pip egress-on" style="background:#3730a3;"></div><div class="co-stat-pip egress-off" style="background:#3730a3;"></div><div class="co-stat-pip egress-off" style="background:#3730a3;"></div><div class="co-stat-pip egress-off" style="background:#3730a3;"></div><div class="co-stat-pip egress-off" style="background:#3730a3;"></div><span class="co-stat-val">1/5 · Highest hyperscaler egress rate</span></div></div>
           </div>
           <details class="co-expand">
-            <summary>Contract &amp; orchestration details</summary>
-            <div class="co-expand-inner"><div class="co-spec">
+            <summary>Strengths, gaps &amp; contract details</summary>
+            <div class="co-expand-inner"><div class="co-highlights">
+            <div class="co-hl"><div class="co-hl-dot" style="background:#3730a3;"></div><span class="tip" data-tip="Trainium2: AWS's custom AI training chip — claims 3× better performance per dollar vs H100 for select model architectures. Inferentia2: AWS's custom inference chip for cheap, high-throughput model serving. Both are NVIDIA-free, meaning zero NVIDIA margin for customers who commit to the AWS ecosystem.">Trainium2 / Inferentia2</span> — only alternative to NVIDIA ASICs at hyperscale with real deployment</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#3730a3;"></div>S3/FSx: where most enterprise training data lives — moving is a multi-year migration project</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#b91c1c;"></div>HyperPod Slurm took SemiAnalysis 14hrs/4 attempts · EFA opaque vs IB · monitoring near-absent</div>
+            </div><div class="co-spec" style="margin-top:6px;">
               <div class="cs-row"><span class="cs-k">Contract</span><span class="cs-v">On-demand · 1–3yr reserved · Savings Plans</span></div>
               <div class="cs-row"><span class="cs-k">Orch</span><span class="cs-v">HyperPod (painful) · EKS (functional)</span></div>
             </div></div>
@@ -1312,21 +1297,20 @@ details[open].co-expand summary::before{content:'▾';}
           <div class="co-meta"><span class="co-meta-pill pub">Public · CRWV · NASDAQ</span><span class="co-meta-pill na">HQ: US</span><span class="co-meta-pill">US · EU</span></div>
           <div class="co-score-row"><div class="co-total" style="color:#64748b;">46</div><div class="co-total-label">/ 50 · Industry Benchmark</div></div>
           <div class="co-radar-wrap" id="radar-coreweave"></div>
-          <div class="co-oneliner">CoreWeave is the industry benchmark for GPU cloud. It is the only provider that can run large batch training jobs and real-time inference workloads on the same physical hardware pool simultaneously (L3 orchestration layer), maximising GPU utilisation and reducing cost per job. Its proprietary storage acceleration and hardware isolation make it the top choice for frontier AI labs.</div>
           <div class="co-diff" style="color:#64748b;border-color:#64748b;background:rgba(100,116,139,0.07);">The only neocloud running <span class="tip" data-tip="Slurm: the dominant batch job scheduler used by AI labs for large training runs. Jobs are queued and allocated to GPU clusters in sequence — like a timed booking system for compute.">Slurm</span> and <span class="tip" data-tip="Kubernetes (K8s): the industry-standard system for managing containerised AI workloads such as real-time inference APIs. Unlike Slurm (batch), Kubernetes handles always-on services.">Kubernetes</span> simultaneously on the same GPU pool — eliminating idle time between training and inference workloads</div>
-          <div class="co-highlights">
-            <div class="co-hl"><div class="co-hl-dot" style="background:#64748b;"></div><span class="tip" data-tip="SUNK: CoreWeave's system that runs Slurm (batch training jobs) and Kubernetes (inference services) on the same GPU pool simultaneously — no other neocloud does this in production. LOTA: NVMe cache delivering 7+ GB/s per GPU, eliminating the storage bottleneck during checkpoint saves. BlueField-3 DPU: NVIDIA chip that offloads networking and security from the GPU, enabling hardware-enforced tenant isolation. IB+SHARP: InfiniBand high-speed networking with in-network computation — the fastest available inter-GPU fabric.">SUNK + LOTA NVMe cache + BlueField-3 DPU + IB+SHARP</span> — unique combination no other neocloud has</div>
-            <div class="co-hl"><div class="co-hl-dot" style="background:#64748b;"></div>W&amp;B (acquired 2025): XID/AER errors feed natively into researcher training dashboards</div>
-            <div class="co-hl"><div class="co-hl-dot" style="background:#b91c1c;"></div>Reservation-only (1–36 mo) · no spot/preemptible · 10–15% premium over Gold peers</div>
-          </div>
+          <div class="co-oneliner">CoreWeave is the industry benchmark for GPU cloud. It is the only provider that can run large batch training jobs and real-time inference workloads on the same physical hardware pool simultaneously (L3 orchestration layer), maximising GPU utilisation and reducing cost per job. Its proprietary storage acceleration and hardware isolation make it the top choice for frontier AI labs.</div>
           <div class="co-stats">
             <div class="co-stat-item"><div class="co-stat-label">Pricing</div><div class="co-stat-bar"><div class="co-stat-pip on" style="background:#64748b;"></div><div class="co-stat-pip on" style="background:#64748b;"></div><div class="co-stat-pip off" style="background:#64748b;"></div><div class="co-stat-pip off" style="background:#64748b;"></div><div class="co-stat-pip off" style="background:#64748b;"></div><span class="co-stat-val">2/5 · ~$6/hr H100 SXM</span></div></div>
             <div class="co-stat-item"><div class="co-stat-label">Flexibility</div><div class="co-stat-bar"><div class="co-stat-pip on" style="background:#64748b;"></div><div class="co-stat-pip off" style="background:#64748b;"></div><div class="co-stat-pip off" style="background:#64748b;"></div><div class="co-stat-pip off" style="background:#64748b;"></div><div class="co-stat-pip off" style="background:#64748b;"></div><span class="co-stat-val">1/5 · Reserved only (1–36 mo)</span></div></div>
             <div class="co-stat-item"><div class="co-stat-label">Egress fees</div><div class="co-stat-bar"><div class="co-stat-pip egress-on" style="background:#64748b;"></div><div class="co-stat-pip egress-on" style="background:#64748b;"></div><div class="co-stat-pip egress-on" style="background:#64748b;"></div><div class="co-stat-pip egress-on" style="background:#64748b;"></div><div class="co-stat-pip egress-on" style="background:#64748b;"></div><span class="co-stat-val">5/5 · Free on primary clusters</span></div></div>
           </div>
           <details class="co-expand">
-            <summary>Contract &amp; orchestration details</summary>
-            <div class="co-expand-inner"><div class="co-spec">
+            <summary>Strengths, gaps &amp; contract details</summary>
+            <div class="co-expand-inner"><div class="co-highlights">
+            <div class="co-hl"><div class="co-hl-dot" style="background:#64748b;"></div><span class="tip" data-tip="SUNK: CoreWeave's system that runs Slurm (batch training jobs) and Kubernetes (inference services) on the same GPU pool simultaneously — no other neocloud does this in production. LOTA: NVMe cache delivering 7+ GB/s per GPU, eliminating the storage bottleneck during checkpoint saves. BlueField-3 DPU: NVIDIA chip that offloads networking and security from the GPU, enabling hardware-enforced tenant isolation. IB+SHARP: InfiniBand high-speed networking with in-network computation — the fastest available inter-GPU fabric.">SUNK + LOTA NVMe cache + BlueField-3 DPU + IB+SHARP</span> — unique combination no other neocloud has</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#64748b;"></div>W&amp;B (acquired 2025): XID/AER errors feed natively into researcher training dashboards</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#b91c1c;"></div>Reservation-only (1–36 mo) · no spot/preemptible · 10–15% premium over Gold peers</div>
+            </div><div class="co-spec" style="margin-top:6px;">
               <div class="cs-row"><span class="cs-k">Contract</span><span class="cs-v">Reservation-only (1–36 month) · No on-demand</span></div>
               <div class="cs-row"><span class="cs-k">Orch</span><span class="cs-v">SUNK: K8s + Slurm co-scheduled (production-grade, licensed externally)</span></div>
             </div></div>
@@ -1338,21 +1322,20 @@ details[open].co-expand summary::before{content:'▾';}
           <div class="co-meta"><span class="co-meta-pill pub">Public · NBIS · NASDAQ</span><span class="co-meta-pill eu">HQ: EU (Netherlands)</span><span class="co-meta-pill">EU · APAC · US</span></div>
           <div class="co-score-row"><div class="co-total" style="color:#b45309;">37</div><div class="co-total-label">/ 50 · #1 Gold Neocloud</div></div>
           <div class="co-radar-wrap" id="radar-nebius"></div>
-          <div class="co-oneliner">Nebius is the only top-tier GPU cloud where you can book compute by the hour and cancel instantly, or bid on spare capacity at a fraction of the reserved price (L3 spot market). Its orchestration software is published publicly on GitHub — meaning any organisation can independently verify exactly how it works, a level of transparency no other neocloud at this tier offers.</div>
           <div class="co-diff" style="color:#b45309;border-color:#b45309;background:rgba(180,83,9,0.07);">The only Gold-tier neocloud with true spot pricing — book hourly, bid on spare capacity, or cancel without penalty; no 30-day minimum</div>
-          <div class="co-highlights">
-            <div class="co-hl"><div class="co-hl-dot" style="background:#b45309;"></div><span class="tip" data-tip="Soperator: Nebius's open-source Slurm-on-Kubernetes operator — published on GitHub so any organisation can read, verify, and even fork the exact code running their cluster. Already independently adopted by Gcore and Voltage Park without Nebius involvement.">Soperator</span> on GitHub · fully auditable · deployed by GCORE + Voltage Park too</div>
-            <div class="co-hl"><div class="co-hl-dot" style="background:#b45309;"></div>Spot/preemptible + on-demand (publicly priced) — unique among Gold-tier neoclouds</div>
-            <div class="co-hl"><div class="co-hl-dot" style="background:#b91c1c;"></div>Russian roots → perception risk · credit rating limits DC expansion pace</div>
-          </div>
+          <div class="co-oneliner">Nebius is the only top-tier GPU cloud where you can book compute by the hour and cancel instantly, or bid on spare capacity at a fraction of the reserved price (L3 spot market). Its orchestration software is published publicly on GitHub — meaning any organisation can independently verify exactly how it works, a level of transparency no other neocloud at this tier offers.</div>
           <div class="co-stats">
             <div class="co-stat-item"><div class="co-stat-label">Pricing</div><div class="co-stat-bar"><div class="co-stat-pip on" style="background:#b45309;"></div><div class="co-stat-pip on" style="background:#b45309;"></div><div class="co-stat-pip on" style="background:#b45309;"></div><div class="co-stat-pip on" style="background:#b45309;"></div><div class="co-stat-pip off" style="background:#b45309;"></div><span class="co-stat-val">4/5 · ~$2.80/hr H100 OD</span></div></div>
             <div class="co-stat-item"><div class="co-stat-label">Flexibility</div><div class="co-stat-bar"><div class="co-stat-pip on" style="background:#b45309;"></div><div class="co-stat-pip on" style="background:#b45309;"></div><div class="co-stat-pip on" style="background:#b45309;"></div><div class="co-stat-pip on" style="background:#b45309;"></div><div class="co-stat-pip on" style="background:#b45309;"></div><span class="co-stat-val">5/5 · OD + spot + reserved</span></div></div>
             <div class="co-stat-item"><div class="co-stat-label">Egress fees</div><div class="co-stat-bar"><div class="co-stat-pip egress-on" style="background:#b45309;"></div><div class="co-stat-pip egress-on" style="background:#b45309;"></div><div class="co-stat-pip egress-on" style="background:#b45309;"></div><div class="co-stat-pip egress-on" style="background:#b45309;"></div><div class="co-stat-pip egress-on" style="background:#b45309;"></div><span class="co-stat-val">5/5 · Free egress</span></div></div>
           </div>
           <details class="co-expand">
-            <summary>Contract &amp; orchestration details</summary>
-            <div class="co-expand-inner"><div class="co-spec">
+            <summary>Strengths, gaps &amp; contract details</summary>
+            <div class="co-expand-inner"><div class="co-highlights">
+            <div class="co-hl"><div class="co-hl-dot" style="background:#b45309;"></div><span class="tip" data-tip="Soperator: Nebius's open-source Slurm-on-Kubernetes operator — published on GitHub so any organisation can read, verify, and even fork the exact code running their cluster. Already independently adopted by Gcore and Voltage Park without Nebius involvement.">Soperator</span> on GitHub · fully auditable · deployed by GCORE + Voltage Park too</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#b45309;"></div>Spot/preemptible + on-demand (publicly priced) — unique among Gold-tier neoclouds</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#b91c1c;"></div>Russian roots → perception risk · credit rating limits DC expansion pace</div>
+            </div><div class="co-spec" style="margin-top:6px;">
               <div class="cs-row"><span class="cs-k">Contract</span><span class="cs-v">Hourly on-demand · Reserved · Preemptible spot</span></div>
               <div class="cs-row"><span class="cs-k">Orch</span><span class="cs-v">Soperator (open-source SonK) · KubeVirt · Spot market</span></div>
             </div></div>
@@ -1361,26 +1344,25 @@ details[open].co-expand summary::before{content:'▾';}
         <div class="co-card anim anim-3" style="border-top:2px solid #b45309;">
           <div class="co-rank">3</div>
           <div class="co-top"><div class="co-monogram" style="background:rgba(180,83,9,0.12);color:#92400e;border:1px solid rgba(180,83,9,0.35);">FS</div><div class="co-name-wrap"><div class="co-name">FluidStack</div><span class="tbadge gold">Gold</span></div></div>
-          <div class="co-meta"><span class="co-meta-pill vc">VC-backed · Series B</span><span class="co-meta-pill eu">HQ: EU (UK)</span><span class="co-meta-pill">Multi-region</span></div>
+          <div class="co-meta"><span class="co-meta-pill vc">VC-backed · Series B</span><span class="co-meta-pill na">HQ: US (NY)</span><span class="co-meta-pill">US · EU · APAC</span></div>
           <div class="co-score-row"><div class="co-total" style="color:#b45309;">36</div><div class="co-total-label">/ 50 · Gold</div></div>
           <div class="co-radar-wrap" id="radar-fluidstack"></div>
-          <div class="co-oneliner">FluidStack reaches Gold tier without owning a single GPU — a rank earned entirely through the quality of its engineering team rather than capital investment. Where other providers take weeks to resolve cluster issues, FluidStack deploys engineers on-site and fixes problems within hours, making it the most operationally agile provider in its tier for teams that need a responsive partner.</div>
-          <div class="co-diff" style="color:#b45309;border-color:#b45309;background:rgba(180,83,9,0.07);">Gold-tier quality with zero hardware ownership — the only neocloud that earns its rank purely through engineering excellence, not capital</div>
-          <div class="co-highlights">
-            <div class="co-hl"><div class="co-hl-dot" style="background:#b45309;"></div>ArgoCD shared IaC — customer can audit exact cluster config; Google-backstopped capacity</div>
-            <div class="co-hl"><div class="co-hl-dot" style="background:#b45309;"></div>Meta, Poolside, Blackforest Labs reference customers despite zero owned hardware</div>
-            <div class="co-hl"><div class="co-hl-dot" style="background:#b91c1c;"></div>Reliability varies by DC partner · no permanent owned infrastructure</div>
-          </div>
+          <div class="co-diff" style="color:#b45309;border-color:#b45309;background:rgba(180,83,9,0.07);">The only neocloud that pivoted from pure aggregator to owned GPU infrastructure in 2024 — now Anthropic's $50B AI data centre partner, backed by Google, running H100/H200 clusters for Meta, Mistral &amp; Black Forest Labs</div>
+          <div class="co-oneliner">FluidStack transitioned from a GPU marketplace model to owning and operating dedicated H100/H200 clusters in 2024 (62% owned revenue), relocating HQ from London to New York to pursue larger US contracts. Its forward-deployed engineering team resolves cluster issues on-site within hours — operational agility that CoreWeave and Nebius at larger scale cannot match.</div>
           <div class="co-stats">
             <div class="co-stat-item"><div class="co-stat-label">Pricing</div><div class="co-stat-bar"><div class="co-stat-pip on" style="background:#b45309;"></div><div class="co-stat-pip on" style="background:#b45309;"></div><div class="co-stat-pip on" style="background:#b45309;"></div><div class="co-stat-pip on" style="background:#b45309;"></div><div class="co-stat-pip off" style="background:#b45309;"></div><span class="co-stat-val">4/5 · ~$2.50/hr H100</span></div></div>
             <div class="co-stat-item"><div class="co-stat-label">Flexibility</div><div class="co-stat-bar"><div class="co-stat-pip on" style="background:#b45309;"></div><div class="co-stat-pip on" style="background:#b45309;"></div><div class="co-stat-pip on" style="background:#b45309;"></div><div class="co-stat-pip on" style="background:#b45309;"></div><div class="co-stat-pip off" style="background:#b45309;"></div><span class="co-stat-val">4/5 · Weekly / monthly terms</span></div></div>
             <div class="co-stat-item"><div class="co-stat-label">Egress fees</div><div class="co-stat-bar"><div class="co-stat-pip egress-on" style="background:#b45309;"></div><div class="co-stat-pip egress-on" style="background:#b45309;"></div><div class="co-stat-pip egress-on" style="background:#b45309;"></div><div class="co-stat-pip egress-on" style="background:#b45309;"></div><div class="co-stat-pip egress-on" style="background:#b45309;"></div><span class="co-stat-val">5/5 · Free on primary clusters</span></div></div>
           </div>
           <details class="co-expand">
-            <summary>Contract &amp; orchestration details</summary>
-            <div class="co-expand-inner"><div class="co-spec">
+            <summary>Strengths, gaps &amp; contract details</summary>
+            <div class="co-expand-inner"><div class="co-highlights">
+            <div class="co-hl"><div class="co-hl-dot" style="background:#b45309;"></div>Anthropic $50B DC partnership (TX + NY) + Google-backed financing — largest single strategic deal of any neocloud</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#b45309;"></div>ArgoCD shared IaC · customers can audit exact cluster config · Meta, Mistral, Black Forest Labs reference customers</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#b91c1c;"></div>Smaller owned footprint than CoreWeave / Nebius · ownership transition still recent (62% owned revenue as of 2024)</div>
+            </div><div class="co-spec" style="margin-top:6px;">
               <div class="cs-row"><span class="cs-k">Contract</span><span class="cs-v">Weekly · Monthly · Reserved — most flexible Gold-tier terms</span></div>
-              <div class="cs-row"><span class="cs-k">Orch</span><span class="cs-v">K8s + Slurm · forward-deployed engineering team</span></div>
+              <div class="cs-row"><span class="cs-k">Orch</span><span class="cs-v">K8s + Slurm · forward-deployed engineering team · ArgoCD IaC shared with customers</span></div>
             </div></div>
           </details>
         </div>
@@ -1487,21 +1469,20 @@ details[open].co-expand summary::before{content:'▾';}
           <div class="co-meta"><span class="co-meta-pill vc">VC · Series C+</span><span class="co-meta-pill na">HQ: US</span><span class="co-meta-pill">US · APAC</span></div>
           <div class="co-score-row"><div class="co-total" style="color:#7c3aed;">31</div><div class="co-total-label">/ 50 · Silver</div></div>
           <div class="co-radar-wrap" id="radar-together"></div>
-          <div class="co-oneliner">Together AI is the only GPU cloud in this tier with a team of engineers dedicated to making AI models run faster at the software level (L4 execution layer) — meaning customers get measurably more AI output per dollar spent. It also hedges infrastructure costs by routing idle GPUs into a public API, making the economics of running a reserved cluster more predictable.</div>
           <div class="co-diff" style="color:#7c3aed;border-color:#7c3aed;background:rgba(124,58,237,0.07);">Built by the <span class="tip" data-tip="FlashAttention: a GPU memory algorithm that reorganises how transformer AI models perform their core computation, reducing memory usage by 5–20× and enabling much longer context windows. Invented at Together AI and now the industry standard — every major AI lab uses it.">FlashAttention</span> inventors — the only orchestrator with engineers who make the AI software itself faster, not just cheaper hardware</div>
-          <div class="co-highlights">
-            <div class="co-hl"><div class="co-hl-dot" style="background:#7c3aed;"></div>TKC/FlashAttention — only orchestrator with a kernel team VP; measurable throughput gain</div>
-            <div class="co-hl"><div class="co-hl-dot" style="background:#7c3aed;"></div>Instant Clusters (KubeVirt+Slinky) — only correctly-configured Slinky deployment tested</div>
-            <div class="co-hl"><div class="co-hl-dot" style="background:#b91c1c;"></div>#1 reliability complaints · no auto node-remediation · K8s onboarding via SSH</div>
-          </div>
+          <div class="co-oneliner">Together AI is the only GPU cloud in this tier with a team of engineers dedicated to making AI models run faster at the software level (L4 execution layer) — meaning customers get measurably more AI output per dollar spent. It also hedges infrastructure costs by routing idle GPUs into a public API, making the economics of running a reserved cluster more predictable.</div>
           <div class="co-stats">
             <div class="co-stat-item"><div class="co-stat-label">Pricing</div><div class="co-stat-bar"><div class="co-stat-pip on" style="background:#7c3aed;"></div><div class="co-stat-pip on" style="background:#7c3aed;"></div><div class="co-stat-pip on" style="background:#7c3aed;"></div><div class="co-stat-pip on" style="background:#7c3aed;"></div><div class="co-stat-pip off" style="background:#7c3aed;"></div><span class="co-stat-val">4/5 · ~$2.49/hr cluster</span></div></div>
             <div class="co-stat-item"><div class="co-stat-label">Flexibility</div><div class="co-stat-bar"><div class="co-stat-pip on" style="background:#7c3aed;"></div><div class="co-stat-pip on" style="background:#7c3aed;"></div><div class="co-stat-pip on" style="background:#7c3aed;"></div><div class="co-stat-pip on" style="background:#7c3aed;"></div><div class="co-stat-pip on" style="background:#7c3aed;"></div><span class="co-stat-val">5/5 · Hourly on-demand</span></div></div>
             <div class="co-stat-item"><div class="co-stat-label">Egress fees</div><div class="co-stat-bar"><div class="co-stat-pip egress-on" style="background:#7c3aed;"></div><div class="co-stat-pip egress-on" style="background:#7c3aed;"></div><div class="co-stat-pip egress-on" style="background:#7c3aed;"></div><div class="co-stat-pip egress-on" style="background:#7c3aed;"></div><div class="co-stat-pip egress-on" style="background:#7c3aed;"></div><span class="co-stat-val">5/5 · Free egress</span></div></div>
           </div>
           <details class="co-expand">
-            <summary>Contract &amp; orchestration details</summary>
-            <div class="co-expand-inner"><div class="co-spec">
+            <summary>Strengths, gaps &amp; contract details</summary>
+            <div class="co-expand-inner"><div class="co-highlights">
+            <div class="co-hl"><div class="co-hl-dot" style="background:#7c3aed;"></div>TKC/FlashAttention — only orchestrator with a kernel team VP; measurable throughput gain</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#7c3aed;"></div>Instant Clusters (KubeVirt+Slinky) — only correctly-configured Slinky deployment tested</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#b91c1c;"></div>#1 reliability complaints · no auto node-remediation · K8s onboarding via SSH</div>
+            </div><div class="co-spec" style="margin-top:6px;">
               <div class="cs-row"><span class="cs-k">Contract</span><span class="cs-v">On-demand (Instant Clusters) + Reserved clusters</span></div>
               <div class="cs-row"><span class="cs-k">Orch</span><span class="cs-v">KubeVirt+Slinky · inference API endpoints</span></div>
             </div></div>
@@ -1513,21 +1494,20 @@ details[open].co-expand summary::before{content:'▾';}
           <div class="co-meta"><span class="co-meta-pill vc">VC + Microsoft deal</span><span class="co-meta-pill na">HQ: US</span><span class="co-meta-pill">US-centric</span></div>
           <div class="co-score-row"><div class="co-total" style="color:#5b21b6;">30</div><div class="co-total-label">/ 50 · Silver</div></div>
           <div class="co-radar-wrap" id="radar-lambda"></div>
-          <div class="co-oneliner">Lambda gives researchers the rare ability to book high-end GPUs on demand, by the hour, with no long-term commitment — the only orchestrator in this tier with a meaningful on-demand inventory. Its hardware knowledge (physical infrastructure layer, L1) is unusually deep for a software-focused provider, a credibility validated by a $1.5B capacity deal with Microsoft.</div>
           <div class="co-diff" style="color:#5b21b6;border-color:#5b21b6;background:rgba(91,33,182,0.07);">The only orchestrator with a real hourly H100/H200 inventory — book a single GPU, no reservation or minimum commitment required</div>
-          <div class="co-highlights">
-            <div class="co-hl"><div class="co-hl-dot" style="background:#5b21b6;"></div>Largest OD H100/H200 fleet when not sold out — unique for researchers avoiding 12-month commitments</div>
-            <div class="co-hl"><div class="co-hl-dot" style="background:#5b21b6;"></div>HPC hardware depth: rack/IB/firmware expertise unusual among orchestrators</div>
-            <div class="co-hl"><div class="co-hl-dot" style="background:#b91c1c;"></div>Frequent H100 sellouts · Monitoring poor · Support inconsistency across regions</div>
-          </div>
+          <div class="co-oneliner">Lambda gives researchers the rare ability to book high-end GPUs on demand, by the hour, with no long-term commitment — the only orchestrator in this tier with a meaningful on-demand inventory. Its hardware knowledge (physical infrastructure layer, L1) is unusually deep for a software-focused provider, a credibility validated by a $1.5B capacity deal with Microsoft.</div>
           <div class="co-stats">
             <div class="co-stat-item"><div class="co-stat-label">Pricing</div><div class="co-stat-bar"><div class="co-stat-pip on" style="background:#5b21b6;"></div><div class="co-stat-pip on" style="background:#5b21b6;"></div><div class="co-stat-pip on" style="background:#5b21b6;"></div><div class="co-stat-pip off" style="background:#5b21b6;"></div><div class="co-stat-pip off" style="background:#5b21b6;"></div><span class="co-stat-val">3/5 · ~$2.99/hr H100 OD</span></div></div>
             <div class="co-stat-item"><div class="co-stat-label">Flexibility</div><div class="co-stat-bar"><div class="co-stat-pip on" style="background:#5b21b6;"></div><div class="co-stat-pip on" style="background:#5b21b6;"></div><div class="co-stat-pip on" style="background:#5b21b6;"></div><div class="co-stat-pip on" style="background:#5b21b6;"></div><div class="co-stat-pip off" style="background:#5b21b6;"></div><span class="co-stat-val">4/5 · Hourly OD available</span></div></div>
             <div class="co-stat-item"><div class="co-stat-label">Egress fees</div><div class="co-stat-bar"><div class="co-stat-pip egress-on" style="background:#5b21b6;"></div><div class="co-stat-pip egress-on" style="background:#5b21b6;"></div><div class="co-stat-pip egress-on" style="background:#5b21b6;"></div><div class="co-stat-pip egress-off" style="background:#5b21b6;"></div><div class="co-stat-pip egress-off" style="background:#5b21b6;"></div><span class="co-stat-val">3/5 · Conditional on region</span></div></div>
           </div>
           <details class="co-expand">
-            <summary>Contract &amp; orchestration details</summary>
-            <div class="co-expand-inner"><div class="co-spec">
+            <summary>Strengths, gaps &amp; contract details</summary>
+            <div class="co-expand-inner"><div class="co-highlights">
+            <div class="co-hl"><div class="co-hl-dot" style="background:#5b21b6;"></div>Largest OD H100/H200 fleet when not sold out — unique for researchers avoiding 12-month commitments</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#5b21b6;"></div>HPC hardware depth: rack/IB/firmware expertise unusual among orchestrators</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#b91c1c;"></div>Frequent H100 sellouts · Monitoring poor · Support inconsistency across regions</div>
+            </div><div class="co-spec" style="margin-top:6px;">
               <div class="cs-row"><span class="cs-k">Contract</span><span class="cs-v">Hourly on-demand · No long-term commitment required</span></div>
               <div class="cs-row"><span class="cs-k">Orch</span><span class="cs-v">K8s + Slurm (1-Click Clusters)</span></div>
             </div></div>
@@ -1539,21 +1519,20 @@ details[open].co-expand summary::before{content:'▾';}
           <div class="co-meta"><span class="co-meta-pill vc">VC · Series B</span><span class="co-meta-pill na">HQ: US</span><span class="co-meta-pill">US-centric</span></div>
           <div class="co-score-row"><div class="co-total" style="color:#92400e;">22</div><div class="co-total-label">/ 50 · Bronze</div></div>
           <div class="co-radar-wrap" id="radar-lightningai"></div>
-          <div class="co-oneliner">Lightning.ai is the easiest way for an ML engineer to go from writing code to running it on GPUs in production (L4–L7), without needing to understand clusters or infrastructure. It uniquely auto-pauses idle compute to prevent unexpected bills — a cost governance feature no other provider in this tier offers — making it ideal as an entry point before teams are ready to manage raw cluster environments.</div>
           <div class="co-diff" style="color:#92400e;border-color:#92400e;background:rgba(146,64,14,0.07);">The only orchestrator with automatic compute pause — write code in the IDE, run on GPUs in minutes, never pay for idle time</div>
-          <div class="co-highlights">
-            <div class="co-hl"><div class="co-hl-dot" style="background:#92400e;"></div>Auto-sleep + attach/detach cost controls — unique governance tooling at this price point</div>
-            <div class="co-hl"><div class="co-hl-dot" style="background:#92400e;"></div>Notebook-to-production flow with lowest time-to-first-model-call in this tier</div>
-            <div class="co-hl"><div class="co-hl-dot" style="background:#b91c1c;"></div>Brokered supply · Security:2 · no cluster defensibility · margin layering at scale</div>
-          </div>
+          <div class="co-oneliner">Lightning.ai is the easiest way for an ML engineer to go from writing code to running it on GPUs in production (L4–L7), without needing to understand clusters or infrastructure. It uniquely auto-pauses idle compute to prevent unexpected bills — a cost governance feature no other provider in this tier offers — making it ideal as an entry point before teams are ready to manage raw cluster environments.</div>
           <div class="co-stats">
             <div class="co-stat-item"><div class="co-stat-label">Pricing</div><div class="co-stat-bar"><div class="co-stat-pip on" style="background:#92400e;"></div><div class="co-stat-pip on" style="background:#92400e;"></div><div class="co-stat-pip on" style="background:#92400e;"></div><div class="co-stat-pip off" style="background:#92400e;"></div><div class="co-stat-pip off" style="background:#92400e;"></div><span class="co-stat-val">3/5 · Per-seat + GPU-hr</span></div></div>
             <div class="co-stat-item"><div class="co-stat-label">Flexibility</div><div class="co-stat-bar"><div class="co-stat-pip on" style="background:#92400e;"></div><div class="co-stat-pip on" style="background:#92400e;"></div><div class="co-stat-pip on" style="background:#92400e;"></div><div class="co-stat-pip on" style="background:#92400e;"></div><div class="co-stat-pip on" style="background:#92400e;"></div><span class="co-stat-val">5/5 · Hourly on-demand</span></div></div>
             <div class="co-stat-item"><div class="co-stat-label">Egress fees</div><div class="co-stat-bar"><div class="co-stat-pip egress-on" style="background:#92400e;"></div><div class="co-stat-pip egress-on" style="background:#92400e;"></div><div class="co-stat-pip egress-on" style="background:#92400e;"></div><div class="co-stat-pip egress-off" style="background:#92400e;"></div><div class="co-stat-pip egress-off" style="background:#92400e;"></div><span class="co-stat-val">3/5 · Provider-dependent</span></div></div>
           </div>
           <details class="co-expand">
-            <summary>Contract &amp; orchestration details</summary>
-            <div class="co-expand-inner"><div class="co-spec">
+            <summary>Strengths, gaps &amp; contract details</summary>
+            <div class="co-expand-inner"><div class="co-highlights">
+            <div class="co-hl"><div class="co-hl-dot" style="background:#92400e;"></div>Auto-sleep + attach/detach cost controls — unique governance tooling at this price point</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#92400e;"></div>Notebook-to-production flow with lowest time-to-first-model-call in this tier</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#b91c1c;"></div>Brokered supply · Security:2 · no cluster defensibility · margin layering at scale</div>
+            </div><div class="co-spec" style="margin-top:6px;">
               <div class="cs-row"><span class="cs-k">Contract</span><span class="cs-v">Hourly on-demand · No long-term commitment</span></div>
               <div class="cs-row"><span class="cs-k">Orch</span><span class="cs-v">Studio + notebook workflows · brokered K8s</span></div>
             </div></div>
@@ -1661,21 +1640,20 @@ details[open].co-expand summary::before{content:'▾';}
           <div class="co-meta"><span class="co-meta-pill vc">VC · Seed/Series A</span><span class="co-meta-pill na">HQ: US</span><span class="co-meta-pill">Global (23+ providers)</span></div>
           <div class="co-score-row"><div class="co-total" style="color:#b45309;">24</div><div class="co-total-label">/ 50 · Bronze</div></div>
           <div class="co-radar-wrap" id="radar-shadeform"></div>
-          <div class="co-oneliner">Shadeform is the only GPU marketplace that tells you, for each individual server, which security and compliance certifications it holds — making it the only aggregator usable by organisations that need to audit their infrastructure (control layer, L6). It is also NVIDIA's own exclusive marketplace partner for developer GPU access, giving it a privileged position in the procurement ecosystem.</div>
           <div class="co-diff" style="color:#b45309;border-color:#b45309;background:rgba(180,83,9,0.07);">The only aggregator surfacing compliance certifications (SOC2, HIPAA, PCI) per individual server — making enterprise procurement possible without leaving the spot market</div>
-          <div class="co-highlights">
-            <div class="co-hl"><div class="co-hl-dot" style="background:#b45309;"></div>Compliance metadata per instance — unique transparency in aggregator category</div>
-            <div class="co-hl"><div class="co-hl-dot" style="background:#b45309;"></div>On-demand + time-scheduled reserved · NVIDIA Brev exclusive partner</div>
-            <div class="co-hl"><div class="co-hl-dot" style="background:#b91c1c;"></div>No own Slurm/K8s · cluster quality depends on underlying provider · Bronze infra rating</div>
-          </div>
+          <div class="co-oneliner">Shadeform is the only GPU marketplace that tells you, for each individual server, which security and compliance certifications it holds — making it the only aggregator usable by organisations that need to audit their infrastructure (control layer, L6). It is also NVIDIA's own exclusive marketplace partner for developer GPU access, giving it a privileged position in the procurement ecosystem.</div>
           <div class="co-stats">
             <div class="co-stat-item"><div class="co-stat-label">Pricing</div><div class="co-stat-bar"><div class="co-stat-pip on" style="background:#b45309;"></div><div class="co-stat-pip on" style="background:#b45309;"></div><div class="co-stat-pip on" style="background:#b45309;"></div><div class="co-stat-pip on" style="background:#b45309;"></div><div class="co-stat-pip off" style="background:#b45309;"></div><span class="co-stat-val">4/5 · $1.50–3.00/hr spot</span></div></div>
             <div class="co-stat-item"><div class="co-stat-label">Flexibility</div><div class="co-stat-bar"><div class="co-stat-pip on" style="background:#b45309;"></div><div class="co-stat-pip on" style="background:#b45309;"></div><div class="co-stat-pip on" style="background:#b45309;"></div><div class="co-stat-pip on" style="background:#b45309;"></div><div class="co-stat-pip off" style="background:#b45309;"></div><span class="co-stat-val">4/5 · OD + reserved windows</span></div></div>
             <div class="co-stat-item"><div class="co-stat-label">Egress fees</div><div class="co-stat-bar"><div class="co-stat-pip egress-on" style="background:#b45309;"></div><div class="co-stat-pip egress-on" style="background:#b45309;"></div><div class="co-stat-pip egress-on" style="background:#b45309;"></div><div class="co-stat-pip egress-off" style="background:#b45309;"></div><div class="co-stat-pip egress-off" style="background:#b45309;"></div><span class="co-stat-val">3/5 · Provider-dependent</span></div></div>
           </div>
           <details class="co-expand">
-            <summary>Contract &amp; orchestration details</summary>
-            <div class="co-expand-inner"><div class="co-spec">
+            <summary>Strengths, gaps &amp; contract details</summary>
+            <div class="co-expand-inner"><div class="co-highlights">
+            <div class="co-hl"><div class="co-hl-dot" style="background:#b45309;"></div>Compliance metadata per instance — unique transparency in aggregator category</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#b45309;"></div>On-demand + time-scheduled reserved · NVIDIA Brev exclusive partner</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#b91c1c;"></div>No own Slurm/K8s · cluster quality depends on underlying provider · Bronze infra rating</div>
+            </div><div class="co-spec" style="margin-top:6px;">
               <div class="cs-row"><span class="cs-k">Contract</span><span class="cs-v">Hourly on-demand + brokered reserved (no own SLA)</span></div>
               <div class="cs-row"><span class="cs-k">Orch</span><span class="cs-v">Provider-dependent (no own stack)</span></div>
             </div></div>
@@ -1687,21 +1665,20 @@ details[open].co-expand summary::before{content:'▾';}
           <div class="co-meta"><span class="co-meta-pill vc">VC-backed</span><span class="co-meta-pill na">HQ: US</span><span class="co-meta-pill">Global P2P</span></div>
           <div class="co-score-row"><div class="co-total" style="color:#92400e;">20</div><div class="co-total-label">/ 50 · Bronze · Pricing:5</div></div>
           <div class="co-radar-wrap" id="radar-vastai"></div>
-          <div class="co-oneliner">Vast.ai has the cheapest GPUs of any provider in the entire ClusterMAX benchmark — because it taps a supply pool no other cloud can access: spare capacity from cryptocurrency miners and gaming hardware rented out peer-to-peer. The trade-off is complete: every quality dimension except price scores 1/5, meaning there are zero guarantees on reliability, security, or network performance.</div>
           <div class="co-diff" style="color:#92400e;border-color:#92400e;background:rgba(146,64,14,0.07);">Pure price play: P2P crypto-miner supply delivers RTX 4090 at $0.30/hr — a price point structurally impossible through any datacenter-grade provider</div>
-          <div class="co-highlights">
-            <div class="co-hl"><div class="co-hl-dot" style="background:#92400e;"></div>Pricing:5 (joint highest in matrix) · RTX 4090 at $0.30/hr · H100 at ~$1.80/hr spot</div>
-            <div class="co-hl"><div class="co-hl-dot" style="background:#92400e;"></div>Real-time P2P bid · crypto-miner crossover supply creates unique liquidity</div>
-            <div class="co-hl"><div class="co-hl-dot" style="background:#b91c1c;"></div>Security/Orch/Storage/Reliability/Monitoring all 1/5 · No SLA · peer quality variance</div>
-          </div>
+          <div class="co-oneliner">Vast.ai has the cheapest GPUs of any provider in the entire ClusterMAX benchmark — because it taps a supply pool no other cloud can access: spare capacity from cryptocurrency miners and gaming hardware rented out peer-to-peer. The trade-off is complete: every quality dimension except price scores 1/5, meaning there are zero guarantees on reliability, security, or network performance.</div>
           <div class="co-stats">
             <div class="co-stat-item"><div class="co-stat-label">Pricing</div><div class="co-stat-bar"><div class="co-stat-pip on" style="background:#92400e;"></div><div class="co-stat-pip on" style="background:#92400e;"></div><div class="co-stat-pip on" style="background:#92400e;"></div><div class="co-stat-pip on" style="background:#92400e;"></div><div class="co-stat-pip on" style="background:#92400e;"></div><span class="co-stat-val">5/5 · $0.30–2.50/hr P2P bid</span></div></div>
             <div class="co-stat-item"><div class="co-stat-label">Flexibility</div><div class="co-stat-bar"><div class="co-stat-pip on" style="background:#92400e;"></div><div class="co-stat-pip on" style="background:#92400e;"></div><div class="co-stat-pip on" style="background:#92400e;"></div><div class="co-stat-pip on" style="background:#92400e;"></div><div class="co-stat-pip on" style="background:#92400e;"></div><span class="co-stat-val">5/5 · Hourly spot only</span></div></div>
             <div class="co-stat-item"><div class="co-stat-label">Egress fees</div><div class="co-stat-bar"><div class="co-stat-pip egress-on" style="background:#92400e;"></div><div class="co-stat-pip egress-on" style="background:#92400e;"></div><div class="co-stat-pip egress-on" style="background:#92400e;"></div><div class="co-stat-pip egress-on" style="background:#92400e;"></div><div class="co-stat-pip egress-off" style="background:#92400e;"></div><span class="co-stat-val">4/5 · Free on most hosts</span></div></div>
           </div>
           <details class="co-expand">
-            <summary>Contract &amp; orchestration details</summary>
-            <div class="co-expand-inner"><div class="co-spec">
+            <summary>Strengths, gaps &amp; contract details</summary>
+            <div class="co-expand-inner"><div class="co-highlights">
+            <div class="co-hl"><div class="co-hl-dot" style="background:#92400e;"></div>Pricing:5 (joint highest in matrix) · RTX 4090 at $0.30/hr · H100 at ~$1.80/hr spot</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#92400e;"></div>Real-time P2P bid · crypto-miner crossover supply creates unique liquidity</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#b91c1c;"></div>Security/Orch/Storage/Reliability/Monitoring all 1/5 · No SLA · peer quality variance</div>
+            </div><div class="co-spec" style="margin-top:6px;">
               <div class="cs-row"><span class="cs-k">Contract</span><span class="cs-v">Hourly spot only · no time-scheduled reservations</span></div>
               <div class="cs-row"><span class="cs-k">Orch</span><span class="cs-v">None provided — customer manages everything</span></div>
             </div></div>
@@ -1713,21 +1690,20 @@ details[open].co-expand summary::before{content:'▾';}
           <div class="co-meta"><span class="co-meta-pill vc">VC-backed</span><span class="co-meta-pill na">HQ: US</span><span class="co-meta-pill">Global</span></div>
           <div class="co-score-row"><div class="co-total" style="color:#92400e;">20</div><div class="co-total-label">/ 50 · Bronze</div></div>
           <div class="co-radar-wrap" id="radar-runpod"></div>
-          <div class="co-oneliner">RunPod offers two tiers of trust in one platform: a vetted 'Secure Cloud' where every host has passed an independent security audit, and a cheaper 'Community Cloud' of peer-supplied hardware. This gives developers the cheapest entry point that still meets basic security standards, packaged as simple containers rather than complex cluster configurations — the lowest-friction way to start running AI workloads.</div>
           <div class="co-diff" style="color:#92400e;border-color:#92400e;background:rgba(146,64,14,0.07);">The only aggregator with a SOC 2-audited 'Secure Cloud' tier — bridging the gap between P2P spot pricing and the baseline security that real applications need</div>
-          <div class="co-highlights">
-            <div class="co-hl"><div class="co-hl-dot" style="background:#92400e;"></div>Secure Cloud: SOC 2 vetted providers · responsive engineering team · 20k+ accessible GPUs</div>
-            <div class="co-hl"><div class="co-hl-dot" style="background:#92400e;"></div>On-demand + reserved pod windows · container-first = lowest friction dev entry</div>
-            <div class="co-hl"><div class="co-hl-dot" style="background:#b91c1c;"></div>Container/pod model limits Slurm/K8s HPC · Community tier has provider opacity</div>
-          </div>
+          <div class="co-oneliner">RunPod offers two tiers of trust in one platform: a vetted 'Secure Cloud' where every host has passed an independent security audit, and a cheaper 'Community Cloud' of peer-supplied hardware. This gives developers the cheapest entry point that still meets basic security standards, packaged as simple containers rather than complex cluster configurations — the lowest-friction way to start running AI workloads.</div>
           <div class="co-stats">
             <div class="co-stat-item"><div class="co-stat-label">Pricing</div><div class="co-stat-bar"><div class="co-stat-pip on" style="background:#92400e;"></div><div class="co-stat-pip on" style="background:#92400e;"></div><div class="co-stat-pip on" style="background:#92400e;"></div><div class="co-stat-pip on" style="background:#92400e;"></div><div class="co-stat-pip off" style="background:#92400e;"></div><span class="co-stat-val">4/5 · $1.40–2.50/hr pods</span></div></div>
             <div class="co-stat-item"><div class="co-stat-label">Flexibility</div><div class="co-stat-bar"><div class="co-stat-pip on" style="background:#92400e;"></div><div class="co-stat-pip on" style="background:#92400e;"></div><div class="co-stat-pip on" style="background:#92400e;"></div><div class="co-stat-pip on" style="background:#92400e;"></div><div class="co-stat-pip on" style="background:#92400e;"></div><span class="co-stat-val">5/5 · Hourly pod billing</span></div></div>
             <div class="co-stat-item"><div class="co-stat-label">Egress fees</div><div class="co-stat-bar"><div class="co-stat-pip egress-on" style="background:#92400e;"></div><div class="co-stat-pip egress-on" style="background:#92400e;"></div><div class="co-stat-pip egress-on" style="background:#92400e;"></div><div class="co-stat-pip egress-off" style="background:#92400e;"></div><div class="co-stat-pip egress-off" style="background:#92400e;"></div><span class="co-stat-val">3/5 · Varies by host</span></div></div>
           </div>
           <details class="co-expand">
-            <summary>Contract &amp; orchestration details</summary>
-            <div class="co-expand-inner"><div class="co-spec">
+            <summary>Strengths, gaps &amp; contract details</summary>
+            <div class="co-expand-inner"><div class="co-highlights">
+            <div class="co-hl"><div class="co-hl-dot" style="background:#92400e;"></div>Secure Cloud: SOC 2 vetted providers · responsive engineering team · 20k+ accessible GPUs</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#92400e;"></div>On-demand + reserved pod windows · container-first = lowest friction dev entry</div>
+            <div class="co-hl"><div class="co-hl-dot" style="background:#b91c1c;"></div>Container/pod model limits Slurm/K8s HPC · Community tier has provider opacity</div>
+            </div><div class="co-spec" style="margin-top:6px;">
               <div class="cs-row"><span class="cs-k">Contract</span><span class="cs-v">Hourly on-demand + reserved pod windows (no cluster SLA)</span></div>
               <div class="cs-row"><span class="cs-k">Orch</span><span class="cs-v">Container/pod model · Slurm in beta</span></div>
             </div></div>
@@ -1751,7 +1727,7 @@ details[open].co-expand summary::before{content:'▾';}
         <div class="sum-model" style="color:var(--h);">H</div>
         <div style="font-family:var(--mono);font-size:9px;color:var(--h);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Hyperscaler</div>
         <div class="sum-tagline">Full-stack compliance machine. Wins on breadth, not raw GPU performance.</div>
-        <div class="sum-kv"><div class="sum-k">Key differentiator</div><div class="sum-v accent">Compliance portfolio + ISV ecosystem</div></div>
+        <div class="sum-kv"><div class="sum-k">Key differentiator</div><div class="sum-v accent">Compliance portfolio + Independent Software Vendor (ISV) ecosystem</div></div>
         <div class="sum-kv"><div class="sum-k">Capital intensity</div><div class="sum-v">Extreme · $200B+/yr across AWS/Azure/GCP</div></div>
         <div class="sum-kv"><div class="sum-k">Moat</div><div class="sum-v">FedRAMP / SOC2 / HIPAA · 200+ managed services · enterprise switching cost</div></div>
         <div class="sum-kv"><div class="sum-k">Pricing vs neocloud</div><div class="sum-v accent">+30–50%</div></div>
