@@ -1,0 +1,80 @@
+[
+  {
+    "company": "GCP",
+    "business_model_category": "Hyperscaler",
+    "key_differentiator": "Private global subsea fiber network bypassing the public internet [1], and BeyondCorp zero-trust security natively enabled.[2]",
+    "short_description": "Hyperscaler focused on data-analytics and ML, offering proprietary TPUs and Vertex AI integration with highly consistent global latency."
+  },
+  {
+    "company": "AWS",
+    "business_model_category": "Hyperscaler",
+    "key_differentiator": "No specific AI hardware differentiator; its main advantage is massive scale, operational maturity, and deep ecosystem lock-in. [3]",
+    "short_description": "The largest cloud provider by market share, acting as the default infrastructure choice for enterprises heavily invested in its broader ecosystem."
+  },
+  {
+    "company": "Azure",
+    "business_model_category": "Hyperscaler",
+    "key_differentiator": "Exclusive hosting partnership with OpenAI and deep integration with enterprise Windows and Active Directory environments. [3]",
+    "short_description": "An enterprise-first hyperscaler that leverages existing corporate software licenses to subsidize AI compute costs."
+  },
+  {
+    "company": "Oracle",
+    "business_model_category": "Hyperscaler",
+    "key_differentiator": "Bare-metal performance that avoids hypervisor latency, combined with a zero-egress direct connection to Microsoft Azure. [4]",
+    "short_description": "A database-heavy cloud provider prioritizing high-bandwidth, latency-sensitive bare-metal GPU clusters."
+  },
+  {
+    "company": "Coreweave",
+    "business_model_category": "Neocloud",
+    "key_differentiator": "Hypervisor-free, Kubernetes-native architecture for maximum training speeds, but requires massive multi-year take-or-pay contracts. [5]",
+    "short_description": "A highly capitalized neocloud focused exclusively on large-scale, long-term enterprise AI training clusters."
+  },
+  {
+    "company": "Nebius",
+    "business_model_category": "Neocloud",
+    "key_differentiator": "A vertically integrated stack offering strong European data sovereignty compliance and managed serverless inference endpoints. [6]",
+    "short_description": "An NVIDIA-backed AI cloud platform targeting the European market with custom hardware and both training and inference solutions."
+  },
+  {
+    "company": "Fluidstack",
+    "business_model_category": "Neocloud",
+    "key_differentiator": "A strict zero data egress/ingress fee policy, making it highly cost-effective for moving large datasets between clouds. [7]",
+    "short_description": "A specialized GPU cloud provider combining bare-metal performance guarantees with highly transparent, simple pricing."
+  },
+  {
+    "company": "Together AI",
+    "business_model_category": "Orchestrator",
+    "key_differentiator": "Highly optimized custom CUDA kernels that solve memory-bandwidth bottlenecks, drastically speeding up inference for open-source models. [8]",
+    "short_description": "A PaaS focused entirely on accelerating and serving open-source AI models without requiring users to manage the underlying hardware."
+  },
+  {
+    "company": "Lambda Labs",
+    "business_model_category": "Neocloud",
+    "key_differentiator": "The 'Lambda Stack,' which provides instantly usable, pre-configured ML software environments, combined with per-minute billing. [9, 5]",
+    "short_description": "A developer-centric GPU cloud heavily favored by researchers for its ease of setup and cheap short-term experimentation costs."
+  },
+  {
+    "company": "Lightning AI",
+    "business_model_category": "Orchestrator",
+    "key_differentiator": "Cloud-based IDEs that decouple code from hardware, allowing developers to switch underlying GPU providers without rewriting their environment. [10]",
+    "short_description": "An orchestration and development platform that abstracts cluster management so engineers can focus strictly on building models."
+  },
+  {
+    "company": "Shadeform",
+    "business_model_category": "Aggregator",
+    "key_differentiator": "A unified API to access 30+ different GPU clouds from a single console, with zero markup fees on top of provider prices.",
+    "short_description": "A pure GPU brokerage tool designed to eliminate the procurement friction of managing multiple cloud vendor accounts."
+  },
+  {
+    "company": "Vast.ai",
+    "business_model_category": "Aggregator",
+    "key_differentiator": "A peer-to-peer auction marketplace that drives hourly GPU rental prices to the absolute bottom of the market. [5]",
+    "short_description": "A decentralized compute marketplace prioritizing extreme cost savings over reliability and uptime guarantees."
+  },
+  {
+    "company": "RunPod",
+    "business_model_category": "Aggregator / Neocloud",
+    "key_differentiator": "A dual-tier system (Community vs. Secure) that lets users choose between bottom-tier pricing and Tier-3 datacenter reliability. [11, 12]",
+    "short_description": "A highly accessible cloud platform blending the low costs of an aggregator with the stability of a dedicated neocloud."
+  }
+]

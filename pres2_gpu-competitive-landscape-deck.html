@@ -362,7 +362,7 @@ details[open].co-expand summary::before{content:'▾';}
 
 /* ── SUMMARY SLIDE ── */
 .summary-wrap{display:flex;flex:1;flex-direction:column;padding:8px 44px 12px;}
-.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;flex:1;}
+.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;align-items:start;}
 .sum-col{display:flex;flex-direction:column;gap:6px;padding:12px;border-radius:7px;border:1px solid var(--border);}
 .sum-model{font-family:var(--display);font-size:26px;line-height:1;margin-bottom:4px;}
 .sum-tagline{font-size:11px;font-weight:600;line-height:1.4;min-height:32px;}
@@ -380,10 +380,10 @@ details[open].co-expand summary::before{content:'▾';}
 .icp-matrix td{padding:5px 12px;border-bottom:1px solid rgba(148,163,184,.07);vertical-align:middle;font-size:10.5px;color:var(--muted);}
 .icp-matrix td:first-child{padding-left:20px;font-size:10px;color:var(--dim);}
 .icp-group-row td{font-family:var(--mono);font-size:7.5px;text-transform:uppercase;letter-spacing:.1em;padding:7px 12px 3px!important;background:var(--bg2);color:var(--dim);font-weight:600;}
-.fit-y{text-align:center;font-weight:700;color:#10b981;}
-.fit-c{text-align:center;font-weight:600;color:#6366f1;}
-.fit-p{text-align:center;font-weight:600;color:#f59e0b;}
-.fit-n{text-align:center;font-weight:600;color:rgba(148,163,184,.4);}
+.fit-y{text-align:center;font-weight:700;font-size:13px;color:#10b981;background:rgba(16,185,129,.14);border:1px solid rgba(16,185,129,.28);border-radius:4px;}
+.fit-c{text-align:center;font-weight:700;font-size:13px;color:#6366f1;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);border-radius:4px;}
+.fit-p{text-align:center;font-weight:700;font-size:13px;color:#f59e0b;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.25);border-radius:4px;}
+.fit-n{text-align:center;font-weight:600;font-size:13px;color:rgba(148,163,184,.45);background:rgba(148,163,184,.06);border:1px solid rgba(148,163,184,.12);border-radius:4px;}
 
 /* ── DEPIN SLIDE ── */
 .depin-wrap{display:flex;flex:1;flex-direction:column;padding:8px 44px 12px;gap:8px;}
@@ -876,70 +876,70 @@ details[open].co-expand summary::before{content:'▾';}
         <tbody>
           <tr>
             <td><div class="stk-layer-badge"><div class="stk-layer-dot" style="background:#8e44ad;"></div><span class="stk-layer-name">L7 Application &amp; End-User Interface</span></div><div class="stk-layer-nodes"><span class="tip" data-tip="RAG: Retrieval-Augmented Generation. Retrieves documents for context before generation. Reduces hallucination and enables up-to-date knowledge without retraining.">RAG pipelines</span> · <span class="tip" data-tip="AI Agents: LLMs with tool-calling, memory, and planning. Agentic workloads generate 5–30x more tokens per user session than simple Q&A — fundamentally different infrastructure requirements.">Agents</span> · Chat UI · API products</div></td>
-            <td><div class="stk-cov"><span class="hm-pill full">✓ Full</span><div class="stk-node">Gemini, Copilot, Bedrock, SageMaker Studio</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill full">✓</span><div class="stk-node">Gemini, Copilot, Bedrock, SageMaker Studio</div></div></td>
             <td><div class="stk-cov"><span class="hm-pill none">—</span><div class="stk-node">Infrastructure only; no end-user apps</div></div></td>
-            <td><div class="stk-cov"><span class="hm-pill full">✓ Core</span><div class="stk-node">Fine-tune studio, inference API, dev portal</div></div></td>
-            <td><div class="stk-cov"><span class="hm-pill partial">~ API</span><div class="stk-node">Single API across 40+ underlying providers</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill full">✓</span><div class="stk-node">Fine-tune studio, inference API, dev portal</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill partial">~</span><div class="stk-node">Single API across 40+ underlying providers</div></div></td>
           </tr>
           <tr>
             <td><div class="stk-layer-badge"><div class="stk-layer-dot" style="background:#e84393;"></div><span class="stk-layer-name">L6 Control Plane · FinOps · Security</span></div><div class="stk-layer-nodes"><span class="tip" data-tip="DCGM: NVIDIA Data Center GPU Manager. Exposes 300+ GPU metrics (XID errors, NVLink Rx/Tx, thermal, PCIe replays). The foundation of all GPU cluster health monitoring.">DCGM</span>/Grafana · <span class="tip" data-tip="Health checks: automated probes that detect unhealthy GPU nodes and drain them before jobs fail. Active (inject errors) + passive (background polling). CoreWeave is the gold standard.">Health checks</span> · IAM/SOC2 · FinOps</div></td>
-            <td><div class="stk-cov"><span class="hm-pill full">✓ Full</span><div class="stk-node">Azure Monitor, CloudWatch, SOC2/FedRAMP</div></div></td>
-            <td><div class="stk-cov"><span class="hm-pill partial">~ Partial</span><div class="stk-node">Monitoring + health checks vary per provider</div></div></td>
-            <td><div class="stk-cov"><span class="hm-pill full">✓ Core</span><div class="stk-node">Cost attribution, observability, model routing</div></div></td>
-            <td><div class="stk-cov"><span class="hm-pill limited">· Billing</span><div class="stk-node">Unified billing; no infra observability</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill full">✓</span><div class="stk-node">Azure Monitor, CloudWatch, SOC2/FedRAMP</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill partial">~</span><div class="stk-node">Monitoring + health checks vary per provider</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill full">✓</span><div class="stk-node">Cost attribution, observability, model routing</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill limited">·</span><div class="stk-node">Unified billing; no infra observability</div></div></td>
           </tr>
           <tr>
             <td><div class="stk-layer-badge"><div class="stk-layer-dot" style="background:#e67e22;"></div><span class="stk-layer-name">L5 Data &amp; Serving Infrastructure</span></div><div class="stk-layer-nodes"><span class="tip" data-tip="POSIX filesystem: standard file I/O. Training needs POSIX (Lustre, GPFS, Weka, VAST) for fast random dataset access. Object storage (S3-compatible) is used for checkpoints and model weights.">POSIX/VAST/Weka</span> · Object storage · <span class="tip" data-tip="KV Cache: stores key-value attention computations for processed tokens, enabling fast generation. PagedAttention (vLLM) manages KV cache allocation like OS virtual memory.">KV cache</span> · <span class="tip" data-tip="API gateway: entry point for inference requests. Handles auth, rate limiting, routing, load balancing. Adds 1–5ms latency on high-throughput serving paths.">API gateway</span></div></td>
-            <td><div class="stk-cov"><span class="hm-pill full">✓ Full</span><div class="stk-node">S3, GCS, ADLS + managed APIs</div></div></td>
-            <td><div class="stk-cov"><span class="hm-pill partial">~ Partial</span><div class="stk-node">VAST/Weka storage owned; serving layer minimal</div></div></td>
-            <td><div class="stk-cov"><span class="hm-pill full">✓ Core</span><div class="stk-node">Inference endpoints, semantic cache, model store</div></div></td>
-            <td><div class="stk-cov"><span class="hm-pill partial">~ Routes</span><div class="stk-node">Unified API; storage on underlying provider</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill full">✓</span><div class="stk-node">S3, GCS, ADLS + managed APIs</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill partial">~</span><div class="stk-node">VAST/Weka storage owned; serving layer minimal</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill full">✓</span><div class="stk-node">Inference endpoints, semantic cache, model store</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill partial">~</span><div class="stk-node">Unified API; storage on underlying provider</div></div></td>
           </tr>
           <tr>
             <td><div class="stk-layer-badge"><div class="stk-layer-dot" style="background:#9b59b6;"></div><span class="stk-layer-name">L4 Workload Execution</span></div><div class="stk-layer-nodes"><span class="tip" data-tip="vLLM: inference serving engine. PagedAttention manages KV-cache like OS virtual memory pages, enabling 24x higher throughput vs naive implementations.">vLLM</span>/SGLang · FSDP/Megatron · <span class="tip" data-tip="LoRA: Low-Rank Adaptation. Fine-tunes only ~0.1% of parameters, reducing GPU memory by 10–30x vs full fine-tuning.">LoRA/QLoRA</span> · <span class="tip" data-tip="Prefill-decode disaggregation: sends compute-intensive prompt processing to one GPU cluster, autoregressive generation to another. Matches hardware to the bottleneck type.">P/D disaggregation</span></div></td>
             <td><div class="stk-cov"><span class="hm-pill partial">~ Managed</span><div class="stk-node">SageMaker, Vertex AI, Azure ML</div></div></td>
-            <td><div class="stk-cov"><span class="hm-pill limited">· Supports</span><div class="stk-node">Provides GPU; customer runs all ML frameworks</div></div></td>
-            <td><div class="stk-cov"><span class="hm-pill full">✓ Core</span><div class="stk-node">Inference engine, fine-tune pipelines</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill limited">·</span><div class="stk-node">Provides GPU; customer runs all ML frameworks</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill full">✓</span><div class="stk-node">Inference engine, fine-tune pipelines</div></div></td>
             <td><div class="stk-cov"><span class="hm-pill none">—</span></div></td>
           </tr>
           <tr>
             <td><div class="stk-layer-badge"><div class="stk-layer-dot" style="background:#5ab86a;"></div><span class="stk-layer-name">L3 Virtualisation &amp; Orchestration</span></div><div class="stk-layer-nodes">Kubernetes + <span class="tip" data-tip="GPU Operator: NVIDIA's K8s operator that automates GPU driver installation, device plugin, and DCGM monitoring sidecar. Required for any GPU workload on Kubernetes.">GPU Operator</span> · <span class="tip" data-tip="Slurm: dominant HPC batch scheduler for large distributed training runs. Used by all frontier AI labs. Manages node allocation, job queues, partitions.">Slurm</span> · <span class="tip" data-tip="SonK (Slurm-on-Kubernetes): runs Slurm and K8s on the same hardware pool simultaneously. Implementations: CoreWeave SUNK (proprietary), Nebius Soperator (open-source), SchedMD Slinky.">SonK</span> · BM/vGPU · Spot mgmt</div></td>
-            <td><div class="stk-cov"><span class="hm-pill full">✓ Full</span><div class="stk-node">EKS, GKE, AKS + CycleCloud/Slurm</div></div></td>
-            <td><div class="stk-cov"><span class="hm-pill full">✓ Full</span><div class="stk-node">SonK maturity = #1 differentiator</div></div></td>
-            <td><div class="stk-cov"><span class="hm-pill full">✓ Core</span><div class="stk-node">Multi-cloud federation, quota, scheduling</div></div></td>
-            <td><div class="stk-cov"><span class="hm-pill partial">~ Federates</span><div class="stk-node">Routes to cheapest provider; no own infra</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill full">✓</span><div class="stk-node">EKS, GKE, AKS + CycleCloud/Slurm</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill full">✓</span><div class="stk-node">SonK maturity = #1 differentiator</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill full">✓</span><div class="stk-node">Multi-cloud federation, quota, scheduling</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill partial">~</span><div class="stk-node">Routes to cheapest provider; no own infra</div></div></td>
           </tr>
           <tr>
             <td><div class="stk-layer-badge"><div class="stk-layer-dot" style="background:#5aace8;"></div><span class="stk-layer-name">L2 Firmware, Drivers &amp; Libraries</span></div><div class="stk-layer-nodes"><span class="tip" data-tip="CUDA: NVIDIA's parallel compute platform. Every PyTorch operation on GPU becomes CUDA kernel calls. Version compatibility is the most common source of performance bugs.">CUDA</span>/ROCm · <span class="tip" data-tip="NCCL: NVIDIA Collective Communications Library. Manages allreduce/allgather in distributed training. Misconfigured NCCL topology (wrong topology.conf) is the #1 cause of low MFU.">NCCL topology</span> · cuDNN · <span class="tip" data-tip="MIG: Multi-Instance GPU. An H100 can be split into up to 7 isolated slices for smaller workloads. Hardware-enforced tenant isolation.">MIG</span> · BMC/IPMI</div></td>
-            <td><div class="stk-cov"><span class="hm-pill partial">~ Manages</span><div class="stk-node">Vendor CUDA/ROCm; own TensorRT</div></div></td>
-            <td><div class="stk-cov"><span class="hm-pill partial">~ Configures</span><div class="stk-node">NCCL topology config = key differentiator</div></div></td>
-            <td><div class="stk-cov"><span class="hm-pill limited">· Uses</span></div></td>
+            <td><div class="stk-cov"><span class="hm-pill partial">~</span><div class="stk-node">Vendor CUDA/ROCm; own TensorRT</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill partial">~</span><div class="stk-node">NCCL topology config = key differentiator</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill limited">·</span></div></td>
             <td><div class="stk-cov"><span class="hm-pill none">—</span></div></td>
           </tr>
           <tr>
             <td><div class="stk-layer-badge"><div class="stk-layer-dot" style="background:#e8c840;"></div><span class="stk-layer-name">L1 Physical Infrastructure</span></div><div class="stk-layer-nodes">DC (owned/colo) · 40–500MW power · Liquid cooling · <span class="tip" data-tip="HGX H100/B200: 8-GPU SXM server node with 6.4TB/s NVLink within the node. The physical building block of every GPU cluster.">HGX nodes</span> · <span class="tip" data-tip="InfiniBand NDR 400G: RDMA-capable interconnect between GPU nodes at 400Gb/s per port. SHARP in-network allreduce reduces CPU round-trips. IB fabric quality is the primary hardware differentiator.">InfiniBand NDR 400G</span></div></td>
-            <td><div class="stk-cov"><span class="hm-pill full">✓ Full</span><div class="stk-node">Global DC estate; 40–500MW facilities</div></div></td>
-            <td><div class="stk-cov"><span class="hm-pill full">✓ Owns</span><div class="stk-node">IB fabric ownership = core moat</div></div></td>
-            <td><div class="stk-cov"><span class="hm-pill limited">· Uses</span><div class="stk-node">Some own partial capacity (Together AI)</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill full">✓</span><div class="stk-node">Global DC estate; 40–500MW facilities</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill full">✓</span><div class="stk-node">IB fabric ownership = core moat</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill limited">·</span><div class="stk-node">Some own partial capacity (Together AI)</div></div></td>
             <td><div class="stk-cov"><span class="hm-pill none">—</span></div></td>
           </tr>
           <tr>
             <td><div class="stk-layer-badge"><div class="stk-layer-dot" style="background:#94a3b8;"></div><span class="stk-layer-name">L0 Silicon Supply Chain</span></div><div class="stk-layer-nodes"><span class="tip" data-tip="Custom AI ASICs: Google TPU v5e/5p, AWS Trainium2, Azure Maia 100. Only hyperscalers design their own AI chips. Neoclouds procure NVIDIA H100/H200/B200 from the open market.">Custom ASICs</span> · Foundry (TSMC) · <span class="tip" data-tip="Advanced Packaging (CoWoS): stacks HBM3e directly on the GPU die, delivering up to 5TB/s memory bandwidth on B200. TSMC CoWoS capacity is the primary bottleneck for H200/B200 supply.">CoWoS packaging</span> · GPU procurement</div></td>
-            <td><div class="stk-cov"><span class="hm-pill full">✓ Designs</span><div class="stk-node">TPU, Trainium2, Maia 100, Oracle ASIC</div></div></td>
-            <td><div class="stk-cov"><span class="hm-pill limited">· Procures</span><div class="stk-node">Allocated H100/H200/B200/GB200</div></div></td>
-            <td><div class="stk-cov"><span class="hm-pill limited">· Uses</span><div class="stk-node">Leases from neocloud/hyperscaler</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill full">✓</span><div class="stk-node">TPU, Trainium2, Maia 100, Oracle ASIC</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill limited">·</span><div class="stk-node">Allocated H100/H200/B200/GB200</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill limited">·</span><div class="stk-node">Leases from neocloud/hyperscaler</div></div></td>
             <td><div class="stk-cov"><span class="hm-pill none">—</span></div></td>
           </tr>
           <tr>
             <td><div class="stk-layer-badge"><div class="stk-layer-dot" style="background:#e74c3c;"></div><span class="stk-layer-name">L−1 Energy &amp; Connectivity</span></div><div class="stk-layer-nodes"><span class="tip" data-tip="Power Purchase Agreements: long-term contracts with power generators. Crusoe uses methane gas from oil wells. Hyperscalers own or contract 40–500MW facilities.">PPAs</span> · Stranded gas · Submarine cables · AS/fiber ownership</div></td>
-            <td><div class="stk-cov"><span class="hm-pill full">✓ Full</span><div class="stk-node">Own DCs + power grids (100–500MW)</div></div></td>
-            <td><div class="stk-cov"><span class="hm-pill partial">~ Varies</span><div class="stk-node">Crusoe: stranded gas. Others: colo</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill full">✓</span><div class="stk-node">Own DCs + power grids (100–500MW)</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill partial">~</span><div class="stk-node">Crusoe: stranded gas. Others: colo</div></div></td>
             <td><div class="stk-cov"><span class="hm-pill none">—</span></div></td>
             <td><div class="stk-cov"><span class="hm-pill none">—</span></div></td>
           </tr>
         </tbody>
       </table>
-      <div style="padding:6px 0;font-family:var(--mono);font-size:8px;color:var(--dim2);">✓ Full / Own = primary asset · ~ Partial = configures/enables · · Limited = uses substrate only · — None = absent from model</div>
+      <div style="padding:6px 0;font-family:var(--mono);font-size:8px;color:var(--dim2);">✓ Primary · ~ Partial · · Uses only · — Absent</div>
     </div>
   </div>
 </div>
@@ -1730,6 +1730,7 @@ details[open].co-expand summary::before{content:'▾';}
     <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Who Buys GPU Compute · Customer Archetypes</div></div>
     <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Light</span></div>
   </div>
+  <div class="s3-hint" id="s15a-hint"><span>Reveal next archetype</span><span class="s3-kbd">→</span></div>
   <div class="summary-wrap">
     <div style="font-family:var(--mono);font-size:9px;color:var(--dim);padding-bottom:8px;">Four distinct buyer personas — each with different workloads, technical requirements, and risk tolerances. Hover workload tags for context.</div>
     <div class="summary-grid">
@@ -1739,36 +1740,40 @@ details[open].co-expand summary::before{content:'▾';}
         <div style="font-family:var(--mono);font-size:9px;color:var(--h);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">Enterprise Integrator</div>
         <div class="sum-tagline">Regulated Fortune 2000 deploying internal AI at production scale — past pilot stage.</div>
         <div style="font-family:var(--mono);font-size:7.5px;color:var(--dim2);margin-bottom:4px;">Finance · Healthcare · Pharma · Defence</div>
+        <div class="sum-kv"><div class="sum-k">Examples</div><div class="sum-v" style="font-size:9.5px;color:var(--dim2);">J.P. Morgan · Pfizer · Siemens · Lockheed · NHS</div></div>
         <div class="sum-kv"><div class="sum-k">Workloads</div><div class="sum-v"><span class="wl-tag">Fine-tuning</span><span class="wl-tag">Inference (RAG)</span><span class="wl-tag">Agentic AI</span></div></div>
         <div class="sum-kv"><div class="sum-k">Must-haves</div><div class="sum-v">Data residency · FedRAMP / SOC2 / HIPAA · private VPC · enterprise SLA</div></div>
         <div class="sum-kv"><div class="sum-k">Key pain</div><div class="sum-v">Inference at scale costs 60–70% more than equivalent on-prem · regulatory data barriers block public APIs</div></div>
       </div>
       <!-- ICP 2: AI-Native Startup -->
-      <div class="sum-col anim anim-2" style="border-color:rgba(16,185,129,.25);background:var(--n-dim);">
+      <div class="sum-col huang-hidden" id="s15a-c2" style="border-color:rgba(16,185,129,.25);background:var(--n-dim);">
         <div class="sum-model" style="color:var(--n);">S</div>
         <div style="font-family:var(--mono);font-size:9px;color:var(--n);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">AI-Native Startup</div>
         <div class="sum-tagline">Building specialised apps and vertical AI products on open-weights models.</div>
         <div style="font-family:var(--mono);font-size:7.5px;color:var(--dim2);margin-bottom:4px;">App builders · Coding copilots · Vertical AI</div>
+        <div class="sum-kv"><div class="sum-k">Examples</div><div class="sum-v" style="font-size:9.5px;color:var(--dim2);">Cursor · Midjourney · ElevenLabs · Perplexity · Character.ai</div></div>
         <div class="sum-kv"><div class="sum-k">Workloads</div><div class="sum-v"><span class="wl-tag">Fine-tuning</span><span class="wl-tag">Inference API</span><span class="wl-tag">Rapid iteration</span></div></div>
         <div class="sum-kv"><div class="sum-k">Must-haves</div><div class="sum-v">Zero egress fees · transparent per-second billing · instant deploys · pre-built vLLM / ComfyUI endpoints</div></div>
         <div class="sum-kv"><div class="sum-k">Key pain</div><div class="sum-v">Egress fees destroy runway · slow provisioning · hyperscaler IaC complexity kills velocity</div></div>
       </div>
       <!-- ICP 3: Foundation Model Lab -->
-      <div class="sum-col anim anim-3" style="border-color:rgba(168,85,247,.25);background:var(--o-dim);">
+      <div class="sum-col huang-hidden" id="s15a-c3" style="border-color:rgba(168,85,247,.25);background:var(--o-dim);">
         <div class="sum-model" style="color:var(--o);">L</div>
         <div style="font-family:var(--mono);font-size:9px;color:var(--o);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">Foundation Model Lab</div>
         <div class="sum-tagline">Frontier pre-training and massive fine-tuning — measured in thousands of GPUs.</div>
         <div style="font-family:var(--mono);font-size:7.5px;color:var(--dim2);margin-bottom:4px;">AI labs · Academic consortiums · Deep tech</div>
+        <div class="sum-kv"><div class="sum-k">Examples</div><div class="sum-v" style="font-size:9.5px;color:var(--dim2);">Mistral · xAI · Stability AI · Allen AI · TII (Falcon)</div></div>
         <div class="sum-kv"><div class="sum-k">Workloads</div><div class="sum-v"><span class="wl-tag">Pre-training</span><span class="wl-tag">Large-scale fine-tuning</span></div></div>
         <div class="sum-kv"><div class="sum-k">Must-haves</div><div class="sum-v">Bare metal · InfiniBand / RoCE 400–800G · MFU &gt;70% · cluster health + preemption SLA</div></div>
         <div class="sum-kv"><div class="sum-k">Key pain</div><div class="sum-v">Sub-70% MFU = catastrophic cost bleed · GPU underutilisation during data-loading phases</div></div>
       </div>
       <!-- ICP 4: Web3 / Decentralised AI -->
-      <div class="sum-col anim anim-4" style="border-color:rgba(245,158,11,.25);background:var(--a-dim);">
+      <div class="sum-col huang-hidden" id="s15a-c4" style="border-color:rgba(245,158,11,.25);background:var(--a-dim);">
         <div class="sum-model" style="color:var(--a);">W</div>
         <div style="font-family:var(--mono);font-size:9px;color:var(--a);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">Web3 / Decentralised AI</div>
         <div class="sum-tagline">Crypto-native teams building ZK systems, DePIN networks, or permissionless AI protocols.</div>
         <div style="font-family:var(--mono);font-size:7.5px;color:var(--dim2);margin-bottom:4px;">ZK proof systems · DePIN networks · Decentralised AI</div>
+        <div class="sum-kv"><div class="sum-k">Examples</div><div class="sum-v" style="font-size:9.5px;color:var(--dim2);">Bittensor · Ritual · Gensyn · Akash · io.net</div></div>
         <div class="sum-kv"><div class="sum-k">Workloads</div><div class="sum-v"><span class="wl-tag">ZK proofs</span><span class="wl-tag">Batch inference</span><span class="wl-tag">Model training</span></div></div>
         <div class="sum-kv"><div class="sum-k">Must-haves</div><div class="sum-v">Permissionless access · tokenised payments · distributed edge nodes · programmatic provisioning</div></div>
         <div class="sum-kv"><div class="sum-k">Key pain</div><div class="sum-v">Latency through centralised regions · ideological and financial objection to cloud monopolies</div></div>
@@ -1811,6 +1816,13 @@ details[open].co-expand summary::before{content:'▾';}
           <td class="fit-c tip" data-tip="Managed inference APIs with growing compliance coverage, but no physical infrastructure isolation. Works for lower-regulation tiers (GDPR, SOC2) not classified workloads.">(✓)</td>
           <td class="fit-n tip" data-tip="No compliance, no SLA, shared supply. Unacceptable for any regulated inference endpoint.">−</td>
         </tr>
+        <tr>
+          <td>Batch inference (compliance scanning · doc classification)</td>
+          <td class="fit-y tip" data-tip="Managed batch APIs with FedRAMP authorisation, data residency, SOC2. Ideal for compliance-sensitive document pipelines.">✓</td>
+          <td class="fit-y tip" data-tip="Dedicated capacity, predictable pricing, SOC2 Type II. Best TCO for sustained batch workloads needing isolation.">✓</td>
+          <td class="fit-c tip" data-tip="Batch API endpoints available; good developer experience, but no physical isolation for regulated data.">(✓)</td>
+          <td class="fit-p tip" data-tip="Cheapest per-hour but no SLA, no compliance certs. Only viable if data is non-regulated and occasional preemption is acceptable.">~</td>
+        </tr>
         <tr class="icp-group-row"><td colspan="5">S — AI-Native Startup / Scale-up</td></tr>
         <tr>
           <td>Fine-tuning (open-weights: Llama, Mistral)</td>
@@ -1825,6 +1837,13 @@ details[open].co-expand summary::before{content:'▾';}
           <td class="fit-y tip" data-tip="Dedicated inference clusters, zero egress, competitive per-hour pricing. Solid for production traffic requiring SLA.">✓</td>
           <td class="fit-y tip" data-tip="Native fit: API-compatible vLLM endpoints, per-token billing, managed auto-scaling. Best developer experience for inference-first products.">✓</td>
           <td class="fit-c tip" data-tip="Lowest cost but preemption risk makes it unsuitable for production SLAs without a retry/fallback layer. Works behind an orchestrator.">(✓)</td>
+        </tr>
+        <tr>
+          <td>Multi-modal pipelines (image · video · audio generation)</td>
+          <td class="fit-p tip" data-tip="Works but 30–50% pricing premium eats runway fast. Managed diffusion services exist but complex pricing.">~</td>
+          <td class="fit-y tip" data-tip="Consumer GPU mix (A100/H100) ideal for diffusion. ComfyUI, Stable Diffusion endpoints, competitive per-hour pricing. CoreWeave/Nebius both strong here.">✓</td>
+          <td class="fit-y tip" data-tip="Native fit: managed endpoints, per-generation billing, pre-built ComfyUI/SDXL environments. Minimal DevOps overhead.">✓</td>
+          <td class="fit-c tip" data-tip="Cheap consumer GPUs (RTX 3090/4090) work well for diffusion workloads. Preemption risk for production batches; fine for burst.">(✓)</td>
         </tr>
         <tr class="icp-group-row"><td colspan="5">L — Foundation Model Lab / Deep Tech</td></tr>
         <tr>
@@ -1841,6 +1860,13 @@ details[open].co-expand summary::before{content:'▾';}
           <td class="fit-c tip" data-tip="Some managed fine-tuning platforms (Modal, Together) support medium-scale runs. Limited at multi-thousand-GPU scale.">(✓)</td>
           <td class="fit-n tip" data-tip="No guaranteed capacity, no InfiniBand. Not viable for synchronous gradient updates across large clusters.">−</td>
         </tr>
+        <tr>
+          <td>Frontier inference serving (public APIs · 100K+ RPM)</td>
+          <td class="fit-y tip" data-tip="Scale exists, managed serving (SageMaker, Vertex AI). Premium price but rock-solid SLA for production traffic.">✓</td>
+          <td class="fit-y tip" data-tip="Bare-metal inference clusters, no hypervisor overhead, vLLM/SGLang optimised. Best throughput-per-dollar for dedicated serving.">✓</td>
+          <td class="fit-y tip" data-tip="Native fit: purpose-built for managed inference APIs. Auto-scaling, per-token billing, multi-model routing. Together, Modal, Fireworks best examples.">✓</td>
+          <td class="fit-n tip" data-tip="No SLA, preemption at volume makes this unviable for production inference endpoints requiring reliability guarantees.">−</td>
+        </tr>
         <tr class="icp-group-row"><td colspan="5">W — Web3 / Decentralised AI</td></tr>
         <tr>
           <td>ZK proofs / crypto workloads</td>
@@ -1855,6 +1881,13 @@ details[open].co-expand summary::before{content:'▾';}
           <td class="fit-p tip" data-tip="Bare metal works but enterprise contract model and no permissionless/tokenised access create friction for crypto-native teams.">~</td>
           <td class="fit-p tip" data-tip="Could work for inference API consumption but no crypto tooling or permissionless provisioning model.">~</td>
           <td class="fit-y tip" data-tip="Best fit: lowest cost, distributed supply, works for embarrassingly parallel jobs where occasional preemption is tolerable.">✓</td>
+        </tr>
+        <tr>
+          <td>Decentralised training (federated / P2P gradient)</td>
+          <td class="fit-n tip" data-tip="No permissionless access, no token payments, centralised architecture. Hard ideological and practical mismatch.">−</td>
+          <td class="fit-n tip" data-tip="Enterprise contracts, no crypto tooling, no permissionless provisioning. Not designed for decentralised coordination patterns.">−</td>
+          <td class="fit-p tip" data-tip="Compute market APIs could theoretically support this but no native coordination layer for P2P gradient aggregation.">~</td>
+          <td class="fit-y tip" data-tip="Natural fit: crypto-native supply, permissionless access, tokenised incentives. Gensyn, Bittensor use aggregator-adjacent infrastructure for P2P training.">✓</td>
         </tr>
       </tbody>
     </table>
