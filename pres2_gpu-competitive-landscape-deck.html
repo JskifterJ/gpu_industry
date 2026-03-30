@@ -135,6 +135,8 @@ html.light .dd-ss-cell{color:rgba(0,0,0,0.30);}
 .co-monogram{width:30px;height:30px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;font-weight:600;flex-shrink:0;}
 .co-name-wrap{display:flex;flex-direction:column;gap:3px;}
 .co-name{font-family:var(--display);font-size:17px;letter-spacing:.04em;line-height:1;}
+.co-attr{display:flex;flex-wrap:wrap;gap:3px;justify-content:flex-end;margin-left:auto;align-self:flex-start;}
+.attr-pill{font-family:var(--mono);font-size:7px;font-weight:600;padding:1px 5px;border-radius:3px;border:1px solid;letter-spacing:.04em;white-space:nowrap;}
 .co-score-row{display:flex;align-items:baseline;gap:6px;}
 .co-total{font-family:var(--mono);font-size:20px;font-weight:600;}
 .co-total-label{font-family:var(--mono);font-size:8px;color:var(--dim);letter-spacing:.06em;}
@@ -1100,7 +1102,7 @@ details[open].co-expand summary::before{content:'▾';}
         <div class="co-col-stack">
         <div class="co-card anim anim-1" style="border-top:2px solid #059669;">
           <div class="co-rank">1</div>
-          <div class="co-top"><div class="co-monogram" style="background:rgba(5,150,105,0.10);color:#059669;border:1px solid rgba(5,150,105,0.35);">GCP</div><div class="co-name-wrap"><div class="co-name">Google Cloud</div><span class="tbadge gold">Gold·↑Silver</span></div></div>
+          <div class="co-top"><div class="co-monogram" style="background:rgba(5,150,105,0.10);color:#059669;border:1px solid rgba(5,150,105,0.35);">GCP</div><div class="co-name-wrap"><div class="co-name">Google Cloud</div><span class="tbadge gold">Gold·↑Silver</span></div><div class="co-attr"><span class="attr-pill" style="color:#c084fc;border-color:rgba(192,132,252,.25);background:rgba(192,132,252,.06);">FM Lab</span></div></div>
           <div class="co-meta"><span class="co-meta-pill pub">Public · GOOGL · NASDAQ</span><span class="co-meta-pill na">HQ: US</span><span class="co-meta-pill">Global</span></div>
           <div class="co-score-row"><div class="co-total" style="color:#059669;">36</div><div class="co-total-label">/ 50 · Gold · fast-tracking</div></div>
           <div class="co-radar-wrap" id="radar-gcp"></div>
@@ -1125,7 +1127,7 @@ details[open].co-expand summary::before{content:'▾';}
         </div>
         <div class="co-card anim anim-4" style="border-top:2px solid #f59e0b;">
           <div class="co-rank">★</div>
-          <div class="co-top"><div class="co-monogram" style="background:rgba(245,158,11,.1);color:#b45309;border:1px solid rgba(245,158,11,.3);">OR</div><div class="co-name-wrap"><div class="co-name">Oracle OCI</div><span class="tbadge gold">Gold</span></div></div>
+          <div class="co-top"><div class="co-monogram" style="background:rgba(245,158,11,.1);color:#b45309;border:1px solid rgba(245,158,11,.3);">OR</div><div class="co-name-wrap"><div class="co-name">Oracle OCI</div><span class="tbadge gold">Gold</span></div><div class="co-attr"><span class="attr-pill" style="color:#10b981;border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.06);">NVIDIA Partner</span><span class="attr-pill" style="color:#c084fc;border-color:rgba(192,132,252,.25);background:rgba(192,132,252,.06);">FM Lab</span></div></div>
           <div class="co-meta"><span class="co-meta-pill pub">Public · ORCL · NYSE</span><span class="co-meta-pill na">HQ: US</span><span class="co-meta-pill">Global (45 regions)</span></div>
           <div class="co-score-row"><div class="co-total" style="color:#b45309;">39</div><div class="co-total-label">/ 50 · Highest CM score</div></div>
           <div class="co-radar-wrap" id="radar-oracle"></div>
@@ -1151,7 +1153,7 @@ details[open].co-expand summary::before{content:'▾';}
         </div>
         <div class="co-card anim anim-2" style="border-top:2px solid #0891B2;">
           <div class="co-rank">2</div>
-          <div class="co-top"><div class="co-monogram" style="background:rgba(8,145,178,0.1);color:#0891B2;border:1px solid rgba(8,145,178,0.35);">AZ</div><div class="co-name-wrap"><div class="co-name">Azure</div><span class="tbadge gold">Gold</span></div></div>
+          <div class="co-top"><div class="co-monogram" style="background:rgba(8,145,178,0.1);color:#0891B2;border:1px solid rgba(8,145,178,0.35);">AZ</div><div class="co-name-wrap"><div class="co-name">Azure</div><span class="tbadge gold">Gold</span></div><div class="co-attr"><span class="attr-pill" style="color:#c084fc;border-color:rgba(192,132,252,.25);background:rgba(192,132,252,.06);">FM Lab</span></div></div>
           <div class="co-meta"><span class="co-meta-pill pub">Public · MSFT · NASDAQ</span><span class="co-meta-pill na">HQ: US</span><span class="co-meta-pill">Global</span></div>
           <div class="co-score-row"><div class="co-total" style="color:#0891B2;">34</div><div class="co-total-label">/ 50 · Gold</div></div>
           <div class="co-radar-wrap" id="radar-azure"></div>
@@ -1176,7 +1178,7 @@ details[open].co-expand summary::before{content:'▾';}
         </div>
         <div class="co-card anim anim-3" style="border-top:2px solid #3730a3;">
           <div class="co-rank">3</div>
-          <div class="co-top"><div class="co-monogram" style="background:var(--h-dim);color:var(--h);border:1px solid rgba(99,102,241,0.35);">AWS</div><div class="co-name-wrap"><div class="co-name">Amazon AWS</div><span class="tbadge silver">Silver</span></div></div>
+          <div class="co-top"><div class="co-monogram" style="background:var(--h-dim);color:var(--h);border:1px solid rgba(99,102,241,0.35);">AWS</div><div class="co-name-wrap"><div class="co-name">Amazon AWS</div><span class="tbadge silver">Silver</span></div><div class="co-attr"><span class="attr-pill" style="color:#c084fc;border-color:rgba(192,132,252,.25);background:rgba(192,132,252,.06);">FM Lab</span></div></div>
           <div class="co-meta"><span class="co-meta-pill pub">Public · AMZN · NASDAQ</span><span class="co-meta-pill na">HQ: US</span><span class="co-meta-pill">Global</span></div>
           <div class="co-score-row"><div class="co-total" style="color:#3730a3;">29</div><div class="co-total-label">/ 50 · Silver · #1 market share</div></div>
           <div class="co-radar-wrap" id="radar-aws"></div>
@@ -1288,7 +1290,7 @@ details[open].co-expand summary::before{content:'▾';}
       <div class="company-cards">
         <div class="co-card anim anim-1" style="border-top:2px solid #64748b;">
           <div class="co-rank">1</div>
-          <div class="co-top"><div class="co-monogram" style="background:#1e293b;color:#cbd5e1;border:1px solid #475569;">CW</div><div class="co-name-wrap"><div class="co-name">CoreWeave</div><span class="tbadge pt">Platinum</span></div></div>
+          <div class="co-top"><div class="co-monogram" style="background:#1e293b;color:#cbd5e1;border:1px solid #475569;">CW</div><div class="co-name-wrap"><div class="co-name">CoreWeave</div><span class="tbadge pt">Platinum</span></div><div class="co-attr"><span class="attr-pill" style="color:#22c55e;border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.08);">NVIDIA Elite</span><span class="attr-pill" style="color:#c084fc;border-color:rgba(192,132,252,.25);background:rgba(192,132,252,.06);">FM Lab</span></div></div>
           <div class="co-meta"><span class="co-meta-pill pub">Public · CRWV · NASDAQ</span><span class="co-meta-pill na">HQ: US</span><span class="co-meta-pill">US · EU</span></div>
           <div class="co-score-row"><div class="co-total" style="color:#64748b;">46</div><div class="co-total-label">/ 50 · Industry Benchmark</div></div>
           <div class="co-radar-wrap" id="radar-coreweave"></div>
@@ -1313,7 +1315,7 @@ details[open].co-expand summary::before{content:'▾';}
         </div>
         <div class="co-card anim anim-2" style="border-top:2px solid #b45309;">
           <div class="co-rank">2</div>
-          <div class="co-top"><div class="co-monogram" style="background:rgba(180,83,9,0.12);color:#92400e;border:1px solid rgba(180,83,9,0.35);">NB</div><div class="co-name-wrap"><div class="co-name">Nebius</div><span class="tbadge gold">Gold</span></div></div>
+          <div class="co-top"><div class="co-monogram" style="background:rgba(180,83,9,0.12);color:#92400e;border:1px solid rgba(180,83,9,0.35);">NB</div><div class="co-name-wrap"><div class="co-name">Nebius</div><span class="tbadge gold">Gold</span></div><div class="co-attr"><span class="attr-pill" style="color:#22c55e;border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.08);">NVIDIA Elite</span><span class="attr-pill" style="color:var(--dim);border-color:var(--border);background:rgba(128,128,128,.05);">Lab Agnostic</span></div></div>
           <div class="co-meta"><span class="co-meta-pill pub">Public · NBIS · NASDAQ</span><span class="co-meta-pill eu">HQ: EU (Netherlands)</span><span class="co-meta-pill">EU · APAC · US</span></div>
           <div class="co-score-row"><div class="co-total" style="color:#b45309;">37</div><div class="co-total-label">/ 50 · #1 Gold Neocloud</div></div>
           <div class="co-radar-wrap" id="radar-nebius"></div>
@@ -1338,7 +1340,7 @@ details[open].co-expand summary::before{content:'▾';}
         </div>
         <div class="co-card anim anim-3" style="border-top:2px solid #b45309;">
           <div class="co-rank">3</div>
-          <div class="co-top"><div class="co-monogram" style="background:rgba(180,83,9,0.12);color:#92400e;border:1px solid rgba(180,83,9,0.35);">FS</div><div class="co-name-wrap"><div class="co-name">FluidStack</div><span class="tbadge gold">Gold</span></div></div>
+          <div class="co-top"><div class="co-monogram" style="background:rgba(180,83,9,0.12);color:#92400e;border:1px solid rgba(180,83,9,0.35);">FS</div><div class="co-name-wrap"><div class="co-name">FluidStack</div><span class="tbadge gold">Gold</span></div><div class="co-attr"><span class="attr-pill" style="color:var(--dim);border-color:var(--border);background:rgba(128,128,128,.05);">Lab Agnostic</span></div></div>
           <div class="co-meta"><span class="co-meta-pill vc">VC-backed · Series B</span><span class="co-meta-pill na">HQ: US (NY)</span><span class="co-meta-pill">US · EU · APAC</span></div>
           <div class="co-score-row"><div class="co-total" style="color:#b45309;">36</div><div class="co-total-label">/ 50 · Gold</div></div>
           <div class="co-radar-wrap" id="radar-fluidstack"></div>
@@ -1460,7 +1462,7 @@ details[open].co-expand summary::before{content:'▾';}
       <div class="company-cards">
         <div class="co-card anim anim-1" style="border-top:2px solid #7c3aed;">
           <div class="co-rank">1</div>
-          <div class="co-top"><div class="co-monogram" style="background:var(--o-dim);color:var(--o);border:1px solid rgba(168,85,247,0.35);">TG</div><div class="co-name-wrap"><div class="co-name">Together AI</div><span class="tbadge silver">Silver</span></div></div>
+          <div class="co-top"><div class="co-monogram" style="background:var(--o-dim);color:var(--o);border:1px solid rgba(168,85,247,0.35);">TG</div><div class="co-name-wrap"><div class="co-name">Together AI</div><span class="tbadge silver">Silver</span></div><div class="co-attr"><span class="attr-pill" style="color:#38bdf8;border-color:rgba(56,189,248,.3);background:rgba(56,189,248,.07);">HW Agnostic</span><span class="attr-pill" style="color:var(--dim);border-color:var(--border);background:rgba(128,128,128,.05);">Lab Agnostic</span></div></div>
           <div class="co-meta"><span class="co-meta-pill vc">VC · Series C+</span><span class="co-meta-pill na">HQ: US</span><span class="co-meta-pill">US · APAC</span></div>
           <div class="co-score-row"><div class="co-total" style="color:#7c3aed;">31</div><div class="co-total-label">/ 50 · Silver</div></div>
           <div class="co-radar-wrap" id="radar-together"></div>
@@ -1485,7 +1487,7 @@ details[open].co-expand summary::before{content:'▾';}
         </div>
         <div class="co-card anim anim-2" style="border-top:2px solid #5b21b6;">
           <div class="co-rank">2</div>
-          <div class="co-top"><div class="co-monogram" style="background:rgba(91,33,182,0.12);color:#5b21b6;border:1px solid rgba(91,33,182,0.35);">LM</div><div class="co-name-wrap"><div class="co-name">Lambda Labs</div><span class="tbadge silver">Silver</span></div></div>
+          <div class="co-top"><div class="co-monogram" style="background:rgba(91,33,182,0.12);color:#5b21b6;border:1px solid rgba(91,33,182,0.35);">LM</div><div class="co-name-wrap"><div class="co-name">Lambda Labs</div><span class="tbadge silver">Silver</span></div><div class="co-attr"><span class="attr-pill" style="color:#22c55e;border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.08);">NVIDIA Elite</span><span class="attr-pill" style="color:var(--dim);border-color:var(--border);background:rgba(128,128,128,.05);">Lab Agnostic</span></div></div>
           <div class="co-meta"><span class="co-meta-pill vc">VC + Microsoft deal</span><span class="co-meta-pill na">HQ: US</span><span class="co-meta-pill">US-centric</span></div>
           <div class="co-score-row"><div class="co-total" style="color:#5b21b6;">30</div><div class="co-total-label">/ 50 · Silver</div></div>
           <div class="co-radar-wrap" id="radar-lambda"></div>
@@ -1510,7 +1512,7 @@ details[open].co-expand summary::before{content:'▾';}
         </div>
         <div class="co-card anim anim-3" style="border-top:2px solid #d97706;">
           <div class="co-rank">3</div>
-          <div class="co-top"><div class="co-monogram" style="background:rgba(217,119,6,0.12);color:#92400e;border:1px solid rgba(217,119,6,0.35);">LA</div><div class="co-name-wrap"><div class="co-name">Lightning.ai</div><span class="tbadge bronze">Bronze</span></div></div>
+          <div class="co-top"><div class="co-monogram" style="background:rgba(217,119,6,0.12);color:#92400e;border:1px solid rgba(217,119,6,0.35);">LA</div><div class="co-name-wrap"><div class="co-name">Lightning.ai</div><span class="tbadge bronze">Bronze</span></div><div class="co-attr"><span class="attr-pill" style="color:#38bdf8;border-color:rgba(56,189,248,.3);background:rgba(56,189,248,.07);">HW Agnostic</span><span class="attr-pill" style="color:var(--dim);border-color:var(--border);background:rgba(128,128,128,.05);">Lab Agnostic</span></div></div>
           <div class="co-meta"><span class="co-meta-pill vc">VC · Series B</span><span class="co-meta-pill na">HQ: US</span><span class="co-meta-pill">US-centric</span></div>
           <div class="co-score-row"><div class="co-total" style="color:#92400e;">22</div><div class="co-total-label">/ 50 · Bronze</div></div>
           <div class="co-radar-wrap" id="radar-lightningai"></div>
@@ -1631,7 +1633,7 @@ details[open].co-expand summary::before{content:'▾';}
       <div class="company-cards">
         <div class="co-card anim anim-1" style="border-top:2px solid #b45309;">
           <div class="co-rank">1</div>
-          <div class="co-top"><div class="co-monogram" style="background:var(--a-dim);color:var(--a);border:1px solid rgba(245,158,11,0.35);">SF</div><div class="co-name-wrap"><div class="co-name">Shadeform</div><span class="tbadge bronze">Bronze</span></div></div>
+          <div class="co-top"><div class="co-monogram" style="background:var(--a-dim);color:var(--a);border:1px solid rgba(245,158,11,0.35);">SF</div><div class="co-name-wrap"><div class="co-name">Shadeform</div><span class="tbadge bronze">Bronze</span></div><div class="co-attr"><span class="attr-pill" style="color:#38bdf8;border-color:rgba(56,189,248,.3);background:rgba(56,189,248,.07);">HW Agnostic</span><span class="attr-pill" style="color:var(--dim);border-color:var(--border);background:rgba(128,128,128,.05);">Lab Agnostic</span></div></div>
           <div class="co-meta"><span class="co-meta-pill vc">VC · Seed/Series A</span><span class="co-meta-pill na">HQ: US</span><span class="co-meta-pill">Global (23+ providers)</span></div>
           <div class="co-score-row"><div class="co-total" style="color:#b45309;">24</div><div class="co-total-label">/ 50 · Bronze</div></div>
           <div class="co-radar-wrap" id="radar-shadeform"></div>
@@ -1656,7 +1658,7 @@ details[open].co-expand summary::before{content:'▾';}
         </div>
         <div class="co-card anim anim-2" style="border-top:2px solid #d97706;">
           <div class="co-rank">2</div>
-          <div class="co-top"><div class="co-monogram" style="background:rgba(217,119,6,0.12);color:#92400e;border:1px solid rgba(217,119,6,0.35);">DC</div><div class="co-name-wrap"><div class="co-name">DataCrunch (Verda)</div><span class="tbadge bronze">Bronze</span></div></div>
+          <div class="co-top"><div class="co-monogram" style="background:rgba(217,119,6,0.12);color:#92400e;border:1px solid rgba(217,119,6,0.35);">DC</div><div class="co-name-wrap"><div class="co-name">DataCrunch (Verda)</div><span class="tbadge bronze">Bronze</span></div><div class="co-attr"><span class="attr-pill" style="color:#22c55e;border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.08);">NVIDIA Elite</span><span class="attr-pill" style="color:var(--dim);border-color:var(--border);background:rgba(128,128,128,.05);">Lab Agnostic</span></div></div>
           <div class="co-meta"><span class="co-meta-pill vc">VC-backed</span><span class="co-meta-pill eu">HQ: EU (Finland)</span><span class="co-meta-pill">EU · Iceland</span></div>
           <div class="co-score-row"><div class="co-total" style="color:#92400e;">23</div><div class="co-total-label">/ 50 · Bronze · Neocloud</div></div>
           <div class="co-radar-wrap" id="radar-datacrunch"></div>
@@ -1681,7 +1683,7 @@ details[open].co-expand summary::before{content:'▾';}
         </div>
         <div class="co-card anim anim-3" style="border-top:2px solid #d97706;">
           <div class="co-rank">3</div>
-          <div class="co-top"><div class="co-monogram" style="background:rgba(217,119,6,0.12);color:#92400e;border:1px solid rgba(217,119,6,0.35);">RP</div><div class="co-name-wrap"><div class="co-name">RunPod</div><span class="tbadge bronze">Bronze</span></div></div>
+          <div class="co-top"><div class="co-monogram" style="background:rgba(217,119,6,0.12);color:#92400e;border:1px solid rgba(217,119,6,0.35);">RP</div><div class="co-name-wrap"><div class="co-name">RunPod</div><span class="tbadge bronze">Bronze</span></div><div class="co-attr"><span class="attr-pill" style="color:#38bdf8;border-color:rgba(56,189,248,.3);background:rgba(56,189,248,.07);">HW Agnostic</span><span class="attr-pill" style="color:var(--dim);border-color:var(--border);background:rgba(128,128,128,.05);">Lab Agnostic</span></div></div>
           <div class="co-meta"><span class="co-meta-pill vc">VC-backed</span><span class="co-meta-pill na">HQ: US</span><span class="co-meta-pill">Global</span></div>
           <div class="co-score-row"><div class="co-total" style="color:#92400e;">20</div><div class="co-total-label">/ 50 · Bronze</div></div>
           <div class="co-radar-wrap" id="radar-runpod"></div>
