@@ -465,7 +465,7 @@ details[open].co-expand summary::before{content:'▾';}
 </head>
 <body>
 <div class="progress" id="progress" style="width:5.00%"></div>
-<div class="slide-counter"><span class="counter-cur" id="ccur">01</span> / 21</div>
+<div class="slide-counter"><span class="counter-cur" id="ccur">01</span> / 22</div>
 <div class="key-hint"><span class="key-badge">←</span><span class="key-badge">→</span></div>
 <nav class="nav">
   <button class="nav-btn" id="btn-prev" onclick="go(cur-1)" disabled>&#8592;</button>
@@ -2249,32 +2249,32 @@ const SCORES={
 function cwColor(){return document.documentElement.classList.contains('light')?'#334155':'#94a3b8';}
 
 function renderRadarsForSlide(n){
-  if(n===16){ initCSControls(); renderCompetitiveSpace(); return; }
-  if(n===7){
+  if(n===18){ initCSControls(); renderCompetitiveSpace(); return; }
+  if(n===8){
     radar('radar-gcp',    SCORES.gcp,    document.documentElement.classList.contains('light')?'#065f46':'#10b981',CRIT);
     radar('radar-oracle', SCORES.oracle, document.documentElement.classList.contains('light')?'#92400e':'#f59e0b',CRIT);
     radar('radar-azure',  SCORES.azure,  '#0891B2',CRIT);
     radar('radar-aws',    SCORES.aws,    document.documentElement.classList.contains('light')?'#3730a3':'#6366f1',CRIT);
   }
-  if(n===9){
+  if(n===10){
     const cwC=document.documentElement.classList.contains('light')?'#334155':'#94a3b8';
     const golC=document.documentElement.classList.contains('light')?'#92400e':'#f59e0b';
     radar('radar-coreweave', SCORES.coreweave, cwC, CRIT);
     radar('radar-nebius',    SCORES.nebius,    golC,CRIT);
     radar('radar-fluidstack',SCORES.fluidstack,golC,CRIT);
   }
-  if(n===13){
+  if(n===14){
     const aC=document.documentElement.classList.contains('light')?'#92400e':'#f59e0b';
     const brC=document.documentElement.classList.contains('light')?'#78350f':'#cd7f32';
-    // S11 Aggregators: Shadeform (24) · Vast.ai (20) · RunPod (20)
+    // S14 Aggregators: Shadeform (24) · Vast.ai (20) · RunPod (20)
     if(SCORES.shadeform)    radar('radar-shadeform',    SCORES.shadeform,   aC,  CRIT);
     if(SCORES.vastai)       radar('radar-vastai',   SCORES.vastai,      brC, CRIT);
     if(SCORES.runpod)       radar('radar-runpod',       SCORES.runpod,      brC, CRIT);
   }
-  if(n===11){
+  if(n===12){
     const oC=document.documentElement.classList.contains('light')?'#5b21b6':'#a855f7';
     const brC=document.documentElement.classList.contains('light')?'#78350f':'#cd7f32';
-    // S9 Orchestrators: Together AI (31) · Lambda (30) · Lightning.ai (22)
+    // S12 Orchestrators: Together AI (31) · Lambda (30) · Lightning.ai (22)
     radar('radar-together',   SCORES.together,    oC,   CRIT);
     radar('radar-lambda',     SCORES.lambda,      document.documentElement.classList.contains('light')?'#3730a3':'#6366f1', CRIT);
     if(SCORES.lightningai) radar('radar-lightningai', SCORES.lightningai, brC, CRIT);
@@ -2282,7 +2282,7 @@ function renderRadarsForSlide(n){
 }
 
 // ── NAVIGATION ──────────────────────────────────────────
-const TOTAL=20;
+const TOTAL=22;
 let cur=0;
 let s3Step=0; // 0 = our model only, 1 = Huang model revealed
 let s4Step=0; // 0 = model cards only, 1 = spectra revealed
@@ -2292,7 +2292,8 @@ const prog=document.getElementById('progress');
 const btnPrev=document.getElementById('btn-prev');
 const btnNext=document.getElementById('btn-next');
 const ccur=document.getElementById('ccur');
-const COLORS=['#3730a3','#475569','#e8c840','#3730a3','#3730a3','#0284c7','#3730a3','#3730a3','#065f46','#065f46','#5b21b6','#5b21b6','#92400e','#92400e','#6366f1','#7c3aed','#0891b2','#10b981','#c084fc','#5b21b6'];
+// Indices: 0=s1,1=s1b,2=s2,3=s3,4=s4,5=s5,6=s6,7=s7,8=s8,9=s9,10=s10,11=s11,12=s12,13=s13,14=s14,15=s15,16=s4b,17=s16,18=s17,19=s18,20=s19,21=s20
+const COLORS=['#3730a3','#475569','#475569','#e8c840','#3730a3','#3730a3','#0284c7','#3730a3','#3730a3','#065f46','#065f46','#5b21b6','#5b21b6','#92400e','#92400e','#6366f1','#3730a3','#7c3aed','#0891b2','#10b981','#c084fc','#5b21b6'];
 
 function showHuangModel(){
   s3Step=1;
@@ -2354,19 +2355,19 @@ for(let i=0;i<TOTAL;i++){const d=document.createElement('div');d.className='dot'
 
 function go(n,direct){
   // S3 step-within-slide logic (only for sequential prev/next, not dot jumps)
-  if(!direct && cur===2 && n===3 && s3Step===0){ showHuangModel(); return; }
-  if(!direct && cur===2 && n===3 && s3Step===1){ showTierMap(); return; }
-  if(!direct && cur===2 && n===1 && s3Step===1){ hideHuangModel(); return; }
-  if(!direct && cur===2 && n===1 && s3Step===2){ hideTierMap(); return; }
+  if(!direct && cur===3 && n===4 && s3Step===0){ showHuangModel(); return; }
+  if(!direct && cur===3 && n===4 && s3Step===1){ showTierMap(); return; }
+  if(!direct && cur===3 && n===2 && s3Step===1){ hideHuangModel(); return; }
+  if(!direct && cur===3 && n===2 && s3Step===2){ hideTierMap(); return; }
   // S4 step-within-slide logic
-  if(!direct && cur===3 && n===4 && s4Step===0){ showS4Spectra(); return; }
-  if(!direct && cur===3 && n===2 && s4Step===1){ hideS4Spectra(); return; }
+  if(!direct && cur===4 && n===5 && s4Step===0){ showS4Spectra(); return; }
+  if(!direct && cur===4 && n===3 && s4Step===1){ hideS4Spectra(); return; }
   if(n<0||n>=TOTAL)return;
   const old=cur;cur=n;
   // Reset s3Step when leaving s3, or when returning to s3 from a different slide
-  if(old===2 || n===2) hideHuangModel();
+  if(old===3 || n===3) hideHuangModel();
   // Reset s4Step when leaving s4 or jumping directly to s4
-  if(old===3 || n===3) hideS4Spectra();
+  if(old===4 || n===4) hideS4Spectra();
   slides[old].classList.remove('active');slides[old].classList.add('prev');
   const os=slides[old];setTimeout(()=>os.classList.remove('prev'),700);
   slides[cur].classList.add('active');
