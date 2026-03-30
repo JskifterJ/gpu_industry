@@ -165,6 +165,7 @@ html.light .dd-ss-cell{color:rgba(0,0,0,0.30);}
 .bp-row{display:flex;gap:8px;align-items:flex-start;}
 .bp-tag{font-family:var(--mono);font-size:7.5px;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:3px;background:var(--bg3);border:1px solid var(--border);color:var(--dim);white-space:nowrap;flex-shrink:0;margin-top:1px;}
 .bp-text{font-size:11px;color:var(--muted);line-height:1.5;font-weight:300;}
+.bp-icp{font-family:var(--mono);font-size:7px;font-weight:700;padding:1px 5px;border-radius:2px;border:1px solid;flex-shrink:0;margin-top:2px;letter-spacing:.05em;}
 
 /* ── STACK MATRIX ── */
 .matrix-wrap{width:100%;padding:4px 40px 72px;overflow-y:auto;}
@@ -1075,9 +1076,9 @@ details[open].co-expand summary::before{content:'▾';}
         <div class="anim anim-3">
           <div class="dd-section-label" style="margin-top:4px;">Typical Buyer Profiles</div>
           <div class="buyer-profiles">
-            <div class="bp-row"><div class="bp-tag">Regulated Enterprise</div><div class="bp-text">Healthcare, finance, and government teams requiring HIPAA, FedRAMP High, or PCI DSS compliance. Cannot use neoclouds regardless of price — audit requirements mandate hyperscaler attestations.</div></div>
-            <div class="bp-row"><div class="bp-tag">Enterprise App Teams</div><div class="bp-text">Existing Azure/AWS/GCP users leveraging SageMaker, Vertex AI, or Azure ML managed services. Prefers reduced cluster management overhead over raw GPU performance.</div></div>
-            <div class="bp-row"><div class="bp-tag">Frontier AI Affiliates</div><div class="bp-text">Labs with deep strategic ties to a specific hyperscaler: OpenAI → Azure, Google DeepMind → GCP, Anthropic → AWS Bedrock. Anchor-tenant relationships create structural lock-in.</div></div>
+            <div class="bp-row"><span class="bp-icp" style="color:var(--h);border-color:rgba(99,102,241,.3);background:var(--h-dim);">E</span><div class="bp-tag">Regulated Enterprise</div><div class="bp-text">Healthcare, finance, and government teams requiring HIPAA, FedRAMP High, or PCI DSS compliance. Cannot use neoclouds regardless of price — audit requirements mandate hyperscaler attestations.</div></div>
+            <div class="bp-row"><span class="bp-icp" style="color:var(--h);border-color:rgba(99,102,241,.3);background:var(--h-dim);">E</span><div class="bp-tag">Enterprise App Teams</div><div class="bp-text">Existing Azure/AWS/GCP users leveraging SageMaker, Vertex AI, or Azure ML managed services. Prefers reduced cluster management overhead over raw GPU performance.</div></div>
+            <div class="bp-row"><span class="bp-icp" style="color:var(--o);border-color:rgba(168,85,247,.3);background:var(--o-dim);">L</span><div class="bp-tag">Frontier AI Affiliates</div><div class="bp-text">Labs with deep strategic ties to a specific hyperscaler: OpenAI → Azure, Google DeepMind → GCP, Anthropic → AWS Bedrock. Anchor-tenant relationships create structural lock-in.</div></div>
           </div>
         </div>
       </div>
@@ -1266,9 +1267,9 @@ details[open].co-expand summary::before{content:'▾';}
         </div>
         <div class="dd-section-label anim anim-3" style="margin-top:6px;">Typical Buyer Profiles</div>
         <div class="buyer-profiles anim anim-4">
-          <div class="bp-row"><div class="bp-tag">AI Research Lab</div><div class="bp-text">256–32K+ GPU distributed training. Needs bare-metal IB performance, production SonK, 99%+ node availability SLA. Willing to reserve 12–36 months for TCO.</div></div>
-          <div class="bp-row"><div class="bp-tag">Growth AI Startup</div><div class="bp-text">Scaling beyond cloud-native spot. Needs reliable 50–500 GPU cluster. Often sources from Nebius or FluidStack for flexibility.</div></div>
-          <div class="bp-row"><div class="bp-tag">Enterprise ML Platform</div><div class="bp-text">Building internal training/fine-tuning infra. Needs SOC2, dedicated capacity, support SLA. Compares CoreWeave vs hyperscalers on total TCO.</div></div>
+          <div class="bp-row"><span class="bp-icp" style="color:var(--o);border-color:rgba(168,85,247,.3);background:var(--o-dim);">L</span><div class="bp-tag">AI Research Lab</div><div class="bp-text">256–32K+ GPU distributed training. Needs bare-metal IB performance, production SonK, 99%+ node availability SLA. Willing to reserve 12–36 months for TCO.</div></div>
+          <div class="bp-row"><span class="bp-icp" style="color:var(--n);border-color:rgba(16,185,129,.3);background:var(--n-dim);">S</span><div class="bp-tag">Growth AI Startup</div><div class="bp-text">Scaling beyond cloud-native spot. Needs reliable 50–500 GPU cluster. Often sources from Nebius or FluidStack for flexibility.</div></div>
+          <div class="bp-row"><span class="bp-icp" style="color:var(--h);border-color:rgba(99,102,241,.3);background:var(--h-dim);">E</span><div class="bp-tag">Enterprise ML Platform</div><div class="bp-text">Building internal training/fine-tuning infra. Needs SOC2, dedicated capacity, support SLA. Compares CoreWeave vs hyperscalers on total TCO.</div></div>
         </div>
       </div>
     </div>
@@ -1438,9 +1439,9 @@ details[open].co-expand summary::before{content:'▾';}
         </div>
         <div class="dd-section-label anim anim-7" style="margin-top:6px;">Typical Buyer Profiles</div>
         <div class="buyer-profiles anim anim-8">
-          <div class="bp-row"><div class="bp-tag">ML Inference Teams</div><div class="bp-text">Serving open-weight models (Llama, Mistral, Qwen) at scale. Need low latency + per-token pricing without managing GPU infra.</div></div>
-          <div class="bp-row"><div class="bp-tag">AI-Native Startups</div><div class="bp-text">Fine-tuning pipelines + inference endpoints from one vendor. Prefer a single API over managing separate neocloud clusters.</div></div>
-          <div class="bp-row"><div class="bp-tag">Enterprise ML Platforms</div><div class="bp-text">Internal ML teams needing experiment tracking (W&B), quota management (Run:ai), and inference serving in one workflow.</div></div>
+          <div class="bp-row"><span class="bp-icp" style="color:var(--n);border-color:rgba(16,185,129,.3);background:var(--n-dim);">S</span><div class="bp-tag">ML Inference Teams</div><div class="bp-text">Serving open-weight models (Llama, Mistral, Qwen) at scale. Need low latency + per-token pricing without managing GPU infra.</div></div>
+          <div class="bp-row"><span class="bp-icp" style="color:var(--n);border-color:rgba(16,185,129,.3);background:var(--n-dim);">S</span><div class="bp-tag">AI-Native Startups</div><div class="bp-text">Fine-tuning pipelines + inference endpoints from one vendor. Prefer a single API over managing separate neocloud clusters.</div></div>
+          <div class="bp-row"><span class="bp-icp" style="color:var(--h);border-color:rgba(99,102,241,.3);background:var(--h-dim);">E</span><div class="bp-tag">Enterprise ML Platforms</div><div class="bp-text">Internal ML teams needing experiment tracking (W&B), quota management (Run:ai), and inference serving in one workflow.</div></div>
         </div>
       </div>
     </div>
@@ -1550,7 +1551,7 @@ details[open].co-expand summary::before{content:'▾';}
           <div style="font-family:var(--display);font-size:52px;line-height:.9;color:var(--a);">A</div>
           <div>
             <div style="font-family:var(--display);font-size:28px;line-height:1;color:var(--a);">AGGREGATOR</div>
-            <div style="font-family:var(--mono);font-size:8.5px;color:var(--dim);letter-spacing:.12em;text-transform:uppercase;">Shadeform · Vast.ai · RunPod</div>
+            <div style="font-family:var(--mono);font-size:8.5px;color:var(--dim);letter-spacing:.12em;text-transform:uppercase;">Shadeform · DataCrunch · RunPod</div>
           </div>
         </div>
         <div class="dd-diff-box anim anim-2" style="border-left-color:var(--a);background:var(--a-dim);">
@@ -1609,9 +1610,9 @@ details[open].co-expand summary::before{content:'▾';}
         </div>
         <div class="dd-section-label anim anim-5" style="margin-top:6px;">Typical Buyer Profiles</div>
         <div class="buyer-profiles anim anim-6">
-          <div class="bp-row"><div class="bp-tag">Academic / Research</div><div class="bp-text">University labs. Spot pricing at 40–70% discount justifies preemption for batch evaluation jobs.</div></div>
-          <div class="bp-row"><div class="bp-tag">Burst / Overflow Users</div><div class="bp-text">Elastic tier in a hybrid strategy rather than primary infrastructure.</div></div>
-          <div class="bp-row"><div class="bp-tag">Bootstrapped Startups</div><div class="bp-text">Zero-commitment access. Entry point before a startup has scale or credit history for a neocloud reservation.</div></div>
+          <div class="bp-row"><span class="bp-icp" style="color:var(--o);border-color:rgba(168,85,247,.3);background:var(--o-dim);">L</span><div class="bp-tag">Academic / Research</div><div class="bp-text">University labs. Spot pricing at 40–70% discount justifies preemption for batch evaluation jobs.</div></div>
+          <div class="bp-row"><span class="bp-icp" style="color:var(--n);border-color:rgba(16,185,129,.3);background:var(--n-dim);">S</span><div class="bp-tag">Burst / Overflow Users</div><div class="bp-text">Elastic tier in a hybrid strategy rather than primary infrastructure.</div></div>
+          <div class="bp-row"><span class="bp-icp" style="color:var(--a);border-color:rgba(245,158,11,.3);background:var(--a-dim);">M</span><div class="bp-tag">Bootstrapped SMEs</div><div class="bp-text">Zero-commitment access. Media production, content tools, data pipelines — workloads tolerant of preemption. Entry point before a team has scale.</div></div>
         </div>
       </div>
     </div>
@@ -1751,16 +1752,16 @@ details[open].co-expand summary::before{content:'▾';}
         <div class="sum-kv"><div class="sum-k">Must-haves</div><div class="sum-v">Bare metal · InfiniBand / RoCE 400–800G · MFU &gt;70% · cluster health + preemption SLA</div></div>
         <div class="sum-kv"><div class="sum-k">Key pain</div><div class="sum-v">Sub-70% MFU = catastrophic cost bleed · GPU underutilisation during data-loading phases</div></div>
       </div>
-      <!-- ICP 4: Web3 / Decentralised AI -->
+      <!-- ICP 4: SME / Cost-Sensitive Operator -->
       <div class="sum-col huang-hidden" id="s15a-c4" style="border-color:rgba(245,158,11,.25);background:var(--a-dim);">
-        <div class="sum-model" style="color:var(--a);">W</div>
-        <div style="font-family:var(--mono);font-size:9px;color:var(--a);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">Web3 / Decentralised AI</div>
-        <div class="sum-tagline">Crypto-native teams building ZK systems, DePIN networks, or permissionless AI protocols.</div>
-        <div style="font-family:var(--mono);font-size:7.5px;color:var(--dim2);margin-bottom:4px;">ZK proof systems · DePIN networks · Decentralised AI</div>
-        <div class="sum-kv"><div class="sum-k">Examples</div><div class="sum-v" style="font-size:9.5px;color:var(--dim2);">Bittensor · Ritual · Gensyn · Akash · io.net</div></div>
-        <div class="sum-kv"><div class="sum-k">Workloads</div><div class="sum-v"><span class="wl-tag">ZK proofs</span><span class="wl-tag">Batch inference</span><span class="wl-tag">Model training</span></div></div>
-        <div class="sum-kv"><div class="sum-k">Must-haves</div><div class="sum-v">Permissionless access · tokenised payments · distributed edge nodes · programmatic provisioning</div></div>
-        <div class="sum-kv"><div class="sum-k">Key pain</div><div class="sum-v">Latency through centralised regions · ideological and financial objection to cloud monopolies</div></div>
+        <div class="sum-model" style="color:var(--a);">M</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--a);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">SME · Cost-Sensitive</div>
+        <div class="sum-tagline">Bootstrapped AI teams and media operators running parallel GPU workloads on a tight budget.</div>
+        <div style="font-family:var(--mono);font-size:7.5px;color:var(--dim2);margin-bottom:4px;">Media production · Creative AI tools · Content pipelines</div>
+        <div class="sum-kv"><div class="sum-k">Examples</div><div class="sum-v" style="font-size:9.5px;color:var(--dim2);">AI image/video startups · 3D rendering shops · TTS tools · data scraping teams</div></div>
+        <div class="sum-kv"><div class="sum-k">Workloads</div><div class="sum-v"><span class="wl-tag">Batch media gen</span><span class="wl-tag">Parallel inference</span><span class="wl-tag">LoRA fine-tuning</span></div></div>
+        <div class="sum-kv"><div class="sum-k">Must-haves</div><div class="sum-v">Sub-$1/hr GPU pricing · no monthly minimums · simple container deploys · can tolerate preemption</div></div>
+        <div class="sum-kv"><div class="sum-k">Key pain</div><div class="sum-v">Enterprise providers 5–10× too expensive · stateless workloads make quality variance acceptable · zero compliance overhead</div></div>
       </div>
     </div>
   </div>
@@ -1851,27 +1852,27 @@ details[open].co-expand summary::before{content:'▾';}
           <td class="fit-y tip" data-tip="Native fit: purpose-built for managed inference APIs. Auto-scaling, per-token billing, multi-model routing. Together, Modal, Fireworks best examples.">✓</td>
           <td class="fit-n tip" data-tip="No SLA, preemption at volume makes this unviable for production inference endpoints requiring reliability guarantees.">−</td>
         </tr>
-        <tr class="icp-group-row"><td colspan="5">W — Web3 / Decentralised AI</td></tr>
+        <tr class="icp-group-row"><td colspan="5">M — SME · Cost-Sensitive Operator</td></tr>
         <tr>
-          <td>ZK proofs / crypto workloads</td>
-          <td class="fit-n tip" data-tip="Enterprise KYC, centralised control, no permissionless access, no tokenised payments. Ideological and financial mismatch.">−</td>
-          <td class="fit-n tip" data-tip="Enterprise-only contracts, no crypto payment rails, no permissionless provisioning. Not designed for this segment.">−</td>
-          <td class="fit-n tip" data-tip="Software-only layer, no GPU infrastructure or tokenised payment integration. No pathway to permissionless access.">−</td>
-          <td class="fit-y tip" data-tip="Native fit: crypto-native supply (ex-miners), lowest price floor, permissionless access. RTX consumer GPUs ideal for ZK prover workloads.">✓</td>
+          <td>Batch media generation (image · video · 3D rendering)</td>
+          <td class="fit-p tip" data-tip="Technically works but 5–10× pricing premium vs aggregators destroys margins for high-volume batch generation. No economic case at SME scale.">~</td>
+          <td class="fit-c tip" data-tip="Spot/on-demand (Nebius, RunPod) with no minimum works for bursts. Overkill for simple stateless diffusion workloads but viable if quality SLA matters.">(✓)</td>
+          <td class="fit-y tip" data-tip="Native fit: per-generation billing, managed ComfyUI/SDXL/TTS endpoints, zero DevOps. Ideal for SMEs without ML infra engineers.">✓</td>
+          <td class="fit-y tip" data-tip="Best price point: RTX 4090 at $0.30–1.50/hr. Stateless generation workloads tolerate preemption — if a frame fails, re-queue it. Salad, Vast.ai, RunPod ideal.">✓</td>
         </tr>
         <tr>
-          <td>Distributed / embarrassingly parallel inference</td>
-          <td class="fit-n tip" data-tip="Too expensive, centralised architecture, no crypto integration. Not a natural match.">−</td>
-          <td class="fit-p tip" data-tip="Bare metal works but enterprise contract model and no permissionless/tokenised access create friction for crypto-native teams.">~</td>
-          <td class="fit-p tip" data-tip="Could work for inference API consumption but no crypto tooling or permissionless provisioning model.">~</td>
-          <td class="fit-y tip" data-tip="Best fit: lowest cost, distributed supply, works for embarrassingly parallel jobs where occasional preemption is tolerable.">✓</td>
+          <td>Parallel inference (content tools · data pipelines)</td>
+          <td class="fit-p tip" data-tip="Works but 3–5× pricing premium over alternatives is economically unviable for bootstrapped SMEs running high-throughput parallel jobs.">~</td>
+          <td class="fit-c tip" data-tip="Spot pricing on Nebius/FluidStack makes this viable. Good SLA. Slight overkill on cluster sophistication vs what stateless inference needs.">(✓)</td>
+          <td class="fit-y tip" data-tip="Per-token/per-request billing with auto-scaling — ideal for SME inference use cases. No infra management. Together AI, Modal, Fireworks natural fit.">✓</td>
+          <td class="fit-c tip" data-tip="Cheapest option — works well for stateless, retry-tolerant inference pipelines. Preemption acceptable if retry logic is in place. RunPod / Salad.">(✓)</td>
         </tr>
         <tr>
-          <td>Decentralised training (federated / P2P gradient)</td>
-          <td class="fit-n tip" data-tip="No permissionless access, no token payments, centralised architecture. Hard ideological and practical mismatch.">−</td>
-          <td class="fit-n tip" data-tip="Enterprise contracts, no crypto tooling, no permissionless provisioning. Not designed for decentralised coordination patterns.">−</td>
-          <td class="fit-p tip" data-tip="Compute market APIs could theoretically support this but no native coordination layer for P2P gradient aggregation.">~</td>
-          <td class="fit-y tip" data-tip="Natural fit: crypto-native supply, permissionless access, tokenised incentives. Gensyn, Bittensor use aggregator-adjacent infrastructure for P2P training.">✓</td>
+          <td>LoRA / adapter fine-tuning (experimental · &lt;$200 budget)</td>
+          <td class="fit-p tip" data-tip="Overly complex setup (SageMaker, Vertex) and premium pricing. Viable for one-off jobs but no reason to choose over simpler alternatives at this budget.">~</td>
+          <td class="fit-y tip" data-tip="Spot pricing on Nebius or hourly on-demand on Lambda/FluidStack. Pre-configured LoRA environments. Good TCO for small-batch fine-tuning.">✓</td>
+          <td class="fit-y tip" data-tip="Managed fine-tune APIs (Together, Modal) — per-job billing, no cluster management, pre-built LoRA pipelines. Best DX for non-infra teams.">✓</td>
+          <td class="fit-p tip" data-tip="Cheapest option but preemption during a training run is costly. Acceptable for throwaway experiments; not for reproducible fine-tuned model production.">~</td>
         </tr>
       </tbody>
     </table>
@@ -1888,7 +1889,7 @@ details[open].co-expand summary::before{content:'▾';}
     <div style="padding:10px 44px 0;display:flex;gap:32px;align-items:flex-start;">
       <div style="flex:1;">
         <div style="font-family:var(--display);font-size:18px;letter-spacing:.04em;margin-bottom:6px;">The long tail of compute. <span style="color:var(--dim);">Not a neocloud substitute.</span></div>
-        <div style="font-size:12px;color:var(--muted);line-height:1.55;max-width:640px;">Crypto-economic incentives recruit idle GPU capacity — gaming rigs, mining farms, edge servers — into a shared marketplace. Price wins. Everything else loses.</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.55;max-width:640px;">Crypto-economic incentives recruit idle GPU capacity — gaming rigs, mining farms, edge servers — into a shared marketplace. Price wins. Everything else loses. Real buyers: <strong style="color:var(--a);">bootstrapped SMEs</strong> running parallel media/inference, and Web3-native crypto projects. Enterprises will not touch these networks — no compliance, no SLA, no legal recourse.</div>
       </div>
       <div style="flex-shrink:0;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 16px;display:flex;gap:16px;">
         <div style="text-align:center;"><div style="font-family:var(--display);font-size:26px;color:#ef4444;">1/5</div><div style="font-family:var(--mono);font-size:7.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;">Security</div></div>
@@ -1905,8 +1906,8 @@ details[open].co-expand summary::before{content:'▾';}
           <div style="font-family:var(--display);font-size:22px;color:#6366f1;">Akash Network</div>
           <span style="font-family:var(--mono);font-size:7.5px;padding:2px 7px;border-radius:2px;background:rgba(99,102,241,.12);color:#6366f1;border:1px solid rgba(99,102,241,.25);">Crypto-native</span>
         </div>
-        <div style="font-size:11.5px;color:var(--muted);line-height:1.45;">Cosmos blockchain, on-chain reverse auctions, AKT staking. Permissionless GPU listing. ~10k GPUs active.</div>
-        <div style="font-family:var(--mono);font-size:8px;color:var(--dim);">Best for: blockchain-native teams · censorship-resistant compute</div>
+        <div style="font-size:11.5px;color:var(--muted);line-height:1.45;">Cosmos SDK, on-chain reverse auctions, AKT staking. Permissionless GPU listing — mostly consumer and lower-tier datacenter GPUs. ~10k GPUs active, ~$14M network revenue 2024. No SOC 2.</div>
+        <div style="font-family:var(--mono);font-size:8px;color:var(--dim);">Best for: blockchain-native teams · open-source researchers · censorship-resistant compute</div>
         <div style="display:flex;gap:16px;margin-top:auto;padding-top:6px;">
           <div><div style="font-family:var(--display);font-size:16px;color:#22c55e;">~10k</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">GPUs LIVE</div></div>
           <div><div style="font-family:var(--display);font-size:16px;color:#6366f1;">AKT</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">PAYMENT TOKEN</div></div>
@@ -1919,8 +1920,8 @@ details[open].co-expand summary::before{content:'▾';}
           <div style="font-family:var(--display);font-size:22px;color:#ec4899;">Aethir</div>
           <span style="font-family:var(--mono);font-size:7.5px;padding:2px 7px;border-radius:2px;background:rgba(236,72,153,.12);color:#ec4899;border:1px solid rgba(236,72,153,.25);">Enterprise DePIN</span>
         </div>
-        <div style="font-size:11.5px;color:var(--muted);line-height:1.45;">Decentralised GPU cloud with enterprise-grade H100 hardware. Telecom partnerships (KDDI Japan). ATH token. Targets gaming, AI inference, and telecoms verticals.</div>
-        <div style="font-family:var(--mono);font-size:8px;color:var(--dim);">Best for: enterprise inference · gaming streaming · telecom edge AI</div>
+        <div style="font-size:11.5px;color:var(--muted);line-height:1.45;">The closest DePIN network to a traditional cloud provider — aggregates Tier-3/4 datacenters, not consumer PCs. KDDI Japan partnership, 47k+ H100-class GPUs, $36M+ ARR Q4 2024. ATH token.</div>
+        <div style="font-family:var(--mono);font-size:8px;color:var(--dim);">Best for: enterprise AI inference · cloud gaming streaming · telecom edge AI</div>
         <div style="display:flex;gap:16px;margin-top:auto;padding-top:6px;">
           <div><div style="font-family:var(--display);font-size:16px;color:#22c55e;">47k+</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">H100-CLASS GPUs</div></div>
           <div><div style="font-family:var(--display);font-size:16px;color:#f59e0b;">$36M+</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">ARR (Q4 2024)</div></div>
@@ -1932,8 +1933,8 @@ details[open].co-expand summary::before{content:'▾';}
           <div style="font-family:var(--display);font-size:22px;color:#10b981;">Salad.com</div>
           <span style="font-family:var(--mono);font-size:7.5px;padding:2px 7px;border-radius:2px;background:rgba(16,185,129,.12);color:#10b981;border:1px solid rgba(16,185,129,.25);">Gaming PCs</span>
         </div>
-        <div style="font-size:11.5px;color:var(--muted);line-height:1.45;">5M+ idle gaming PCs (RTX 3060–4090). Containerised inference jobs only. No InfiniBand.</div>
-        <div style="font-family:var(--mono);font-size:8px;color:var(--dim);">Best for: diffusion models · small-batch LLM · media AI</div>
+        <div style="font-size:11.5px;color:var(--muted);line-height:1.45;">5M+ idle gaming PCs on residential WiFi (RTX 3060–4090). Strictly containerised, stateless jobs only — home PCs have zero InfiniBand and no ECC memory. If a node drops, the job re-queues.</div>
+        <div style="font-family:var(--mono);font-size:8px;color:var(--dim);">Best for: Stable Diffusion batches · TTS · data scraping · media AI with retry tolerance</div>
         <div style="display:flex;gap:16px;margin-top:auto;padding-top:6px;">
           <div><div style="font-family:var(--display);font-size:16px;color:#22c55e;">5M+</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">REGISTERED PCS</div></div>
           <div><div style="font-family:var(--display);font-size:16px;color:#10b981;">$0.10</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">RTX 4090/HR</div></div>
@@ -1945,8 +1946,8 @@ details[open].co-expand summary::before{content:'▾';}
           <div style="font-family:var(--display);font-size:22px;color:#a855f7;">io.net</div>
           <span style="font-family:var(--mono);font-size:7.5px;padding:2px 7px;border-radius:2px;background:rgba(168,85,247,.12);color:#a855f7;border:1px solid rgba(168,85,247,.25);">Cluster Attempt</span>
         </div>
-        <div style="font-size:11.5px;color:var(--muted);line-height:1.45;">Claims 1M+ GPUs via IO blockchain. WAN latency (~50ms) vs IB microseconds = impractical for multi-node training. Raised $30M Series A.</div>
-        <div style="font-family:var(--mono);font-size:8px;color:var(--dim);">Best for: embarrassingly parallel inference only</div>
+        <div style="font-size:11.5px;color:var(--muted);line-height:1.45;">1M+ GPU claim is heavily scrutinised — early network plagued by spoofed nodes faking hardware to farm token airdrops. ~50ms WAN latency makes multi-node training impossible. Raised $30M Series A.</div>
+        <div style="font-family:var(--mono);font-size:8px;color:var(--dim);">Best for: embarrassingly parallel inference only · not viable for synchronous training</div>
         <div style="display:flex;gap:16px;margin-top:auto;padding-top:6px;">
           <div><div style="font-family:var(--display);font-size:16px;color:#a855f7;">~50ms</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">NODE LATENCY</div></div>
           <div><div style="font-family:var(--display);font-size:16px;color:#ef4444;">0</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">INFINIBAND</div></div>
@@ -1958,8 +1959,8 @@ details[open].co-expand summary::before{content:'▾';}
           <div style="font-family:var(--display);font-size:22px;color:#5aace8;">Render Network</div>
           <span style="font-family:var(--mono);font-size:7.5px;padding:2px 7px;border-radius:2px;background:rgba(90,172,232,.12);color:#5aace8;border:1px solid rgba(90,172,232,.25);">Vertical Web3</span>
         </div>
-        <div style="font-size:11.5px;color:var(--muted);line-height:1.45;">Built for 3D rendering (Blender, Cinema 4D). RNDR token. Only Web3 GPU network with genuine vertical niche and software lock-in.</div>
-        <div style="font-family:var(--mono);font-size:8px;color:var(--dim);">Best for: VFX rendering · creative GPU · 3D generative AI</div>
+        <div style="font-size:11.5px;color:var(--muted);line-height:1.45;">The most successful application-specific Web3 compute network. Direct integration with OTOY OctaneRender (Blender, Cinema 4D) creates genuine software lock-in. 3D frame rendering is naturally fault-tolerant — a failed frame just gets reassigned. RNDR → RENDER token (Solana).</div>
+        <div style="font-family:var(--mono);font-size:8px;color:var(--dim);">Best for: VFX rendering · 3D generative AI · OctaneRender pipelines</div>
         <div style="display:flex;gap:16px;margin-top:auto;padding-top:6px;">
           <div><div style="font-family:var(--display);font-size:16px;color:#5aace8;">RNDR</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">TOKEN</div></div>
           <div><div style="font-family:var(--display);font-size:16px;color:#22c55e;">Niche</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">MOAT EXISTS</div></div>
@@ -1971,8 +1972,8 @@ details[open].co-expand summary::before{content:'▾';}
           <div style="font-family:var(--display);font-size:22px;color:#06b6d4;">Fluence</div>
           <span style="font-family:var(--mono);font-size:7.5px;padding:2px 7px;border-radius:2px;background:rgba(6,182,212,.12);color:#06b6d4;border:1px solid rgba(6,182,212,.25);">Web3 Serverless</span>
         </div>
-        <div style="font-size:11.5px;color:var(--muted);line-height:1.45;">Decentralised serverless compute ("Cloudless") — matches workloads to providers via Fluence protocol. FLT token. Developer-first API for distributed job execution.</div>
-        <div style="font-family:var(--mono);font-size:8px;color:var(--dim);">Best for: permissionless compute · batch jobs · Web3 developer tooling</div>
+        <div style="font-size:11.5px;color:var(--muted);line-height:1.45;">Decentralised "Cloudless" serverless compute using WebAssembly (Wasm). Currently best known for CPU-heavy tasks: blockchain RPC nodes, zk-rollups, and Web3 backends. Expanding toward GPU/AI, but not its primary focus today. FLT token.</div>
+        <div style="font-family:var(--mono);font-size:8px;color:var(--dim);">Best for: Web3 backends · decentralised RPC nodes · permissionless serverless jobs</div>
         <div style="display:flex;gap:16px;margin-top:auto;padding-top:6px;">
           <div><div style="font-family:var(--display);font-size:16px;color:#06b6d4;">FLT</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">TOKEN</div></div>
           <div><div style="font-family:var(--display);font-size:16px;color:#22c55e;">Open</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">SOURCE</div></div>
@@ -1983,23 +1984,31 @@ details[open].co-expand summary::before{content:'▾';}
     <div style="margin:8px 44px 0;padding:10px 14px;border-radius:6px;border:1px solid rgba(239,68,68,.2);background:rgba(239,68,68,.04);display:flex;gap:20px;align-items:flex-start;">
       <div style="flex:1;">
         <div style="font-family:var(--display);font-size:14px;color:#ef4444;letter-spacing:.04em;margin-bottom:4px;">The Fundamental Limit</div>
-        <div style="font-size:11px;color:var(--muted);line-height:1.5;">No InfiniBand = no distributed training. Consumer GPUs lack ECC memory. No SLA. No compliance. Web3's ceiling: single-GPU inference and batch jobs tolerant of failure.</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.5;">50ms+ WAN latency = no distributed training (GPU sits idle 99% of the time waiting for gradients). Consumer GPUs lack ECC memory. No SLA, no compliance, no legal recourse. Enterprise data through Akash/Salad risks memory scraping — SOC 2 is structurally impossible for permissionless networks. Ceiling: single-GPU inference and stateless batch jobs tolerant of failure.</div>
       </div>
       <div style="display:flex;flex-direction:column;gap:3px;flex-shrink:0;">
-        <div style="font-family:var(--mono);font-size:8.5px;color:#ef4444;">✗ Multi-node distributed training</div>
-        <div style="font-family:var(--mono);font-size:8.5px;color:#ef4444;">✗ Production inference with SLA</div>
-        <div style="font-family:var(--mono);font-size:8.5px;color:#ef4444;">✗ HIPAA / SOC2 / FedRAMP workloads</div>
-        <div style="font-family:var(--mono);font-size:8.5px;color:#22c55e;">✓ Cost-sensitive experimentation &amp; prototyping</div>
+        <div style="font-family:var(--mono);font-size:8.5px;color:#ef4444;">✗ Multi-node synchronised training</div>
+        <div style="font-family:var(--mono);font-size:8.5px;color:#ef4444;">✗ Enterprise / regulated workloads</div>
+        <div style="font-family:var(--mono);font-size:8.5px;color:#ef4444;">✗ Production inference SLA</div>
+        <div style="font-family:var(--mono);font-size:8.5px;color:#22c55e;">✓ SME parallel media / inference (stateless)</div>
+        <div style="font-family:var(--mono);font-size:8.5px;color:#22c55e;">✓ Web3-native crypto projects</div>
       </div>
     </div>
     <div style="margin:8px 44px 0;padding:10px 14px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);">
-      <div style="font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-bottom:8px;">Web3 vs Traditional Aggregator (e.g. Shadeform)</div>
-      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;">
-        <div><div style="font-family:var(--mono);font-size:7.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;">Supply source</div><div style="font-size:11px;color:var(--muted);">Consumer/miner owners</div></div>
-        <div><div style="font-family:var(--mono);font-size:7.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;">Trust model</div><div style="font-size:11px;color:var(--muted);">Crypto collateral / ratings</div></div>
-        <div><div style="font-family:var(--mono);font-size:7.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;">Price floor</div><div style="font-size:11px;color:var(--muted);">$0.05–0.40/hr (RTX class)</div></div>
-        <div><div style="font-family:var(--mono);font-size:7.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;">Enterprise fit</div><div style="font-size:11px;color:#b91c1c;">None — no compliance, no SLA</div></div>
-        <div><div style="font-family:var(--mono);font-size:7.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;">Verdict</div><div style="font-size:11px;color:var(--muted);">Complementary, not substitute</div></div>
+      <div style="font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-bottom:8px;">Who actually uses Web3 GPU compute?</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+        <div style="padding:8px 10px;border-radius:4px;border:1px solid rgba(245,158,11,.2);background:rgba(245,158,11,.04);">
+          <div style="font-family:var(--mono);font-size:7.5px;color:var(--a);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">M · SMEs &amp; Bootstrapped Startups</div>
+          <div style="font-size:11px;color:var(--muted);line-height:1.5;">Salad for Stable Diffusion batches, TTS, and 3D rendering. Akash for censorship-resistant or budget-constrained inference. Workloads are stateless — a dropped node is a minor inconvenience, not a crisis.</div>
+        </div>
+        <div style="padding:8px 10px;border-radius:4px;border:1px solid rgba(99,102,241,.2);background:rgba(99,102,241,.04);">
+          <div style="font-family:var(--mono);font-size:7.5px;color:var(--h);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Web3-Native Projects</div>
+          <div style="font-size:11px;color:var(--muted);line-height:1.5;">DePIN networks hosting their own RPC nodes, zk-rollup provers, and Web3 front-ends. The biggest customers of Akash and Fluence are other crypto projects — not AI companies.</div>
+        </div>
+        <div style="padding:8px 10px;border-radius:4px;border:1px solid rgba(239,68,68,.2);background:rgba(239,68,68,.04);">
+          <div style="font-family:var(--mono);font-size:7.5px;color:#ef4444;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Who does NOT use this</div>
+          <div style="font-size:11px;color:var(--muted);line-height:1.5;">Fortune 500s, healthcare, finance — bound by GDPR/HIPAA. Proprietary data on Akash/Salad = random machine somewhere with no SLA. They will pay the 3–5× premium to AWS for the legal safety net.</div>
+        </div>
       </div>
     </div>
   </div>
