@@ -964,7 +964,7 @@ details[open].co-expand summary::before{content:'▾';}
         <div class="cmi-crit-plain">How smooth is the experience from signing up to running your first job? A slow or broken onboarding costs real researcher time.</div>
         <div class="cmi-crit-desc">Onboarding → cluster creation → support SLA · PyTorch install speed</div>
       </div>
-      <div class="cmi-crit starred anim anim-2">
+      <div class="cmi-crit anim anim-2">
         <div class="cmi-crit-top"><div class="cmi-crit-label" style="color:#5ab86a;">Orchestration</div><div class="cmi-crit-avg">avg 3.1<span>/5</span></div></div>
         <div class="cmi-crit-plain">The job scheduler — can you run AI training (Slurm) and cloud deployments (Kubernetes) on the same hardware simultaneously? The #1 differentiator among premium providers.</div>
         <div class="cmi-crit-desc">Slurm config · K8s setup · SonK maturity · multi-node NCCL validation</div>
@@ -974,7 +974,7 @@ details[open].co-expand summary::before{content:'▾';}
         <div class="cmi-crit-plain">How fast can GPUs read training data? If storage is the bottleneck, GPUs sit idle — wasting expensive compute time.</div>
         <div class="cmi-crit-desc">POSIX filesystem · object storage · local NVMe cache performance</div>
       </div>
-      <div class="cmi-crit starred anim anim-3">
+      <div class="cmi-crit anim anim-3">
         <div class="cmi-crit-top"><div class="cmi-crit-label" style="color:#5aace8;">Networking</div><div class="cmi-crit-avg">avg 2.9<span>/5</span></div></div>
         <div class="cmi-crit-plain">How fast GPUs talk to each other within a cluster — critical for large-scale training where hundreds of GPUs must coordinate every step.</div>
         <div class="cmi-crit-desc">InfiniBand / <span class="tip" data-tip="RoCEv2 (RDMA over Converged Ethernet v2): runs ultra-fast GPU-to-GPU communication over standard Ethernet switches. Cheaper than InfiniBand to deploy but delivers lower bandwidth and higher latency — the trade-off providers make when they skip dedicated AI networking.">RoCEv2</span> · <span class="tip" data-tip="NCCL allreduce bandwidth: NCCL (NVIDIA Collective Communications Library) is the software coordinating data exchange between all GPUs in a training run. Allreduce is the specific pattern that synchronises gradient updates across every GPU simultaneously — its speed is the primary bottleneck in large-scale training.">NCCL allreduce bandwidth</span> · SHARP support</div>
@@ -984,7 +984,7 @@ details[open].co-expand summary::before{content:'▾';}
         <div class="cmi-crit-plain">When a GPU fails, how quickly is it detected and replaced? A long-running training job can lose days of progress from a single unhandled failure.</div>
         <div class="cmi-crit-desc">Uptime SLA · passive + active health checks · auto-drain on failure</div>
       </div>
-      <div class="cmi-crit starred anim anim-4">
+      <div class="cmi-crit anim anim-4">
         <div class="cmi-crit-top"><div class="cmi-crit-label" style="color:#e84393;">Monitoring</div><div class="cmi-crit-avg">avg 2.6<span>/5</span></div></div>
         <div class="cmi-crit-plain">Visibility into what's happening on your cluster — GPU health, utilisation, error logs. Poor monitoring means problems are invisible until jobs crash.</div>
         <div class="cmi-crit-desc">Grafana · DCGM metrics · straggler detection · dmesg / XID logs</div>
