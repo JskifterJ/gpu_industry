@@ -372,6 +372,18 @@ details[open].co-expand summary::before{content:'▾';}
 .sum-v.accent{font-weight:600;}
 .sum-score-range{font-family:var(--display);font-size:22px;margin-top:4px;}
 .sum-risk{font-family:var(--mono);font-size:9px;padding:5px 8px;border-radius:3px;background:rgba(239,68,68,.08);color:#b91c1c;border:1px solid rgba(239,68,68,.15);line-height:1.4;margin-top:auto;}
+.wl-tag{display:inline-block;font-family:var(--mono);font-size:7.5px;padding:2px 6px;border-radius:2px;background:var(--bg3);color:var(--dim);border:1px solid var(--border);margin:1px 2px 1px 0;}
+/* ── ICP MATRIX ── */
+.icp-matrix{width:100%;border-collapse:collapse;}
+.icp-matrix th{font-family:var(--mono);font-size:8.5px;text-transform:uppercase;letter-spacing:.09em;padding:7px 12px;border-bottom:2px solid var(--border);text-align:center;white-space:nowrap;}
+.icp-matrix th:first-child{text-align:left;min-width:160px;}
+.icp-matrix td{padding:5px 12px;border-bottom:1px solid rgba(148,163,184,.07);vertical-align:middle;font-size:10.5px;color:var(--muted);}
+.icp-matrix td:first-child{padding-left:20px;font-size:10px;color:var(--dim);}
+.icp-group-row td{font-family:var(--mono);font-size:7.5px;text-transform:uppercase;letter-spacing:.1em;padding:7px 12px 3px!important;background:var(--bg2);color:var(--dim);font-weight:600;}
+.fit-y{text-align:center;font-weight:700;color:#10b981;}
+.fit-c{text-align:center;font-weight:600;color:#6366f1;}
+.fit-p{text-align:center;font-weight:600;color:#f59e0b;}
+.fit-n{text-align:center;font-weight:600;color:rgba(148,163,184,.4);}
 
 /* ── DEPIN SLIDE ── */
 .depin-wrap{display:flex;flex:1;flex-direction:column;padding:8px 44px 12px;gap:8px;}
@@ -465,7 +477,7 @@ details[open].co-expand summary::before{content:'▾';}
 </head>
 <body>
 <div class="progress" id="progress" style="width:5.00%"></div>
-<div class="slide-counter"><span class="counter-cur" id="ccur">01</span> / 22</div>
+<div class="slide-counter"><span class="counter-cur" id="ccur">01</span> / 23</div>
 <div class="key-hint"><span class="key-badge">←</span><span class="key-badge">→</span></div>
 <nav class="nav">
   <button class="nav-btn" id="btn-prev" onclick="go(cur-1)" disabled>&#8592;</button>
@@ -585,7 +597,7 @@ details[open].co-expand summary::before{content:'▾';}
 <div class="slide" id="s2">
   <div class="bg-grid"></div>
   <div style="position:absolute;top:18px;right:44px;z-index:20;">
-    <button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="<span id="tl">Light</span></button>
+    <button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Light</span>
   </div>
   <div class="agenda-body">
     <div class="anim anim-1" style="display:flex;flex-direction:column;align-items:flex-start;gap:6px;">
@@ -627,10 +639,8 @@ details[open].co-expand summary::before{content:'▾';}
 <div class="slide" id="s3">
   <div class="slide-chrome">
     <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">The Stack · Our 9-Layer Model</div></div>
-    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="<span id="tl">Light</span></button></div>
+    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Light</span></div>
   </div>
-  <!-- Step hint (shown on step 0, hidden on step 1) -->
-  <div class="s3-hint" id="s3-hint"><span>Compare with Jensen Huang's view</span><span class="s3-kbd">→</span></div>
   <div class="cake-wrap">
     <!-- OUR 9-layer model (LEFT — always visible) -->
     <div class="cake-side" id="cake-ours">
@@ -720,16 +730,15 @@ details[open].co-expand summary::before{content:'▾';}
       <div style="font-family:var(--mono);font-size:8px;color:var(--dim2);margin-top:8px;line-height:1.5;">NVIDIA designs chips + software. Partners own systems up.<br>Jensen's key insight: the real value is in the full stack together.</div>
     </div>
   </div>
-  <!-- Footnote: hidden until step 2, then revealed -->
-  <div style="padding:0 44px 10px;font-family:var(--mono);font-size:8px;color:var(--dim2);" id="s3-footnote" class="huang-hidden">We extend NVIDIA's "Systems" layer into L1 (physical hardware) + L2 (firmware/drivers), and add two layers NVIDIA's frame omits: L−1 (energy &amp; connectivity) and L6 (cloud control plane). These are the layers that determine real competitive advantage in the GPU cloud market.
-  <div style="margin-top:7px;display:flex;flex-wrap:wrap;gap:4px;align-items:center;"><span style="color:var(--dim);margin-right:4px;">Hugo Shi's 5 service tiers (Saturn Cloud CTO) mapped to our layers:</span><span class="hs-tier">T1 Raw Compute → L0 + L1</span><span class="hs-tier">T2 Orchestration → L3</span><span class="hs-tier">T3 Storage → L5</span><span class="hs-tier">T4 Networking → L1 + L2</span><span class="hs-tier">T5 Managed ML → L4 + L6 + L7</span></div>
+  <div style="padding:0 44px 10px;font-family:var(--mono);font-size:8px;color:var(--dim2);" id="s3-footnote">We extend NVIDIA's "Systems" layer into L1 (physical hardware) + L2 (firmware/drivers), and add two layers NVIDIA's frame omits: L−1 (energy &amp; connectivity) and L6 (cloud control plane). These are the layers that determine real competitive advantage in the GPU cloud market.
   </div>
+</div>
 
 <!-- ══ S4 — FOUR MODELS ══ -->
 <div class="slide" id="s4">
   <div class="slide-chrome">
     <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Four Business Models</div></div>
-    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="<span id="tl">Light</span></button></div>
+    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Light</span></div>
   </div>
   <div class="slide-body" style="flex-direction:column;padding:10px 0 72px;overflow-y:auto;">
     <div style="padding:0 44px 8px;font-family:var(--mono);font-size:9px;color:var(--dim);">The GPU compute market organises into four distinct archetypes, each occupying different layers of the <span class="tip" data-tip="L−1 (Energy) through L7 (Application). Each layer adds abstraction above the raw GPU silicon. Colour-coded consistently throughout this deck.">value chain</span> and serving different buyer profiles.</div>
@@ -858,7 +867,7 @@ details[open].co-expand summary::before{content:'▾';}
 <div class="slide" id="s5">
   <div class="slide-chrome">
     <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Stack Ownership Map · L7 → L−1</div></div>
-    <div class="chrome-right"><span class="chrome-note">● Owns · ◐ Facilitates · ○ Uses · — N/A</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="<span id="tl">Light</span></button></div>
+    <div class="chrome-right"><span class="chrome-note">● Owns · ◐ Facilitates · ○ Uses · — N/A</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Light</span></div>
   </div>
   <div class="slide-body" style="overflow-y:auto;padding-bottom:0;">
     <div class="matrix-wrap">
@@ -940,7 +949,7 @@ details[open].co-expand summary::before{content:'▾';}
 <div class="slide" id="s6">
   <div class="slide-chrome">
     <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">ClusterMAX 2.0 · The Industry Standard</div></div>
-    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="<span id="tl">Light</span></button></div>
+    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Light</span></div>
   </div>
   <div class="cmi-wrap">
     <div class="cmi-left">
@@ -1021,7 +1030,7 @@ details[open].co-expand summary::before{content:'▾';}
 <div class="slide" id="s7">
   <div class="slide-chrome">
     <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title" style="color:var(--h);">Hyperscaler · Deep Dive</div></div>
-    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="<span id="tl">Light</span></button></div>
+    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Light</span></div>
   </div>
   <div class="slide-body">
     <div class="deepdive-wrap">
@@ -1097,7 +1106,7 @@ details[open].co-expand summary::before{content:'▾';}
 <div class="slide" id="s8">
   <div class="slide-chrome">
     <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title" style="color:var(--h);">Hyperscaler · Rankings by CM Score</div></div>
-    <div class="chrome-right"><span class="chrome-note">Sorted by CM score: Oracle 39★ · GCP 36 · Azure 34 · AWS 29</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="<span id="tl">Light</span></button></div>
+    <div class="chrome-right"><span class="chrome-note">Sorted by CM score: Oracle 39★ · GCP 36 · Azure 34 · AWS 29</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Light</span></div>
   </div>
   <div class="slide-body" style="flex-direction:column;padding-top:0;overflow-y:auto;padding-bottom:72px;">
     <div class="top3-wrap">
@@ -1214,7 +1223,7 @@ details[open].co-expand summary::before{content:'▾';}
 <div class="slide" id="s9">
   <div class="slide-chrome">
     <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title" style="color:var(--n);">Neocloud · Deep Dive</div></div>
-    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="<span id="tl">Light</span></button></div>
+    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Light</span></div>
   </div>
   <div class="slide-body">
     <div class="deepdive-wrap">
@@ -1286,7 +1295,7 @@ details[open].co-expand summary::before{content:'▾';}
 <div class="slide" id="s10">
   <div class="slide-chrome">
     <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title" style="color:var(--n);">Neocloud · Rankings by CM Score</div></div>
-    <div class="chrome-right"><span class="chrome-note">CoreWeave 46 Platinum · Nebius 37 Gold · FluidStack 36 Gold</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="<span id="tl">Light</span></button></div>
+    <div class="chrome-right"><span class="chrome-note">CoreWeave 46 Platinum · Nebius 37 Gold · FluidStack 36 Gold</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Light</span></div>
   </div>
   <div class="slide-body" style="flex-direction:column;padding-top:0;overflow-y:auto;padding-bottom:72px;">
     <div class="top3-wrap">
@@ -1376,7 +1385,7 @@ details[open].co-expand summary::before{content:'▾';}
 <div class="slide" id="s11">
   <div class="slide-chrome">
     <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title" style="color:var(--o);">Orchestrator · Deep Dive</div></div>
-    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="<span id="tl">Light</span></button></div>
+    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Light</span></div>
   </div>
   <div class="slide-body">
     <div class="deepdive-wrap">
@@ -1458,7 +1467,7 @@ details[open].co-expand summary::before{content:'▾';}
 <div class="slide" id="s12">
   <div class="slide-chrome">
     <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title" style="color:var(--o);">Orchestrator · Rankings by CM Score</div></div>
-    <div class="chrome-right"><span class="chrome-note">Together AI 31/50 Silver · Lambda 30/50 Silver · Lightning.ai 22/50 Bronze</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="<span id="tl">Light</span></button></div>
+    <div class="chrome-right"><span class="chrome-note">Together AI 31/50 Silver · Lambda 30/50 Silver · Lightning.ai 22/50 Bronze</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Light</span></div>
   </div>
   <div class="slide-body" style="flex-direction:column;padding-top:0;overflow-y:auto;padding-bottom:72px;">
     <div class="top3-wrap">
@@ -1548,7 +1557,7 @@ details[open].co-expand summary::before{content:'▾';}
 <div class="slide" id="s13">
   <div class="slide-chrome">
     <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title" style="color:var(--a);">Aggregator · Deep Dive</div></div>
-    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="<span id="tl">Light</span></button></div>
+    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Light</span></div>
   </div>
   <div class="slide-body">
     <div class="deepdive-wrap">
@@ -1629,7 +1638,7 @@ details[open].co-expand summary::before{content:'▾';}
 <div class="slide" id="s14">
   <div class="slide-chrome">
     <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title" style="color:var(--a);">Aggregator · Rankings by CM Score</div></div>
-    <div class="chrome-right"><span class="chrome-note">Shadeform 24/50 · Vast.ai 20/50 · RunPod 20/50 — all Bronze</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="<span id="tl">Light</span></button></div>
+    <div class="chrome-right"><span class="chrome-note">Shadeform 24/50 · Vast.ai 20/50 · RunPod 20/50 — all Bronze</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Light</span></div>
   </div>
   <div class="slide-body" style="flex-direction:column;padding-top:0;overflow-y:auto;padding-bottom:72px;">
     <div class="top3-wrap">
@@ -1715,64 +1724,140 @@ details[open].co-expand summary::before{content:'▾';}
   </div>
 </div>
 
-<!-- ══ S15 — BUSINESS MODEL SUMMARY ══ -->
-<div class="slide" id="s15">
+<!-- ══ S15A — ICP OVERVIEW ══ -->
+<div class="slide" id="s15a">
   <div class="slide-chrome">
-    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Four Models · Side-by-Side</div></div>
-    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="<span id="tl">Light</span></button></div>
+    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Who Buys GPU Compute · Customer Archetypes</div></div>
+    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Light</span></div>
   </div>
   <div class="summary-wrap">
-    <div style="font-family:var(--mono);font-size:9px;color:var(--dim);padding-bottom:8px;">How the four archetypes compare across the dimensions that determine market position, defensibility, and startup relevance.</div>
+    <div style="font-family:var(--mono);font-size:9px;color:var(--dim);padding-bottom:8px;">Four distinct buyer personas — each with different workloads, technical requirements, and risk tolerances. Hover workload tags for context.</div>
     <div class="summary-grid">
+      <!-- ICP 1: Enterprise Integrator -->
       <div class="sum-col anim anim-1" style="border-color:rgba(99,102,241,.25);background:var(--h-dim);">
-        <div class="sum-model" style="color:var(--h);">H</div>
-        <div style="font-family:var(--mono);font-size:9px;color:var(--h);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Hyperscaler</div>
-        <div class="sum-tagline">Full-stack compliance machine. Wins on breadth, not raw GPU performance.</div>
-        <div class="sum-kv"><div class="sum-k">Key differentiator</div><div class="sum-v accent">Compliance portfolio + Independent Software Vendor (ISV) ecosystem</div></div>
-        <div class="sum-kv"><div class="sum-k">Capital intensity</div><div class="sum-v">Extreme · $200B+/yr across AWS/Azure/GCP</div></div>
-        <div class="sum-kv"><div class="sum-k">Moat</div><div class="sum-v">FedRAMP / SOC2 / HIPAA · 200+ managed services · enterprise switching cost</div></div>
-        <div class="sum-kv"><div class="sum-k">Pricing vs neocloud</div><div class="sum-v accent">+30–50%</div></div>
-        <div class="sum-kv"><div class="sum-k">Capacity model</div><div class="sum-v">On-demand + reserved (1–3yr) + spot</div></div>
-        <div class="sum-score-range" style="color:var(--h);">29–39<span style="font-family:var(--mono);font-size:11px;color:var(--dim);"> / 50</span></div>
-        <div class="sum-risk">Risk: GPU allocation rationed outside anchor accounts</div>
+        <div class="sum-model" style="color:var(--h);">E</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--h);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">Enterprise Integrator</div>
+        <div class="sum-tagline">Regulated Fortune 2000 deploying internal AI at production scale — past pilot stage.</div>
+        <div style="font-family:var(--mono);font-size:7.5px;color:var(--dim2);margin-bottom:4px;">Finance · Healthcare · Pharma · Defence</div>
+        <div class="sum-kv"><div class="sum-k">Workloads</div><div class="sum-v"><span class="wl-tag">Fine-tuning</span><span class="wl-tag">Inference (RAG)</span><span class="wl-tag">Agentic AI</span></div></div>
+        <div class="sum-kv"><div class="sum-k">Must-haves</div><div class="sum-v">Data residency · FedRAMP / SOC2 / HIPAA · private VPC · enterprise SLA</div></div>
+        <div class="sum-kv"><div class="sum-k">Key pain</div><div class="sum-v">Inference at scale costs 60–70% more than equivalent on-prem · regulatory data barriers block public APIs</div></div>
       </div>
+      <!-- ICP 2: AI-Native Startup -->
       <div class="sum-col anim anim-2" style="border-color:rgba(16,185,129,.25);background:var(--n-dim);">
-        <div class="sum-model" style="color:var(--n);">N</div>
-        <div style="font-family:var(--mono);font-size:9px;color:var(--n);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Neocloud</div>
-        <div class="sum-tagline">The infrastructure bet. Wins on cluster quality and SonK orchestration depth.</div>
-        <div class="sum-kv"><div class="sum-k">Key differentiator</div><div class="sum-v accent">SonK maturity · IB fabric · health check depth</div></div>
-        <div class="sum-kv"><div class="sum-k">Capital intensity</div><div class="sum-v">High · $1B+ GPU procurement debt common</div></div>
-        <div class="sum-kv"><div class="sum-k">Moat</div><div class="sum-v">GPU allocation relationships · 12–36 month RPO commitments · ops depth</div></div>
-        <div class="sum-kv"><div class="sum-k">Pricing vs Azure</div><div class="sum-v accent">−30–50%</div></div>
-        <div class="sum-kv"><div class="sum-k">Capacity model</div><div class="sum-v">Mostly reserved · limited on-demand · Nebius has spot</div></div>
-        <div class="sum-score-range" style="color:var(--n);">36–46<span style="font-family:var(--mono);font-size:11px;color:var(--dim);"> / 50</span></div>
-        <div class="sum-risk">Risk: debt load + customer concentration + Blackwell transition</div>
+        <div class="sum-model" style="color:var(--n);">S</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--n);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">AI-Native Startup</div>
+        <div class="sum-tagline">Building specialised apps and vertical AI products on open-weights models.</div>
+        <div style="font-family:var(--mono);font-size:7.5px;color:var(--dim2);margin-bottom:4px;">App builders · Coding copilots · Vertical AI</div>
+        <div class="sum-kv"><div class="sum-k">Workloads</div><div class="sum-v"><span class="wl-tag">Fine-tuning</span><span class="wl-tag">Inference API</span><span class="wl-tag">Rapid iteration</span></div></div>
+        <div class="sum-kv"><div class="sum-k">Must-haves</div><div class="sum-v">Zero egress fees · transparent per-second billing · instant deploys · pre-built vLLM / ComfyUI endpoints</div></div>
+        <div class="sum-kv"><div class="sum-k">Key pain</div><div class="sum-v">Egress fees destroy runway · slow provisioning · hyperscaler IaC complexity kills velocity</div></div>
       </div>
+      <!-- ICP 3: Foundation Model Lab -->
       <div class="sum-col anim anim-3" style="border-color:rgba(168,85,247,.25);background:var(--o-dim);">
-        <div class="sum-model" style="color:var(--o);">O</div>
-        <div style="font-family:var(--mono);font-size:9px;color:var(--o);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Orchestrator</div>
-        <div class="sum-tagline">The software layer. Wins on developer experience and kernel engineering.</div>
-        <div class="sum-kv"><div class="sum-k">Key differentiator</div><div class="sum-v accent">Inference kernel depth (FlashAttention) · DX</div></div>
-        <div class="sum-kv"><div class="sum-k">Capital intensity</div><div class="sum-v">Low–Medium · software-first; hybrids add GPU capex</div></div>
-        <div class="sum-kv"><div class="sum-k">Moat</div><div class="sum-v">Kernel engineering · LangChain / HF ecosystem · agentic tooling</div></div>
-        <div class="sum-kv"><div class="sum-k">Pricing model</div><div class="sum-v accent">Per-token / per-job · software margin</div></div>
-        <div class="sum-kv"><div class="sum-k">Capacity model</div><div class="sum-v">On-demand (no reservation) · API-first</div></div>
-        <div class="sum-score-range" style="color:var(--o);">22–31<span style="font-family:var(--mono);font-size:11px;color:var(--dim);"> / 50</span></div>
-        <div class="sum-risk">Risk: OSS vLLM/SGLang commoditises the inference layer</div>
+        <div class="sum-model" style="color:var(--o);">L</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--o);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">Foundation Model Lab</div>
+        <div class="sum-tagline">Frontier pre-training and massive fine-tuning — measured in thousands of GPUs.</div>
+        <div style="font-family:var(--mono);font-size:7.5px;color:var(--dim2);margin-bottom:4px;">AI labs · Academic consortiums · Deep tech</div>
+        <div class="sum-kv"><div class="sum-k">Workloads</div><div class="sum-v"><span class="wl-tag">Pre-training</span><span class="wl-tag">Large-scale fine-tuning</span></div></div>
+        <div class="sum-kv"><div class="sum-k">Must-haves</div><div class="sum-v">Bare metal · InfiniBand / RoCE 400–800G · MFU &gt;70% · cluster health + preemption SLA</div></div>
+        <div class="sum-kv"><div class="sum-k">Key pain</div><div class="sum-v">Sub-70% MFU = catastrophic cost bleed · GPU underutilisation during data-loading phases</div></div>
       </div>
+      <!-- ICP 4: Web3 / Decentralised AI -->
       <div class="sum-col anim anim-4" style="border-color:rgba(245,158,11,.25);background:var(--a-dim);">
-        <div class="sum-model" style="color:var(--a);">A</div>
-        <div style="font-family:var(--mono);font-size:9px;color:var(--a);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Aggregator</div>
-        <div class="sum-tagline">The arbitrage play. Wins on price discovery and zero capex.</div>
-        <div class="sum-kv"><div class="sum-k">Key differentiator</div><div class="sum-v accent">Supply breadth · price transparency · zero lock-in</div></div>
-        <div class="sum-kv"><div class="sum-k">Capital intensity</div><div class="sum-v">Very low · revenue = spread · no hardware</div></div>
-        <div class="sum-kv"><div class="sum-k">Moat</div><div class="sum-v">Network effects (more providers = better discovery) · developer trust</div></div>
-        <div class="sum-kv"><div class="sum-k">Pricing model</div><div class="sum-v accent">Spot spread · both OD and reserved available</div></div>
-        <div class="sum-kv"><div class="sum-k">Capacity model</div><div class="sum-v">On-demand + time-scheduled reserved (no cluster SLA)</div></div>
-        <div class="sum-score-range" style="color:var(--a);">20–24<span style="font-family:var(--mono);font-size:11px;color:var(--dim);"> / 50</span></div>
-        <div class="sum-risk">Risk: supply tightens → pricing leverage + priority both collapse</div>
+        <div class="sum-model" style="color:var(--a);">W</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--a);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">Web3 / Decentralised AI</div>
+        <div class="sum-tagline">Crypto-native teams building ZK systems, DePIN networks, or permissionless AI protocols.</div>
+        <div style="font-family:var(--mono);font-size:7.5px;color:var(--dim2);margin-bottom:4px;">ZK proof systems · DePIN networks · Decentralised AI</div>
+        <div class="sum-kv"><div class="sum-k">Workloads</div><div class="sum-v"><span class="wl-tag">ZK proofs</span><span class="wl-tag">Batch inference</span><span class="wl-tag">Model training</span></div></div>
+        <div class="sum-kv"><div class="sum-k">Must-haves</div><div class="sum-v">Permissionless access · tokenised payments · distributed edge nodes · programmatic provisioning</div></div>
+        <div class="sum-kv"><div class="sum-k">Key pain</div><div class="sum-v">Latency through centralised regions · ideological and financial objection to cloud monopolies</div></div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- ══ S15B — ICP × BUSINESS MODEL MATRIX ══ -->
+<div class="slide" id="s15b">
+  <div class="slide-chrome">
+    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Which Provider Fits Which Customer</div></div>
+    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Light</span></div>
+  </div>
+  <div class="slide-body" style="flex-direction:column;padding:10px 44px 72px;overflow-y:auto;">
+    <div style="font-family:var(--mono);font-size:9px;color:var(--dim);margin-bottom:10px;">Hover each cell for reasoning. ✓ strong fit · <span style="color:#6366f1;">(✓)</span> conditional · <span style="color:#f59e0b;">~</span> partial · <span style="color:rgba(148,163,184,.5);">−</span> poor fit.</div>
+    <table class="icp-matrix">
+      <thead>
+        <tr>
+          <th style="text-align:left;">ICP · Workload</th>
+          <th style="color:var(--h);">H · Hyperscaler</th>
+          <th style="color:var(--n);">N · Neocloud</th>
+          <th style="color:var(--o);">O · Orchestrator</th>
+          <th style="color:var(--a);">A · Aggregator</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="icp-group-row"><td colspan="5">E — Enterprise Integrator (Regulated)</td></tr>
+        <tr>
+          <td>Fine-tuning (proprietary / classified)</td>
+          <td class="fit-y tip" data-tip="Full compliance portfolio (FedRAMP, HIPAA, SOC2), private VPCs, enterprise SLAs. Premium price but often the only viable option for classified workloads.">✓</td>
+          <td class="fit-y tip" data-tip="Growing compliance certs (SOC2 Type II), dedicated bare-metal, private VPCs. 30–50% cheaper than hyperscalers. FedRAMP coverage still maturing.">✓</td>
+          <td class="fit-p tip" data-tip="Software-only — lacks isolated physical infrastructure for regulated data. Some hybrid orchestrators own partial GPU capacity but compliance coverage is limited.">~</td>
+          <td class="fit-n tip" data-tip="Shared supply pool, zero compliance certifications, no SLA. Data sovereignty requirements make this a hard no.">−</td>
+        </tr>
+        <tr>
+          <td>Inference (internal RAG · agentic workflows)</td>
+          <td class="fit-y tip" data-tip="FedRAMP-authorised inference endpoints, data residency guarantees, 200+ managed services. Gold standard for regulated internal AI.">✓</td>
+          <td class="fit-c tip" data-tip="Private VPCs, SOC2 certified, dedicated inference clusters. Excellent for non-FedRAMP regulated tiers. FedRAMP coverage still limited vs hyperscalers.">(✓)</td>
+          <td class="fit-c tip" data-tip="Managed inference APIs with growing compliance coverage, but no physical infrastructure isolation. Works for lower-regulation tiers (GDPR, SOC2) not classified workloads.">(✓)</td>
+          <td class="fit-n tip" data-tip="No compliance, no SLA, shared supply. Unacceptable for any regulated inference endpoint.">−</td>
+        </tr>
+        <tr class="icp-group-row"><td colspan="5">S — AI-Native Startup / Scale-up</td></tr>
+        <tr>
+          <td>Fine-tuning (open-weights: Llama, Mistral)</td>
+          <td class="fit-p tip" data-tip="Technically works but egress fees and complex IaC destroy startup runway. 30–50% pricing premium. Viable but painful — most startups eventually migrate away.">~</td>
+          <td class="fit-y tip" data-tip="Best fit: zero egress, competitive pricing, pre-configured training environments (FSDP, LoRA), fast provisioning. CoreWeave/Nebius specifically target this segment.">✓</td>
+          <td class="fit-y tip" data-tip="Managed fine-tune APIs (Modal, Together AI) — excellent DX, per-job billing, no cluster management. Scales well to medium-size runs without DevOps overhead.">✓</td>
+          <td class="fit-p tip" data-tip="Cheapest spot capacity but no managed environment, preemption risk, no SLA. Fine for experimental runs, not reproducible production fine-tuning.">~</td>
+        </tr>
+        <tr>
+          <td>Inference API (production traffic)</td>
+          <td class="fit-p tip" data-tip="Managed inference works but 30–50% premium quickly becomes prohibitive at scale. Complex pricing models obscure true TCO.">~</td>
+          <td class="fit-y tip" data-tip="Dedicated inference clusters, zero egress, competitive per-hour pricing. Solid for production traffic requiring SLA.">✓</td>
+          <td class="fit-y tip" data-tip="Native fit: API-compatible vLLM endpoints, per-token billing, managed auto-scaling. Best developer experience for inference-first products.">✓</td>
+          <td class="fit-c tip" data-tip="Lowest cost but preemption risk makes it unsuitable for production SLAs without a retry/fallback layer. Works behind an orchestrator.">(✓)</td>
+        </tr>
+        <tr class="icp-group-row"><td colspan="5">L — Foundation Model Lab / Deep Tech</td></tr>
+        <tr>
+          <td>Pre-training (frontier scale · 10K+ GPUs)</td>
+          <td class="fit-y tip" data-tip="Scale exists; integrates with proprietary storage ecosystems. TPU/Trainium as alternatives for select workloads. Risk: rationing outside anchor accounts.">✓</td>
+          <td class="fit-y tip" data-tip="Purpose-built for this use case — bare metal, InfiniBand NDR 400G+, Slurm/SonK, cluster health checks. Best MFU guarantees on the market.">✓</td>
+          <td class="fit-n tip" data-tip="No GPU ownership. Cannot provide non-blocking InfiniBand fabric. Physics prevents efficient synchronous gradient communication at scale.">−</td>
+          <td class="fit-n tip" data-tip="No SLA, no InfiniBand, no dedicated cluster. Preemption destroys training runs. Completely unviable for multi-node synchronised training.">−</td>
+        </tr>
+        <tr>
+          <td>Large-scale fine-tuning (1K+ GPUs)</td>
+          <td class="fit-p tip" data-tip="Scale works but TCO becomes prohibitive; rationing risk outside anchor accounts; data egress from training datasets adds up.">~</td>
+          <td class="fit-y tip" data-tip="Dedicated clusters, bare metal, InfiniBand fabric, high MFU. This is the core neocloud value proposition.">✓</td>
+          <td class="fit-c tip" data-tip="Some managed fine-tuning platforms (Modal, Together) support medium-scale runs. Limited at multi-thousand-GPU scale.">(✓)</td>
+          <td class="fit-n tip" data-tip="No guaranteed capacity, no InfiniBand. Not viable for synchronous gradient updates across large clusters.">−</td>
+        </tr>
+        <tr class="icp-group-row"><td colspan="5">W — Web3 / Decentralised AI</td></tr>
+        <tr>
+          <td>ZK proofs / crypto workloads</td>
+          <td class="fit-n tip" data-tip="Enterprise KYC, centralised control, no permissionless access, no tokenised payments. Ideological and financial mismatch.">−</td>
+          <td class="fit-n tip" data-tip="Enterprise-only contracts, no crypto payment rails, no permissionless provisioning. Not designed for this segment.">−</td>
+          <td class="fit-n tip" data-tip="Software-only layer, no GPU infrastructure or tokenised payment integration. No pathway to permissionless access.">−</td>
+          <td class="fit-y tip" data-tip="Native fit: crypto-native supply (ex-miners), lowest price floor, permissionless access. RTX consumer GPUs ideal for ZK prover workloads.">✓</td>
+        </tr>
+        <tr>
+          <td>Distributed / embarrassingly parallel inference</td>
+          <td class="fit-n tip" data-tip="Too expensive, centralised architecture, no crypto integration. Not a natural match.">−</td>
+          <td class="fit-p tip" data-tip="Bare metal works but enterprise contract model and no permissionless/tokenised access create friction for crypto-native teams.">~</td>
+          <td class="fit-p tip" data-tip="Could work for inference API consumption but no crypto tooling or permissionless provisioning model.">~</td>
+          <td class="fit-y tip" data-tip="Best fit: lowest cost, distributed supply, works for embarrassingly parallel jobs where occasional preemption is tolerable.">✓</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>
 
@@ -1780,7 +1865,7 @@ details[open].co-expand summary::before{content:'▾';}
 <div class="slide" id="s4b">
   <div class="slide-chrome">
     <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Platform Convergence · The Stack Race</div></div>
-    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="<span id="tl">Light</span></button></div>
+    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Light</span></div>
   </div>
   <div class="slide-body" style="flex-direction:column;padding:8px 0 72px;overflow-y:auto;">
 
@@ -1912,11 +1997,11 @@ details[open].co-expand summary::before{content:'▾';}
 </div>
 
 
-<!-- ══ S16 — DEPIN ══ -->
+<!-- ══ S16 — WEB3 ══ -->
 <div class="slide" id="s16">
   <div class="slide-chrome">
-    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">What About Crypto? · DePIN GPU Networks</div></div>
-    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="<span id="tl">Light</span></button></div>
+    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">What About Crypto? · Web3 GPU Networks</div></div>
+    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Light</span></div>
   </div>
   <div class="slide-body" style="flex-direction:column;overflow-y:auto;padding-bottom:72px;">
     <div style="padding:10px 44px 0;display:flex;gap:32px;align-items:flex-start;">
@@ -1933,79 +2018,101 @@ details[open].co-expand summary::before{content:'▾';}
       </div>
     </div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:10px 44px 0;">
-      <div style="background:var(--bg3);border:1px solid rgba(249,115,22,.25);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;" class="anim anim-1">
-        <div style="display:flex;align-items:center;gap:8px;">
-          <div style="font-family:var(--display);font-size:22px;color:#f97316;">Vast.ai</div>
-          <span style="font-family:var(--mono);font-size:7.5px;padding:2px 7px;border-radius:2px;background:rgba(249,115,22,.12);color:#f97316;border:1px solid rgba(249,115,22,.25);">Quasi-DePIN</span>
-        </div>
-        <div style="font-size:11.5px;color:var(--muted);line-height:1.45;">P2P GPU marketplace with centralised billing. Crypto-miner crossover supply. RTX 4090 at $0.30/hr.</div>
-        <div style="font-family:var(--mono);font-size:8px;color:var(--dim);">Best for: dev experiments · non-critical inference</div>
-        <div style="display:flex;gap:16px;margin-top:auto;padding-top:6px;">
-          <div><div style="font-family:var(--display);font-size:16px;color:#22c55e;">100k+</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">GPU LISTINGS</div></div>
-          <div><div style="font-family:var(--display);font-size:16px;color:#f97316;">$0.30</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">RTX 4090/HR</div></div>
-        </div>
-      </div>
-      <div style="background:var(--bg3);border:1px solid rgba(99,102,241,.25);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;" class="anim anim-2">
+      <!-- Akash -->
+      <div style="background:var(--bg3);border:1px solid rgba(99,102,241,.25);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;" class="anim anim-1">
         <div style="display:flex;align-items:center;gap:8px;">
           <div style="font-family:var(--display);font-size:22px;color:#6366f1;">Akash Network</div>
           <span style="font-family:var(--mono);font-size:7.5px;padding:2px 7px;border-radius:2px;background:rgba(99,102,241,.12);color:#6366f1;border:1px solid rgba(99,102,241,.25);">Crypto-native</span>
         </div>
-        <div style="font-size:11.5px;color:var(--muted);line-height:1.45;">Cosmos blockchain, on-chain reverse auctions, AKT staking. Permissionless GPU listing. ~10k GPUs.</div>
-        <div style="font-family:var(--mono);font-size:8px;color:var(--dim);">Best for: blockchain-native teams · censorship resistance</div>
+        <div style="font-size:11.5px;color:var(--muted);line-height:1.45;">Cosmos blockchain, on-chain reverse auctions, AKT staking. Permissionless GPU listing. ~10k GPUs active.</div>
+        <div style="font-family:var(--mono);font-size:8px;color:var(--dim);">Best for: blockchain-native teams · censorship-resistant compute</div>
         <div style="display:flex;gap:16px;margin-top:auto;padding-top:6px;">
           <div><div style="font-family:var(--display);font-size:16px;color:#22c55e;">~10k</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">GPUs LIVE</div></div>
           <div><div style="font-family:var(--display);font-size:16px;color:#6366f1;">AKT</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">PAYMENT TOKEN</div></div>
+          <div><div style="font-family:var(--display);font-size:16px;color:#f59e0b;">~$14M</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">NETWORK REV '24</div></div>
         </div>
       </div>
+      <!-- Aethir -->
+      <div style="background:var(--bg3);border:1px solid rgba(236,72,153,.25);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;" class="anim anim-2">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="font-family:var(--display);font-size:22px;color:#ec4899;">Aethir</div>
+          <span style="font-family:var(--mono);font-size:7.5px;padding:2px 7px;border-radius:2px;background:rgba(236,72,153,.12);color:#ec4899;border:1px solid rgba(236,72,153,.25);">Enterprise DePIN</span>
+        </div>
+        <div style="font-size:11.5px;color:var(--muted);line-height:1.45;">Decentralised GPU cloud with enterprise-grade H100 hardware. Telecom partnerships (KDDI Japan). ATH token. Targets gaming, AI inference, and telecoms verticals.</div>
+        <div style="font-family:var(--mono);font-size:8px;color:var(--dim);">Best for: enterprise inference · gaming streaming · telecom edge AI</div>
+        <div style="display:flex;gap:16px;margin-top:auto;padding-top:6px;">
+          <div><div style="font-family:var(--display);font-size:16px;color:#22c55e;">47k+</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">H100-CLASS GPUs</div></div>
+          <div><div style="font-family:var(--display);font-size:16px;color:#f59e0b;">$36M+</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">ARR (Q4 2024)</div></div>
+        </div>
+      </div>
+      <!-- Salad -->
       <div style="background:var(--bg3);border:1px solid rgba(16,185,129,.25);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;" class="anim anim-3">
         <div style="display:flex;align-items:center;gap:8px;">
           <div style="font-family:var(--display);font-size:22px;color:#10b981;">Salad.com</div>
           <span style="font-family:var(--mono);font-size:7.5px;padding:2px 7px;border-radius:2px;background:rgba(16,185,129,.12);color:#10b981;border:1px solid rgba(16,185,129,.25);">Gaming PCs</span>
         </div>
-        <div style="font-size:11.5px;color:var(--muted);line-height:1.45;">5M+ idle gaming PCs (RTX 3060–4090). Containerised inference jobs only. No IB.</div>
+        <div style="font-size:11.5px;color:var(--muted);line-height:1.45;">5M+ idle gaming PCs (RTX 3060–4090). Containerised inference jobs only. No InfiniBand.</div>
         <div style="font-family:var(--mono);font-size:8px;color:var(--dim);">Best for: diffusion models · small-batch LLM · media AI</div>
         <div style="display:flex;gap:16px;margin-top:auto;padding-top:6px;">
           <div><div style="font-family:var(--display);font-size:16px;color:#22c55e;">5M+</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">REGISTERED PCS</div></div>
           <div><div style="font-family:var(--display);font-size:16px;color:#10b981;">$0.10</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">RTX 4090/HR</div></div>
         </div>
       </div>
+      <!-- io.net -->
       <div style="background:var(--bg3);border:1px solid rgba(168,85,247,.25);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;" class="anim anim-4">
         <div style="display:flex;align-items:center;gap:8px;">
           <div style="font-family:var(--display);font-size:22px;color:#a855f7;">io.net</div>
           <span style="font-family:var(--mono);font-size:7.5px;padding:2px 7px;border-radius:2px;background:rgba(168,85,247,.12);color:#a855f7;border:1px solid rgba(168,85,247,.25);">Cluster Attempt</span>
         </div>
-        <div style="font-size:11.5px;color:var(--muted);line-height:1.45;">Claims 1M+ GPUs. Tries to aggregate distributed machines into "clusters" via IO blockchain. WAN latency (~50ms) vs IB microseconds = impractical for training.</div>
+        <div style="font-size:11.5px;color:var(--muted);line-height:1.45;">Claims 1M+ GPUs via IO blockchain. WAN latency (~50ms) vs IB microseconds = impractical for multi-node training. Raised $30M Series A.</div>
         <div style="font-family:var(--mono);font-size:8px;color:var(--dim);">Best for: embarrassingly parallel inference only</div>
         <div style="display:flex;gap:16px;margin-top:auto;padding-top:6px;">
           <div><div style="font-family:var(--display);font-size:16px;color:#a855f7;">~50ms</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">NODE LATENCY</div></div>
           <div><div style="font-family:var(--display);font-size:16px;color:#ef4444;">0</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">INFINIBAND</div></div>
         </div>
       </div>
+      <!-- Render Network -->
       <div style="background:var(--bg3);border:1px solid rgba(90,172,232,.25);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;" class="anim anim-5">
         <div style="display:flex;align-items:center;gap:8px;">
           <div style="font-family:var(--display);font-size:22px;color:#5aace8;">Render Network</div>
-          <span style="font-family:var(--mono);font-size:7.5px;padding:2px 7px;border-radius:2px;background:rgba(90,172,232,.12);color:#5aace8;border:1px solid rgba(90,172,232,.25);">Vertical DePIN</span>
+          <span style="font-family:var(--mono);font-size:7.5px;padding:2px 7px;border-radius:2px;background:rgba(90,172,232,.12);color:#5aace8;border:1px solid rgba(90,172,232,.25);">Vertical Web3</span>
         </div>
-        <div style="font-size:11.5px;color:var(--muted);line-height:1.45;">Built for 3D rendering (Blender, Cinema 4D). RNDR token. Only DePIN with genuine vertical niche and software lock-in.</div>
+        <div style="font-size:11.5px;color:var(--muted);line-height:1.45;">Built for 3D rendering (Blender, Cinema 4D). RNDR token. Only Web3 GPU network with genuine vertical niche and software lock-in.</div>
         <div style="font-family:var(--mono);font-size:8px;color:var(--dim);">Best for: VFX rendering · creative GPU · 3D generative AI</div>
         <div style="display:flex;gap:16px;margin-top:auto;padding-top:6px;">
           <div><div style="font-family:var(--display);font-size:16px;color:#5aace8;">RNDR</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">TOKEN</div></div>
           <div><div style="font-family:var(--display);font-size:16px;color:#22c55e;">Niche</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">MOAT EXISTS</div></div>
         </div>
       </div>
-      <div style="background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;" class="anim anim-6">
-        <div style="font-family:var(--display);font-size:16px;color:#ef4444;letter-spacing:.04em;">The Fundamental Limit</div>
-        <div style="font-size:11px;color:var(--muted);line-height:1.5;">No InfiniBand = no distributed training. Consumer GPUs lack ECC memory. No SLA. No compliance. DePIN's ceiling: single-GPU inference and batch jobs tolerant of failure.</div>
-        <div style="margin-top:auto;display:flex;flex-direction:column;gap:3px;">
-          <div style="font-family:var(--mono);font-size:8.5px;color:#ef4444;">✗ Multi-node distributed training</div>
-          <div style="font-family:var(--mono);font-size:8.5px;color:#ef4444;">✗ Production inference with SLA</div>
-          <div style="font-family:var(--mono);font-size:8.5px;color:#ef4444;">✗ HIPAA / SOC2 / FedRAMP workloads</div>
-          <div style="font-family:var(--mono);font-size:8.5px;color:#22c55e;">✓ Cost-sensitive experimentation &amp; prototyping</div>
+      <!-- Fluence -->
+      <div style="background:var(--bg3);border:1px solid rgba(6,182,212,.25);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;" class="anim anim-6">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="font-family:var(--display);font-size:22px;color:#06b6d4;">Fluence</div>
+          <span style="font-family:var(--mono);font-size:7.5px;padding:2px 7px;border-radius:2px;background:rgba(6,182,212,.12);color:#06b6d4;border:1px solid rgba(6,182,212,.25);">Web3 Serverless</span>
+        </div>
+        <div style="font-size:11.5px;color:var(--muted);line-height:1.45;">Decentralised serverless compute ("Cloudless") — matches workloads to providers via Fluence protocol. FLT token. Developer-first API for distributed job execution.</div>
+        <div style="font-family:var(--mono);font-size:8px;color:var(--dim);">Best for: permissionless compute · batch jobs · Web3 developer tooling</div>
+        <div style="display:flex;gap:16px;margin-top:auto;padding-top:6px;">
+          <div><div style="font-family:var(--display);font-size:16px;color:#06b6d4;">FLT</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">TOKEN</div></div>
+          <div><div style="font-family:var(--display);font-size:16px;color:#22c55e;">Open</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">SOURCE</div></div>
         </div>
       </div>
     </div>
+    <!-- Fundamental Limit -->
+    <div style="margin:8px 44px 0;padding:10px 14px;border-radius:6px;border:1px solid rgba(239,68,68,.2);background:rgba(239,68,68,.04);display:flex;gap:20px;align-items:flex-start;">
+      <div style="flex:1;">
+        <div style="font-family:var(--display);font-size:14px;color:#ef4444;letter-spacing:.04em;margin-bottom:4px;">The Fundamental Limit</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.5;">No InfiniBand = no distributed training. Consumer GPUs lack ECC memory. No SLA. No compliance. Web3's ceiling: single-GPU inference and batch jobs tolerant of failure.</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:3px;flex-shrink:0;">
+        <div style="font-family:var(--mono);font-size:8.5px;color:#ef4444;">✗ Multi-node distributed training</div>
+        <div style="font-family:var(--mono);font-size:8.5px;color:#ef4444;">✗ Production inference with SLA</div>
+        <div style="font-family:var(--mono);font-size:8.5px;color:#ef4444;">✗ HIPAA / SOC2 / FedRAMP workloads</div>
+        <div style="font-family:var(--mono);font-size:8.5px;color:#22c55e;">✓ Cost-sensitive experimentation &amp; prototyping</div>
+      </div>
+    </div>
     <div style="margin:8px 44px 0;padding:10px 14px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);">
-      <div style="font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-bottom:8px;">DePIN vs Traditional Aggregator (e.g. Shadeform)</div>
+      <div style="font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-bottom:8px;">Web3 vs Traditional Aggregator (e.g. Shadeform)</div>
       <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;">
         <div><div style="font-family:var(--mono);font-size:7.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;">Supply source</div><div style="font-size:11px;color:var(--muted);">Consumer/miner owners</div></div>
         <div><div style="font-family:var(--mono);font-size:7.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;">Trust model</div><div style="font-size:11px;color:var(--muted);">Crypto collateral / ratings</div></div>
@@ -2021,7 +2128,7 @@ details[open].co-expand summary::before{content:'▾';}
 <div class="slide" id="s17">
   <div class="slide-chrome">
     <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title" id="cs-slide-title">Competitive Space</div></div>
-    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="<span id="tl">Light</span></button></div>
+    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Light</span></div>
   </div>
   <div class="cs-wrap">
     <div class="cs-ctrl-bar">
@@ -2051,7 +2158,7 @@ details[open].co-expand summary::before{content:'▾';}
 <div class="slide" id="s18">
   <div class="slide-chrome">
     <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Go Deeper · Live Dashboards</div></div>
-    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="<span id="tl">Light</span></button></div>
+    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Light</span></div>
   </div>
   <div class="slide-body" style="flex-direction:column;padding:20px 44px 72px;gap:16px;overflow-y:auto;">
     <div style="font-size:13px;color:var(--muted);line-height:1.6;max-width:700px;">The three live dashboards below update continuously. Each covers a different layer of the competitive intelligence stack — together they form the complete ClusterMAX Intelligence Suite.</div>
@@ -2105,7 +2212,7 @@ details[open].co-expand summary::before{content:'▾';}
 <div class="slide" id="s19">
   <div class="slide-chrome">
     <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Emerging Business Models · Next Archetypes</div></div>
-    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="<span id="tl">Light</span></button></div>
+    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Light</span></div>
   </div>
   <div class="slide-body" style="flex-direction:column;padding-top:0;overflow-y:auto;padding-bottom:72px;">
     <div class="emerging-wrap">
@@ -2167,7 +2274,7 @@ details[open].co-expand summary::before{content:'▾';}
   </div>
   <div class="slide-chrome" style="position:relative;z-index:10;">
     <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">What Comes Next · Deck 3 Preview</div></div>
-    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="<span id="tl">Light</span></button></div>
+    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Light</span></div>
   </div>
   <div style="position:relative;z-index:2;display:flex;flex:1;align-items:center;padding-bottom:72px;">
     <div style="padding:0 80px;max-width:860px;">
@@ -2249,7 +2356,7 @@ const SCORES={
 function cwColor(){return document.documentElement.classList.contains('light')?'#334155':'#94a3b8';}
 
 function renderRadarsForSlide(n){
-  if(n===18){ initCSControls(); renderCompetitiveSpace(); return; }
+  if(n===19){ initCSControls(); renderCompetitiveSpace(); return; }
   if(n===8){
     radar('radar-gcp',    SCORES.gcp,    document.documentElement.classList.contains('light')?'#065f46':'#10b981',CRIT);
     radar('radar-oracle', SCORES.oracle, document.documentElement.classList.contains('light')?'#92400e':'#f59e0b',CRIT);
@@ -2282,9 +2389,9 @@ function renderRadarsForSlide(n){
 }
 
 // ── NAVIGATION ──────────────────────────────────────────
-const TOTAL=22;
+const TOTAL=23;
 let cur=0;
-let s3Step=0; // 0 = our model only, 1 = Huang model revealed
+let s3Step=0; // 0 = ICN stack only, 1 = Huang comparison revealed
 let s4Step=0; // 0 = model cards only, 1 = spectra revealed
 const slides=document.querySelectorAll('.slide');
 const dotsEl=document.getElementById('dots');
@@ -2292,48 +2399,18 @@ const prog=document.getElementById('progress');
 const btnPrev=document.getElementById('btn-prev');
 const btnNext=document.getElementById('btn-next');
 const ccur=document.getElementById('ccur');
-// Indices: 0=s1,1=s1b,2=s2,3=s3,4=s4,5=s5,6=s6,7=s7,8=s8,9=s9,10=s10,11=s11,12=s12,13=s13,14=s14,15=s15,16=s4b,17=s16,18=s17,19=s18,20=s19,21=s20
-const COLORS=['#3730a3','#475569','#475569','#e8c840','#3730a3','#3730a3','#0284c7','#3730a3','#3730a3','#065f46','#065f46','#5b21b6','#5b21b6','#92400e','#92400e','#6366f1','#3730a3','#7c3aed','#0891b2','#10b981','#c084fc','#5b21b6'];
+// Indices: 0=s1,1=s1b,2=s2,3=s3,4=s4,5=s5,6=s6,7=s7,8=s8,9=s9,10=s10,11=s11,12=s12,13=s13,14=s14,15=s15a,16=s15b,17=s4b,18=s16,19=s17,20=s18,21=s19,22=s20
+const COLORS=['#3730a3','#475569','#475569','#e8c840','#3730a3','#3730a3','#0284c7','#3730a3','#3730a3','#065f46','#065f46','#5b21b6','#5b21b6','#92400e','#92400e','#6366f1','#6366f1','#3730a3','#7c3aed','#0891b2','#10b981','#c084fc','#5b21b6'];
 
 function showHuangModel(){
   s3Step=1;
-  document.getElementById('cake-huang').classList.add('revealed');
   document.getElementById('cake-divider-el').classList.add('revealed');
-  document.getElementById('s3-footnote').classList.add('revealed');
-  // Update hint to signal next step
-  const h=document.getElementById('s3-hint');
-  h.querySelector('span:first-child').textContent="Hugo Shi's 5 service tiers";
-  h.style.opacity='1';
-  const ct=document.querySelector('#s3 .chrome-title');
-  if(ct) ct.textContent='The Stack · 9 Layers vs NVIDIA\'s AI Cake';
+  document.getElementById('cake-huang').classList.add('revealed');
 }
 function hideHuangModel(){
   s3Step=0;
-  document.getElementById('cake-huang').classList.remove('revealed');
   document.getElementById('cake-divider-el').classList.remove('revealed');
-  document.getElementById('s3-footnote').classList.remove('revealed');
-  document.getElementById('s3-tiers').classList.remove('revealed');
-  const h=document.getElementById('s3-hint');
-  h.querySelector('span:first-child').textContent='Compare with Jensen Huang\'s view';
-  h.style.opacity='1';
-  const ct=document.querySelector('#s3 .chrome-title');
-  if(ct) ct.textContent='The Stack · Our 9-Layer Model';
-}
-function showTierMap(){
-  s3Step=2;
-  document.getElementById('s3-tiers').classList.add('revealed');
-  document.getElementById('s3-hint').style.opacity='0';
-  const ct=document.querySelector('#s3 .chrome-title');
-  if(ct) ct.textContent='The Stack · Hugo Shi\'s 5 Service Tiers';
-}
-function hideTierMap(){
-  s3Step=1;
-  document.getElementById('s3-tiers').classList.remove('revealed');
-  const h=document.getElementById('s3-hint');
-  h.querySelector('span:first-child').textContent="Hugo Shi's 5 service tiers";
-  h.style.opacity='1';
-  const ct=document.querySelector('#s3 .chrome-title');
-  if(ct) ct.textContent='The Stack · 9 Layers vs NVIDIA\'s AI Cake';
+  document.getElementById('cake-huang').classList.remove('revealed');
 }
 function showS4Spectra(){
   s4Step=1;
@@ -2354,19 +2431,16 @@ function hideS4Spectra(){
 for(let i=0;i<TOTAL;i++){const d=document.createElement('div');d.className='dot'+(i===0?' active':'');d.onclick=()=>go(i,true);dotsEl.appendChild(d);}
 
 function go(n,direct){
-  // S3 step-within-slide logic (only for sequential prev/next, not dot jumps)
+  // S3 step-within-slide logic
   if(!direct && cur===3 && n===4 && s3Step===0){ showHuangModel(); return; }
-  if(!direct && cur===3 && n===4 && s3Step===1){ showTierMap(); return; }
   if(!direct && cur===3 && n===2 && s3Step===1){ hideHuangModel(); return; }
-  if(!direct && cur===3 && n===2 && s3Step===2){ hideTierMap(); return; }
   // S4 step-within-slide logic
   if(!direct && cur===4 && n===5 && s4Step===0){ showS4Spectra(); return; }
   if(!direct && cur===4 && n===3 && s4Step===1){ hideS4Spectra(); return; }
   if(n<0||n>=TOTAL)return;
   const old=cur;cur=n;
-  // Reset s3Step when leaving s3, or when returning to s3 from a different slide
+  // Reset s3Step/s4Step when leaving those slides or jumping directly to them
   if(old===3 || n===3) hideHuangModel();
-  // Reset s4Step when leaving s4 or jumping directly to s4
   if(old===4 || n===4) hideS4Spectra();
   slides[old].classList.remove('active');slides[old].classList.add('prev');
   const os=slides[old];setTimeout(()=>os.classList.remove('prev'),700);
