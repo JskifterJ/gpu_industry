@@ -477,7 +477,7 @@ details[open].co-expand summary::before{content:'▾';}
 </head>
 <body>
 <div class="progress" id="progress" style="width:5.00%"></div>
-<div class="slide-counter"><span class="counter-cur" id="ccur">01</span> / 23</div>
+<div class="slide-counter"><span class="counter-cur" id="ccur">01</span> / 20</div>
 <div class="key-hint"><span class="key-badge">←</span><span class="key-badge">→</span></div>
 <nav class="nav">
   <button class="nav-btn" id="btn-prev" onclick="go(cur-1)" disabled>&#8592;</button>
@@ -1894,142 +1894,6 @@ details[open].co-expand summary::before{content:'▾';}
   </div>
 </div>
 
-<!-- ══ S4B — PLATFORM CONVERGENCE ══ -->
-<div class="slide" id="s4b">
-  <div class="slide-chrome">
-    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Platform Convergence · The Stack Race</div></div>
-    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Light</span></div>
-  </div>
-  <div class="slide-body" style="flex-direction:column;padding:8px 0 72px;overflow-y:auto;">
-
-    <!-- Intro -->
-    <div class="anim anim-1" style="padding:0 44px 10px;font-family:var(--mono);font-size:8.5px;color:var(--dim);line-height:1.65;">Both ends of the market are racing toward the centre. Hardware-first neoclouds are building software capability to avoid becoming commodity "dumb pipes." Software-first orchestrators are securing owned compute to capture margin and eliminate supply risk. The boundaries between <span style="color:var(--n);">N</span> and <span style="color:var(--o);">O</span> are dissolving — what remains is a platform spectrum, not discrete buckets.</div>
-
-    <!-- 9-layer strip + zone brackets -->
-    <div class="anim anim-1" style="padding:0 44px;margin-bottom:14px;">
-      <div style="display:flex;height:22px;border-radius:3px;overflow:hidden;gap:1px;">
-        <div style="flex:1;background:#e74c3c;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:6px;color:rgba(255,255,255,.85);font-weight:700;">L−1</div>
-        <div style="flex:1;background:#94a3b8;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:6px;color:rgba(255,255,255,.85);font-weight:700;">L0</div>
-        <div style="flex:1;background:#c7a82a;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:6px;color:rgba(0,0,0,.7);font-weight:700;">L1</div>
-        <div style="flex:1;background:#5aace8;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:6px;color:rgba(255,255,255,.85);font-weight:700;">L2</div>
-        <div style="flex:1;background:#5ab86a;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:6px;color:rgba(255,255,255,.85);font-weight:700;">L3</div>
-        <div style="flex:1;background:#9b59b6;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:6px;color:rgba(255,255,255,.85);font-weight:700;">L4</div>
-        <div style="flex:1;background:#e67e22;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:6px;color:rgba(255,255,255,.85);font-weight:700;">L5</div>
-        <div style="flex:1;background:#e84393;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:6px;color:rgba(255,255,255,.85);font-weight:700;">L6</div>
-        <div style="flex:1;background:#8e44ad;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:6px;color:rgba(255,255,255,.85);font-weight:700;">L7</div>
-      </div>
-      <div style="display:flex;gap:1px;margin-top:2px;">
-        <div style="flex:1;text-align:center;font-family:var(--mono);font-size:5.5px;color:var(--dim2);">Energy</div>
-        <div style="flex:1;text-align:center;font-family:var(--mono);font-size:5.5px;color:var(--dim2);">Silicon</div>
-        <div style="flex:1;text-align:center;font-family:var(--mono);font-size:5.5px;color:var(--dim2);">Physical</div>
-        <div style="flex:1;text-align:center;font-family:var(--mono);font-size:5.5px;color:var(--dim2);">Firmware</div>
-        <div style="flex:1;text-align:center;font-family:var(--mono);font-size:5.5px;color:var(--dim2);">Orch</div>
-        <div style="flex:1;text-align:center;font-family:var(--mono);font-size:5.5px;color:var(--dim2);">Exec</div>
-        <div style="flex:1;text-align:center;font-family:var(--mono);font-size:5.5px;color:var(--dim2);">Data</div>
-        <div style="flex:1;text-align:center;font-family:var(--mono);font-size:5.5px;color:var(--dim2);">Control</div>
-        <div style="flex:1;text-align:center;font-family:var(--mono);font-size:5.5px;color:var(--dim2);">App</div>
-      </div>
-      <!-- Zone brackets aligned to thirds of the strip width -->
-      <div style="display:flex;margin-top:5px;font-family:var(--mono);font-size:6.5px;">
-        <div style="width:33.33%;border-top:2px solid var(--n);padding-top:3px;color:var(--n);">← Pure Compute</div>
-        <div style="width:33.34%;border-top:2px solid rgba(139,92,246,.55);padding-top:3px;color:rgba(139,92,246,.8);text-align:center;">← Convergence Zone →</div>
-        <div style="width:33.33%;border-top:2px solid var(--o);padding-top:3px;color:var(--o);text-align:right;">Pure Orchestration →</div>
-      </div>
-    </div>
-
-    <!-- 3-column convergence grid -->
-    <div style="padding:0 44px;display:grid;grid-template-columns:210px 1fr 210px;gap:14px;flex:1;min-height:0;">
-
-      <!-- Col 1: Pure Compute -->
-      <div class="anim anim-2" style="display:flex;flex-direction:column;gap:6px;">
-        <div style="font-family:var(--mono);font-size:7.5px;font-weight:700;color:var(--n);text-transform:uppercase;letter-spacing:.09em;border-bottom:2px solid var(--n);padding-bottom:4px;">Pure Compute · L−1 → L2</div>
-        <div style="font-family:var(--mono);font-size:6.5px;color:var(--dim2);line-height:1.4;">Hardware-only. No managed orchestration, no VPCs. Differentiate purely on price and raw GPU access.</div>
-        <div style="padding:7px 9px;background:var(--bg3);border:1px solid var(--border);border-radius:4px;">
-          <div style="font-family:var(--mono);font-size:8px;font-weight:600;color:var(--dim);margin-bottom:3px;">Concierge Clouds</div>
-          <div style="font-family:var(--mono);font-size:6.5px;color:var(--dim2);line-height:1.4;">Manual SSH key delivery · no VPC · wire-transfer payments · machines often internet-exposed · requires hands-on ML engineers</div>
-        </div>
-        <div style="padding:7px 9px;background:var(--bg3);border:1px solid var(--border);border-radius:4px;">
-          <div style="font-family:var(--mono);font-size:8px;font-weight:600;color:var(--a);margin-bottom:3px;">A · Pure Aggregators</div>
-          <div style="font-family:var(--mono);font-size:6.5px;color:var(--dim2);line-height:1.4;">Vast.ai · TensorDock · spot-market routing only · zero hardware ownership · differentiation is price, nothing else</div>
-        </div>
-        <div style="padding:5px 8px;border-radius:4px;background:rgba(16,185,129,.05);border:1px solid rgba(16,185,129,.15);font-family:var(--mono);font-size:6.5px;color:var(--dim2);line-height:1.4;"><span style="color:var(--text);">Moat:</span> price. <span style="color:var(--text);">Vulnerability:</span> zero stickiness — customers switch on a $/GPU-hr basis with no migration cost.</div>
-      </div>
-
-      <!-- Col 2: Convergence Zone -->
-      <div class="anim anim-3" style="display:flex;flex-direction:column;gap:8px;background:rgba(99,102,241,.04);border:1px solid rgba(99,102,241,.18);border-radius:7px;padding:12px 14px;">
-        <div style="font-family:var(--mono);font-size:7.5px;font-weight:700;color:rgba(139,92,246,.9);text-transform:uppercase;letter-spacing:.09em;border-bottom:2px solid rgba(139,92,246,.3);padding-bottom:4px;text-align:center;">The Squeezed Middle · Convergent Platforms</div>
-        <div style="font-family:var(--mono);font-size:6.5px;color:var(--dim2);text-align:center;margin-bottom:2px;">Both sides racing toward: <span style="color:var(--text);font-weight:600;">Full-Stack AI OS + Owned Hardware</span></div>
-
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1;">
-
-          <!-- Hardware-first → up the stack -->
-          <div style="display:flex;flex-direction:column;gap:5px;">
-            <div style="font-family:var(--mono);font-size:6px;font-weight:700;color:var(--n);text-transform:uppercase;letter-spacing:.08em;padding-bottom:3px;border-bottom:1px solid rgba(16,185,129,.2);">Hardware-first → up stack</div>
-            <div style="font-family:var(--mono);font-size:6px;color:var(--dim2);line-height:1.35;margin-bottom:2px;">Own GPUs. Adding software to escape commoditisation.</div>
-            <div style="padding:5px 7px;background:var(--bg3);border:1px solid var(--border);border-left:2px solid var(--n);border-radius:3px;">
-              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;"><span style="font-family:var(--mono);font-size:7.5px;font-weight:700;color:var(--n);">CoreWeave</span><span style="font-size:11px;color:var(--n);">→</span></div>
-              <div style="font-family:var(--mono);font-size:6px;color:var(--dim2);line-height:1.35;">Acquired W&amp;B 2025 — absorbing the L5 researcher monitoring + training dashboard layer</div>
-            </div>
-            <div style="padding:5px 7px;background:var(--bg3);border:1px solid var(--border);border-left:2px solid var(--n);border-radius:3px;">
-              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;"><span style="font-family:var(--mono);font-size:7.5px;font-weight:700;color:var(--n);">Nebius</span><span style="font-size:11px;color:var(--n);">→</span></div>
-              <div style="font-family:var(--mono);font-size:6px;color:var(--dim2);line-height:1.35;">Open-sourced Soperator (L3) — building developer ecosystem above the GPU substrate</div>
-            </div>
-            <div style="padding:5px 7px;background:var(--bg3);border:1px solid var(--border);border-left:2px solid var(--n);border-radius:3px;">
-              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;"><span style="font-family:var(--mono);font-size:7.5px;font-weight:700;color:var(--n);">FluidStack</span><span style="font-size:11px;color:var(--n);">→</span></div>
-              <div style="font-family:var(--mono);font-size:6px;color:var(--dim2);line-height:1.35;">Aggregator → owned infra pivot (62%) + Anthropic $50B DC partnership (TX + NY)</div>
-            </div>
-            <div style="padding:5px 7px;background:var(--bg3);border:1px solid var(--border);border-left:2px solid var(--n);border-radius:3px;">
-              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;"><span style="font-family:var(--mono);font-size:7.5px;font-weight:700;color:var(--n);">Crusoe</span><span style="font-size:11px;color:var(--n);">→</span></div>
-              <div style="font-family:var(--mono);font-size:6px;color:var(--dim2);line-height:1.35;">Energy-first DC strategy — adding orchestration + mission-critical AI partnerships (L3+)</div>
-            </div>
-          </div>
-
-          <!-- Software-first ← down the stack -->
-          <div style="display:flex;flex-direction:column;gap:5px;">
-            <div style="font-family:var(--mono);font-size:6px;font-weight:700;color:var(--o);text-transform:uppercase;letter-spacing:.08em;padding-bottom:3px;border-bottom:1px solid rgba(168,85,247,.2);">Software-first ← down stack</div>
-            <div style="font-family:var(--mono);font-size:6px;color:var(--dim2);line-height:1.35;margin-bottom:2px;">Built platforms. Now securing owned compute to capture margin + eliminate supply risk.</div>
-            <div style="padding:5px 7px;background:var(--bg3);border:1px solid var(--border);border-left:2px solid var(--o);border-radius:3px;">
-              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;"><span style="font-size:11px;color:var(--o);">←</span><span style="font-family:var(--mono);font-size:7.5px;font-weight:700;color:var(--o);">Lambda Labs</span></div>
-              <div style="font-family:var(--mono);font-size:6px;color:var(--dim2);line-height:1.35;">Owns physical DCs · $1.5B Microsoft capacity deal · bridges L1 hardware + L3–L5 software</div>
-            </div>
-            <div style="padding:5px 7px;background:var(--bg3);border:1px solid var(--border);border-left:2px solid var(--o);border-radius:3px;">
-              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;"><span style="font-size:11px;color:var(--o);">←</span><span style="font-family:var(--mono);font-size:7px;font-weight:700;color:var(--o);">Lightning AI + Voltage Park</span></div>
-              <div style="font-family:var(--mono);font-size:6px;color:var(--dim2);line-height:1.35;">Direct merger: L4–L7 dev platform + L1–L3 GPU infra operator = fully-integrated AI cloud</div>
-            </div>
-            <div style="padding:5px 7px;background:var(--bg3);border:1px solid var(--border);border-left:2px solid var(--o);border-radius:3px;">
-              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;"><span style="font-size:11px;color:var(--o);">←</span><span style="font-family:var(--mono);font-size:7.5px;font-weight:700;color:var(--o);">Together AI</span></div>
-              <div style="font-family:var(--mono);font-size:6px;color:var(--dim2);line-height:1.35;">Securing owned GPU capacity while retaining FlashAttention research-kernel software moat</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Hugo Shi quote -->
-        <div style="padding:7px 10px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);border-radius:4px;font-family:var(--mono);font-size:7.5px;color:var(--muted);text-align:center;line-height:1.55;">
-          <span style="color:var(--text);font-weight:600;">"GPU clouds recognise they have to move up the stack and not just provide raw compute"</span><br>
-          <span style="color:var(--dim2);font-size:6.5px;">Hugo Shi · CTO Saturn Cloud · AI Engineering Podcast</span>
-        </div>
-      </div>
-
-      <!-- Col 3: Pure Orchestration -->
-      <div class="anim anim-2" style="display:flex;flex-direction:column;gap:6px;">
-        <div style="font-family:var(--mono);font-size:7.5px;font-weight:700;color:var(--o);text-transform:uppercase;letter-spacing:.09em;border-bottom:2px solid var(--o);padding-bottom:4px;">Pure Orchestration · L3 → L7</div>
-        <div style="font-family:var(--mono);font-size:6.5px;color:var(--dim2);line-height:1.4;">Software-only. BYO-compute. Capital-light. Differentiates on workflow, scheduling, and developer experience — not hardware.</div>
-        <div style="padding:7px 9px;background:var(--bg3);border:1px solid var(--border);border-radius:4px;">
-          <div style="font-family:var(--mono);font-size:8px;font-weight:600;color:var(--o);margin-bottom:3px;">Modal</div>
-          <div style="font-family:var(--mono);font-size:6.5px;color:var(--dim2);line-height:1.4;">Serverless GPU functions. Routes to cheapest available hardware automatically. No infrastructure management required — developer writes functions, not clusters.</div>
-        </div>
-        <div style="padding:7px 9px;background:var(--bg3);border:1px solid var(--border);border-radius:4px;">
-          <div style="font-family:var(--mono);font-size:8px;font-weight:600;color:var(--o);margin-bottom:2px;">Run:ai <span style="font-weight:400;color:var(--dim2);font-size:7px;">acq. NVIDIA</span></div>
-          <div style="font-family:var(--mono);font-size:6.5px;color:var(--dim2);line-height:1.4;">Pure GPU scheduler (L3). Works across any hardware — on-prem, cloud, any vendor. Moat is scheduling efficiency, not infrastructure.</div>
-        </div>
-        <div style="padding:5px 8px;border-radius:4px;background:rgba(168,85,247,.05);border:1px solid rgba(168,85,247,.15);font-family:var(--mono);font-size:6.5px;color:var(--dim2);line-height:1.4;"><span style="color:var(--text);">Why stay software-only?</span> Capital-light avoids hardware depreciation risk. Can route across all providers simultaneously, maximising price leverage.</div>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-
 <!-- ══ S16 — WEB3 ══ -->
 <div class="slide" id="s16">
   <div class="slide-chrome">
@@ -2157,147 +2021,6 @@ details[open].co-expand summary::before{content:'▾';}
   </div>
 </div>
 
-<!-- ══ S17 — COMPETITIVE SPACE ══ -->
-<div class="slide" id="s17">
-  <div class="slide-chrome">
-    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title" id="cs-slide-title">Competitive Space</div></div>
-    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Light</span></div>
-  </div>
-  <div class="cs-wrap">
-    <div class="cs-ctrl-bar">
-      <button class="cs-btn cs-btn-active" id="cs-btn-2d" onclick="setCSMode('2d')">2D</button>
-      <button class="cs-btn" id="cs-btn-3d" onclick="setCSMode('3d')">3D</button>
-      <div class="cs-sep"></div>
-      <div class="cs-sel-wrap"><span class="cs-sel-lbl">X</span><select class="cs-sel" id="cs-x-sel"></select></div>
-      <div class="cs-sel-wrap"><span class="cs-sel-lbl">Y</span><select class="cs-sel" id="cs-y-sel"></select></div>
-      <div class="cs-sel-wrap" id="cs-z-wrap" style="display:none;"><span class="cs-sel-lbl">Z</span><select class="cs-sel" id="cs-z-sel"></select></div>
-      <div class="cs-sep"></div>
-      <div class="cs-sel-wrap"><span class="cs-sel-lbl">Color</span><select class="cs-sel" id="cs-color-sel"><option value="tier">Tier</option><option value="model">Business Model</option></select></div>
-      <div class="cs-sep"></div>
-      <button class="cs-btn" id="cs-btn-regr" onclick="toggleCSRegr()">Regr.</button>
-      <div class="cs-sep"></div>
-      <div id="cs-leg-inline" class="cs-leg-inline"></div>
-    </div>
-    <div class="cs-canvas-wrap">
-      <canvas id="cs-canvas"></canvas>
-      <div id="cs-tooltip"></div>
-      <div id="cs-stats-panel" class="cs-stats-panel"></div>
-      <div id="cs-3d-hint" style="display:none;position:absolute;bottom:8px;right:12px;font-family:var(--mono);font-size:7.5px;color:var(--dim);pointer-events:none;letter-spacing:.04em;">drag to rotate · scroll to zoom</div>
-    </div>
-  </div>
-</div>
-
-<!-- ══ S18 — GO DEEPER (was S17) ══ -->
-<div class="slide" id="s18">
-  <div class="slide-chrome">
-    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Go Deeper · Live Dashboards</div></div>
-    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Light</span></div>
-  </div>
-  <div class="slide-body" style="flex-direction:column;padding:20px 44px 72px;gap:16px;overflow-y:auto;">
-    <div style="font-size:13px;color:var(--muted);line-height:1.6;max-width:700px;">The three live dashboards below update continuously. Each covers a different layer of the competitive intelligence stack — together they form the complete ClusterMAX Intelligence Suite.</div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
-      <a href="https://jskifterj.github.io/gpu_industry/strategy_competitor_intelligence.html" target="_blank" style="text-decoration:none;">
-        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:18px;display:flex;flex-direction:column;gap:8px;transition:border-color .2s;" class="anim anim-1">
-          <div style="font-family:var(--mono);font-size:8.5px;text-transform:uppercase;letter-spacing:.12em;color:var(--dim);">Dashboard 01</div>
-          <div style="font-family:var(--display);font-size:20px;color:var(--h);">Competitor Intelligence</div>
-          <div style="font-size:12px;color:var(--muted);line-height:1.5;">Full criteria matrix for 34+ rated providers. Drill into any provider's 10-dimension scorecard, tier classification, and business model tag.</div>
-          <div style="font-family:var(--mono);font-size:9px;color:var(--dim);margin-top:auto;">↗ strategy_competitor_intelligence.html</div>
-        </div>
-      </a>
-      <a href="https://jskifterj.github.io/gpu_industry/strategy_value_chain_master.html" target="_blank" style="text-decoration:none;">
-        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:18px;display:flex;flex-direction:column;gap:8px;" class="anim anim-2">
-          <div style="font-family:var(--mono);font-size:8.5px;text-transform:uppercase;letter-spacing:.12em;color:var(--dim);">Dashboard 02</div>
-          <div style="font-family:var(--display);font-size:20px;color:var(--n);">Value Chain Master</div>
-          <div style="font-size:12px;color:var(--muted);line-height:1.5;">L−1 through L7 stack ownership map. Trace how value flows through the GPU supply chain and where margin is captured by each archetype.</div>
-          <div style="font-family:var(--mono);font-size:9px;color:var(--dim);margin-top:auto;">↗ strategy_value_chain_master.html</div>
-        </div>
-      </a>
-      <a href="https://jskifterj.github.io/gpu_industry/index" target="_blank" style="text-decoration:none;">
-        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:18px;display:flex;flex-direction:column;gap:8px;" class="anim anim-3">
-          <div style="font-family:var(--mono);font-size:8.5px;text-transform:uppercase;letter-spacing:.12em;color:var(--dim);">Index</div>
-          <div style="font-family:var(--display);font-size:20px;color:var(--o);">Intelligence Index</div>
-          <div style="font-size:12px;color:var(--muted);line-height:1.5;">Central hub for all ClusterMAX dashboards, research notes, and the full provider tracking universe (209 providers).</div>
-          <div style="font-family:var(--mono);font-size:9px;color:var(--dim);margin-top:auto;">↗ index</div>
-        </div>
-      </a>
-    </div>
-    <div style="font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.12em;color:var(--dim);margin-top:8px;padding-top:2px;">Research Sources</div>
-    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;">
-      <div style="background:var(--bg3);border:1px solid var(--border);border-left:3px solid var(--muted);border-radius:9px;padding:18px;display:flex;flex-direction:column;gap:8px;" class="anim anim-4">
-        <div style="font-family:var(--mono);font-size:8.5px;text-transform:uppercase;letter-spacing:.12em;color:var(--dim);">Primary Benchmark · Nov 2025</div>
-        <div style="font-family:var(--display);font-size:20px;color:var(--text);">SemiAnalysis · ClusterMAX 2.0</div>
-        <div style="font-size:12px;color:var(--muted);line-height:1.5;">Hands-on physical cluster deployment across 34 providers. 10-criteria scoring system, 5-tier classification. The only rigorous GPU cloud benchmark — all ratings in this deck are derived from these findings.</div>
-        <div style="font-family:var(--mono);font-size:9px;color:var(--dim);margin-top:auto;">semianalysis.com · ClusterMAX 2.0 Report</div>
-      </div>
-      <a href="https://open.spotify.com/episode/2aNuZT3E6f3tAFUeB7KWhd?si=1a6c8bbfa8be4931" target="_blank" style="text-decoration:none;">
-        <div style="background:var(--bg3);border:1px solid var(--border);border-left:3px solid #1db954;border-radius:9px;padding:18px;display:flex;flex-direction:column;gap:8px;" class="anim anim-5">
-          <div style="font-family:var(--mono);font-size:8.5px;text-transform:uppercase;letter-spacing:.12em;color:var(--dim);">Podcast · Jan 2025 · Spotify</div>
-          <div style="font-family:var(--display);font-size:20px;color:#1db954;">AI Engineering Podcast</div>
-          <div style="font-size:12px;color:var(--muted);line-height:1.5;"><strong style="color:var(--text);">Hugo Shi</strong> (co-founder &amp; CTO, Saturn Cloud) on GPU cloud economics — provider landscape from hyperscalers to aggregators, security posture, managed services depth, and how to choose a provider based on your workload profile.</div>
-          <div style="font-family:var(--mono);font-size:9px;color:var(--dim);margin-top:auto;">↗ open.spotify.com · GPU Clouds &amp; the New Economics of AI Compute</div>
-        </div>
-      </a>
-    </div>
-  </div>
-</div>
-
-<!-- ══ S19 — EMERGING MODELS ══ -->
-<div class="slide" id="s19">
-  <div class="slide-chrome">
-    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Emerging Business Models · Next Archetypes</div></div>
-    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Light</span></div>
-  </div>
-  <div class="slide-body" style="flex-direction:column;padding-top:0;overflow-y:auto;padding-bottom:72px;">
-    <div class="emerging-wrap">
-      <div style="padding-top:8px;font-family:var(--mono);font-size:9px;color:var(--dim);">Five new archetypes emerging that don't fit cleanly into the four current models — the stepping stones toward Deck 3 startup positioning.</div>
-      <div class="emerging-grid">
-        <div class="em-card anim anim-1" style="border-top:3px solid var(--h);">
-          <div style="font-size:20px;">🏛️</div>
-          <div class="em-title">Sovereign AI Cloud</div>
-          <div class="em-stage" style="background:var(--h-dim);color:var(--h);">Early · Growing Fast</div>
-          <div class="em-desc">Government-owned or government-contracted GPU infrastructure. Nations building AI compute independence. France (OVHcloud), Saudi Arabia (Humain/SoftBank), UAE (G42), India (Neysa).</div>
-          <div class="em-driver">Driver: EU AI Act + data sovereignty laws force local compute. Governments cannot rely on US hyperscalers for sensitive workloads.</div>
-        </div>
-        <div class="em-card anim anim-2" style="border-top:3px solid var(--n);">
-          <div style="font-size:20px;">🔬</div>
-          <div class="em-title">Vertical AI Stack</div>
-          <div class="em-stage" style="background:var(--n-dim);color:var(--n);">Emerging</div>
-          <div class="em-desc">Full-stack AI provider with compliant compute, domain models, and workflow integration for a single vertical: healthcare (HIPAA+BAA+clinical LLMs), legal, or financial services.</div>
-          <div class="em-driver">Driver: Regulated industries can't use public APIs for sensitive data. Domain models outperform general models. Bundling is the key to enterprise stickiness.</div>
-        </div>
-        <div class="em-card anim anim-3" style="border-top:3px solid var(--a);">
-          <div style="font-size:20px;">⚡</div>
-          <div class="em-title">Inference-First Cloud</div>
-          <div class="em-stage" style="background:var(--a-dim);color:var(--a);">Now · Rapid Growth</div>
-          <div class="em-desc">Infrastructure purpose-built for agentic inference, not training. Prefill-decode disaggregated clusters. Hardware mix of GB200 UltraServers (inference) + H100 SXM (training) in same facility.</div>
-          <div class="em-driver">Driver: Inference is already 65–80% of GPU-hours. Agentic workloads multiply tokens-per-task. Training-optimised clusters waste 40%+ efficiency on serving.</div>
-        </div>
-        <div class="em-card anim anim-4" style="border-top:3px solid var(--o);">
-          <div style="font-size:20px;">🔗</div>
-          <div class="em-title">Compute Finance</div>
-          <div class="em-stage" style="background:var(--o-dim);color:var(--o);">Nascent · High Potential</div>
-          <div class="em-desc">GPU compute as a financial asset. RPO-backed debt, GPU futures, institutional asset management. Ornn Compute went live in 2025. CoreWeave IPO validated compute as institutional collateral.</div>
-          <div class="em-driver">Driver: Top neoclouds hold $400B+ collective RPOs. Morgan Stanley, BlackRock actively underwriting GPU infrastructure debt.</div>
-        </div>
-        <div class="em-card anim anim-5" style="border-top:3px solid #06b6d4;">
-          <div style="font-size:20px;">🌐</div>
-          <div class="em-title">Edge AI Fabric</div>
-          <div class="em-stage" style="background:rgba(6,182,212,0.10);color:#0e7490;">Speculative · 3–5yr</div>
-          <div class="em-desc">Distributed inference at network edge — telco PoPs, CDN nodes, enterprise on-prem interconnected into a unified inference fabric. Sub-20ms latency for real-time AI.</div>
-          <div class="em-driver">Driver: Cloud inference adds 50–200ms. Real-time AI requires &lt;20ms. 5G enables edge compute economics. Telcos have fibre + PoP estate but lack AI expertise.</div>
-        </div>
-        <div class="em-card anim anim-6" style="border-top:3px solid #f97316;">
-          <div style="font-size:20px;">📊</div>
-          <div class="em-title">Compute Market Infrastructure</div>
-          <div class="em-stage" style="background:rgba(249,115,22,0.10);color:#c2410c;">Live · Early Liquidity</div>
-          <div class="em-desc">Standardised compute units, futures contracts, securitised hardware purchases, and RPO-backed debt. Ornn futures went live 2025. Goal: liquid, exchange-traded GPU capacity market.</div>
-          <div class="em-driver">Driver: Newest silicon remains rationed — information asymmetry a liquid market could resolve. $400B+ collective RPOs validate compute as institutional asset class.</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- ══ S20 — BRIDGE ══ -->
 <div class="slide" id="s20">
   <div class="bg-grid"></div>
@@ -2327,6 +2050,37 @@ details[open].co-expand summary::before{content:'▾';}
         <a class="dash-link" href="https://jskifterj.github.io/gpu_industry/strategy_value_chain_master.html" target="_blank">↗ Value Chain</a>
         <a class="dash-link" href="https://jskifterj.github.io/gpu_industry/index" target="_blank">↗ Index</a>
       </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ S17 — COMPETITIVE SPACE ══ -->
+<div class="slide" id="s17">
+  <div class="slide-chrome">
+    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title" id="cs-slide-title">Competitive Space</div></div>
+    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Light</span></div>
+  </div>
+  <div class="cs-wrap">
+    <div class="cs-ctrl-bar">
+      <button class="cs-btn cs-btn-active" id="cs-btn-2d" onclick="setCSMode('2d')">2D</button>
+      <button class="cs-btn" id="cs-btn-3d" onclick="setCSMode('3d')">3D</button>
+      <div class="cs-sep"></div>
+      <div class="cs-sel-wrap"><span class="cs-sel-lbl">X</span><select class="cs-sel" id="cs-x-sel"></select></div>
+      <div class="cs-sel-wrap"><span class="cs-sel-lbl">Y</span><select class="cs-sel" id="cs-y-sel"></select></div>
+      <div class="cs-sel-wrap" id="cs-z-wrap" style="display:none;"><span class="cs-sel-lbl">Z</span><select class="cs-sel" id="cs-z-sel"></select></div>
+      <div class="cs-sep"></div>
+      <div class="cs-sel-wrap"><span class="cs-sel-lbl">Color</span><select class="cs-sel" id="cs-color-sel"><option value="tier">Tier</option><option value="model">Business Model</option></select></div>
+      <div class="cs-sep"></div>
+      <button class="cs-btn" id="cs-btn-regr" onclick="toggleCSRegr()">Regr.</button>
+      <div class="cs-sep"></div>
+      <div id="cs-leg-inline" class="cs-leg-inline"></div>
+    </div>
+    <div class="cs-canvas-wrap">
+      <canvas id="cs-canvas"></canvas>
+      <div id="cs-tooltip"></div>
+      <div id="cs-stats-panel" class="cs-stats-panel"></div>
+      <div id="cs-3d-hint" style="display:none;position:absolute;bottom:8px;right:12px;font-family:var(--mono);font-size:7.5px;color:var(--dim);pointer-events:none;letter-spacing:.04em;">drag to rotate · scroll to zoom</div>
     </div>
   </div>
 </div>
@@ -2422,18 +2176,19 @@ function renderRadarsForSlide(n){
 }
 
 // ── NAVIGATION ──────────────────────────────────────────
-const TOTAL=23;
+const TOTAL=20;
 let cur=0;
-let s3Step=0; // 0 = ICN stack only, 1 = Huang comparison revealed
-let s4Step=0; // 0 = model cards only, 1 = spectra revealed
+let s3Step=0;   // 0 = ICN stack only, 1 = Huang comparison revealed
+let s4Step=0;   // 0 = model cards only, 1 = spectra revealed
+let s15aStep=0; // 0-3: how many extra ICP cards have been revealed (card 1 always shown)
 const slides=document.querySelectorAll('.slide');
 const dotsEl=document.getElementById('dots');
 const prog=document.getElementById('progress');
 const btnPrev=document.getElementById('btn-prev');
 const btnNext=document.getElementById('btn-next');
 const ccur=document.getElementById('ccur');
-// Indices: 0=s1,1=s1b,2=s2,3=s3,4=s4,5=s5,6=s6,7=s7,8=s8,9=s9,10=s10,11=s11,12=s12,13=s13,14=s14,15=s15a,16=s15b,17=s4b,18=s16,19=s17,20=s18,21=s19,22=s20
-const COLORS=['#3730a3','#475569','#475569','#e8c840','#3730a3','#3730a3','#0284c7','#3730a3','#3730a3','#065f46','#065f46','#5b21b6','#5b21b6','#92400e','#92400e','#6366f1','#6366f1','#3730a3','#7c3aed','#0891b2','#10b981','#c084fc','#5b21b6'];
+// Indices: 0=s1,1=s1b,2=s2,3=s3,4=s4,5=s5,6=s6,7=s7,8=s8,9=s9,10=s10,11=s11,12=s12,13=s13,14=s14,15=s15a,16=s15b,17=s16,18=s20,19=s17
+const COLORS=['#3730a3','#475569','#475569','#e8c840','#3730a3','#3730a3','#0284c7','#3730a3','#3730a3','#065f46','#065f46','#5b21b6','#5b21b6','#92400e','#92400e','#6366f1','#6366f1','#7c3aed','#5b21b6','#0891b2'];
 
 function showHuangModel(){
   s3Step=1;
@@ -2444,6 +2199,21 @@ function hideHuangModel(){
   s3Step=0;
   document.getElementById('cake-divider-el').classList.remove('revealed');
   document.getElementById('cake-huang').classList.remove('revealed');
+}
+function showNextS15aCard(){
+  s15aStep++;
+  document.getElementById('s15a-c'+(s15aStep+1)).classList.add('revealed');
+  if(s15aStep===3){ const h=document.getElementById('s15a-hint'); if(h) h.style.opacity='0'; }
+}
+function hidePrevS15aCard(){
+  document.getElementById('s15a-c'+(s15aStep+1)).classList.remove('revealed');
+  s15aStep--;
+  const h=document.getElementById('s15a-hint'); if(h) h.style.opacity='1';
+}
+function resetS15aCards(){
+  s15aStep=0;
+  [2,3,4].forEach(i=>{ const el=document.getElementById('s15a-c'+i); if(el) el.classList.remove('revealed'); });
+  const h=document.getElementById('s15a-hint'); if(h) h.style.opacity='1';
 }
 function showS4Spectra(){
   s4Step=1;
@@ -2470,11 +2240,15 @@ function go(n,direct){
   // S4 step-within-slide logic
   if(!direct && cur===4 && n===5 && s4Step===0){ showS4Spectra(); return; }
   if(!direct && cur===4 && n===3 && s4Step===1){ hideS4Spectra(); return; }
+  // S15A step-within-slide logic (reveal 3 extra ICP cards one by one)
+  if(!direct && cur===15 && n===16 && s15aStep<3){ showNextS15aCard(); return; }
+  if(!direct && cur===15 && n===14 && s15aStep>0){ hidePrevS15aCard(); return; }
   if(n<0||n>=TOTAL)return;
   const old=cur;cur=n;
-  // Reset s3Step/s4Step when leaving those slides or jumping directly to them
+  // Reset step states when leaving or jumping to these slides
   if(old===3 || n===3) hideHuangModel();
   if(old===4 || n===4) hideS4Spectra();
+  if(old===15 || n===15) resetS15aCards();
   slides[old].classList.remove('active');slides[old].classList.add('prev');
   const os=slides[old];setTimeout(()=>os.classList.remove('prev'),700);
   slides[cur].classList.add('active');

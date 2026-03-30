@@ -66,10 +66,10 @@
     "short_description": "A pure GPU brokerage tool designed to eliminate the procurement friction of managing multiple cloud vendor accounts."
   },
   {
-    "company": "Vast.ai",
-    "business_model_category": "Aggregator",
-    "key_differentiator": "A peer-to-peer auction marketplace that drives hourly GPU rental prices to the absolute bottom of the market. [5]",
-    "short_description": "A decentralized compute marketplace prioritizing extreme cost savings over reliability and uptime guarantees."
+    "company": "Verda",
+    "business_model_category": "Neocloud",
+    "key_differentiator": "Enterprise-grade European infrastructure that pairs extreme operational sustainability—including 100% renewable energy and waste heat recycling—with top-tier NVIDIA hardware access.",
+    "short_description": "A specialized European GPU cloud platform delivering predictable, high-performance AI infrastructure with a strict focus on environmental sustainability and GDPR compliance."
   },
   {
     "company": "RunPod",
