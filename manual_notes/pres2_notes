@@ -1,6 +1,16 @@
 For each of the business models (hyperscalers in particular), note their capacity to innovate -> e.g, Google with their latest TurboQuant
 For hyperscalers, note the 'hypervisor' tax -> performance degradation from being served on virtual machines (VMs) rather than bare metal, which the neoclouds offer.
 
+# GCP
+private subsea network - not public internet 
+consistent, global latency for inference workloads
+deliberately positioned itself to capture the data-analytics and machine-learning segments of the enterprise market, focusing heavily on AI-native operations through deep integrations with its proprietary Vertex AI framework and Google Kubernetes Engine (GKE)
+GCP's key differentiator resides deep within its physical networking architecture rather than at the individual compute instance level. The platform operates a private, global subsea fiber network that deliberately routes enterprise traffic away from the public internet.1 This architectural decision provides highly consistent global latency, a critical parameter for globally distributed inference routing and multi-region training pipelines where network jitter can severely degrade model performance and lead to GPU idling
+Features such as Binary Authorization for containerized deployments, Confidential Computing, and strictly enforced Virtual Private Cloud (VPC) Service Controls provide a default security posture that appeals significantly to heavily regulated industries, such as finance and healthcare.
+On the hardware front, GCP offers a broad spectrum of accelerator-optimized machines, including the A2 series (utilizing A100 GPUs) and the newly introduced G4 series, which leverages NVIDIA RTX PRO 6000 Blackwell Server Edition GPUs to support direct peer-to-peer (P2P) communication over PCIe buses without host CPU intervention. This is complemented by Google's proprietary Tensor Processing Units (TPUs), which offer highly competitive performance-per-dollar metrics for specialized training workloads.
+
+
+
 # OCI 
 provides a unique multi-cloud routing capability: the Azure Interconnect. This feature offers a high-speed, low-latency connection directly into Microsoft Azure with absolutely no data egress charges in supported regions, allowing enterprises to maintain their application front-ends in Azure while utilizing OCI's superior bare-metal clusters for backend AI training
 Furthermore, OCI’s security features—including Cloud Guard (threat detection), Security Zones (policy enforcement), and Vault (key management)—are enabled by default and provided at no additional cost, contrasting sharply with other hyperscalers that monetize these capabilities as add-on services

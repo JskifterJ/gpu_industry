@@ -245,27 +245,38 @@ Shadeform is fundamentally a tool for FinOps optimization, allowing users to rap
 | **Hardware Consistency** | Bare-Metal Uncertainty | Environment quality fluctuates depending on the underlying partner cloud.57 |
 | **Cost Optimization Limitation** | No Native Spot Instances | Forces users to pay premium on-demand rates for interruptible workloads.61 |
 
-## **Verda**
+## **Prime Intellect**
 
 ## **Strategic Market Positioning and ClusterMAX Evaluation**
 
-Verda (formerly DataCrunch) operates as a specialized European neocloud, delivering high-performance GPU infrastructure for AI and machine learning workloads. Within the SemiAnalysis ClusterMAX 2.0 evaluation framework, Verda achieved a Bronze ranking, validating its ongoing development toward building an industry-leading product for self-service and large-scale model training.68 Based in Finland, Verda has positioned itself as an enterprise-ready alternative to decentralized aggregators by providing predictable, dedicated infrastructure with a strong emphasis on environmental sustainability and European data sovereignty.
+Prime Intellect operates as a premier global compute exchange and aggregator, delivering high-performance GPU infrastructure for AI and machine learning workloads by unifying fragmented cloud providers. Moving beyond the reliability limitations of early decentralized networks, Prime Intellect has positioned itself as an enterprise-grade platform that aggregates centralized neoclouds and decentralized providers under a single, frictionless marketplace. It acts as the "Airbnb for compute," enabling developers to instantly secure cost-effective GPUs—ranging from a single H100 to massive 512+ multi-node clusters—without being locked into a single vendor's ecosystem.
 
 ## **Infrastructure, Hardware, and Networking Differentiators**
 
-Verda's key differentiator is its commitment to 100% renewable energy combined with extreme operational sustainability. Operating out of Finnish data centers, the platform utilizes efficient cooling mechanisms and actively contributes its server waste heat to local district heating systems. From a hardware perspective, Verda provides instant access to the latest NVIDIA architectures, including highly constrained Blackwell B200 and GB300 configurations, alongside H100s. The platform supports on-demand GPU instances, custom-managed clusters, and autoscaling containers, offering a seamless, developer-first cloud experience built for speed and reliability.
+Prime Intellect’s defining technical differentiator is its proprietary distributed training framework, prime, which fundamentally solves the bottleneck of training AI models across geographically separated GPUs. By implementing a highly optimized version of Distributed Low Communication (DiLoCo) training and int8 ring-all-reduce algorithms, the platform allows massive models to be trained across different global data centers simultaneously while maintaining over 80% compute utilization. It provides a unified resource pool of top-tier hardware (including H100s, B200s, and RTX series) pulled from over a dozen integrated clouds. The platform handles the heavy lifting of fault tolerance, dynamic node management, and spot-instance orchestration behind the scenes.
 
 ## **Pricing Models and Ecosystem Implications**
 
-Verda operates on a highly transparent, pay-as-you-go pricing model that provides significant cost savings compared to traditional hyperscalers. The platform is heavily tailored for teams requiring European data residency, boasting built-in security, GDPR compliance, and ISO 27001 certification to ensure enterprise readiness. Furthermore, Verda includes engineering support directly through its platform, ensuring that customers have reliable assistance for complex deployments.
+Prime Intellect operates on a highly transparent, dynamic pricing model that provides deep cost savings by exploiting global market inefficiencies and sweeping up underutilized cloud capacity. The platform is heavily tailored for AI teams requiring massive scale without the burden of long-term, multi-million-dollar lock-in contracts. Its built-in orchestration automatically routes workloads to the most cost-effective provider at any given moment. Furthermore, by abstracting away the complexity of networking and node failures, Prime Intellect ensures that customers experience reliable, continuous training runs even when utilizing highly discounted spot instances spread across multiple continents.
 
-| Feature Category | Verda Specification / Metric | Market Implication |
-| :---- | :---- | :---- |
-| **ClusterMAX Rating** | Bronze | Recognized as an emerging, reliable player in self-service AI model training.68 |
-| **Sustainability** | 100% Renewable Energy | Industry-leading environmental footprint; recycles waste heat for local district heating. |
-| **Compliance** | ISO 27001 & GDPR | Meets strict data residency and security requirements for European enterprises. |
-| **Hardware Portfolio** | H100, B200, GB300 | Instant access to the newest generation of NVIDIA Blackwell accelerators. |
-| **Deployment Model** | Neocloud (Owned Infrastructure) | Delivers the stability and SLAs often missing in decentralized peer-to-peer marketplaces. |
+Feature Category
+Prime Intellect Specification / Metric
+Market Implication
+Market Positioning
+Global Compute Exchange
+Recognized as a leading aggregator, unifying fragmented GPU supply into a single, highly liquid market.
+Training Framework
+prime (DiLoCo / FSDP)
+Breaks traditional network barriers, enabling massive distributed AI training across distinct, globally distributed data centers.
+Hardware Portfolio
+H100, B200, RTX Series
+Instant, on-demand access to a massive global pool of cutting-edge accelerators without single-vendor lock-in.
+Cost Optimization
+Dynamic Routing & Spot Orchestration
+Delivers profound cost savings by automatically sourcing and migrating workloads to the cheapest available global compute.
+Deployment Model
+Aggregator (Unified API)
+Provides the massive scale of hyperscalers combined with the aggressive pricing efficiency of localized neoclouds.
 
 ## **RunPod**
 
