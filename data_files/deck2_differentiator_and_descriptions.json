@@ -143,16 +143,16 @@
     "frontier_lab_agnostic": 1
   },
   {
-    "company": "Verda",
-    "business_model_category": "Neocloud",
-    "key_differentiator": "Enterprise-grade European infrastructure that pairs extreme operational sustainability—including 100% renewable energy and waste heat recycling—with top-tier NVIDIA hardware access.",
-    "short_description": "A specialized European GPU cloud platform delivering predictable, high-performance AI infrastructure with a strict focus on environmental sustainability and GDPR compliance.",
+    "company": "Prime Intellect",
+    "business_model_category": "Aggregator",
+    "key_differentiator": "A network-oriented distributed compute platform that routes capacity across federated partner infrastructure, with exceptionally fast engineering iteration backed by open-source ecosystem momentum.",
+    "short_description": "A fast-iterating distributed GPU platform bridging federated compute access and open-source AI research, prioritizing speed of execution over deep enterprise infrastructure controls.",
     "strategic_relationships": "",
     "nvidia_preferred_partner": 0,
-    "nvidia_elite_partner": 1,
+    "nvidia_elite_partner": 0,
     "fm_lab_partnership": 0,
     "fm_lab_partner": null,
-    "hardware_agnostic": 0,
+    "hardware_agnostic": 1,
     "frontier_lab_agnostic": 1
   },
   {

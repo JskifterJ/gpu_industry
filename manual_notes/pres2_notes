@@ -1,1 +1,56 @@
-For each of the business models (hyperscalers in particular), note their capacity to innovate -> e.g, Google with their latest 
+For each of the business models (hyperscalers in particular), note their capacity to innovate -> e.g, Google with their latest TurboQuant
+For hyperscalers, note the 'hypervisor' tax -> performance degradation from being served on virtual machines (VMs) rather than bare metal, which the neoclouds offer.
+
+# OCI 
+provides a unique multi-cloud routing capability: the Azure Interconnect. This feature offers a high-speed, low-latency connection directly into Microsoft Azure with absolutely no data egress charges in supported regions, allowing enterprises to maintain their application front-ends in Azure while utilizing OCI's superior bare-metal clusters for backend AI training
+Furthermore, OCI’s security features—including Cloud Guard (threat detection), Security Zones (policy enforcement), and Vault (key management)—are enabled by default and provided at no additional cost, contrasting sharply with other hyperscalers that monetize these capabilities as add-on services
+
+# Coreweave
+The rigorous benchmarking report validated CoreWeave's absolute dominance across security, storage, orchestration, and reliability. Specifically, the evaluation highlighted CoreWeave's proprietary CAIOS and LOTA storage systems, its advanced penetration testing, and its active/passive health checks that deliver an industry-leading 96% goodput (compared to the 90% industry average).
+CAIOS (CoreWeave AI Object Storage): This is CoreWeave’s proprietary storage system. AI models require absolutely massive datasets to train. CAIOS is designed to manage and retrieve that data at scale without the bottlenecks typical of standard cloud storage.
+Asset-level delayed draw term loans require CW to satisfy lenders with revenue predictability which is secures through long-term contract lockins of 4-6 yers.
+
+# Nebius 
+CW of Europe; focus on open source rather than proprietary nature of CW agenda. Introduced "Token Factory" in November 2025 to host over 60 leading open-source models (incl. deepseek, llama, qwen, nvidia nemotron etc.), using an openAI-compatible API (devs can easily swap out proprietary models such as chatgpt for open-source models hosted by Nebius.). Token Factory is also for post-training to customize open-weight models with specific data (fine-tuning, distillation). 
+Fine-Tuning: You can use your own proprietary datasets to fine-tune models (using methods like LoRA or full supervised fine-tuning) so they match your company's tone, adhere to your domain-specific terminology, or output strict formats like JSON or SQL.
+Distillation: This is a major feature of the platform. It allows users to take a massive, expensive "teacher" model and compress its knowledge into a smaller "student" model. The result is a custom model that runs 3 to 5 times faster and costs significantly less to operate, while maintaining high reasoning quality
+
+# FluidStack
+differentiator is proprietary orchestration stack, Atlas OS, a bare metal orchestration/operating system. Lighthouse for predictive cluster healing, enabling them to promise 95%+ theoretical hardware output. 
+
+# Together AI
+leadership in open.source AI; definitive platform for training, fine-tuning and deploying open-weight foundation models 
+Employs the developers behind FlashAttention (custom CUDA kernels that optimize memory access patterns) - a piece of software that results in up to 90% faster training on Blackwell and 2-5x inference throughput compared to stock open-source engines such as vLLM.
+Offers managed inference endpoints (pay per token) alongside dedicated clusters.
+due to their custom software extracitng more throughput from underlying hardware, high-volume inference tasks are competitively priced.
+By integrating observability, self-healing, it eliminates need for dedicated MLOps teams = good choice for AI-native startups and enterprises prioritizing developer iteration speed over raw hardware control.
+
+# Lambda Labs
+Intense brand loyalty within academic and ML research communities, prioritizing developer ergonomics and hardware accessibility over massive enterprise contracts.
+Key differentiator: focus on eliminating environmental setup friction; the 'Lambda Stack'; proprietary software layers that ensures each deployed instance comes pre-configured and perfectlty mateched for deep learning frameworks (PyTorch, TensorFlow), drivers etc.
+Allows researchers to transition from local workstations to cloud instances instantly
+Aggressive pricing nad per-minute billing -> developer-focus; short experimental job access. 
+
+# Lightning AI
+targets AI engineers who require the power of enterprise-grade compute but do not want to interact with the complexities of Kubernetes, SLURM, or cross-cloud networking configurations
+'Lightning Studios': multi-cloud gpu marketplace. A cloud-based IDE pre-configured for machine learning workloads. Enables developers to code directly without setting up an environment, sourcing more compute from a marketplace that aggregates capacity from AWS, GCP, Lambda, Nebius etc.
+Core breakthrough is workload portability: ability for developers to migrate workspace and running job from one cloud provider to another as projects develop, without needing to write a single line of code to reconfigure environment, move data etc.
+Per default, this leads to no vendor locking, optimizing for real.-time metrics of performance, cost and geographic location of the requried compute. 
+Allows organizations to centralize resoruce management; budgets, usage tracking, policies etc., across different cloud providers from a single dashboard.
+
+# Shadeform
+Brokerage layer across gpu compute ecosystem. A unified API and control console bridging +30 cloud providers across 100 regions. 
+Caters primarily to API-first DevOps teams and enterprises seeking to diversify compute supply chain without admin overhead.
+Standardized GPU instances across clouds to a 'Shade instance type' which also introduces architectural limitations since they cannot ascertain that the bare metal configuration is consisten (level of physical access, root SSH capabilities, custom CUDA driver installation entirely dependent on partner cloud) = distributed training practically impossible.
+Fundamentally a FinOps tool to compare availability.
+Lack of spot instance support: broker only on-demand and reserved capacity for fault-tolerant workloads.
+
+# Prime Intellect
+Enterprise-grade positioning, aggregating neoclouds, decentralized providers etc in one marketplace.
+Differentiator: proprietary distributed training framework, 'Prime', which, purportedly, allows large model training across different data centers simultanously at over 80% compute utilization. 
+Pulls from over 10 integrated clouds, handling fault tolerance, node managemnt and spot-instance orchestration behind the scenes.
+Tailored for AI teams requiring massive scale without long-term, high-cost contract lock-ins; routes workloads to most cost-effective provider at any moment.
+
+# RunPod
+Dual-tiered infrastructure model; from 'community cloud' to 'secure cloud' from Tier 3+ certified data centers with SOC 2 and hardware isolation. 
+Good at serverless inference but only for raw gpu compute which requires databases, api hosting, pipelines and monitoring tools on top for full-stack applications. 
