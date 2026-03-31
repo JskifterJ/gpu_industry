@@ -9,6 +9,17 @@ GCP's key differentiator resides deep within its physical networking architectur
 Features such as Binary Authorization for containerized deployments, Confidential Computing, and strictly enforced Virtual Private Cloud (VPC) Service Controls provide a default security posture that appeals significantly to heavily regulated industries, such as finance and healthcare.
 On the hardware front, GCP offers a broad spectrum of accelerator-optimized machines, including the A2 series (utilizing A100 GPUs) and the newly introduced G4 series, which leverages NVIDIA RTX PRO 6000 Blackwell Server Edition GPUs to support direct peer-to-peer (P2P) communication over PCIe buses without host CPU intervention. This is complemented by Google's proprietary Tensor Processing Units (TPUs), which offer highly competitive performance-per-dollar metrics for specialized training workloads.
 
+# AWS
+AWS does not possess a particular AI-specific differentiator apart from the immense ecosystem lock-in and operational maturity characteristic of a traditional hyperscaler.
+The platform's true advantage is its breadth, offering over 200 integrated services spanning databases, serverless computing (Lambda), and machine learning deployment tools (SageMaker and Bedrock).
+To address the intense demand for compute, AWS has heavily diversified its hardware portfolio. The platform offers premium NVIDIA instances—such as the p5e and p5en lines featuring eight H200 GPUs per node—as well as the G7e instances powered by NVIDIA RTX PRO 6000 Blackwell Server Edition GPUs.11 Crucially, AWS has invested massive capital into developing its own proprietary custom silicon, namely Trainium and Inferentia, designed to provide cost-effective alternatives to NVIDIA hardware and insulate the company from ongoing supply chain bottlenecks
+
+# Azure
+Azure's primary differentiator is its seamless, native integration with the ubiquitous Microsoft enterprise ecosystem. Features such as deep Active Directory (now Entra ID) integration, Microsoft Defender, and Azure Arc for hybrid cloud management make Azure the default choice for enterprise Windows environments.
+While Azure provides high-end GPU instances, its infrastructure is heavily optimized to support the proprietary token-based billing and provisioned throughput required by its exclusive OpenAI model hosting services.
+From a hardware perspective, Azure operates the largest geographic footprint of any hyperscaler, spanning over 60 regions.14 This expansive network is particularly critical for multinational organizations that must navigate complex data sovereignty and regulatory compliance mandates.
+Azure performs exceptionally well in compliance and enterprise ecosystem integration, but shares the same fundamental weaknesses as AWS regarding high egress fees, complex Kubernetes management (AKS), and the inherent "GPU tax" of hypervisor-based virtualization.4 However, Azure's unique market position is heavily bolstered by its exclusive, deep-rooted partnership with OpenAI, fundamentally transforming the platform into the requisite infrastructure layer for enterprises standardizing on GPT-class models.
+
 
 
 # OCI 
