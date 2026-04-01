@@ -157,7 +157,7 @@
   },
   {
     "company": "RunPod",
-    "business_model_category": "Aggregator / Neocloud",
+    "business_model_category": "Aggregator",
     "key_differentiator": "A dual-tier system (Community vs. Secure) that lets users choose between bottom-tier pricing and Tier-3 datacenter reliability. [11, 12]",
     "short_description": "A highly accessible cloud platform blending the low costs of an aggregator with the stability of a dedicated neocloud.",
     "strategic_relationships": "",
@@ -167,5 +167,18 @@
     "fm_lab_partner": null,
     "hardware_agnostic": 1,
     "frontier_lab_agnostic": 1
-  }
+  },
+  {
+  "company": "Vast.ai",
+  "business_model_category": "Aggregator",
+  "key_differentiator": "A large long-tail GPU marketplace maximizing price optionality and flexible procurement paths across independent suppliers.",
+  "short_description": "A global GPU marketplace offering ultra-low cost for experimentation, though with highly variable quality and limited orchestration assurance.",
+  "strategic_relationships": "Operates as a pure marketplace over heterogeneous provider inventory without exclusive hardware or frontier lab partnerships.",
+  "nvidia_preferred_partner": 0,
+  "nvidia_elite_partner": 0,
+  "fm_lab_partnership": 0,
+  "fm_lab_partner": null,
+  "hardware_agnostic": 1,
+  "frontier_lab_agnostic": 1
+}
 ]

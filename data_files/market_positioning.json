@@ -1357,5 +1357,101 @@
       "target_buyer_profiles": ["Hyperscaler partners", "Large enterprises", "Power-constrained frontier AI programs"],
       "typical_workloads": ["Gigawatt-scale reserved clusters", "Large distributed training", "Enterprise inference platforms"]
     }
-  }
+  },
+    {
+      "company_metadata": {
+        "company_name": "Vast.ai",
+        "clustermax_tier": "Bronze",
+        "headquarters_region": "Global",
+        "datacenter_geographies": [
+          "Global"
+        ]
+      },
+      "market_positioning": {
+        "stated_pitch": "Large long-tail GPU marketplace maximizing price optionality with variable quality outcomes.",
+        "customer_perception": "Strong price-performance appeal for experimentation and burst workloads, but highly variable quality and limited orchestration assurance.",
+        "hardware_availability": [
+          "Mixed marketplace inventory"
+        ],
+        "hardware_positioning_notes": "Large long-tail marketplace footprint for low-cost GPU sourcing. Highly flexible procurement paths across independent suppliers."
+      },
+      "standardized_offerings": {
+        "bare_metal": false,
+        "vms": false,
+        "managed_k8s": false,
+        "managed_slurm": false,
+        "serverless_inference": false,
+        "managed_storage_ai_datalake": false
+      },
+      "value_chain_ownership": {
+        "_instruction": "For each node below (derived directly from strategy_value_chain_master.html), specify 'Owns', 'Facilitates', 'Uses', or 'N/A'.",
+        "l1_physical_infrastructure": {
+          "colo": "N/A",
+          "power": "N/A",
+          "cooling": "N/A",
+          "gpunodes": "Facilitates",
+          "infiniband": "N/A",
+          "storagehw": "Facilitates"
+        },
+        "l3_virtualization_orchestration": {
+          "baremetal": "N/A",
+          "vgpu": "Facilitates",
+          "k8s": "N/A",
+          "jobsched": "N/A",
+          "capagg": "Owns"
+        },
+        "l5_data_serving": {
+          "datasetstore": "N/A",
+          "modelserving": "N/A",
+          "apigateway": "N/A"
+        }
+      },
+      "competitive_intelligence": {
+        "product_differentiator": "Marketplace depth and ultra-low cost, offering fast access to a broad supply for quick experimentation.",
+        "weaknesses_and_gaps": "Container-first model limits standard Slurm/K8s workflows. High provider-quality variance creates non-deterministic performance outcomes, and incomplete supplier transparency complicates procurement governance."
+      },
+      "customer_segmentation": {
+        "target_buyer_profiles": [
+          "Developers",
+          "Hobbyists",
+          "Cost Sensitive"
+        ],
+        "typical_workloads": [
+          "Notebook-heavy prototyping",
+          "Ad-hoc single-node jobs",
+          "Burst-style experimentation"
+        ]
+      },
+      "comparison_taxonomy": {
+        "business_model_class": "Asset-light aggregator",
+        "pricing_tier": "low",
+        "contract_flexibility": "hourly",
+        "orchestration": {
+          "k8s": false,
+          "slurm": false,
+          "co_scheduling": false,
+          "co_scheduler_type": "None",
+          "maturity": "N/A"
+        },
+        "egress": {
+          "policy": "conditional",
+          "detail": "Provider-dependent and marketplace-specific terms."
+        },
+        "region_presence": {
+          "north_america": true,
+          "europe": true,
+          "apac": true,
+          "geography_list": "Global"
+        },
+        "buyer_tags": [
+          "Developers",
+          "Hobbyists",
+          "Cost Sensitive"
+        ],
+        "confidence": {
+          "level": "medium",
+          "note": "Directly covered in ClusterMAX Bronze section with marketplace variability and transparency limits."
+        }
+      }
+    }
 ]
