@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The GPU Cloud Competitive Landscape — Strategy Deck</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;1,300&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -18,7 +19,7 @@
   --chrome-bg:rgba(6,8,16,0.94);--chrome-border:rgba(255,255,255,0.09);--nav-bg:rgba(6,8,16,0.92);
   --radar-grid:rgba(128,128,128,0.15);--radar-line:rgba(128,128,128,0.12);--radar-text:rgba(180,196,216,0.65);
   --display:'Bebas Neue',sans-serif;--sans:'Barlow',sans-serif;--mono:'JetBrains Mono',monospace;
-  --slide-dur:0.55s;
+  --slide-dur:0.4s;
 }
 html.light {
   --bg:#f5f2ee;--bg2:#ede9e2;--bg3:#e0dbd4;--bg4:#d4cec5;
@@ -32,7 +33,7 @@ html.light {
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);}
-.slide{position:absolute;inset:0;display:flex;flex-direction:column;transform:translateX(100%);transition:transform var(--slide-dur) cubic-bezier(0.76,0,0.24,1),opacity 0.4s ease;opacity:0;overflow:hidden;background:var(--bg);}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;transform:translateX(100%);transition:transform var(--slide-dur) cubic-bezier(0.76,0,0.24,1),opacity 0.2s ease;opacity:0;overflow:hidden;background:var(--bg);}
 .slide.active{transform:translateX(0);opacity:1;}
 .slide.prev{transform:translateX(-100%);opacity:0;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
@@ -509,6 +510,17 @@ details[open].co-expand summary::before{content:'▾';}
 .anv-stall-bar{width:100%;border-radius:3px 3px 0 0;}
 .anv-stall-label{font-family:var(--mono);font-size:6.5px;color:var(--dim2);text-align:center;white-space:nowrap;}
 .anv-stall-price{font-family:var(--mono);font-size:7px;color:var(--a);text-align:center;white-space:nowrap;}
+/* ── HUANG MAPPING TAGS ── */
+.huang-map-tag{display:none;font-family:var(--mono);font-size:7px;letter-spacing:.07em;padding:2px 7px;border-radius:3px;font-weight:500;align-self:flex-start;margin-top:5px;white-space:nowrap;}
+.huang-map-omit{display:none;font-family:var(--mono);font-size:7px;letter-spacing:.07em;padding:2px 7px;border-radius:3px;font-weight:500;align-self:flex-start;margin-top:5px;white-space:nowrap;}
+.huang-map-dual{display:none;flex-direction:row;gap:4px;flex-wrap:wrap;align-self:flex-start;margin-top:5px;}
+.huang-map-dual .huang-map-tag{margin-top:0;display:inline-flex;align-items:center;}
+#cake-ours.huang-shown .huang-map-tag{display:inline-flex;align-items:center;}
+#cake-ours.huang-shown .huang-map-omit{display:inline-flex;align-items:center;}
+#cake-ours.huang-shown .huang-map-dual{display:flex;}
+.cake-l-covers{font-family:var(--mono);font-size:7.5px;color:var(--dim2);margin-top:6px;padding-top:5px;border-top:1px solid var(--border);line-height:1.45;}
+.cake-l-covers strong{color:var(--dim);}
+
 </style>
 </head>
 <body>
@@ -665,8 +677,23 @@ details[open].co-expand summary::before{content:'▾';}
       <div class="agenda-item anim anim-5">
         <div class="agenda-n">05</div>
         <div class="agenda-dot" style="background:var(--a);"></div>
-        <div><div class="agenda-title">Market Summary + DePIN</div><div class="agenda-sub">Cross-model comparison · decentralised GPU compute · what's next</div></div>
+        <div><div class="agenda-title">Market Summary + What about crypto?</div><div class="agenda-sub">Cross-model comparison · decentralised GPU compute · what's next</div></div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ sSD01 — SECTION DIVIDER 01 · THE STACK ══ -->
+<div class="slide" id="sSD01">
+  <div class="bg-grid"></div>
+  <div style="position:absolute;top:18px;right:44px;z-index:20;"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Light</span></button></div>
+  <div style="position:absolute;inset:0;display:flex;align-items:center;padding:0 80px;padding-bottom:72px;">
+    <div style="position:relative;overflow:visible;">
+      <div style="font-family:var(--display);font-size:clamp(120px,18vw,200px);line-height:1;color:rgba(232,200,64,0.07);position:absolute;top:-70px;left:-12px;user-select:none;pointer-events:none;">01</div>
+      <div class="anim anim-1" style="width:40px;height:3px;background:#e8c840;border-radius:2px;margin-bottom:14px;position:relative;z-index:1;"></div>
+      <div class="anim anim-1" style="font-family:var(--mono);font-size:9px;color:#e8c840;letter-spacing:.22em;text-transform:uppercase;margin-bottom:12px;position:relative;z-index:1;">Section 01</div>
+      <div class="anim anim-2" style="font-family:var(--display);font-size:clamp(44px,7vw,80px);line-height:.92;letter-spacing:.04em;margin-bottom:18px;position:relative;z-index:1;">THE STACK</div>
+      <div class="anim anim-3" style="font-size:13.5px;color:var(--muted);font-weight:300;line-height:1.6;max-width:520px;position:relative;z-index:1;">9 layers from bare silicon to application — the scaffold every competitor is built on</div>
     </div>
   </div>
 </div>
@@ -680,51 +707,60 @@ details[open].co-expand summary::before{content:'▾';}
   <div class="cake-wrap">
     <!-- OUR 9-layer model (LEFT — always visible) -->
     <div class="cake-side" id="cake-ours">
-      <div class="cake-title" style="text-align:center;">ClusterMAX 9-Layer Model (L−1 → L7)</div>
+      <div class="cake-title" style="text-align:center;">9-Layer Stack/'GPU value chain' (L−1 → L7)</div>
       <div class="cake-layer anim anim-1" style="background:rgba(142,68,173,.12);border:1px solid rgba(142,68,173,.22);">
         <div class="cake-l-name" style="color:#8e44ad;">L7 · Application</div>
         <div class="cake-l-plain">The AI products users actually interact with — chatbots, copilots, developer APIs</div>
         <div class="cake-l-sub">RAG · agents · chat UI · inference API products · developer portals</div>
+        <div class="huang-map-tag" style="background:rgba(142,68,173,.18);color:#8e44ad;border:1px solid rgba(142,68,173,.3);">&#8627; Huang: Applications</div>
       </div>
       <div class="cake-layer anim anim-2" style="background:rgba(232,67,147,.12);border:1px solid rgba(232,67,147,.22);">
         <div class="cake-l-name" style="color:#e84393;">L6 · Control Plane</div>
         <div class="cake-l-plain">Cloud management — cost tracking, security access, compliance, and health monitoring</div>
         <div class="cake-l-sub">DCGM monitoring · health checks · IAM · FinOps · SOC2 compliance</div>
+        <div class="huang-map-tag" style="background:rgba(142,68,173,.18);color:#8e44ad;border:1px solid rgba(142,68,173,.3);">&#8627; Huang: Applications</div>
       </div>
       <div class="cake-layer anim anim-3" style="background:rgba(230,126,34,.12);border:1px solid rgba(230,126,34,.22);">
         <div class="cake-l-name" style="color:#e67e22;">L5 · Data & Serving</div>
         <div class="cake-l-plain">Where AI models and datasets live, and the layer that delivers model responses</div>
         <div class="cake-l-sub">POSIX/VAST/Weka · S3-compatible object storage · model serving · KV cache</div>
+        <div class="huang-map-tag" style="background:rgba(230,126,34,.18);color:#e67e22;border:1px solid rgba(230,126,34,.3);">&#8627; Huang: Algorithms</div>
       </div>
       <div class="cake-layer anim anim-4" style="background:rgba(155,89,182,.12);border:1px solid rgba(155,89,182,.22);">
         <div class="cake-l-name" style="color:#9b59b6;">L4 · Workload Execution</div>
         <div class="cake-l-plain">Software that runs AI training and inference jobs across many GPUs simultaneously</div>
         <div class="cake-l-sub">vLLM / SGLang · FSDP / Megatron · LoRA fine-tuning · P/D disaggregation</div>
+        <div class="huang-map-tag" style="background:rgba(230,126,34,.18);color:#e67e22;border:1px solid rgba(230,126,34,.3);">&#8627; Huang: Algorithms</div>
       </div>
       <div class="cake-layer anim anim-5" style="background:rgba(90,184,106,.12);border:1px solid rgba(90,184,106,.22);">
         <div class="cake-l-name" style="color:#5ab86a;">L3 · Orchestration</div>
         <div class="cake-l-plain">The job scheduler — decides which AI task runs on which GPU server and manages queues</div>
         <div class="cake-l-sub">Kubernetes (GPU Operator) · Slurm · SonK (SUNK / Soperator / Slinky)</div>
+        <div class="huang-map-tag" style="background:rgba(90,184,106,.18);color:#5ab86a;border:1px solid rgba(90,184,106,.3);">&#8627; Huang: Software</div>
       </div>
       <div class="cake-layer anim anim-6" style="background:rgba(90,172,232,.12);border:1px solid rgba(90,172,232,.22);">
         <div class="cake-l-name" style="color:#5aace8;">L2 · Firmware, Drivers & Libraries</div>
         <div class="cake-l-plain">Low-level software that talks directly to the GPU hardware and enables GPU-to-GPU communication</div>
         <div class="cake-l-sub">CUDA / ROCm · NCCL topology config · cuDNN · MIG · BMC/IPMI</div>
+        <div class="huang-map-dual"><div class="huang-map-tag" style="background:rgba(90,172,232,.18);color:#5aace8;border:1px solid rgba(90,172,232,.3);">&#8627; Huang: Systems (BMC)</div><div class="huang-map-tag" style="background:rgba(90,184,106,.18);color:#5ab86a;border:1px solid rgba(90,184,106,.3);">&#8627; Huang: Software (CUDA)</div></div>
       </div>
       <div class="cake-layer anim anim-7" style="background:rgba(232,200,64,.12);border:1px solid rgba(232,200,64,.22);">
         <div class="cake-l-name" style="color:#e8c840;">L1 · Physical Infrastructure</div>
         <div class="cake-l-plain">GPU servers, high-speed connections between them, data center space, and cooling</div>
         <div class="cake-l-sub">HGX nodes · InfiniBand NDR 400G fabric · data center · liquid cooling</div>
+        <div class="huang-map-tag" style="background:rgba(90,172,232,.18);color:#5aace8;border:1px solid rgba(90,172,232,.3);">&#8627; Huang: Systems</div>
       </div>
       <div class="cake-layer anim anim-1" style="background:rgba(148,163,184,.10);border:1px solid rgba(148,163,184,.18);opacity:.85;">
         <div class="cake-l-name" style="color:#94a3b8;">L0 · Silicon Supply Chain</div>
         <div class="cake-l-plain">The chips themselves — NVIDIA AI processors or custom-built alternatives (Google's TPU, Amazon's Trainium)</div>
         <div class="cake-l-sub">GPU procurement (H100/B200/GB200) · custom ASICs (TPU / Trainium)</div>
+        <div class="huang-map-tag" style="background:rgba(148,163,184,.18);color:#94a3b8;border:1px solid rgba(148,163,184,.3);">&#8627; Huang: Chips</div>
       </div>
       <div class="cake-layer anim anim-1" style="background:rgba(231,76,60,.10);border:1px solid rgba(231,76,60,.18);opacity:.85;">
         <div class="cake-l-name" style="color:#e74c3c;">L−1 · Energy & Connectivity</div>
         <div class="cake-l-plain">Who controls the power supply and internet backbone — the physical foundation everything else depends on</div>
         <div class="cake-l-sub">PPAs · stranded gas power · submarine cables · own fiber / AS ownership</div>
+        <div class="huang-map-omit" style="background:rgba(231,76,60,.12);color:#e74c3c;border:1px solid rgba(231,76,60,.22);">&#9888; Not in Huang's model</div>
       </div>
     </div>
 
@@ -732,41 +768,61 @@ details[open].co-expand summary::before{content:'▾';}
     <div class="cake-divider huang-hidden" id="cake-divider-el">
       <div class="cake-arrow">↔</div>
       <div style="width:1px;flex:1;background:var(--border);margin:8px 0;"></div>
-      <div class="cake-eq" style="writing-mode:vertical-rl;transform:rotate(180deg);letter-spacing:.12em;">VS</div>
+      <div class="cake-eq" style="writing-mode:vertical-rl;transform:rotate(180deg);letter-spacing:.12em;font-size:7px;">MAPS TO</div>
     </div>
 
     <!-- NVIDIA 5-layer cake (Jensen Huang's model) — RIGHT — hidden until step 2 -->
     <div class="cake-side huang-hidden" id="cake-huang">
-      <div class="cake-title" style="text-align:center;">Jensen Huang's 5-Layer AI Stack</div>
+      <div class="cake-title" style="text-align:center;">Huang's 5-Layer AI Cake · Mapped to Our Model</div>
       <div class="cake-layer" style="background:rgba(142,68,173,.18);border:1px solid rgba(142,68,173,.3);">
         <div class="cake-l-name" style="color:#8e44ad;">Applications</div>
         <div class="cake-l-plain">The products end-users interact with</div>
         <div class="cake-l-sub">ChatGPT · Copilot · Gemini · enterprise AI products</div>
+        <div class="cake-l-covers"><strong>Our model:</strong> L6 Control Plane + L7 Application</div>
       </div>
       <div class="cake-layer" style="background:rgba(230,126,34,.15);border:1px solid rgba(230,126,34,.28);">
         <div class="cake-l-name" style="color:#e67e22;">Algorithms</div>
         <div class="cake-l-plain">The AI models and the code used to train and run them</div>
         <div class="cake-l-sub">Models · training frameworks · inference engines · fine-tuning</div>
+        <div class="cake-l-covers"><strong>Our model:</strong> L4 Workload Execution + L5 Data &amp; Serving</div>
       </div>
       <div class="cake-layer" style="background:rgba(90,184,106,.15);border:1px solid rgba(90,184,106,.28);">
         <div class="cake-l-name" style="color:#5ab86a;">Software</div>
         <div class="cake-l-plain">NVIDIA's GPU programming toolkit and communication libraries</div>
         <div class="cake-l-sub">CUDA · cuDNN · NCCL · TensorRT · orchestration</div>
+        <div class="cake-l-covers"><strong>Our model:</strong> L2 Drivers &amp; Libraries (CUDA side) + L3 Orchestration</div>
       </div>
       <div class="cake-layer" style="background:rgba(90,172,232,.15);border:1px solid rgba(90,172,232,.28);">
         <div class="cake-l-name" style="color:#5aace8;">Systems</div>
         <div class="cake-l-plain">The physical hardware — servers, networking between GPUs, and cooling</div>
         <div class="cake-l-sub">Servers · networking (InfiniBand / NVLink) · cooling</div>
+        <div class="cake-l-covers"><strong>Our model:</strong> L1 Physical Infrastructure + L2 Firmware &amp; Hardware Mgmt (BMC/IPMI)</div>
       </div>
       <div class="cake-layer" style="background:rgba(148,163,184,.15);border:1px solid rgba(148,163,184,.28);">
         <div class="cake-l-name" style="color:#94a3b8;">Chips</div>
         <div class="cake-l-plain">The GPU silicon NVIDIA designs and manufactures</div>
         <div class="cake-l-sub">GPU silicon · NPUs · HBM memory · packaging (CoWoS)</div>
+        <div class="cake-l-covers"><strong>Our model:</strong> L0 Silicon Supply Chain</div>
       </div>
       <div style="font-family:var(--mono);font-size:8px;color:var(--dim2);margin-top:8px;line-height:1.5;">NVIDIA designs chips + software. Partners own systems up.<br>Jensen's key insight: the real value is in the full stack together.</div>
     </div>
   </div>
   <div style="padding:0 44px 10px;font-family:var(--mono);font-size:8px;color:var(--dim2);" id="s3-footnote">We extend NVIDIA's "Systems" layer into L1 (physical hardware) + L2 (firmware/drivers), and add two layers NVIDIA's frame omits: L−1 (energy &amp; connectivity) and L6 (cloud control plane). These are the layers that determine real competitive advantage in the GPU cloud market.
+  </div>
+</div>
+
+<!-- ══ sSD02 — SECTION DIVIDER 02 · FOUR BUSINESS MODELS ══ -->
+<div class="slide" id="sSD02">
+  <div class="bg-grid"></div>
+  <div style="position:absolute;top:18px;right:44px;z-index:20;"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Light</span></button></div>
+  <div style="position:absolute;inset:0;display:flex;align-items:center;padding:0 80px;padding-bottom:72px;">
+    <div style="position:relative;overflow:visible;">
+      <div style="font-family:var(--display);font-size:clamp(120px,18vw,200px);line-height:1;color:rgba(99,102,241,0.07);position:absolute;top:-70px;left:-12px;user-select:none;pointer-events:none;">02</div>
+      <div class="anim anim-1" style="width:40px;height:3px;background:var(--h);border-radius:2px;margin-bottom:14px;position:relative;z-index:1;"></div>
+      <div class="anim anim-1" style="font-family:var(--mono);font-size:9px;color:var(--h);letter-spacing:.22em;text-transform:uppercase;margin-bottom:12px;position:relative;z-index:1;">Section 02</div>
+      <div class="anim anim-2" style="font-family:var(--display);font-size:clamp(44px,7vw,80px);line-height:.92;letter-spacing:.04em;margin-bottom:18px;position:relative;z-index:1;">FOUR BUSINESS<br>MODELS</div>
+      <div class="anim anim-3" style="font-size:13.5px;color:var(--muted);font-weight:300;line-height:1.6;max-width:520px;position:relative;z-index:1;">Four ways to slice the same stack — each with fundamentally different leverage and trade-offs</div>
+    </div>
   </div>
 </div>
 
@@ -876,6 +932,19 @@ details[open].co-expand summary::before{content:'▾';}
 </div>
 
 
+<!-- ══ sRTA — RED THREAD A · OWNERSHIP ══ -->
+<div class="slide" id="sRTA">
+  <div class="bg-grid"></div>
+  <div style="position:absolute;top:18px;right:44px;z-index:20;"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Light</span></button></div>
+  <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:0 80px;padding-bottom:72px;text-align:center;">
+    <div style="max-width:620px;">
+      <div class="anim anim-1" style="font-family:var(--mono);font-size:8px;color:var(--dim2);letter-spacing:.22em;text-transform:uppercase;margin-bottom:24px;">Connecting thread</div>
+      <div class="anim anim-2" style="font-family:var(--display);font-size:clamp(30px,4.8vw,54px);line-height:1.04;letter-spacing:.04em;margin-bottom:24px;">Which layers does each<br>one actually own?</div>
+      <div class="anim anim-3" style="font-family:var(--mono);font-size:9px;color:var(--dim2);letter-spacing:.16em;text-transform:uppercase;">→ Stack Ownership Map</div>
+    </div>
+  </div>
+</div>
+
 <!-- ══ S5 — STACK OWNERSHIP MAP ══ -->
 <div class="slide" id="s5">
   <div class="slide-chrome">
@@ -958,6 +1027,35 @@ details[open].co-expand summary::before{content:'▾';}
 </div>
 
 
+<!-- ══ sRTB — RED THREAD B · MEASUREMENT ══ -->
+<div class="slide" id="sRTB">
+  <div class="bg-grid"></div>
+  <div style="position:absolute;top:18px;right:44px;z-index:20;"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Light</span></button></div>
+  <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:0 80px;padding-bottom:72px;text-align:center;">
+    <div style="max-width:680px;">
+      <div class="anim anim-1" style="font-family:var(--mono);font-size:8px;color:var(--dim2);letter-spacing:.22em;text-transform:uppercase;margin-bottom:24px;">Connecting thread</div>
+      <div class="anim anim-2" style="font-family:var(--display);font-size:clamp(28px,4.4vw,50px);line-height:1.06;letter-spacing:.04em;margin-bottom:24px;">Ownership mapped.<br>How do we measure who<br>executes best?</div>
+      <div class="anim anim-3" style="font-family:var(--mono);font-size:9px;color:var(--dim2);letter-spacing:.16em;text-transform:uppercase;">→ ClusterMAX 2.0 · The Rating Framework</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ sSD03 — SECTION DIVIDER 03 · THE RATING FRAMEWORK ══ -->
+<div class="slide" id="sSD03">
+  <div class="bg-grid"></div>
+  <div style="position:absolute;top:18px;right:44px;z-index:20;"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Light</span></button></div>
+  <div style="position:absolute;inset:0;display:flex;align-items:center;padding:0 80px;padding-bottom:72px;">
+    <div style="position:relative;overflow:visible;">
+      <div style="font-family:var(--display);font-size:clamp(120px,18vw,200px);line-height:1;color:rgba(2,132,199,0.07);position:absolute;top:-70px;left:-12px;user-select:none;pointer-events:none;">03</div>
+      <div class="anim anim-1" style="width:40px;height:3px;background:#0284c7;border-radius:2px;margin-bottom:14px;position:relative;z-index:1;"></div>
+      <div class="anim anim-1" style="font-family:var(--mono);font-size:9px;color:#0284c7;letter-spacing:.22em;text-transform:uppercase;margin-bottom:12px;position:relative;z-index:1;">Section 03</div>
+      <div class="anim anim-2" style="font-family:var(--display);font-size:clamp(44px,7vw,80px);line-height:.92;letter-spacing:.04em;margin-bottom:18px;position:relative;z-index:1;">THE RATING<br>FRAMEWORK</div>
+      <div class="anim anim-3" style="font-size:13.5px;color:var(--muted);font-weight:300;line-height:1.6;max-width:520px;position:relative;z-index:1;">ClusterMAX 2.0 — 10 criteria, 34 providers, one objective score</div>
+    </div>
+  </div>
+</div>
+
 <!-- ══ S6 — CLUSTERMAX INTRO ══ -->
 <div class="slide" id="s6">
   <div class="slide-chrome">
@@ -1035,6 +1133,26 @@ details[open].co-expand summary::before{content:'▾';}
       <div class="cmi-method-note anim anim-5" style="grid-column:1/-1;">
         <strong>Scoring note:</strong> SemiAnalysis publishes qualitative descriptions, not numerical scores. The 1–5 values shown throughout this deck were <em>inferred</em> from those descriptions and relative rankings — a higher score reflects language like "best-in-class" or "only viable solution", a lower score reflects "needs material improvement" or "near-absent". Averages are across 13 fully-scored providers in our dataset.
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ sSD04 — SECTION DIVIDER 04 · DEEP DIVES + RANKINGS ══ -->
+<div class="slide" id="sSD04">
+  <div class="bg-grid"></div>
+  <div style="position:absolute;top:18px;right:44px;z-index:20;"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Light</span></button></div>
+  <div style="position:absolute;inset:0;display:flex;align-items:center;padding:0 80px;padding-bottom:72px;">
+    <div style="position:relative;overflow:visible;">
+      <div style="font-family:var(--display);font-size:clamp(120px,18vw,200px);line-height:1;color:rgba(255,255,255,0.04);position:absolute;top:-70px;left:-12px;user-select:none;pointer-events:none;">04</div>
+      <div class="anim anim-1" style="display:flex;gap:6px;margin-bottom:14px;position:relative;z-index:1;">
+        <div style="width:10px;height:3px;background:var(--h);border-radius:2px;"></div>
+        <div style="width:10px;height:3px;background:var(--n);border-radius:2px;"></div>
+        <div style="width:10px;height:3px;background:var(--o);border-radius:2px;"></div>
+        <div style="width:10px;height:3px;background:var(--a);border-radius:2px;"></div>
+      </div>
+      <div class="anim anim-1" style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.22em;text-transform:uppercase;margin-bottom:12px;position:relative;z-index:1;">Section 04</div>
+      <div class="anim anim-2" style="font-family:var(--display);font-size:clamp(44px,7vw,80px);line-height:.92;letter-spacing:.04em;margin-bottom:18px;position:relative;z-index:1;">DEEP DIVES<br>+ RANKINGS</div>
+      <div class="anim anim-3" style="font-size:13.5px;color:var(--muted);font-weight:300;line-height:1.6;max-width:520px;position:relative;z-index:1;">Model by model — who leads, who lags, who to watch in 2025</div>
     </div>
   </div>
 </div>
@@ -1744,6 +1862,35 @@ details[open].co-expand summary::before{content:'▾';}
   </div>
 </div>
 
+<!-- ══ sRTC — RED THREAD C · FIT ══ -->
+<div class="slide" id="sRTC">
+  <div class="bg-grid"></div>
+  <div style="position:absolute;top:18px;right:44px;z-index:20;"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Light</span></button></div>
+  <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:0 80px;padding-bottom:72px;text-align:center;">
+    <div style="max-width:640px;">
+      <div class="anim anim-1" style="font-family:var(--mono);font-size:8px;color:var(--dim2);letter-spacing:.22em;text-transform:uppercase;margin-bottom:24px;">Connecting thread</div>
+      <div class="anim anim-2" style="font-family:var(--display);font-size:clamp(30px,4.8vw,54px);line-height:1.04;letter-spacing:.04em;margin-bottom:24px;">Now: which model<br>fits which buyer profiles?</div>
+      <div class="anim anim-3" style="font-family:var(--mono);font-size:9px;color:var(--dim2);letter-spacing:.16em;text-transform:uppercase;">→ Market Fit + ICP Overview</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ sSD05 — SECTION DIVIDER 05 · MARKET FIT + DEPIN ══ -->
+<div class="slide" id="sSD05">
+  <div class="bg-grid"></div>
+  <div style="position:absolute;top:18px;right:44px;z-index:20;"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Light</span></button></div>
+  <div style="position:absolute;inset:0;display:flex;align-items:center;padding:0 80px;padding-bottom:72px;">
+    <div style="position:relative;overflow:visible;">
+      <div style="font-family:var(--display);font-size:clamp(120px,18vw,200px);line-height:1;color:rgba(245,158,11,0.07);position:absolute;top:-70px;left:-12px;user-select:none;pointer-events:none;">05</div>
+      <div class="anim anim-1" style="width:40px;height:3px;background:var(--a);border-radius:2px;margin-bottom:14px;position:relative;z-index:1;"></div>
+      <div class="anim anim-1" style="font-family:var(--mono);font-size:9px;color:var(--a);letter-spacing:.22em;text-transform:uppercase;margin-bottom:12px;position:relative;z-index:1;">Section 05</div>
+      <div class="anim anim-2" style="font-family:var(--display);font-size:clamp(44px,7vw,80px);line-height:.92;letter-spacing:.04em;margin-bottom:18px;position:relative;z-index:1;">MARKET FIT<br>+ WEB3</div>
+      <div class="anim anim-3" style="font-size:13.5px;color:var(--muted);font-weight:300;line-height:1.6;max-width:520px;position:relative;z-index:1;">Rankings done. The question shifts: who should buy from whom — and what's on the frontier?</div>
+    </div>
+  </div>
+</div>
+
 <!-- ══ S15A — ICP OVERVIEW ══ -->
 <div class="slide" id="s15a">
   <div class="slide-chrome">
@@ -1930,137 +2077,125 @@ details[open].co-expand summary::before{content:'▾';}
 <!-- ══ S16 — WEB3 ══ -->
 <div class="slide" id="s16">
   <div class="slide-chrome">
-    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">What About Crypto? · Web3 GPU Networks</div></div>
-    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Light</span></div>
+    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Web3 GPU Networks · DePIN</div></div>
+    <div class="chrome-right"><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Light</span></button></div>
   </div>
   <div class="slide-body" style="flex-direction:column;overflow-y:auto;padding-bottom:72px;">
-    <div style="padding:10px 44px 0;display:flex;gap:32px;align-items:flex-start;">
-      <div style="flex:1;">
-        <div style="font-family:var(--display);font-size:18px;letter-spacing:.04em;margin-bottom:6px;">Crypto and GPU.</span></div>
-        <div style="font-size:12px;color:var(--muted);line-height:1.55;max-width:640px;">Crypto-economic incentives recruit idle GPU capacity — gaming rigs, mining farms, edge servers — into a shared marketplace. Price wins. Everything else loses. Real buyers: <strong style="color:var(--a);">bootstrapped SMEs</strong> running parallel media/inference, and Web3-native crypto projects. Enterprises will not touch these networks — no compliance, no SLA, no legal recourse.</div>
+
+    <!-- Header -->
+    <div style="padding:14px 44px 10px;display:flex;gap:28px;align-items:center;flex-wrap:wrap;">
+      <div style="flex:1;min-width:260px;">
+        <div style="font-family:var(--display);font-size:22px;letter-spacing:.04em;margin-bottom:5px;">Crypto &amp; GPU — The DePIN Landscape</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.55;max-width:560px;">Crypto-economic incentives recruit idle GPU capacity — gaming rigs, mining farms, edge servers — into permissionless marketplaces. One advantage: price. Structural constraints: no InfiniBand, no SLA, no compliance. Use cases are narrow but legitimate.</div>
       </div>
-      <div style="flex-shrink:0;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 16px;display:flex;gap:16px;">
-        <div style="text-align:center;"><div style="font-family:var(--display);font-size:26px;color:#ef4444;">1/5</div><div style="font-family:var(--mono);font-size:7.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;">Security</div></div>
-        <div style="text-align:center;"><div style="font-family:var(--display);font-size:26px;color:#ef4444;">1/5</div><div style="font-family:var(--mono);font-size:7.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;">Reliability</div></div>
-        <div style="text-align:center;"><div style="font-family:var(--display);font-size:26px;color:#ef4444;">0/5</div><div style="font-family:var(--mono);font-size:7.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;">SLA</div></div>
-        <div style="text-align:center;"><div style="font-family:var(--display);font-size:26px;color:#22c55e;">5/5</div><div style="font-family:var(--mono);font-size:7.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;">Pricing</div></div>
-        <div style="text-align:center;"><div style="font-family:var(--display);font-size:26px;color:#ef4444;">0</div><div style="font-family:var(--mono);font-size:7.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;">InfiniBand</div></div>
-      </div>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:10px 44px 0;">
-      <!-- Akash -->
-      <div style="background:var(--bg3);border:1px solid rgba(99,102,241,.25);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;" class="anim anim-1">
-        <div style="display:flex;align-items:center;gap:8px;">
-          <div style="font-family:var(--display);font-size:22px;color:#6366f1;">Akash Network</div>
-          <span style="font-family:var(--mono);font-size:7.5px;padding:2px 7px;border-radius:2px;background:rgba(99,102,241,.12);color:#6366f1;border:1px solid rgba(99,102,241,.25);">Crypto-native</span>
-        </div>
-        <div style="font-size:11.5px;color:var(--muted);line-height:1.45;">Cosmos SDK, on-chain reverse auctions, AKT staking. Permissionless GPU listing — mostly consumer and lower-tier datacenter GPUs. ~10k GPUs active, ~$14M network revenue 2024. No SOC 2.</div>
-        <div style="font-family:var(--mono);font-size:8px;color:var(--dim);">Best for: blockchain-native teams · open-source researchers · censorship-resistant compute</div>
-        <div style="display:flex;gap:16px;margin-top:auto;padding-top:6px;">
-          <div><div style="font-family:var(--display);font-size:16px;color:#22c55e;">~10k</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">GPUs LIVE</div></div>
-          <div><div style="font-family:var(--display);font-size:16px;color:#6366f1;">AKT</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">PAYMENT TOKEN</div></div>
-          <div><div style="font-family:var(--display);font-size:16px;color:#f59e0b;">~$14M</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">NETWORK REV '24</div></div>
-        </div>
-      </div>
-      <!-- Aethir -->
-      <div style="background:var(--bg3);border:1px solid rgba(236,72,153,.25);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;" class="anim anim-2">
-        <div style="display:flex;align-items:center;gap:8px;">
-          <div style="font-family:var(--display);font-size:22px;color:#ec4899;">Aethir</div>
-          <span style="font-family:var(--mono);font-size:7.5px;padding:2px 7px;border-radius:2px;background:rgba(236,72,153,.12);color:#ec4899;border:1px solid rgba(236,72,153,.25);">Enterprise DePIN</span>
-        </div>
-        <div style="font-size:11.5px;color:var(--muted);line-height:1.45;">The closest DePIN network to a traditional cloud provider — aggregates Tier-3/4 datacenters, not consumer PCs. KDDI Japan partnership, 47k+ H100-class GPUs, $36M+ ARR Q4 2024. ATH token.</div>
-        <div style="font-family:var(--mono);font-size:8px;color:var(--dim);">Best for: enterprise AI inference · cloud gaming streaming · telecom edge AI</div>
-        <div style="display:flex;gap:16px;margin-top:auto;padding-top:6px;">
-          <div><div style="font-family:var(--display);font-size:16px;color:#22c55e;">47k+</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">H100-CLASS GPUs</div></div>
-          <div><div style="font-family:var(--display);font-size:16px;color:#f59e0b;">$36M+</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">ARR (Q4 2024)</div></div>
-        </div>
-      </div>
-      <!-- 0G -->
-      <div style="background:var(--bg3);border:1px solid rgba(16,185,129,.25);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;" class="anim anim-3">
-        <div style="display:flex;align-items:center;gap:8px;">
-          <div style="font-family:var(--display);font-size:22px;color:#10b981;">0G Labs</div>
-          <span style="font-family:var(--mono);font-size:7.5px;padding:2px 7px;border-radius:2px;background:rgba(16,185,129,.12);color:#10b981;border:1px solid rgba(16,185,129,.25);">dAIOS</span>
-        </div>
-        <div style="font-size:11.5px;color:var(--muted);line-height:1.45;">A decentralized "operating system" for AI that solves the massive data bottlenecks holding back Web3. Instead of relying on expensive centralized data centers, 0G splits up and verifies data so quickly that users can train massive models over standard office internet.</div>
-        <div style="font-family:var(--mono);font-size:8px;color:var(--dim);">Best for: low-cost AI training · decentralized inference · on-chain AI agents</div>
-        <div style="display:flex;gap:16px;margin-top:auto;padding-top:6px;">
-          <div><div style="font-family:var(--display);font-size:16px;color:#22c55e;">50 Gbps</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">DA THROUGHPUT</div></div>
-          <div><div style="font-family:var(--display);font-size:16px;color:#10b981;">0G</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">TOKEN</div></div>
-        </div>
-      </div>      <!-- io.net -->
-      <div style="background:var(--bg3);border:1px solid rgba(168,85,247,.25);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;" class="anim anim-4">
-        <div style="display:flex;align-items:center;gap:8px;">
-          <div style="font-family:var(--display);font-size:22px;color:#a855f7;">io.net</div>
-          <span style="font-family:var(--mono);font-size:7.5px;padding:2px 7px;border-radius:2px;background:rgba(168,85,247,.12);color:#a855f7;border:1px solid rgba(168,85,247,.25);">Cluster Attempt</span>
-        </div>
-        <div style="font-size:11.5px;color:var(--muted);line-height:1.45;">1M+ GPU claim is heavily scrutinised — early network plagued by spoofed nodes faking hardware to farm token airdrops. ~50ms WAN latency makes multi-node training impossible. Raised $30M Series A.</div>
-        <div style="font-family:var(--mono);font-size:8px;color:var(--dim);">Best for: embarrassingly parallel inference only · not viable for synchronous training</div>
-        <div style="display:flex;gap:16px;margin-top:auto;padding-top:6px;">
-          <div><div style="font-family:var(--display);font-size:16px;color:#a855f7;">~50ms</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">NODE LATENCY</div></div>
-          <div><div style="font-family:var(--display);font-size:16px;color:#ef4444;">0</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">INFINIBAND</div></div>
-        </div>
-      </div>
-      <!-- Render Network -->
-      <div style="background:var(--bg3);border:1px solid rgba(90,172,232,.25);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;" class="anim anim-5">
-        <div style="display:flex;align-items:center;gap:8px;">
-          <div style="font-family:var(--display);font-size:22px;color:#5aace8;">Render Network</div>
-          <span style="font-family:var(--mono);font-size:7.5px;padding:2px 7px;border-radius:2px;background:rgba(90,172,232,.12);color:#5aace8;border:1px solid rgba(90,172,232,.25);">Vertical Web3</span>
-        </div>
-        <div style="font-size:11.5px;color:var(--muted);line-height:1.45;">The most successful application-specific Web3 compute network. Direct integration with OTOY OctaneRender (Blender, Cinema 4D) creates genuine software lock-in. 3D frame rendering is naturally fault-tolerant — a failed frame just gets reassigned. RNDR → RENDER token (Solana).</div>
-        <div style="font-family:var(--mono);font-size:8px;color:var(--dim);">Best for: VFX rendering · 3D generative AI · OctaneRender pipelines</div>
-        <div style="display:flex;gap:16px;margin-top:auto;padding-top:6px;">
-          <div><div style="font-family:var(--display);font-size:16px;color:#5aace8;">RNDR</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">TOKEN</div></div>
-          <div><div style="font-family:var(--display);font-size:16px;color:#22c55e;">Niche</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">MOAT EXISTS</div></div>
-        </div>
-      </div>
-      <!-- Fluence -->
-      <div style="background:var(--bg3);border:1px solid rgba(6,182,212,.25);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;" class="anim anim-6">
-        <div style="display:flex;align-items:center;gap:8px;">
-          <div style="font-family:var(--display);font-size:22px;color:#06b6d4;">Fluence</div>
-          <span style="font-family:var(--mono);font-size:7.5px;padding:2px 7px;border-radius:2px;background:rgba(6,182,212,.12);color:#06b6d4;border:1px solid rgba(6,182,212,.25);">Web3 Serverless</span>
-        </div>
-        <div style="font-size:11.5px;color:var(--muted);line-height:1.45;">Decentralised "Cloudless" serverless compute using WebAssembly (Wasm). Currently best known for CPU-heavy tasks: blockchain RPC nodes, zk-rollups, and Web3 backends. Expanding toward GPU/AI, but not its primary focus today. FLT token.</div>
-        <div style="font-family:var(--mono);font-size:8px;color:var(--dim);">Best for: Web3 backends · decentralised RPC nodes · permissionless serverless jobs</div>
-        <div style="display:flex;gap:16px;margin-top:auto;padding-top:6px;">
-          <div><div style="font-family:var(--display);font-size:16px;color:#06b6d4;">FLT</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">TOKEN</div></div>
-          <div><div style="font-family:var(--display);font-size:16px;color:#22c55e;">Open</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">SOURCE</div></div>
-        </div>
+      <div style="display:flex;gap:14px;flex-shrink:0;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 16px;">
+        <div style="text-align:center;"><div style="font-family:var(--display);font-size:22px;color:#ef4444;">1/5</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;">Security</div></div>
+        <div style="text-align:center;"><div style="font-family:var(--display);font-size:22px;color:#ef4444;">0</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;">SLA</div></div>
+        <div style="text-align:center;"><div style="font-family:var(--display);font-size:22px;color:#ef4444;">0</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;">InfiniBand</div></div>
+        <div style="text-align:center;"><div style="font-family:var(--display);font-size:22px;color:#22c55e;">5/5</div><div style="font-family:var(--mono);font-size:7px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;">Pricing</div></div>
       </div>
     </div>
-    <!-- Fundamental Limit -->
-    <div style="margin:8px 44px 0;padding:10px 14px;border-radius:6px;border:1px solid rgba(239,68,68,.2);background:rgba(239,68,68,.04);display:flex;gap:20px;align-items:flex-start;">
-      <div style="flex:1;">
-        <div style="font-family:var(--display);font-size:14px;color:#ef4444;letter-spacing:.04em;margin-bottom:4px;">The Fundamental Limit</div>
-        <div style="font-size:11px;color:var(--muted);line-height:1.5;">50ms+ WAN latency = no distributed training (GPU sits idle 99% of the time waiting for gradients). Consumer GPUs lack ECC memory. No SLA, no compliance, no legal recourse. Enterprise data through Akash/Salad risks memory scraping — SOC 2 is structurally impossible for permissionless networks. Ceiling: single-GPU inference and stateless batch jobs tolerant of failure.</div>
+
+    <!-- Provider grid: 3 columns × 2 rows -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 44px;">
+
+      <div style="background:var(--bg3);border:1px solid var(--border);border-left:3px solid #6366f1;border-radius:6px;padding:10px 12px;" class="anim anim-1">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">
+          <div style="font-family:var(--display);font-size:17px;color:#6366f1;">Akash Network</div>
+          <span style="font-family:var(--mono);font-size:7px;padding:1px 5px;border-radius:2px;background:rgba(99,102,241,.1);color:#6366f1;border:1px solid rgba(99,102,241,.2);">Crypto-native</span>
+        </div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.5;margin-bottom:6px;">Cosmos SDK reverse-auction marketplace. Permissionless listing — mostly consumer and lower-tier datacenter GPUs. No SOC 2. Best for blockchain-native teams and censorship-resistant compute.</div>
+        <div style="display:flex;gap:14px;">
+          <div><div style="font-family:var(--display);font-size:14px;color:#22c55e;">~10k</div><div style="font-family:var(--mono);font-size:6.5px;color:var(--dim2);">LIVE GPUs</div></div>
+          <div><div style="font-family:var(--display);font-size:14px;color:#6366f1;">$14M</div><div style="font-family:var(--mono);font-size:6.5px;color:var(--dim2);">NET REV '24</div></div>
+          <div><div style="font-family:var(--display);font-size:14px;color:#f59e0b;">AKT</div><div style="font-family:var(--mono);font-size:6.5px;color:var(--dim2);">TOKEN</div></div>
+        </div>
       </div>
-      <div style="display:flex;flex-direction:column;gap:3px;flex-shrink:0;">
-        <div style="font-family:var(--mono);font-size:8.5px;color:#ef4444;">✗ Multi-node synchronised training</div>
-        <div style="font-family:var(--mono);font-size:8.5px;color:#ef4444;">✗ Enterprise / regulated workloads</div>
-        <div style="font-family:var(--mono);font-size:8.5px;color:#ef4444;">✗ Production inference SLA</div>
-        <div style="font-family:var(--mono);font-size:8.5px;color:#22c55e;">✓ SME parallel media / inference (stateless)</div>
-        <div style="font-family:var(--mono);font-size:8.5px;color:#22c55e;">✓ Web3-native crypto projects</div>
+
+      <div style="background:var(--bg3);border:1px solid var(--border);border-left:3px solid #ec4899;border-radius:6px;padding:10px 12px;" class="anim anim-2">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">
+          <div style="font-family:var(--display);font-size:17px;color:#ec4899;">Aethir</div>
+          <span style="font-family:var(--mono);font-size:7px;padding:1px 5px;border-radius:2px;background:rgba(236,72,153,.1);color:#ec4899;border:1px solid rgba(236,72,153,.2);">Enterprise DePIN</span>
+        </div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.5;margin-bottom:6px;">Aggregates Tier-3/4 datacenters — not home PCs. The closest DePIN network to a real cloud provider. KDDI Japan partnership, ATH token. Best for enterprise AI inference and cloud gaming.</div>
+        <div style="display:flex;gap:14px;">
+          <div><div style="font-family:var(--display);font-size:14px;color:#22c55e;">47k+</div><div style="font-family:var(--mono);font-size:6.5px;color:var(--dim2);">H100-CLASS</div></div>
+          <div><div style="font-family:var(--display);font-size:14px;color:#f59e0b;">$36M+</div><div style="font-family:var(--mono);font-size:6.5px;color:var(--dim2);">ARR Q4 '24</div></div>
+        </div>
       </div>
+
+      <div style="background:var(--bg3);border:1px solid var(--border);border-left:3px solid #a855f7;border-radius:6px;padding:10px 12px;" class="anim anim-3">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">
+          <div style="font-family:var(--display);font-size:17px;color:#a855f7;">io.net</div>
+          <span style="font-family:var(--mono);font-size:7px;padding:1px 5px;border-radius:2px;background:rgba(168,85,247,.1);color:#a855f7;border:1px solid rgba(168,85,247,.2);">Cluster Attempt</span>
+        </div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.5;margin-bottom:6px;">1M+ GPU claim heavily scrutinised — early network plagued by spoofed nodes farming airdrops. 50ms WAN latency makes synchronised multi-node training physically impossible. $30M Series A.</div>
+        <div style="display:flex;gap:14px;">
+          <div><div style="font-family:var(--display);font-size:14px;color:#a855f7;">~50ms</div><div style="font-family:var(--mono);font-size:6.5px;color:var(--dim2);">WAN LATENCY</div></div>
+          <div><div style="font-family:var(--display);font-size:14px;color:#ef4444;">0</div><div style="font-family:var(--mono);font-size:6.5px;color:var(--dim2);">INFINIBAND</div></div>
+        </div>
+      </div>
+
+      <div style="background:var(--bg3);border:1px solid var(--border);border-left:3px solid #5aace8;border-radius:6px;padding:10px 12px;" class="anim anim-4">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">
+          <div style="font-family:var(--display);font-size:17px;color:#5aace8;">Render Network</div>
+          <span style="font-family:var(--mono);font-size:7px;padding:1px 5px;border-radius:2px;background:rgba(90,172,232,.1);color:#5aace8;border:1px solid rgba(90,172,232,.2);">Vertical Web3</span>
+        </div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.5;margin-bottom:6px;">The most successful niche Web3 compute network. Direct OTOY OctaneRender integration creates genuine software lock-in. 3D frame rendering is naturally fault-tolerant — failed frames simply re-queue. RNDR → RENDER (Solana).</div>
+        <div style="display:flex;gap:14px;">
+          <div><div style="font-family:var(--display);font-size:14px;color:#5aace8;">RNDR</div><div style="font-family:var(--mono);font-size:6.5px;color:var(--dim2);">TOKEN</div></div>
+          <div><div style="font-family:var(--display);font-size:14px;color:#22c55e;">Niche</div><div style="font-family:var(--mono);font-size:6.5px;color:var(--dim2);">MOAT EXISTS</div></div>
+        </div>
+      </div>
+
+      <div style="background:var(--bg3);border:1px solid var(--border);border-left:3px solid #06b6d4;border-radius:6px;padding:10px 12px;" class="anim anim-5">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">
+          <div style="font-family:var(--display);font-size:17px;color:#06b6d4;">Fluence</div>
+          <span style="font-family:var(--mono);font-size:7px;padding:1px 5px;border-radius:2px;background:rgba(6,182,212,.1);color:#06b6d4;border:1px solid rgba(6,182,212,.2);">Web3 Serverless</span>
+        </div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.5;margin-bottom:6px;">Decentralised "Cloudless" serverless compute via WebAssembly. Currently CPU-heavy: blockchain RPCs, zk-rollups, Web3 backends. Expanding toward GPU/AI workloads. FLT token.</div>
+        <div style="display:flex;gap:14px;">
+          <div><div style="font-family:var(--display);font-size:14px;color:#06b6d4;">FLT</div><div style="font-family:var(--mono);font-size:6.5px;color:var(--dim2);">TOKEN</div></div>
+          <div><div style="font-family:var(--display);font-size:14px;color:#22c55e;">Open</div><div style="font-family:var(--mono);font-size:6.5px;color:var(--dim2);">SOURCE</div></div>
+        </div>
+      </div>
+
+      <div style="background:var(--bg3);border:1px solid var(--border);border-left:3px solid #10b981;border-radius:6px;padding:10px 12px;" class="anim anim-6">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">
+          <div style="font-family:var(--display);font-size:17px;color:#10b981;">0G Labs</div>
+          <span style="font-family:var(--mono);font-size:7px;padding:1px 5px;border-radius:2px;background:rgba(16,185,129,.1);color:#10b981;border:1px solid rgba(16,185,129,.2);">dAIOS</span>
+        </div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.5;margin-bottom:6px;">Decentralised AI OS — solves data bottlenecks via sharded verification, enabling AI model training across standard internet. 50 Gbps DA throughput. Best for on-chain AI agents and low-cost decentralised inference.</div>
+        <div style="display:flex;gap:14px;">
+          <div><div style="font-family:var(--display);font-size:14px;color:#22c55e;">50 Gbps</div><div style="font-family:var(--mono);font-size:6.5px;color:var(--dim2);">DA THROUGHPUT</div></div>
+          <div><div style="font-family:var(--display);font-size:14px;color:#10b981;">0G</div><div style="font-family:var(--mono);font-size:6.5px;color:var(--dim2);">TOKEN</div></div>
+        </div>
+      </div>
+
     </div>
-    <div style="margin:8px 44px 0;padding:10px 14px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);">
-      <div style="font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-bottom:8px;">Who actually uses Web3 GPU compute?</div>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
-        <div style="padding:8px 10px;border-radius:4px;border:1px solid rgba(245,158,11,.2);background:rgba(245,158,11,.04);">
-          <div style="font-family:var(--mono);font-size:7.5px;color:var(--a);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">M · SMEs &amp; Bootstrapped Startups</div>
-          <div style="font-size:11px;color:var(--muted);line-height:1.5;">Salad for Stable Diffusion batches, TTS, and 3D rendering. Akash for censorship-resistant or budget-constrained inference. Workloads are stateless — a dropped node is a minor inconvenience, not a crisis.</div>
+
+    <!-- Bottom verdict -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px 44px 0;">
+      <div style="padding:10px 14px;border-radius:6px;border:1px solid rgba(239,68,68,.2);background:rgba(239,68,68,.04);">
+        <div style="font-family:var(--mono);font-size:8px;color:#ef4444;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;">Structural ceiling</div>
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          <div style="font-size:11px;color:var(--muted);"><span style="color:#ef4444;margin-right:4px;">&#10007;</span>Multi-node training — 50ms+ WAN latency means GPUs sit idle 99% of the time waiting for gradients</div>
+          <div style="font-size:11px;color:var(--muted);"><span style="color:#ef4444;margin-right:4px;">&#10007;</span>Regulated workloads — no SOC 2, no data sovereignty, no legal recourse if a node leaks your data</div>
+          <div style="font-size:11px;color:var(--muted);"><span style="color:#ef4444;margin-right:4px;">&#10007;</span>Production SLAs — enterprises pay the 3–5× hyperscaler premium precisely for the legal safety net</div>
         </div>
-        <div style="padding:8px 10px;border-radius:4px;border:1px solid rgba(99,102,241,.2);background:rgba(99,102,241,.04);">
-          <div style="font-family:var(--mono);font-size:7.5px;color:var(--h);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Web3-Native Projects</div>
-          <div style="font-size:11px;color:var(--muted);line-height:1.5;">DePIN networks hosting their own RPC nodes, zk-rollup provers, and Web3 front-ends. The biggest customers of Akash and Fluence are other crypto projects — not AI companies.</div>
-        </div>
-        <div style="padding:8px 10px;border-radius:4px;border:1px solid rgba(239,68,68,.2);background:rgba(239,68,68,.04);">
-          <div style="font-family:var(--mono);font-size:7.5px;color:#ef4444;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Who does NOT use this</div>
-          <div style="font-size:11px;color:var(--muted);line-height:1.5;">Fortune 500s, healthcare, finance — bound by GDPR/HIPAA. Proprietary data on Akash/Salad = random machine somewhere with no SLA. They will pay the 3–5× premium to AWS for the legal safety net.</div>
+      </div>
+      <div style="padding:10px 14px;border-radius:6px;border:1px solid rgba(34,197,94,.2);background:rgba(34,197,94,.04);">
+        <div style="font-family:var(--mono);font-size:8px;color:#22c55e;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;">Where it legitimately works</div>
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          <div style="font-size:11px;color:var(--muted);"><span style="color:#22c55e;margin-right:4px;">&#10003;</span>SME batch media — Salad/Akash for Stable Diffusion, TTS, 3D rendering at $0.10–0.50/hr</div>
+          <div style="font-size:11px;color:var(--muted);"><span style="color:#22c55e;margin-right:4px;">&#10003;</span>Stateless parallel inference — a dropped node is a minor inconvenience, not a production incident</div>
+          <div style="font-size:11px;color:var(--muted);"><span style="color:#22c55e;margin-right:4px;">&#10003;</span>Web3-native projects — RPC nodes, zk-rollup provers, chain front-ends (the biggest actual customers)</div>
         </div>
       </div>
     </div>
+
   </div>
 </div>
-
 <!-- ══ S20 — BRIDGE ══ -->
 <div class="slide" id="s20">
   <div class="bg-grid"></div>
@@ -2076,14 +2211,14 @@ details[open].co-expand summary::before{content:'▾';}
     <div style="padding:0 80px;max-width:860px;">
       <p class="eyebrow anim anim-1" style="margin-bottom:16px;">ClusterMAX Intelligence Series · Deck 3 of 3</p>
       <div style="font-family:var(--display);font-size:clamp(34px,4.5vw,60px);line-height:.94;letter-spacing:.04em;margin-bottom:18px;" class="anim anim-2">
-        The landscape is clear.<br><span style="color:var(--o);">Now: where does</span><br><span style="color:var(--a);">a new entrant fit?</span>
+        Voila. That's the industry in short.<br><span style="color:var(--o);">Now: where does</span><br><span style="color:var(--a);">ICN potentially fit in?</span>
       </div>
       <p class="anim anim-3" style="font-size:13.5px;color:var(--muted);line-height:1.6;font-weight:300;max-width:580px;">The competitive landscape establishes <em>what exists</em>. Deck 3 analyses <em>what's missing</em>, <em>what it costs to compete</em>, and <em>which emerging archetype offers the most defensible startup opportunity</em>.</p>
       <div class="anim anim-4" style="display:flex;flex-direction:column;gap:9px;margin-top:22px;max-width:580px;">
         <div style="font-family:var(--mono);font-size:8.5px;color:var(--dim);letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px;">Next Steps · Deck 3 of 3</div>
-        <div style="display:flex;gap:12px;align-items:flex-start;"><div style="font-family:var(--display);font-size:20px;color:var(--o);line-height:1;min-width:26px;">01</div><div style="font-size:12.5px;color:var(--muted);line-height:1.6;font-weight:300;"><strong style="color:var(--text);">Market trends</strong> — inference scaling, agentic token multiplier, sovereign AI buildouts, and how each trend reshapes which stack layer captures value.</div></div>
+        <div style="display:flex;gap:12px;align-items:flex-start;"><div style="font-family:var(--display);font-size:20px;color:var(--o);line-height:1;min-width:26px;">01</div><div style="font-size:12.5px;color:var(--muted);line-height:1.6;font-weight:300;"><strong style="color:var(--text);">Market trends</strong> — inference scaling, agentic token multiplier, sovereign AI buildouts and more.</div></div>
         <div style="display:flex;gap:12px;align-items:flex-start;"><div style="font-family:var(--display);font-size:20px;color:var(--o);line-height:1;min-width:26px;">02</div><div style="font-size:12.5px;color:var(--muted);line-height:1.6;font-weight:300;"><strong style="color:var(--text);">Positioning opportunities</strong> — where the four models fail specific buyer segments, wedge product options, and which emerging archetype offers the most defensible startup entry point.</div></div>
-        <div style="display:flex;gap:12px;align-items:flex-start;"><div style="font-family:var(--display);font-size:20px;color:var(--a);line-height:1;min-width:26px;">03</div><div style="font-size:12.5px;color:var(--muted);line-height:1.6;font-weight:300;"><strong style="color:var(--text);">Strategic landscape</strong> — to follow; not included in this deck.</div></div>
+        <div style="display:flex;gap:12px;align-items:flex-start;"><div style="font-family:var(--display);font-size:20px;color:var(--a);line-height:1;min-width:26px;">03</div><div style="font-size:12.5px;color:var(--muted);line-height:1.6;font-weight:300;"><strong style="color:var(--text);">Where value is heading</strong> — drawing on more insights from Jensen Huang.</div></div>
       </div>
       <div class="anim anim-5 link-row" style="margin-top:20px;">
         <a class="dash-link" href="https://jskifterj.github.io/gpu_industry/strategy_competitor_intelligence.html" target="_blank">↗ Competitor Intelligence</a>
@@ -2192,21 +2327,21 @@ const SCORES={
 function cwColor(){return document.documentElement.classList.contains('light')?'#334155':'#94a3b8';}
 
 function renderRadarsForSlide(n){
-  if(n===19){ initCSControls(); renderCompetitiveSpace(); return; }
-  if(n===8){
+  if(n===27){ initCSControls(); renderCompetitiveSpace(); return; }
+  if(n===14){
     radar('radar-gcp',    SCORES.gcp,    document.documentElement.classList.contains('light')?'#065f46':'#10b981',CRIT);
     radar('radar-oracle', SCORES.oracle, document.documentElement.classList.contains('light')?'#92400e':'#f59e0b',CRIT);
     radar('radar-azure',  SCORES.azure,  '#0891B2',CRIT);
     radar('radar-aws',    SCORES.aws,    document.documentElement.classList.contains('light')?'#3730a3':'#6366f1',CRIT);
   }
-  if(n===10){
+  if(n===16){
     const cwC=document.documentElement.classList.contains('light')?'#334155':'#94a3b8';
     const golC=document.documentElement.classList.contains('light')?'#92400e':'#f59e0b';
     radar('radar-coreweave', SCORES.coreweave, cwC, CRIT);
     radar('radar-nebius',    SCORES.nebius,    golC,CRIT);
     radar('radar-fluidstack',SCORES.fluidstack,golC,CRIT);
   }
-  if(n===14){
+  if(n===20){
     const aC=document.documentElement.classList.contains('light')?'#92400e':'#f59e0b';
     const brC=document.documentElement.classList.contains('light')?'#78350f':'#cd7f32';
     // S14 Bronze: Shadeform (24) · Vast.ai (20) · RunPod (20)
@@ -2214,7 +2349,7 @@ function renderRadarsForSlide(n){
     if(SCORES.vastai)     radar('radar-vastai',     SCORES.vastai,     brC, CRIT);
     if(SCORES.runpod)          radar('radar-runpod',          SCORES.runpod,          brC, CRIT);
   }
-  if(n===12){
+  if(n===18){
     const oC=document.documentElement.classList.contains('light')?'#5b21b6':'#a855f7';
     const brC=document.documentElement.classList.contains('light')?'#78350f':'#cd7f32';
     // S12 Orchestrators: Together AI (31) · Lambda (30) · Lightning.ai (22)
@@ -2225,7 +2360,7 @@ function renderRadarsForSlide(n){
 }
 
 // ── NAVIGATION ──────────────────────────────────────────
-const TOTAL=20;
+const TOTAL=28;
 let cur=0;
 let s3Step=0;   // 0 = ICN stack only, 1 = Huang comparison revealed
 let s4Step=0;   // 0 = model cards only, 1 = spectra revealed
@@ -2236,18 +2371,20 @@ const prog=document.getElementById('progress');
 const btnPrev=document.getElementById('btn-prev');
 const btnNext=document.getElementById('btn-next');
 const ccur=document.getElementById('ccur');
-// Indices: 0=s1,1=s1b,2=s2,3=s3,4=s4,5=s5,6=s6,7=s7,8=s8,9=s9,10=s10,11=s11,12=s12,13=s13,14=s14,15=s15a,16=s15b,17=s16,18=s20,19=s17
-const COLORS=['#3730a3','#475569','#475569','#e8c840','#3730a3','#3730a3','#0284c7','#3730a3','#3730a3','#065f46','#065f46','#5b21b6','#5b21b6','#92400e','#92400e','#6366f1','#6366f1','#7c3aed','#5b21b6','#0891b2'];
+// Indices: 0=s1,1=s1b,2=s2,3=sSD01,4=s3,5=sSD02,6=s4,7=sRTA,8=s5,9=sRTB,10=sSD03,11=s6,12=sSD04,13=s7,14=s8,15=s9,16=s10,17=s11,18=s12,19=s13,20=s14,21=sRTC,22=sSD05,23=s15a,24=s15b,25=s16,26=s20,27=s17
+const COLORS=['#3730a3','#475569','#475569','#e8c840','#e8c840','#3730a3','#3730a3','#3730a3','#3730a3','#0284c7','#0284c7','#0284c7','#3730a3','#3730a3','#3730a3','#065f46','#065f46','#5b21b6','#5b21b6','#92400e','#92400e','#92400e','#92400e','#6366f1','#6366f1','#7c3aed','#5b21b6','#0891b2'];
 
 function showHuangModel(){
   s3Step=1;
   document.getElementById('cake-divider-el').classList.add('revealed');
   document.getElementById('cake-huang').classList.add('revealed');
+  document.getElementById('cake-ours').classList.add('huang-shown');
 }
 function hideHuangModel(){
   s3Step=0;
   document.getElementById('cake-divider-el').classList.remove('revealed');
   document.getElementById('cake-huang').classList.remove('revealed');
+  document.getElementById('cake-ours').classList.remove('huang-shown');
 }
 function showNextS15aCard(){
   s15aStep++;
@@ -2284,22 +2421,22 @@ for(let i=0;i<TOTAL;i++){const d=document.createElement('div');d.className='dot'
 
 function go(n,direct){
   // S3 step-within-slide logic
-  if(!direct && cur===3 && n===4 && s3Step===0){ showHuangModel(); return; }
-  if(!direct && cur===3 && n===2 && s3Step===1){ hideHuangModel(); return; }
+  if(!direct && cur===4 && n===5 && s3Step===0){ showHuangModel(); return; }
+  if(!direct && cur===4 && n===3 && s3Step===1){ hideHuangModel(); return; }
   // S4 step-within-slide logic
-  if(!direct && cur===4 && n===5 && s4Step===0){ showS4Spectra(); return; }
-  if(!direct && cur===4 && n===3 && s4Step===1){ hideS4Spectra(); return; }
+  if(!direct && cur===6 && n===7 && s4Step===0){ showS4Spectra(); return; }
+  if(!direct && cur===6 && n===5 && s4Step===1){ hideS4Spectra(); return; }
   // S15A step-within-slide logic (reveal 3 extra ICP cards one by one)
-  if(!direct && cur===15 && n===16 && s15aStep<3){ showNextS15aCard(); return; }
-  if(!direct && cur===15 && n===14 && s15aStep>0){ hidePrevS15aCard(); return; }
+  if(!direct && cur===23 && n===24 && s15aStep<3){ showNextS15aCard(); return; }
+  if(!direct && cur===23 && n===22 && s15aStep>0){ hidePrevS15aCard(); return; }
   if(n<0||n>=TOTAL)return;
   const old=cur;cur=n;
   // Reset step states when leaving or jumping to these slides
-  if(old===3 || n===3) hideHuangModel();
-  if(old===4 || n===4) hideS4Spectra();
-  if(old===15 || n===15) resetS15aCards();
+  if(old===4 || n===4) hideHuangModel();
+  if(old===6 || n===6) hideS4Spectra();
+  if(old===23 || n===23) resetS15aCards();
   slides[old].classList.remove('active');slides[old].classList.add('prev');
-  const os=slides[old];setTimeout(()=>os.classList.remove('prev'),700);
+  const os=slides[old];setTimeout(()=>os.classList.remove('prev'),350);
   slides[cur].classList.add('active');
   document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===cur));
   prog.style.width=((cur+1)/TOTAL*100)+'%';
