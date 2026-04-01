@@ -20,8 +20,6 @@ While Azure provides high-end GPU instances, its infrastructure is heavily optim
 From a hardware perspective, Azure operates the largest geographic footprint of any hyperscaler, spanning over 60 regions.14 This expansive network is particularly critical for multinational organizations that must navigate complex data sovereignty and regulatory compliance mandates.
 Azure performs exceptionally well in compliance and enterprise ecosystem integration, but shares the same fundamental weaknesses as AWS regarding high egress fees, complex Kubernetes management (AKS), and the inherent "GPU tax" of hypervisor-based virtualization.4 However, Azure's unique market position is heavily bolstered by its exclusive, deep-rooted partnership with OpenAI, fundamentally transforming the platform into the requisite infrastructure layer for enterprises standardizing on GPT-class models.
 
-
-
 # OCI 
 provides a unique multi-cloud routing capability: the Azure Interconnect. This feature offers a high-speed, low-latency connection directly into Microsoft Azure with absolutely no data egress charges in supported regions, allowing enterprises to maintain their application front-ends in Azure while utilizing OCI's superior bare-metal clusters for backend AI training
 Furthermore, OCI’s security features—including Cloud Guard (threat detection), Security Zones (policy enforcement), and Vault (key management)—are enabled by default and provided at no additional cost, contrasting sharply with other hyperscalers that monetize these capabilities as add-on services
@@ -29,7 +27,8 @@ Furthermore, OCI’s security features—including Cloud Guard (threat detection
 # Coreweave
 The rigorous benchmarking report validated CoreWeave's absolute dominance across security, storage, orchestration, and reliability. Specifically, the evaluation highlighted CoreWeave's proprietary CAIOS and LOTA storage systems, its advanced penetration testing, and its active/passive health checks that deliver an industry-leading 96% goodput (compared to the 90% industry average).
 CAIOS (CoreWeave AI Object Storage): This is CoreWeave’s proprietary storage system. AI models require absolutely massive datasets to train. CAIOS is designed to manage and retrieve that data at scale without the bottlenecks typical of standard cloud storage.
-Asset-level delayed draw term loans require CW to satisfy lenders with revenue predictability which is secures through long-term contract lockins of 4-6 yers.
+Hailed for its proprietary and best-in-class scheduling and orchestration software, SUNK (Slurm on Kubernetes). SUNK lets teams run both Slurm-based training jobs and Kubernetes-based inference workloads on the same underlying pool of compute, increasing utilization.
+Asset-level delayed draw term loans require CW to satisfy lenders with revenue predictability which is secures through long-term contract lockins of 4-6 years.
 
 # Nebius 
 CW of Europe; focus on open source rather than proprietary nature of CW agenda. Introduced "Token Factory" in November 2025 to host over 60 leading open-source models (incl. deepseek, llama, qwen, nvidia nemotron etc.), using an openAI-compatible API (devs can easily swap out proprietary models such as chatgpt for open-source models hosted by Nebius.). Token Factory is also for post-training to customize open-weight models with specific data (fine-tuning, distillation). 

@@ -385,6 +385,11 @@ details[open].co-expand summary::before{content:'▾';}
 .icp-group-row td{font-family:var(--mono);font-size:7.5px;text-transform:uppercase;letter-spacing:.1em;padding:7px 12px 3px!important;background:var(--bg2);color:var(--dim);font-weight:600;}
 .icp-svc{vertical-align:top;padding:6px 10px 5px!important;min-width:160px;}
 .srv-tag{display:inline-block;font-family:var(--mono);font-size:6.5px;padding:1px 5px;border-radius:2px;border:1px solid var(--border);color:var(--dim2);background:var(--bg3);margin:1px 1px 0 0;white-space:nowrap;line-height:1.5;}
+/* ── COLLAPSIBLE BONUS CARD ── */
+.co-card.collapsed .co-card-body{display:none;}
+.co-card.collapsed .co-top{cursor:pointer;}
+.co-collapse-hint{font-family:var(--mono);font-size:7px;color:var(--dim2);letter-spacing:.07em;margin-left:auto;padding-left:10px;flex-shrink:0;white-space:nowrap;}
+.co-card:not(.collapsed) .co-collapse-hint{display:none;}
 .fit-y{text-align:center;font-weight:700;font-size:13px;color:#10b981;background:rgba(16,185,129,.14);border:1px solid rgba(16,185,129,.28);border-radius:4px;}
 .fit-c{text-align:center;font-weight:700;font-size:13px;color:#6366f1;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);border-radius:4px;}
 .fit-p{text-align:center;font-weight:700;font-size:13px;color:#f59e0b;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.25);border-radius:4px;}
@@ -478,6 +483,32 @@ details[open].co-expand summary::before{content:'▾';}
 
 /* Stacked col for Oracle card under GCP in hyperscaler rankings */
 .co-col-stack{display:flex;flex-direction:column;gap:13px;}
+
+/* ── CULINARY ANALOGY PANELS ── */
+.analogy-section{padding:10px 12px 12px;border-radius:7px;border:1px solid var(--border);background:var(--bg3);}
+.analogy-eyebrow{font-family:var(--mono);font-size:6.5px;text-transform:uppercase;letter-spacing:.12em;color:var(--dim2);margin-bottom:3px;}
+.analogy-title{font-family:var(--display);font-size:13px;line-height:1.15;margin-bottom:8px;}
+.analogy-caption{font-family:var(--mono);font-size:7px;color:var(--dim2);margin-top:7px;text-align:center;letter-spacing:.04em;}
+/* Grid — Hyperscaler */
+.anv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;}
+.anv-block{padding:5px 7px;border-radius:4px;border:1px solid var(--border);font-family:var(--mono);font-size:8px;color:var(--dim2);text-align:center;background:var(--bg2);}
+.anv-block.anv-hi{border-color:var(--h);color:var(--h);background:var(--h-dim);font-weight:700;}
+/* Steak — Neocloud */
+.anv-steak-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;}
+.anv-steak{width:100%;padding:10px 14px;border-radius:5px;border:2px solid var(--n);background:var(--n-dim);font-family:var(--display);font-size:16px;text-align:center;color:var(--n);letter-spacing:.05em;box-sizing:border-box;}
+.anv-quality{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;}
+.anv-qtag{font-family:var(--mono);font-size:7px;padding:2px 7px;border-radius:3px;border:1px solid var(--n);color:var(--n);background:var(--n-dim);}
+/* Flow — Orchestrator */
+.anv-flow{display:flex;align-items:center;gap:5px;flex-wrap:nowrap;width:100%;}
+.anv-flow-node{padding:5px 9px;border-radius:5px;border:1px solid var(--o);background:var(--o-dim);font-family:var(--mono);font-size:8px;color:var(--o);white-space:nowrap;flex-shrink:0;}
+.anv-flow-arrow{font-size:12px;color:var(--dim2);flex-shrink:0;}
+.anv-flow-multi{display:flex;flex-direction:column;gap:4px;}
+/* Market — Aggregator */
+.anv-market{display:flex;align-items:flex-end;gap:5px;height:68px;}
+.anv-stall{display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:2px;flex:1;}
+.anv-stall-bar{width:100%;border-radius:3px 3px 0 0;}
+.anv-stall-label{font-family:var(--mono);font-size:6.5px;color:var(--dim2);text-align:center;white-space:nowrap;}
+.anv-stall-price{font-family:var(--mono);font-size:7px;color:var(--a);text-align:center;white-space:nowrap;}
 </style>
 </head>
 <body>
@@ -752,7 +783,7 @@ details[open].co-expand summary::before{content:'▾';}
         <div class="mc-code" style="color:var(--h);">H</div>
         <div class="mc-name" style="color:var(--h);">Hyperscaler</div>
         <div class="mc-tagline">AWS · GCP · Azure · Oracle</div>
-        <div class="mc-desc">Full-stack cloud with global compliance, managed ML services, and custom <span class="tip" data-tip="Custom AI ASICs: Google TPU, AWS Trainium, Azure Maia. Only hyperscalers design their own chips — neoclouds procure NVIDIA GPUs.">silicon</span>. Owns the full L−1 → L7 stack.</div>
+        <div class="mc-desc">Full-stack cloud with global compliance, managed ML services, and custom <span class="tip" data-tip="Custom AI ASICs: Google TPU, AWS Trainium, Azure Maia. Only hyperscalers design their own chips — neoclouds procure NVIDIA GPUs.">silicon</span></div>
         <div class="mc-abs"><span class="mc-ab on">BMaaS</span><span class="mc-ab on">GPUaaS</span><span class="mc-ab on">MLaaS</span><span class="mc-ab on">WaaS</span></div>
         <div class="mc-capex"><span class="mc-capex-label">CapEx</span><div class="mc-capex-dots"><div class="mc-capex-dot" style="background:var(--h);"></div><div class="mc-capex-dot" style="background:var(--h);"></div><div class="mc-capex-dot" style="background:var(--h);"></div><div class="mc-capex-dot" style="background:var(--h);"></div><div class="mc-capex-dot" style="background:var(--h);"></div></div><span style="font-family:var(--mono);font-size:7.5px;color:var(--dim);">Extreme</span></div>
         <div class="mc-examples">AWS · GCP · Azure · Oracle · Pricing +30–50% vs neoclouds</div>
@@ -770,7 +801,7 @@ details[open].co-expand summary::before{content:'▾';}
         <div class="mc-code" style="color:var(--o);">O</div>
         <div class="mc-name" style="color:var(--o);">Orchestrator</div>
         <div class="mc-tagline">Together AI · Lambda · Modal · Run:ai</div>
-        <div class="mc-desc">Software control-plane above raw infrastructure. Owns <span class="tip" data-tip="Scheduling, quota management, experiment tracking, fine-tune APIs. Some hybrid orchestrators (Together AI, Lambda) also own partial GPU capacity.">L3–L7 software</span>. Some own partial compute (hybrid orchestrators).</div>
+        <div class="mc-desc">Software control-plane above raw infrastructure. Owns <span class="tip" data-tip="Scheduling, quota management, experiment tracking, fine-tune APIs. Some hybrid orchestrators (Together AI, Lambda) also own partial GPU capacity.">L3–6 software</span>. Some own partial compute (hybrid orchestrators).</div>
         <div class="mc-abs"><span class="mc-ab">BMaaS</span><span class="mc-ab on">GPUaaS</span><span class="mc-ab on">MLaaS</span><span class="mc-ab">WaaS</span></div>
         <div class="mc-capex"><span class="mc-capex-label">CapEx</span><div class="mc-capex-dots"><div class="mc-capex-dot" style="background:var(--o);"></div><div class="mc-capex-dot" style="background:var(--o);"></div><div class="mc-capex-dot" style="background:rgba(128,128,128,0.15);"></div><div class="mc-capex-dot" style="background:rgba(128,128,128,0.15);"></div><div class="mc-capex-dot" style="background:rgba(128,128,128,0.15);"></div></div><span style="font-family:var(--mono);font-size:7.5px;color:var(--dim);">Low–Med</span></div>
         <div class="mc-examples">Together AI · Lambda · Modal · Run:ai (NVIDIA) · Per-job / per-token pricing</div>
@@ -802,13 +833,6 @@ details[open].co-expand summary::before{content:'▾';}
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>Stack depth (L−1 → L7)</td>
-              <td><div class="s4-pip-row"><div class="s4-pip" style="background:var(--h);"></div><div class="s4-pip" style="background:var(--h);"></div><div class="s4-pip" style="background:var(--h);"></div><div class="s4-pip" style="background:var(--h);"></div><div class="s4-pip" style="background:var(--h);"></div></div><div class="s4-pip-label">Very High</div></td>
-              <td><div class="s4-pip-row"><div class="s4-pip" style="background:var(--n);"></div><div class="s4-pip" style="background:var(--n);"></div><div class="s4-pip" style="background:var(--n);"></div><div class="s4-pip" style="background:var(--n);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div></div><div class="s4-pip-label">High</div></td>
-              <td><div class="s4-pip-row"><div class="s4-pip" style="background:var(--o);"></div><div class="s4-pip" style="background:var(--o);"></div><div class="s4-pip" style="background:var(--o);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div></div><div class="s4-pip-label">Medium</div></td>
-              <td><div class="s4-pip-row"><div class="s4-pip" style="background:var(--a);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div></div><div class="s4-pip-label">Very Low</div></td>
-            </tr>
             <tr>
               <td>Customer operational overhead</td>
               <td><div class="s4-pip-row"><div class="s4-pip" style="background:var(--h);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div><div class="s4-pip" style="background:rgba(128,128,128,0.12);"></div></div><div class="s4-pip-label">Very Low</div></td>
@@ -866,63 +890,63 @@ details[open].co-expand summary::before{content:'▾';}
           <tr>
             <td><div class="stk-layer-badge"><div class="stk-layer-dot" style="background:#8e44ad;"></div><span class="stk-layer-name">L7 Application &amp; End-User Interface</span></div><div class="stk-layer-nodes"><span class="tip" data-tip="RAG: Retrieval-Augmented Generation. Retrieves documents for context before generation. Reduces hallucination and enables up-to-date knowledge without retraining.">RAG pipelines</span> · <span class="tip" data-tip="AI Agents: LLMs with tool-calling, memory, and planning. Agentic workloads generate 5–30x more tokens per user session than simple Q&A — fundamentally different infrastructure requirements.">Agents</span> · Chat UI · API products</div></td>
             <td><div class="stk-cov"><span class="hm-pill full">✓</span><div class="stk-node">Gemini, Copilot, Bedrock, SageMaker Studio</div></div></td>
-            <td><div class="stk-cov"><span class="hm-pill none">—</span><div class="stk-node">Infrastructure only; no end-user apps</div></div></td>
-            <td><div class="stk-cov"><span class="hm-pill full">✓</span><div class="stk-node">Fine-tune studio, inference API, dev portal</div></div></td>
-            <td><div class="stk-cov"><span class="hm-pill partial">~</span><div class="stk-node">Single API across 40+ underlying providers</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill none">—</span><div class="stk-node">User brings own apps — neoclouds provide no L7</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill none">—</span><div class="stk-node">User brings own apps — orchestrators surface an API, not an application</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill none">—</span><div class="stk-node">User brings own apps — aggregators provide raw GPU access only</div></div></td>
           </tr>
           <tr>
             <td><div class="stk-layer-badge"><div class="stk-layer-dot" style="background:#e84393;"></div><span class="stk-layer-name">L6 Control Plane · FinOps · Security</span></div><div class="stk-layer-nodes"><span class="tip" data-tip="DCGM: NVIDIA Data Center GPU Manager. Exposes 300+ GPU metrics (XID errors, NVLink Rx/Tx, thermal, PCIe replays). The foundation of all GPU cluster health monitoring.">DCGM</span>/Grafana · <span class="tip" data-tip="Health checks: automated probes that detect unhealthy GPU nodes and drain them before jobs fail. Active (inject errors) + passive (background polling). CoreWeave is the gold standard.">Health checks</span> · IAM/SOC2 · FinOps</div></td>
             <td><div class="stk-cov"><span class="hm-pill full">✓</span><div class="stk-node">Azure Monitor, CloudWatch, SOC2/FedRAMP</div></div></td>
-            <td><div class="stk-cov"><span class="hm-pill partial">~</span><div class="stk-node">Monitoring + health checks vary per provider</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill full">✓</span><div class="stk-node">Billing, access management, health monitoring — fully owned</div></div></td>
             <td><div class="stk-cov"><span class="hm-pill full">✓</span><div class="stk-node">Cost attribution, observability, model routing</div></div></td>
-            <td><div class="stk-cov"><span class="hm-pill limited">·</span><div class="stk-node">Unified billing; no infra observability</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill full">✓</span><div class="stk-node">Storefront, billing engine, and access gateway — the aggregator's primary owned layer</div></div></td>
           </tr>
           <tr>
             <td><div class="stk-layer-badge"><div class="stk-layer-dot" style="background:#e67e22;"></div><span class="stk-layer-name">L5 Data &amp; Serving Infrastructure</span></div><div class="stk-layer-nodes"><span class="tip" data-tip="POSIX filesystem: standard file I/O. Training needs POSIX (Lustre, GPFS, Weka, VAST) for fast random dataset access. Object storage (S3-compatible) is used for checkpoints and model weights.">POSIX/VAST/Weka</span> · Object storage · <span class="tip" data-tip="KV Cache: stores key-value attention computations for processed tokens, enabling fast generation. PagedAttention (vLLM) manages KV cache allocation like OS virtual memory.">KV cache</span> · <span class="tip" data-tip="API gateway: entry point for inference requests. Handles auth, rate limiting, routing, load balancing. Adds 1–5ms latency on high-throughput serving paths.">API gateway</span></div></td>
             <td><div class="stk-cov"><span class="hm-pill full">✓</span><div class="stk-node">S3, GCS, ADLS + managed APIs</div></div></td>
-            <td><div class="stk-cov"><span class="hm-pill partial">~</span><div class="stk-node">VAST/Weka storage owned; serving layer minimal</div></div></td>
-            <td><div class="stk-cov"><span class="hm-pill full">✓</span><div class="stk-node">Inference endpoints, semantic cache, model store</div></div></td>
-            <td><div class="stk-cov"><span class="hm-pill partial">~</span><div class="stk-node">Unified API; storage on underlying provider</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill full">✓</span><div class="stk-node">High-speed storage (VAST/Weka), checkpointing, and model artefact management</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill partial">~</span><div class="stk-node">Integrates with host storage — inference endpoints but not raw data infrastructure</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill none">—</span><div class="stk-node">User brings own data, models, and serving infrastructure to the rented hardware</div></div></td>
           </tr>
           <tr>
             <td><div class="stk-layer-badge"><div class="stk-layer-dot" style="background:#9b59b6;"></div><span class="stk-layer-name">L4 Workload Execution</span></div><div class="stk-layer-nodes"><span class="tip" data-tip="vLLM: inference serving engine. PagedAttention manages KV-cache like OS virtual memory pages, enabling 24x higher throughput vs naive implementations.">vLLM</span>/SGLang · FSDP/Megatron · <span class="tip" data-tip="LoRA: Low-Rank Adaptation. Fine-tunes only ~0.1% of parameters, reducing GPU memory by 10–30x vs full fine-tuning.">LoRA/QLoRA</span> · <span class="tip" data-tip="Prefill-decode disaggregation: sends compute-intensive prompt processing to one GPU cluster, autoregressive generation to another. Matches hardware to the bottleneck type.">P/D disaggregation</span></div></td>
-            <td><div class="stk-cov"><span class="hm-pill partial">~ Managed</span><div class="stk-node">SageMaker, Vertex AI, Azure ML</div></div></td>
-            <td><div class="stk-cov"><span class="hm-pill limited">·</span><div class="stk-node">Provides GPU; customer runs all ML frameworks</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill full">✓</span><div class="stk-node">SageMaker, Vertex AI, Azure ML — fully managed training and inference execution</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill partial">~</span><div class="stk-node">Integrate / partner — some (Nebius Token Factory, CoreWeave+W&amp;B) offer managed execution; customer typically runs own frameworks</div></div></td>
             <td><div class="stk-cov"><span class="hm-pill full">✓</span><div class="stk-node">Inference engine, fine-tune pipelines</div></div></td>
-            <td><div class="stk-cov"><span class="hm-pill none">—</span></div></td>
+            <td><div class="stk-cov"><span class="hm-pill none">—</span><div class="stk-node">User brings own ML frameworks, inference engines, and workload tools</div></div></td>
           </tr>
           <tr>
             <td><div class="stk-layer-badge"><div class="stk-layer-dot" style="background:#5ab86a;"></div><span class="stk-layer-name">L3 Virtualisation &amp; Orchestration</span></div><div class="stk-layer-nodes">Kubernetes + <span class="tip" data-tip="GPU Operator: NVIDIA's K8s operator that automates GPU driver installation, device plugin, and DCGM monitoring sidecar. Required for any GPU workload on Kubernetes.">GPU Operator</span> · <span class="tip" data-tip="Slurm: dominant HPC batch scheduler for large distributed training runs. Used by all frontier AI labs. Manages node allocation, job queues, partitions.">Slurm</span> · <span class="tip" data-tip="SonK (Slurm-on-Kubernetes): runs Slurm and K8s on the same hardware pool simultaneously. Implementations: CoreWeave SUNK (proprietary), Nebius Soperator (open-source), SchedMD Slinky.">SonK</span> · BM/vGPU · Spot mgmt</div></td>
             <td><div class="stk-cov"><span class="hm-pill full">✓</span><div class="stk-node">EKS, GKE, AKS + CycleCloud/Slurm</div></div></td>
             <td><div class="stk-cov"><span class="hm-pill full">✓</span><div class="stk-node">SonK maturity = #1 differentiator</div></div></td>
             <td><div class="stk-cov"><span class="hm-pill full">✓</span><div class="stk-node">Multi-cloud federation, quota, scheduling</div></div></td>
-            <td><div class="stk-cov"><span class="hm-pill partial">~</span><div class="stk-node">Routes to cheapest provider; no own infra</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill full">✓</span><div class="stk-node">Container provisioning and job routing — the aggregator's core owned layer</div></div></td>
           </tr>
           <tr>
             <td><div class="stk-layer-badge"><div class="stk-layer-dot" style="background:#5aace8;"></div><span class="stk-layer-name">L2 Firmware, Drivers &amp; Libraries</span></div><div class="stk-layer-nodes"><span class="tip" data-tip="CUDA: NVIDIA's parallel compute platform. Every PyTorch operation on GPU becomes CUDA kernel calls. Version compatibility is the most common source of performance bugs.">CUDA</span>/ROCm · <span class="tip" data-tip="NCCL: NVIDIA Collective Communications Library. Manages allreduce/allgather in distributed training. Misconfigured NCCL topology (wrong topology.conf) is the #1 cause of low MFU.">NCCL topology</span> · cuDNN · <span class="tip" data-tip="MIG: Multi-Instance GPU. An H100 can be split into up to 7 isolated slices for smaller workloads. Hardware-enforced tenant isolation.">MIG</span> · BMC/IPMI</div></td>
-            <td><div class="stk-cov"><span class="hm-pill partial">~</span><div class="stk-node">Vendor CUDA/ROCm; own TensorRT</div></div></td>
-            <td><div class="stk-cov"><span class="hm-pill partial">~</span><div class="stk-node">NCCL topology config = key differentiator</div></div></td>
-            <td><div class="stk-cov"><span class="hm-pill limited">·</span></div></td>
-            <td><div class="stk-cov"><span class="hm-pill none">—</span></div></td>
+            <td><div class="stk-cov"><span class="hm-pill full">✓</span><div class="stk-node">CUDA/ROCm, TensorRT, custom drivers — fully managed and tuned</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill full">✓</span><div class="stk-node">NCCL topology, CUDA/ROCm, BMC firmware — fully owned and tuned for maximum throughput</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill limited">·</span><div class="stk-node">Relies on host — orchestrators have no firmware or driver access</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill limited">·</span><div class="stk-node">Relies on third-party host — aggregators have no firmware access</div></div></td>
           </tr>
           <tr>
             <td><div class="stk-layer-badge"><div class="stk-layer-dot" style="background:#e8c840;"></div><span class="stk-layer-name">L1 Physical Infrastructure</span></div><div class="stk-layer-nodes">DC (owned/colo) · 40–500MW power · Liquid cooling · <span class="tip" data-tip="HGX H100/B200: 8-GPU SXM server node with 6.4TB/s NVLink within the node. The physical building block of every GPU cluster.">HGX nodes</span> · <span class="tip" data-tip="InfiniBand NDR 400G: RDMA-capable interconnect between GPU nodes at 400Gb/s per port. SHARP in-network allreduce reduces CPU round-trips. IB fabric quality is the primary hardware differentiator.">InfiniBand NDR 400G</span></div></td>
             <td><div class="stk-cov"><span class="hm-pill full">✓</span><div class="stk-node">Global DC estate; 40–500MW facilities</div></div></td>
             <td><div class="stk-cov"><span class="hm-pill full">✓</span><div class="stk-node">IB fabric ownership = core moat</div></div></td>
-            <td><div class="stk-cov"><span class="hm-pill limited">·</span><div class="stk-node">Some own partial capacity (Together AI)</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill none">—</span><div class="stk-node">None — orchestrators own no physical infrastructure</div></div></td>
             <td><div class="stk-cov"><span class="hm-pill none">—</span></div></td>
           </tr>
           <tr>
             <td><div class="stk-layer-badge"><div class="stk-layer-dot" style="background:#94a3b8;"></div><span class="stk-layer-name">L0 Silicon Supply Chain</span></div><div class="stk-layer-nodes"><span class="tip" data-tip="Custom AI ASICs: Google TPU v5e/5p, AWS Trainium2, Azure Maia 100. Only hyperscalers design their own AI chips. Neoclouds procure NVIDIA H100/H200/B200 from the open market.">Custom ASICs</span> · Foundry (TSMC) · <span class="tip" data-tip="Advanced Packaging (CoWoS): stacks HBM3e directly on the GPU die, delivering up to 5TB/s memory bandwidth on B200. TSMC CoWoS capacity is the primary bottleneck for H200/B200 supply.">CoWoS packaging</span> · GPU procurement</div></td>
             <td><div class="stk-cov"><span class="hm-pill full">✓</span><div class="stk-node">TPU, Trainium2, Maia 100, Oracle ASIC</div></div></td>
-            <td><div class="stk-cov"><span class="hm-pill limited">·</span><div class="stk-node">Allocated H100/H200/B200/GB200</div></div></td>
-            <td><div class="stk-cov"><span class="hm-pill limited">·</span><div class="stk-node">Leases from neocloud/hyperscaler</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill full">✓</span><div class="stk-node">Allocated and owned: direct procurement of H100/H200/B200/GB200</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill none">—</span><div class="stk-node">None — orchestrators lease compute from neoclouds/hyperscalers</div></div></td>
             <td><div class="stk-cov"><span class="hm-pill none">—</span></div></td>
           </tr>
           <tr>
             <td><div class="stk-layer-badge"><div class="stk-layer-dot" style="background:#e74c3c;"></div><span class="stk-layer-name">L−1 Energy &amp; Connectivity</span></div><div class="stk-layer-nodes"><span class="tip" data-tip="Power Purchase Agreements: long-term contracts with power generators. Crusoe uses methane gas from oil wells. Hyperscalers own or contract 40–500MW facilities.">PPAs</span> · Stranded gas · Submarine cables · AS/fiber ownership</div></td>
             <td><div class="stk-cov"><span class="hm-pill full">✓</span><div class="stk-node">Own DCs + power grids (100–500MW)</div></div></td>
-            <td><div class="stk-cov"><span class="hm-pill partial">~</span><div class="stk-node">Crusoe: stranded gas. Others: colo</div></div></td>
+            <td><div class="stk-cov"><span class="hm-pill limited">·</span><div class="stk-node">Relies on colocation providers and ISPs — no owned energy infrastructure</div></div></td>
             <td><div class="stk-cov"><span class="hm-pill none">—</span></div></td>
             <td><div class="stk-cov"><span class="hm-pill none">—</span></div></td>
           </tr>
@@ -1036,8 +1060,7 @@ details[open].co-expand summary::before{content:'▾';}
           <div class="dd-diff-text">The only model with credible end-to-end stack ownership. Wins on compliance breadth and Independent Software Vendor (ISV) ecosystem — not raw GPU performance.</div>
         </div>
         <div class="dd-kpi-row anim anim-3">
-          <div class="dd-kpi" style="border-color:rgba(99,102,241,.25);"><div class="dd-kpi-label">vs CoreWeave (baseline)</div><div class="dd-kpi-value" style="color:var(--h);">+30–50%</div></div>
-          <div class="dd-kpi" style="border-color:rgba(99,102,241,.25);"><div class="dd-kpi-label">Capital intensity</div><div class="dd-kpi-value" style="color:var(--h);">Extreme</div></div>
+          <div class="dd-kpi" style="border-color:rgba(99,102,241,.25);"><div class="dd-kpi-label">Price vs Neoclouds</div><div class="dd-kpi-value" style="color:var(--h);">up to 50%</div></div>
         </div>
         <div class="anim anim-4">
           <div class="dd-section-label">Stack Ownership (L−1 → L7)</div>
@@ -1047,7 +1070,7 @@ details[open].co-expand summary::before{content:'▾';}
             <div class="dd-ss-cell full" style="background:#e8c840;" title="L1 Physical: global DC estate, HGX nodes">L1</div>
             <div class="dd-ss-cell full" style="background:#5aace8;" title="L2 Firmware: CUDA, TensorRT, custom drivers">L2</div>
             <div class="dd-ss-cell full" style="background:#5ab86a;" title="L3 Orchestration: EKS/GKE/AKS + Slurm/CycleCloud">L3</div>
-            <div class="dd-ss-cell partial" style="background:#9b59b6;" title="L4 Execution: managed training/inference (SageMaker, Vertex AI)">L4</div>
+            <div class="dd-ss-cell full" style="background:#9b59b6;" title="L4 Execution: fully managed — SageMaker, Vertex AI, Azure ML">L4</div>
             <div class="dd-ss-cell full" style="background:#e67e22;" title="L5 Data: S3/GCS/ADLS, model serving APIs">L5</div>
             <div class="dd-ss-cell full" style="background:#e84393;" title="L6 Control: CloudWatch, Azure Monitor, IAM, FedRAMP, SOC2">L6</div>
             <div class="dd-ss-cell full" style="background:#8e44ad;" title="L7 App: Copilot, Gemini, Bedrock, SageMaker Studio">L7</div>
@@ -1070,11 +1093,24 @@ details[open].co-expand summary::before{content:'▾';}
         </div>
       </div>
       <div class="dd-right">
+        <div class="analogy-section" style="border-color:rgba(99,102,241,.2);">
+          <div class="analogy-eyebrow">Business Model · Culinary Analogy</div>
+          <div class="analogy-title" style="color:var(--h);">The All-You-Can-Eat Resort</div>
+          <div class="anv-grid">
+            <div class="anv-block">Database</div>
+            <div class="anv-block">Auth &amp; IAM</div>
+            <div class="anv-block anv-hi">★ GPU</div>
+            <div class="anv-block">CDN</div>
+            <div class="anv-block">ML Platform</div>
+            <div class="anv-block">DNS &amp; VPC</div>
+          </div>
+          <div class="analogy-caption">200+ services — GPU is one item buried in the menu</div>
+        </div>
         <div class="dd-section-label anim anim-1">Historical Edge</div>
         <div class="edge-list anim anim-2">
           <div class="edge-item"><div class="edge-dot" style="background:var(--h);"></div><div><strong>Compliance portfolio:</strong> SOC2, ISO27001, FedRAMP, HIPAA, PCI DSS, DoD IL5. No specialist can match this breadth. Regulated industries (healthcare, finance, government) default to hyperscalers regardless of price.</div></div>
           <div class="edge-item"><div class="edge-dot" style="background:var(--h);"></div><div><strong>Data gravity:</strong> Hyperscalers are often the 'basecamp' for enterprise data workloads, creating network effects that are difficult for competitors to replicate.</div></div>         
-          <div class="edge-item"><div class="edge-dot" style="background:var(--h);"></div><div><strong>ISV ecosystem:</strong> Thousands of SaaS integrations, marketplace tools, pre-built ML solutions (SageMaker, Vertex AI Pipelines, Azure ML) reduce time-to-production for enterprise teams.</div></div>
+          <div class="edge-item"><div class="edge-dot" style="background:var(--h);"></div><div><strong>Independent Software Vendor (ISV) ecosystem:</strong> Thousands of SaaS integrations, marketplace tools, pre-built ML solutions (SageMaker, Vertex AI Pipelines, Azure ML) reduce time-to-production for enterprise teams.</div></div>
           <div class="edge-item"><div class="edge-dot" style="background:var(--h);"></div><div><strong>Custom silicon cost advantage:</strong> <span class="tip" data-tip="Google TPU v5e: 393 TFLOPS at lower $/FLOP than H100 for matrix-multiply-heavy workloads. AWS Trainium2: 3x better perf/$ than H100 for training on select models. Neither requires NVIDIA margin.">TPU/Trainium/Maia</span> create workload-specific cost advantages unreachable by GPU-procuring neoclouds.</div></div>
         </div>
         <div class="anim anim-3">
@@ -1108,8 +1144,8 @@ details[open].co-expand summary::before{content:'▾';}
           <div class="co-meta"><span class="co-meta-pill pub">Public · GOOGL · NASDAQ</span><span class="co-meta-pill na">HQ: US</span><span class="co-meta-pill">Global</span></div>
           <div class="co-score-row"><div class="co-total" style="color:#b45309;">36</div><div class="co-total-label">/ 50 · Gold</div></div>
           <div class="co-radar-wrap" id="radar-gcp"></div>
-          <div class="co-diff" style="color:#b45309;border-color:#b45309;background:rgba(180,83,9,0.07);">GCP's core infrastructure edge is its <span class="tip" data-tip="Google routes enterprise traffic over a private global subsea fiber network rather than the public internet — delivering consistent, low-latency connectivity for globally distributed inference and multi-region training pipelines, where network jitter silently degrades GPU utilisation.">private global fiber network</span>: enterprise traffic routed entirely off the public internet, providing consistent latency for distributed workloads at scale. Reinforced by <span class="tip" data-tip="BeyondCorp: Google's zero-trust security model. Binary Authorization for containerised deployments and Confidential Computing are enabled by default — particularly relevant for regulated industries like finance and healthcare.">BeyondCorp zero-trust security</span> enabled by default.</div>
-          <div class="co-oneliner">A full-stack hyperscaler with best-in-class Kubernetes orchestration, proprietary TPUs, and Vertex AI integration — the natural fit for JAX-native research teams and regulated enterprise ML pipelines.</div>
+          <div class="co-diff" style="color:#b45309;border-color:#b45309;background:rgba(180,83,9,0.07);">GCP's core infrastructure edge is its <span class="tip" data-tip="Google routes enterprise traffic over a private global subsea fiber network rather than the public internet — delivering consistent, low-latency connectivity for globally distributed inference and multi-region training pipelines, where network jitter silently degrades GPU utilisation.">private global fiber network</span>: enterprise traffic routed entirely off the public internet, providing consistent latency for distributed workloads at scale. Reinforced by their proprietary <span class="tip" data-tip="BeyondCorp: Google's zero-trust security model. Binary Authorization for containerised deployments and Confidential Computing are enabled by default — particularly relevant for regulated industries like finance and healthcare.">BeyondCorp zero-trust security (confidential computing).</span>.</div>
+          <div class="co-oneliner">A full-stack hyperscaler with best-in-class Kubernetes orchestration, proprietary TPUs, and Vertex AI integration. The natural fit for research teams deep in the Google ecosystem and regulated enterprise ML pipelines.</div>
           <div class="co-stats">
             <div class="co-stat-item"><div class="co-stat-label">Pricing</div><div class="co-stat-bar"><div class="co-stat-pip on" style="background:#b45309;"></div><div class="co-stat-pip on" style="background:#b45309;"></div><div class="co-stat-pip off" style="background:#b45309;"></div><div class="co-stat-pip off" style="background:#b45309;"></div><div class="co-stat-pip off" style="background:#b45309;"></div><span class="co-stat-val">2/5 · ~$2.80–4.80/hr H100</span></div></div>
             <div class="co-stat-item"><div class="co-stat-label">Flexibility</div><div class="co-stat-bar"><div class="co-stat-pip on" style="background:#b45309;"></div><div class="co-stat-pip on" style="background:#b45309;"></div><div class="co-stat-pip on" style="background:#b45309;"></div><div class="co-stat-pip off" style="background:#b45309;"></div><div class="co-stat-pip off" style="background:#b45309;"></div><span class="co-stat-val">3/5 · On-Demand + CUD 1–3yr</span></div></div>
@@ -1126,9 +1162,10 @@ details[open].co-expand summary::before{content:'▾';}
             </div></div>
           </details>
         </div>
-        <div class="co-card anim anim-4" style="border-top:2px solid #f59e0b;">
+        <div class="co-card anim anim-4 collapsed" id="oracle-card" style="border-top:2px solid #f59e0b;">
           <div class="co-rank">★</div>
-          <div class="co-top"><div class="co-name-wrap"><div class="co-name">Oracle OCI</div><span class="tbadge gold">Gold</span></div><div class="co-attr"><span class="attr-pill" style="color:#10b981;border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.06);">NVIDIA Partner</span><span class="attr-pill" style="color:#c084fc;border-color:rgba(192,132,252,.25);background:rgba(192,132,252,.06);">FM Lab</span></div></div>
+          <div class="co-top" onclick="toggleOracleCard()" style="cursor:pointer;user-select:none;"><div class="co-name-wrap"><div class="co-name">Oracle OCI</div><span class="tbadge gold">Gold</span></div><div class="co-attr"><span class="attr-pill" style="color:#10b981;border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.06);">NVIDIA Partner</span><span class="attr-pill" style="color:#c084fc;border-color:rgba(192,132,252,.25);background:rgba(192,132,252,.06);">FM Lab</span></div><span class="co-collapse-hint">▸ click to expand</span></div>
+          <div class="co-card-body">
           <div class="co-meta"><span class="co-meta-pill pub">Public · ORCL · NYSE</span><span class="co-meta-pill na">HQ: US</span><span class="co-meta-pill">Global (45 regions)</span></div>
           <div class="co-score-row"><div class="co-total" style="color:#b45309;">39</div><div class="co-total-label">/ 50 · Highest CM score</div></div>
           <div class="co-radar-wrap" id="radar-oracle"></div>
@@ -1149,6 +1186,7 @@ details[open].co-expand summary::before{content:'▾';}
               <div class="cs-row"><span class="cs-k">Orch</span><span class="cs-v">OKE (K8s) + Bare metal HPC · No managed Slurm</span></div>
             </div></div>
           </details>
+          </div>
         </div>
         </div>
         <div class="co-card anim anim-2" style="border-top:2px solid #b45309;">
@@ -1158,7 +1196,7 @@ details[open].co-expand summary::before{content:'▾';}
           <div class="co-score-row"><div class="co-total" style="color:#b45309;">34</div><div class="co-total-label">/ 50 · Gold</div></div>
           <div class="co-radar-wrap" id="radar-azure"></div>
           <div class="co-diff" style="color:#b45309;border-color:#b45309;background:rgba(180,83,9,0.07);">Azure is the exclusive cloud partner for OpenAI — the mandatory infrastructure layer for enterprises deploying <span class="tip" data-tip="GPT-class models: the family of large language models developed by OpenAI (GPT-4o, o1, o3). Azure is the only cloud where these can be deployed as managed, enterprise-grade endpoints with provisioned throughput and full SLA guarantees.">GPT-class models</span> in production. For Microsoft-heavy organisations, <span class="tip" data-tip="Azure Hybrid Benefit: a Microsoft licensing mechanism allowing businesses to repurpose existing on-premises Windows Server and SQL Server licenses to offset Azure VM costs — reducing compute rates by up to 80% for established enterprise customers already inside the Microsoft ecosystem.">Azure Hybrid Benefit</span> can offset GPU costs by up to 80%, making it the most financially accessible hyperscaler for teams already inside the Microsoft ecosystem.</div>
-          <div class="co-oneliner">Enterprise-first and government-cleared, with the exclusive OpenAI integration. Strongest for teams already in the Microsoft ecosystem — non-OpenAI workloads face genuine capacity constraints.</div>
+          <div class="co-oneliner">Leads the pack on security. Enterprise-first and government-cleared. Strongest for teams already in the Microsoft ecosystem — non-OpenAI workloads face capacity constraints.</div>
           <div class="co-stats">
             <div class="co-stat-item"><div class="co-stat-label">Pricing</div><div class="co-stat-bar"><div class="co-stat-pip on" style="background:#b45309;"></div><div class="co-stat-pip off" style="background:#b45309;"></div><div class="co-stat-pip off" style="background:#b45309;"></div><div class="co-stat-pip off" style="background:#b45309;"></div><div class="co-stat-pip off" style="background:#b45309;"></div><span class="co-stat-val">1/5 · ~$3–6/hr H100 (EA)</span></div></div>
             <div class="co-stat-item"><div class="co-stat-label">Flexibility</div><div class="co-stat-bar"><div class="co-stat-pip on" style="background:#b45309;"></div><div class="co-stat-pip on" style="background:#b45309;"></div><div class="co-stat-pip off" style="background:#b45309;"></div><div class="co-stat-pip off" style="background:#b45309;"></div><div class="co-stat-pip off" style="background:#b45309;"></div><span class="co-stat-val">2/5 · Mostly reserved / EA</span></div></div>
@@ -1181,7 +1219,7 @@ details[open].co-expand summary::before{content:'▾';}
           <div class="co-meta"><span class="co-meta-pill pub">Public · AMZN · NASDAQ</span><span class="co-meta-pill na">HQ: US</span><span class="co-meta-pill">Global</span></div>
           <div class="co-score-row"><div class="co-total" style="color:#94a3b8;">29</div><div class="co-total-label">/ 50 · Silver · #1 market share</div></div>
           <div class="co-radar-wrap" id="radar-aws"></div>
-          <div class="co-diff" style="color:#94a3b8;border-color:#94a3b8;background:rgba(148,163,184,0.07);">AWS's hardware differentiation is its own silicon: <span class="tip" data-tip="Trainium2: AWS-designed chip optimised for large model training — claims 3× better performance-per-dollar than H100 for certain architectures. Inferentia2: AWS chip for cheap, high-throughput inference serving. Both eliminate NVIDIA licensing margin for teams committed to the AWS ecosystem.">Trainium2 for training and Inferentia2 for inference</span>, the only credible non-NVIDIA alternative at hyperscale. In practice, most enterprise teams select AWS because their training data already lives in S3 — migrating petabytes to a competing cloud is a multi-year project.</div>
+          <div class="co-diff" style="color:#94a3b8;border-color:#94a3b8;background:rgba(148,163,184,0.07);">AWS's hardware differentiation is its own silicon: <span class="tip" data-tip="Trainium2: AWS-designed chip optimised for large model training — claims 3× better performance-per-dollar than H100 for certain architectures. Inferentia2: AWS chip for cheap, high-throughput inference serving. Both eliminate NVIDIA licensing margin for teams committed to the AWS ecosystem.">Trainium2 for training and Inferentia2 for inference</span>, the only credible non-NVIDIA alternative at hyperscale. In practice, most enterprise teams select AWS because their training data already lives in S3.</div>
           <div class="co-oneliner">The default enterprise choice by ecosystem gravity — 200+ integrated services, the deepest compliance portfolio, and data lock-in through S3 that makes switching a structural project regardless of raw GPU performance.</div>
           <div class="co-stats">
             <div class="co-stat-item"><div class="co-stat-label">Pricing</div><div class="co-stat-bar"><div class="co-stat-pip on" style="background:#94a3b8;"></div><div class="co-stat-pip off" style="background:#94a3b8;"></div><div class="co-stat-pip off" style="background:#94a3b8;"></div><div class="co-stat-pip off" style="background:#94a3b8;"></div><div class="co-stat-pip off" style="background:#94a3b8;"></div><span class="co-stat-val">1/5 · ~$3–5/hr H100 OD</span></div></div>
@@ -1191,7 +1229,7 @@ details[open].co-expand summary::before{content:'▾';}
           <details class="co-expand">
             <summary>Strengths, gaps &amp; contract details</summary>
             <div class="co-expand-inner"><div class="co-highlights">
-            <div class="co-hl">An OpenAI $38B GB200/GB300 deal and primary cloud for Anthropic validate AWS at frontier-lab scale. The broadest enterprise integration story of any cloud — 200+ services, deepest compliance portfolio, and FSx/S3 as the de facto home for most enterprise training datasets.</div>
+            <div class="co-hl">An OpenAI $38B GB200/GB300 deal and primary cloud for Anthropic validate AWS at frontier-lab scale. The broadest enterprise integration story of any cloud. 200+ services, deepest compliance portfolio, and FSx/S3 as the de facto home for most enterprise training datasets.</div>
             <div class="co-hl" style="color:rgba(185,28,28,.8);"><span class="tip" data-tip="SageMaker HyperPod: AWS's managed cluster service for large-scale AI training. In independent testing by SemiAnalysis, setup required 14 hours and 4 attempts due to poorly documented prerequisites and race conditions.">HyperPod Slurm</span> setup is the worst-rated experience tested. <span class="tip" data-tip="EFA (Elastic Fabric Adapter): AWS's proprietary high-speed networking fabric for GPU clusters. Unlike InfiniBand, it lacks standard IB tooling, making debugging interconnect performance issues significantly harder.">EFA networking</span> is opaque compared to InfiniBand tooling. Monitoring for Slurm clusters is near-absent, and AWS charges the highest egress fees of any major cloud.</div>
             </div><div class="co-spec" style="margin-top:6px;">
               <div class="cs-row"><span class="cs-k">Contract</span><span class="cs-v">On-demand · 1–3yr reserved · Savings Plans</span></div>
@@ -1225,21 +1263,20 @@ details[open].co-expand summary::before{content:'▾';}
           <div class="dd-diff-text">Cluster quality at the hardware layer — InfiniBand fabric, SonK orchestration maturity, and how fast the team catches and remediates failing GPU nodes.</div>
         </div>
         <div class="dd-kpi-row anim anim-3">
-          <div class="dd-kpi" style="border-color:rgba(16,185,129,.25);"><div class="dd-kpi-label">vs Azure (highest price)</div><div class="dd-kpi-value" style="color:var(--n);">−30–50%</div></div>
-          <div class="dd-kpi" style="border-color:rgba(16,185,129,.25);"><div class="dd-kpi-label">Capital intensity</div><div class="dd-kpi-value" style="color:var(--n);">High</div></div>
+          <div class="dd-kpi" style="border-color:rgba(16,185,129,.25);"><div class="dd-kpi-label">Price vs Hyperscalers</div><div class="dd-kpi-value" style="color:var(--n);">−30–50%</div></div>
         </div>
         <div class="anim anim-4">
           <div class="dd-section-label">Stack Ownership</div>
           <div class="dd-stack-strip">
-            <div class="dd-ss-cell partial" style="background:#e74c3c;" title="L-1 Energy: partial — Crusoe owns; most others use colo">L−1</div>
-            <div class="dd-ss-cell none" style="background:#94a3b8;" title="L0 Silicon: none — procures NVIDIA/AMD">L0</div>
+            <div class="dd-ss-cell limited" style="background:#e74c3c;" title="L-1 Energy: relies on colo providers and ISPs — no owned energy infrastructure">L−1</div>
+            <div class="dd-ss-cell full" style="background:#94a3b8;" title="L0 Silicon: fully owned — direct procurement of H100/H200/B200/GB200">L0</div>
             <div class="dd-ss-cell full" style="background:#e8c840;" title="L1 Physical: fully owned — HGX, IB fabric, DC">L1</div>
-            <div class="dd-ss-cell partial" style="background:#5aace8;" title="L2 Firmware: partial — configures CUDA, NCCL">L2</div>
+            <div class="dd-ss-cell full" style="background:#5aace8;" title="L2 Firmware: fully owned — NCCL topology, CUDA, BMC firmware tuned for maximum throughput">L2</div>
             <div class="dd-ss-cell full" style="background:#5ab86a;" title="L3 Orchestration: fully owned — K8s, Slurm, SonK">L3</div>
-            <div class="dd-ss-cell limited" style="background:#9b59b6;" title="L4 Execution: limited — customer runs all ML frameworks">L4</div>
-            <div class="dd-ss-cell partial" style="background:#e67e22;" title="L5 Data: partial — VAST/Weka storage; no serving API">L5</div>
-            <div class="dd-ss-cell partial" style="background:#e84393;" title="L6 Control: partial — DCGM + health checks vary per provider">L6</div>
-            <div class="dd-ss-cell none" style="background:#8e44ad;" title="L7 App: none — no end-user apps">L7</div>
+            <div class="dd-ss-cell partial" style="background:#9b59b6;" title="L4 Execution: integrate/partner — some (Nebius Token Factory, CoreWeave+W&B) offer managed pipelines; customer typically runs own frameworks">L4</div>
+            <div class="dd-ss-cell full" style="background:#e67e22;" title="L5 Data: fully owned — high-speed storage (VAST/Weka), checkpointing, model artefact management">L5</div>
+            <div class="dd-ss-cell full" style="background:#e84393;" title="L6 Control: fully owned — billing, access management, health monitoring">L6</div>
+            <div class="dd-ss-cell none" style="background:#8e44ad;" title="L7 App: user brings — neoclouds provide no end-user applications">L7</div>
           </div>
           <div class="stk-legend">
             <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#e74c3c;"></div><div class="stk-leg-label">L−1<br>Energy</div></div>
@@ -1259,9 +1296,24 @@ details[open].co-expand summary::before{content:'▾';}
         </div>
       </div>
       <div class="dd-right">
+        <div class="analogy-section" style="border-color:rgba(16,185,129,.2);">
+          <div class="analogy-eyebrow">Business Model · Culinary Analogy</div>
+          <div class="analogy-title" style="color:var(--n);">The Michelin-Star Steakhouse</div>
+          <div class="anv-steak-wrap">
+            <div class="anv-steak">★ GPU COMPUTE ★</div>
+            <div class="anv-quality">
+              <span class="anv-qtag">Bare Metal</span>
+              <span class="anv-qtag">InfiniBand NDR</span>
+              <span class="anv-qtag">96% Goodput</span>
+              <span class="anv-qtag">Cluster SLA</span>
+            </div>
+          </div>
+          <div class="analogy-caption">One product. Done better than anywhere else.</div>
+        </div>
         <div class="dd-section-label anim anim-1">Historical Edge of Neoclouds</div>
         <div class="edge-list anim anim-2">
           <div class="edge-item"><div class="edge-dot" style="background:var(--n);"></div><div><strong>GPU procurement moat:</strong> Neoclouds locked in large H100/H200 allocations in 2022–23 when hyperscalers were rationing access to anchor tenants. Long-term purchase commitments created supply certainty that new entrants cannot easily replicate.</div></div>
+          <div class="edge-item"><div class="edge-dot" style="background:var(--n);"></div><div><strong>No hypervisor 'tax':</strong> Bare-metal provisioning means no hypervisor tax (no VM in between), resulting in ~5-15% better GPU performance compared to hyperscalers.</div></div>
           <div class="edge-item"><div class="edge-dot" style="background:var(--n);"></div><div><strong>InfiniBand fabric depth:</strong> First to deploy IB NDR 400G + SHARP at scale for multi-tenant AI training — a hardware discipline hyperscalers didn't prioritise until neoclouds had already validated it with frontier labs.</div></div>
           <div class="edge-item"><div class="edge-dot" style="background:var(--n);"></div><div><strong>SonK orchestration lead:</strong> CoreWeave's SUNK and Nebius's Soperator were the first production-hardened Slurm+K8s co-schedulers. Node-level health checks, automated remediation, and DCGM integration were built years before equivalent hyperscaler offerings.</div></div>
         </div>
@@ -1292,8 +1344,8 @@ details[open].co-expand summary::before{content:'▾';}
           <div class="co-meta"><span class="co-meta-pill pub">Public · CRWV · NASDAQ</span><span class="co-meta-pill na">HQ: US</span><span class="co-meta-pill">US · EU</span></div>
           <div class="co-score-row"><div class="co-total" style="color:#64748b;">46</div><div class="co-total-label">/ 50 · Industry Benchmark</div></div>
           <div class="co-radar-wrap" id="radar-coreweave"></div>
-          <div class="co-diff" style="color:#64748b;border-color:#64748b;background:rgba(100,116,139,0.07);">CoreWeave's <span class="tip" data-tip="Hypervisor-free bare metal: CoreWeave runs Kubernetes directly on physical hardware with no VM layer, eliminating the ~5–15% GPU performance penalty common to hyperscalers. This yields measured 15–20% faster training times on equivalent hardware.">hypervisor-free architecture</span> delivers measured 15–20% faster training versus hyperscaler peers, with 96% <span class="tip" data-tip="Goodput: the fraction of GPU time performing useful computation. 96% vs the ~90% industry average means meaningfully more completed training per dollar spent.">goodput</span> and proprietary <span class="tip" data-tip="CAIOS (CoreWeave AI Object Storage): purpose-built storage for AI training at scale. LOTA (Local Object Transfer Accelerator): NVMe cache at 7+ GB/s per GPU, eliminating checkpoint-save bottlenecks.">CAIOS and LOTA storage</span>. The trade-off: <span class="tip" data-tip="Take-or-pay: customer commits to pay for reserved GPU capacity regardless of utilisation, typically 4–6 years. Funds CoreWeave's asset-level debt financing.">take-or-pay contracts of 4–6 years</span>.</div>
-          <div class="co-oneliner">The platinum benchmark for enterprise AI training — NVIDIA increased its equity stake in early 2026 to accelerate the buildout. Reservation-only model makes it unsuitable for teams needing flexibility.</div>
+          <div class="co-diff" style="color:#64748b;border-color:#64748b;background:rgba(100,116,139,0.07);">Hailed for its proprietary and best-in-class scheduling and orchestration software, SUNK (Slurm on Kubernetes). SUNK lets teams run both Slurm-based training jobs and Kubernetes-based inference workloads on the same underlying pool of compute, increasing utilization. With 96% <span class="tip" data-tip="Goodput: the fraction of GPU time performing useful computation. 96% vs the ~90% industry average means meaningfully more completed training per dollar spent.">goodput</span> and proprietary <span class="tip" data-tip="CAIOS (CoreWeave AI Object Storage): purpose-built storage for AI training at scale. LOTA (Local Object Transfer Accelerator): NVMe cache at 7+ GB/s per GPU, eliminating checkpoint-save bottlenecks.">CoreWeave AI Object Storage (CAIOS) and Local Object Transfer Accelerator (LOTA) storage</span>. The trade-off: <span class="tip" data-tip="Take-or-pay: customer commits to pay for reserved GPU capacity regardless of utilisation, typically 4–6 years. Funds CoreWeave's asset-level debt financing.">take-or-pay contracts of 4–6 years</span>.</div>
+          <div class="co-oneliner">The platinum benchmark for enterprise AI training. Strongly tied to NVIDIA with largest-in-industry reservations of the newest hardware, continuously. NVIDIA increased its equity stake in early 2026 to accelerate the buildout. Reservation-only model makes it unsuitable for teams needing flexibility.</div>
           <div class="co-stats">
             <div class="co-stat-item"><div class="co-stat-label">Pricing</div><div class="co-stat-bar"><div class="co-stat-pip on" style="background:#64748b;"></div><div class="co-stat-pip on" style="background:#64748b;"></div><div class="co-stat-pip off" style="background:#64748b;"></div><div class="co-stat-pip off" style="background:#64748b;"></div><div class="co-stat-pip off" style="background:#64748b;"></div><span class="co-stat-val">2/5 · ~$6/hr H100 SXM</span></div></div>
             <div class="co-stat-item"><div class="co-stat-label">Flexibility</div><div class="co-stat-bar"><div class="co-stat-pip on" style="background:#64748b;"></div><div class="co-stat-pip off" style="background:#64748b;"></div><div class="co-stat-pip off" style="background:#64748b;"></div><div class="co-stat-pip off" style="background:#64748b;"></div><div class="co-stat-pip off" style="background:#64748b;"></div><span class="co-stat-val">1/5 · Reserved only (1–36 mo)</span></div></div>
@@ -1381,24 +1433,23 @@ details[open].co-expand summary::before{content:'▾';}
         </div>
         <div class="dd-diff-box anim anim-2" style="border-left-color:var(--o);background:var(--o-dim);">
           <div class="dd-diff-label">What they compete on</div>
-          <div class="dd-diff-text">Developer workflow and inference kernel depth — not hardware. The moat is FlashAttention-class engineering, framework integrations, and agentic tooling above the GPU substrate.</div>
+          <div class="dd-diff-text">They don't win by owning the hardware but by having the smartest algorithms. Their competitive edge is providing a seamless, plug-and-play environment that makes AI run faster and cheaper on any underlying chip.</div>
         </div>
         <div class="dd-kpi-row anim anim-3">
-          <div class="dd-kpi" style="border-color:rgba(168,85,247,.25);"><div class="dd-kpi-label">vs Azure H100 rate</div><div class="dd-kpi-value" style="color:var(--o);">−40–60%</div></div>
-          <div class="dd-kpi" style="border-color:rgba(168,85,247,.25);"><div class="dd-kpi-label">Capital intensity</div><div class="dd-kpi-value" style="color:var(--o);">Low–Med</div></div>
+          <div class="dd-kpi" style="border-color:rgba(168,85,247,.25);"><div class="dd-kpi-label">Price Hyperscalers</div><div class="dd-kpi-value" style="color:var(--o);">−40–60%</div></div>
         </div>
         <div class="anim anim-4">
           <div class="dd-section-label">Stack Ownership</div>
           <div class="dd-stack-strip">
-            <div class="dd-ss-cell none" style="background:#e74c3c;">L−1</div>
-            <div class="dd-ss-cell none" style="background:#94a3b8;">L0</div>
-            <div class="dd-ss-cell limited" style="background:#e8c840;" title="L1 Physical: hybrid orchestrators own partial capacity">L1</div>
-            <div class="dd-ss-cell limited" style="background:#5aace8;">L2</div>
+            <div class="dd-ss-cell none" style="background:#e74c3c;" title="L-1 Energy: none — orchestrators own no physical infrastructure">L−1</div>
+            <div class="dd-ss-cell none" style="background:#94a3b8;" title="L0 Silicon: none — orchestrators lease compute from neoclouds/hyperscalers">L0</div>
+            <div class="dd-ss-cell none" style="background:#e8c840;" title="L1 Physical: none — orchestrators own no physical infrastructure">L1</div>
+            <div class="dd-ss-cell limited" style="background:#5aace8;" title="L2 Firmware: relies on host — orchestrators have no firmware or driver access">L2</div>
             <div class="dd-ss-cell full" style="background:#5ab86a;" title="L3 Orchestration: core — scheduling, quota, multi-cloud federation">L3</div>
             <div class="dd-ss-cell full" style="background:#9b59b6;" title="L4 Execution: core — inference engine, fine-tune pipelines">L4</div>
-            <div class="dd-ss-cell full" style="background:#e67e22;" title="L5 Data: core — model store, inference endpoints, API gateway">L5</div>
+            <div class="dd-ss-cell partial" style="background:#e67e22;" title="L5 Data: integrate — inference endpoints but not raw data infrastructure">L5</div>
             <div class="dd-ss-cell full" style="background:#e84393;" title="L6 Control: core — cost attribution, experiment tracking">L6</div>
-            <div class="dd-ss-cell full" style="background:#8e44ad;" title="L7 App: core — developer API, fine-tune studio">L7</div>
+            <div class="dd-ss-cell none" style="background:#8e44ad;" title="L7 App: user brings — orchestrators surface an API, not an application">L7</div>
           </div>
           <div class="stk-legend">
             <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#e74c3c;"></div><div class="stk-leg-label">L−1<br>Energy</div></div>
@@ -1418,11 +1469,28 @@ details[open].co-expand summary::before{content:'▾';}
         </div>
       </div>
       <div class="dd-right">
+        <div class="analogy-section" style="border-color:rgba(168,85,247,.2);">
+          <div class="analogy-eyebrow">Business Model · Culinary Analogy</div>
+          <div class="analogy-title" style="color:var(--o);">The Delivery Algorithm</div>
+          <div class="anv-flow">
+            <div class="anv-flow-node">You</div>
+            <div class="anv-flow-arrow">→</div>
+            <div class="anv-flow-node" style="font-weight:700;">Platform</div>
+            <div class="anv-flow-arrow">→</div>
+            <div class="anv-flow-multi">
+              <div class="anv-flow-node" style="font-size:7px;padding:3px 7px;">AWS</div>
+              <div class="anv-flow-node" style="font-size:7px;padding:3px 7px;">GCP</div>
+              <div class="anv-flow-node" style="font-size:7px;padding:3px 7px;">λ Labs</div>
+            </div>
+          </div>
+          <div class="analogy-caption">You order — it routes to the best available kitchen</div>
+        </div>
         <div class="dd-section-label anim anim-1">Historical Edge of Orchestrators</div>
         <div class="edge-list anim anim-2">
-          <div class="edge-item"><div class="edge-dot" style="background:var(--o);"></div><div><strong>Inference kernel innovation:</strong> FlashAttention, PagedAttention, and SGLang originated in the orchestrator/research community — not at hyperscalers. These cut inference cost by 5–24× before hyperscalers built equivalent optimisations.</div></div>
-          <div class="edge-item"><div class="edge-dot" style="background:var(--o);"></div><div><strong>Open-weight model hub integration:</strong> Orchestrators were first to offer Hugging Face, LangChain, and open-weight model integrations — creating the fastest deploy paths before any managed ML service offered comparable speed.</div></div>
-          <div class="edge-item"><div class="edge-dot" style="background:var(--o);"></div><div><strong>Software-above-GPU category creation:</strong> Orchestrators invented the layer between raw GPU infra and application code — fine-tuning pipelines, serverless inference, experiment tracking — before managed ML services matured.</div></div>
+          <div class="edge-item"><div class="edge-dot" style="background:var(--o);"></div><div><strong>Serverless inference endpoints:</strong> Pioneered the "scale-to-zero" API model for open-source AI. While hyperscalers required provisioning dedicated instances and paying for idle compute, orchestrators delivered instant, pay-per-token endpoints—radically lowering the barrier to entry for AI developers.</div></div>
+          <div class="edge-item"><div class="edge-dot" style="background:var(--o);"></div><div><strong>Inference speed innovation:</strong> such as FlashAttention, PagedAttention, and SGLang originated in the orchestrator/research community. These are pieces of 'software shortcuts' that reduced inference cost by 5–24× before hyperscalers built equivalent optimisations.</div></div>
+          <div class="edge-item"><div class="edge-dot" style="background:var(--o);"></div><div><strong>AI "App Store":</strong> First to seamlessly connect to public libraries of free, open-source AI models. Instead of spending weeks wrestling with complicated setup, developers could essentially click a button and launch an AI instantly—long before the major cloud providers offered that kind of speed.</div></div>
+          <div class="edge-item"><div class="edge-dot" style="background:var(--o);"></div><div><strong>Software-above-GPU category creation:</strong> Invented the layer between raw GPU infra and application code — fine-tuning pipelines, serverless inference, experiment tracking — before managed ML services matured.</div></div>
         </div>
         <div class="dd-section-label anim anim-3" style="margin-top:6px;">Pure vs Hybrid Orchestrator</div>
         <div class="edge-list anim anim-4">
@@ -1553,21 +1621,20 @@ details[open].co-expand summary::before{content:'▾';}
           <div class="dd-diff-text">Price discovery and zero capex. Revenue is the spread. Vulnerability: supply tightens → pricing leverage and allocation priority both collapse simultaneously.</div>
         </div>
         <div class="dd-kpi-row anim anim-3">
-          <div class="dd-kpi" style="border-color:rgba(245,158,11,.25);"><div class="dd-kpi-label">vs Azure H100 rate</div><div class="dd-kpi-value" style="color:var(--a);">−60–80%</div></div>
-          <div class="dd-kpi" style="border-color:rgba(245,158,11,.25);"><div class="dd-kpi-label">Capital intensity</div><div class="dd-kpi-value" style="color:var(--a);">Very Low</div></div>
+          <div class="dd-kpi" style="border-color:rgba(245,158,11,.25);"><div class="dd-kpi-label">Price vs Hyperscalers</div><div class="dd-kpi-value" style="color:var(--a);">−60–80%</div></div>
         </div>
         <div class="anim anim-4">
           <div class="dd-section-label">Stack Ownership</div>
           <div class="dd-stack-strip">
-            <div class="dd-ss-cell none" style="background:#e74c3c;">L−1</div>
-            <div class="dd-ss-cell none" style="background:#94a3b8;">L0</div>
-            <div class="dd-ss-cell none" style="background:#e8c840;">L1</div>
-            <div class="dd-ss-cell none" style="background:#5aace8;">L2</div>
-            <div class="dd-ss-cell limited" style="background:#5ab86a;" title="L3 Orch: limited — federation/routing layer only">L3</div>
-            <div class="dd-ss-cell none" style="background:#9b59b6;">L4</div>
-            <div class="dd-ss-cell limited" style="background:#e67e22;" title="L5 Data: limited — unified API routing only">L5</div>
-            <div class="dd-ss-cell full" style="background:#e84393;" title="L6 Control: billing, marketplace, cost comparison">L6</div>
-            <div class="dd-ss-cell full" style="background:#8e44ad;" title="L7 App: unified API, spot bidding interface">L7</div>
+            <div class="dd-ss-cell none" style="background:#e74c3c;" title="L-1 Energy: none — owned by third-party hosts">L−1</div>
+            <div class="dd-ss-cell none" style="background:#94a3b8;" title="L0 Silicon: none — owned by third-party hosts">L0</div>
+            <div class="dd-ss-cell none" style="background:#e8c840;" title="L1 Physical: none — owned by third-party hosts">L1</div>
+            <div class="dd-ss-cell limited" style="background:#5aace8;" title="L2 Firmware: relies on host — aggregators have no firmware access">L2</div>
+            <div class="dd-ss-cell full" style="background:#5ab86a;" title="L3 Orchestration: fully owned — container provisioning and job routing">L3</div>
+            <div class="dd-ss-cell none" style="background:#9b59b6;" title="L4 Execution: user brings — customer runs own ML frameworks and workload tools">L4</div>
+            <div class="dd-ss-cell none" style="background:#e67e22;" title="L5 Data: user brings — customer brings own data, models, and serving infrastructure">L5</div>
+            <div class="dd-ss-cell full" style="background:#e84393;" title="L6 Control: fully owned — storefront, billing engine, and access gateway">L6</div>
+            <div class="dd-ss-cell none" style="background:#8e44ad;" title="L7 App: user brings — aggregators provide raw GPU access only">L7</div>
           </div>
           <div class="stk-legend">
             <div class="stk-leg-cell"><div class="stk-leg-dot" style="background:#e74c3c;"></div><div class="stk-leg-label">L−1<br>Energy</div></div>
@@ -1591,16 +1658,44 @@ details[open].co-expand summary::before{content:'▾';}
         </div>
       </div>
       <div class="dd-right">
+        <div class="analogy-section" style="border-color:rgba(245,158,11,.2);">
+          <div class="analogy-eyebrow">Business Model · Culinary Analogy</div>
+          <div class="analogy-title" style="color:var(--a);">The Street Food Night Market</div>
+          <div class="anv-market">
+            <div class="anv-stall">
+              <div class="anv-stall-price">$1.40</div>
+              <div class="anv-stall-bar" style="height:52px;background:rgba(245,158,11,.45);"></div>
+              <div class="anv-stall-label">A100</div>
+            </div>
+            <div class="anv-stall">
+              <div class="anv-stall-price" style="color:var(--dim2);font-size:6px;">sold out</div>
+              <div class="anv-stall-bar" style="height:68px;background:rgba(245,158,11,.15);border:1px dashed rgba(245,158,11,.3);box-sizing:border-box;"></div>
+              <div class="anv-stall-label">H100</div>
+            </div>
+            <div class="anv-stall">
+              <div class="anv-stall-price">$0.80</div>
+              <div class="anv-stall-bar" style="height:34px;background:rgba(245,158,11,.55);"></div>
+              <div class="anv-stall-label">4090</div>
+            </div>
+            <div class="anv-stall">
+              <div class="anv-stall-price">$2.10</div>
+              <div class="anv-stall-bar" style="height:58px;background:rgba(245,158,11,.35);"></div>
+              <div class="anv-stall-label">H200</div>
+            </div>
+            <div class="anv-stall">
+              <div class="anv-stall-price">$0.45</div>
+              <div class="anv-stall-bar" style="height:22px;background:rgba(245,158,11,.6);"></div>
+              <div class="anv-stall-label">3090</div>
+            </div>
+          </div>
+          <div class="analogy-caption">Dozens of providers · Dynamic prices · Navigate the chaos</div>
+        </div>
         <div class="dd-section-label anim anim-1">Historical Edge of Aggregators</div>
         <div class="edge-list anim anim-2">
-          <div class="edge-item"><div class="edge-dot" style="background:var(--a);"></div><div><strong>Zero-friction access:</strong> Aggregators created the first no-commitment, per-hour GPU market at a time when every alternative required multi-month reservations with procurement cycles. This unlocked a category of users that neoclouds and hyperscalers couldn't serve.</div></div>
-          <div class="edge-item"><div class="edge-dot" style="background:var(--a);"></div><div><strong>P2P supply discovery:</strong> Vast.ai pioneered real-time bidding for idle capacity from crypto miners, creating a supply pool that traditional cloud providers cannot tap. The result: RTX 4090 at $0.30/hr — structurally impossible through any other channel.</div></div>
-          <div class="edge-item"><div class="edge-dot" style="background:var(--a);"></div><div><strong>Transparency layer:</strong> Aggregators built the first public price comparison across providers — a function that previously required sales calls and NDA-bound proposals, democratising GPU procurement research.</div></div>
-        </div>
-        <div class="dd-section-label anim anim-3" style="margin-top:6px;">Aggregator vs Orchestrator — Key Distinction</div>
-        <div class="edge-list anim anim-4">
-          <div class="edge-item"><div class="edge-dot" style="background:rgba(128,128,128,0.4);"></div><div><strong>Aggregator</strong> routes at the GPU level. Your team manages everything above L3. The aggregator's job ends at provisioning.</div></div>
-          <div class="edge-item"><div class="edge-dot" style="background:rgba(128,128,128,0.4);"></div><div><strong>Orchestrator</strong> manages the software layer above the GPU. Scheduling, experiment tracking, inference serving, developer APIs. Value-add is in L4–L7 software.</div></div>
+          <div class="edge-item"><div class="edge-dot" style="background:var(--a);"></div><div><strong>Elastic Enterprise Compute:</strong> Replaced rigid, multi-year CapEx contracts with on-demand, elastic access to enterprise GPUs.</div></div>
+          <div class="edge-item"><div class="edge-dot" style="background:var(--a);"></div><div><strong>Unified Supply Pooling:</strong> Aggregated fragmented capacity across Neoclouds to guarantee the availability of scarce, high-end compute.</div></div>
+          <div class="edge-item"><div class="edge-dot" style="background:var(--a);"></div><div><strong>Cost Transparency:</strong> Created a unified procurement layer that dynamically optimizes pricing across multiple enterprise providers.</div></div>
+          <div class="edge-item"><div class="edge-dot" style="background:var(--a);"></div><div><strong>Zero Vendor Lock-in:</strong> Abstracted the underlying infrastructure to allow seamless workload portability across different clouds.</div></div>
         </div>
         <div class="dd-section-label anim anim-5" style="margin-top:6px;">Typical Buyer Profiles</div>
         <div class="buyer-profiles anim anim-6">
@@ -1714,7 +1809,7 @@ details[open].co-expand summary::before{content:'▾';}
       <div class="sum-col anim anim-1" style="border-color:rgba(99,102,241,.25);background:var(--h-dim);">
         <div class="sum-model" style="color:var(--h);">E</div>
         <div style="font-family:var(--mono);font-size:9px;color:var(--h);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">Enterprise Integrator</div>
-        <div class="sum-tagline">Regulated Fortune 2000 deploying internal AI at production scale — past pilot stage.</div>
+        <div class="sum-tagline">Regulated large enterprises deploying internal AI at production scale — past pilot stage.</div>
         <div style="font-family:var(--mono);font-size:7.5px;color:var(--dim2);margin-bottom:4px;">Finance · Healthcare · Pharma · Defence</div>
         <div class="sum-kv"><div class="sum-k">Examples</div><div class="sum-v" style="font-size:9.5px;color:var(--dim2);">J.P. Morgan · Pfizer · Siemens · Lockheed · NHS</div></div>
         <div class="sum-kv"><div class="sum-k">Workloads</div><div class="sum-v"><span class="wl-tag">Fine-tuning</span><span class="wl-tag">Inference (RAG)</span><span class="wl-tag">Agentic AI</span></div></div>
@@ -1730,7 +1825,7 @@ details[open].co-expand summary::before{content:'▾';}
         <div class="sum-kv"><div class="sum-k">Examples</div><div class="sum-v" style="font-size:9.5px;color:var(--dim2);">Cursor · Midjourney · ElevenLabs · Perplexity · Character.ai</div></div>
         <div class="sum-kv"><div class="sum-k">Workloads</div><div class="sum-v"><span class="wl-tag">Fine-tuning</span><span class="wl-tag">Inference API</span><span class="wl-tag">Rapid iteration</span></div></div>
         <div class="sum-kv"><div class="sum-k">Must-haves</div><div class="sum-v">Zero egress fees · transparent per-second billing · instant deploys · pre-built vLLM / ComfyUI endpoints</div></div>
-        <div class="sum-kv"><div class="sum-k">Key pain</div><div class="sum-v">Egress fees destroy runway · slow provisioning · hyperscaler IaC complexity kills velocity</div></div>
+        <div class="sum-kv"><div class="sum-k">Key pain</div><div class="sum-v">Egress fees destroy runway · slow provisioning · hyperscaler Infrastructure as Code (IaC) complexity kills velocity</div></div>
       </div>
       <!-- ICP 3: Foundation Model Lab -->
       <div class="sum-col huang-hidden" id="s15a-c3" style="border-color:rgba(168,85,247,.25);background:var(--o-dim);">
@@ -2090,6 +2185,15 @@ details[open].co-expand summary::before{content:'▾';}
   if(t==='dark'){document.documentElement.classList.remove('light');document.querySelectorAll('.tl').forEach(e=>e.textContent='Light');}
   else{document.querySelectorAll('.tl').forEach(e=>e.textContent='Dark');}
 })();
+function toggleOracleCard(){
+  const card=document.getElementById('oracle-card');
+  card.classList.toggle('collapsed');
+  if(!card.classList.contains('collapsed')){
+    setTimeout(()=>{
+      radar('radar-oracle',SCORES.oracle,document.documentElement.classList.contains('light')?'#92400e':'#f59e0b',CRIT);
+    },30);
+  }
+}
 function toggleTheme(){
   const isLight=document.documentElement.classList.contains('light');
   if(isLight){document.documentElement.classList.remove('light');localStorage.setItem('deckTheme2','dark');document.querySelectorAll('.tl').forEach(e=>e.textContent='Light');}
