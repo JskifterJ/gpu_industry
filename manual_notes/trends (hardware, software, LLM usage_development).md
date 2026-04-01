@@ -48,4 +48,8 @@ API Secrets: As seen in the LiteLLM attack, AI workloads are loaded with expensi
 3. Kubernetes as an Attack Surface
 GPU providers heavily utilize Kubernetes to orchestrate multi-tenant GPU allocation. Supply chain malware is evolving to specifically target these orchestration layers. By deploying a malicious package, an attacker or a malicious tenant can attempt to escape their container, traverse the Kubernetes network, and gain root access to the physical GPU host machine.
 
+# Slide ideas
+no business model is necessarily better; it’s a matter of what they serve and market efficiency
+where each business model is heading; what can we expect going forward? What steps are they taking? In terms of stack, in terms of offerings in the stack'
+Illustration (flow between illustrations of layers/components in each layer) of how each business model is developing - dynamic.
 
