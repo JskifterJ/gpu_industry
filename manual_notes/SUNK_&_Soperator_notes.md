@@ -1,19 +1,16 @@
 ### **Slurm v. Kubernetes**
-
 - AI researchers love slurm → HPC, good queuing
 - platform engineers love K8s → auto-scaling, fault tolerance, container orchestration, hardware health management
     - but difficult to use for researchers and terrible at **gang scheduling**
         - gang scheduling = distributed job *only* starts when all required GPUs are available simultaneously
 
 ### **Why SUNK/Soperator?**
-
 - researchers get familiar Slurm backed by resilient auto-healing K8s
     - =
         - less operational overhead for bespoke environments
         - higher ‘goodput’ (if K8 detects failure, slurm auto-re-queues and restarts job from last checkpoint)
 
 ### **Relevant for**
-
 - pre-training
     - K8s fault tolerance is mandatory in combination with Slurm’s gang schedulihng
 - fine-tuning
