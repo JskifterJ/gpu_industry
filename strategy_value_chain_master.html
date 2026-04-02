@@ -1383,6 +1383,18 @@ body.theme-light .btn.btn-toggle-on{
   color: #f5a623;
 }
 
+/* Keep all content containers below fixed top navigation strip. */
+header { margin-top: 24px; }
+.main { padding-top: 0; }
+.legend { margin-top: 0; }
+.drawer {
+  top: 24px;
+  height: calc(100% - 24px);
+}
+.overlay {
+  inset: 24px 0 0 0;
+}
+
 </style>
 </head>
 <body class="theme-light">
