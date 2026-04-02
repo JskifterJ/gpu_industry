@@ -521,6 +521,33 @@ details[open].co-expand summary::before{content:'▾';}
 .cake-l-covers{font-family:var(--mono);font-size:7.5px;color:var(--dim2);margin-top:6px;padding-top:5px;border-top:1px solid var(--border);line-height:1.45;}
 .cake-l-covers strong{color:var(--dim);}
 
+/* ── PDF EXPORT BUTTON ── */
+.nav-sep{width:1px;height:16px;background:var(--border);flex-shrink:0;}
+.nav-pdf{width:auto !important;padding:0 10px !important;font-family:var(--mono);font-size:9px;letter-spacing:.10em;text-transform:uppercase;border-radius:3px !important;}
+
+/* ── PRINT / PDF EXPORT ── */
+@media print {
+  @page { size: 13.33in 7.5in; margin: 0; }
+  html, body { width: 13.33in !important; height: auto !important; overflow: visible !important; background: var(--bg) !important; }
+  .progress, .slide-counter, .key-hint, .nav, #global-tip, .theme-toggle { display: none !important; }
+  .slide {
+    position: relative !important;
+    display: flex !important;
+    width: 13.33in !important;
+    height: 7.5in !important;
+    transform: none !important;
+    opacity: 1 !important;
+    overflow: hidden !important;
+    page-break-after: always;
+    break-after: page;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .slide:last-of-type { page-break-after: auto; break-after: auto; }
+  .slide-body { overflow: visible !important; padding-bottom: 0 !important; }
+  .deepdive-wrap, .dd-left, .dd-right,
+  .top3-wrap, .matrix-wrap, .models-grid { overflow: visible !important; }
+}
 </style>
 </head>
 <body>
@@ -531,6 +558,8 @@ details[open].co-expand summary::before{content:'▾';}
   <button class="nav-btn" id="btn-prev" onclick="go(cur-1)" disabled>&#8592;</button>
   <div class="nav-dots" id="dots"></div>
   <button class="nav-btn" id="btn-next" onclick="go(cur+1)">&#8594;</button>
+  <div class="nav-sep"></div>
+  <button class="nav-btn nav-pdf" onclick="window.print()" title="Export all slides to PDF">PDF</button>
 </nav>
 
 <!-- ══ S1 — COVER ══ -->
@@ -3012,6 +3041,11 @@ renderRadarsForSlide(cur);
     }
   });
 })();
+
+// Pre-render all canvas slides before the print dialog opens
+window.addEventListener('beforeprint', function(){
+  for(let i=0;i<TOTAL;i++) renderRadarsForSlide(i);
+});
 </script>
 </body>
 </html>
