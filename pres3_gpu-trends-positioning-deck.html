@@ -62,7 +62,7 @@ html.light .toggle-thumb{transform:translateX(11px);}
 .nav-dots{display:flex;gap:4px;align-items:center;}
 .dot{width:5px;height:5px;border-radius:50%;background:var(--dim2);cursor:pointer;transition:all .22s;}
 .dot.active{width:14px;border-radius:3px;}
-.dot.d-a1.active{background:#6366f1;}.dot.d-a2.active{background:#10b981;}.dot.d-a3.active{background:#f59e0b;}
+.dot.d-a1.active{background:#6366f1;}.dot.d-a2.active{background:#10b981;}.dot.d-a3.active{background:#f59e0b;}.dot.d-sig.active{background:#06b6d4;}
 .dot:hover:not(.active){background:var(--muted);}
 .nav-btn{width:26px;height:26px;border-radius:50%;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;}
 .nav-btn:hover{border-color:var(--dim);color:var(--text);}
@@ -742,29 +742,117 @@ html.light .toggle-thumb{transform:translateX(11px);}
   </div>
 </div>
 
+<!-- ══ S15: FRONTIER SIGNALS ══ -->
+<div class="slide" id="s15">
+  <div class="slide-chrome">
+    <div class="chrome-left">
+      <div class="chrome-logo">ClusterMAX · ICN</div>
+      <div class="chrome-sep"></div>
+      <div class="chrome-title">S15 · Frontier Signals</div>
+    </div>
+    <div class="chrome-right"><span class="act-badge" style="background:rgba(6,182,212,0.15);color:#06b6d4;">SIGNALS · APRIL 2026</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
+  </div>
+  <div class="slide-body" style="flex-direction:column;padding:14px 44px 72px;gap:12px;overflow-y:auto;">
+    <div class="anim anim-1" style="display:flex;flex-direction:column;gap:4px;">
+      <div style="font-family:var(--display);font-size:32px;letter-spacing:.03em;line-height:1;">FRONTIER SIGNALS</div>
+      <div style="font-family:var(--mono);font-size:8.5px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;">Three developments reshaping the AI infrastructure calculus — April 2026</div>
+    </div>
+    <div class="anim anim-2" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;flex:1;min-height:0;">
+      <!-- Card 1: Glasswing -->
+      <div style="background:var(--bg2);border:1px solid var(--border);border-top:3px solid #ef4444;border-radius:7px;padding:14px 14px 12px;display:flex;flex-direction:column;gap:9px;overflow-y:auto;">
+        <div style="display:flex;flex-direction:column;gap:3px;">
+          <div style="font-family:var(--mono);font-size:7px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim2);">Anthropic · April 2026</div>
+          <div style="font-family:var(--display);font-size:19px;letter-spacing:.04em;color:var(--text);">Project Glasswing</div>
+          <div style="font-size:9px;color:var(--dim);font-style:italic;">The model too powerful to release publicly</div>
+        </div>
+        <ul style="display:flex;flex-direction:column;gap:6px;list-style:none;padding:0;margin:0;">
+          <li style="font-size:9.5px;color:var(--muted);line-height:1.5;padding-left:10px;border-left:2px solid rgba(239,68,68,0.4);">Claude Mythos Preview: <strong style="color:var(--text);">83.1%</strong> on cyber benchmarks vs Opus 4.6's 66.6%</li>
+          <li style="font-size:9.5px;color:var(--muted);line-height:1.5;padding-left:10px;border-left:2px solid rgba(239,68,68,0.4);">Zero-days found across <strong style="color:var(--text);">every major OS &amp; browser</strong> — incl. a 27-year-old OpenBSD flaw; autonomously chained Linux kernel vulns</li>
+          <li style="font-size:9.5px;color:var(--muted);line-height:1.5;padding-left:10px;border-left:2px solid rgba(239,68,68,0.4);">Withheld from release until <strong style="color:var(--text);">12 industry partners</strong> (AWS, Apple, Google, NVIDIA, Microsoft, Cisco, CrowdStrike, Broadcom, Palo Alto…) coordinated patching</li>
+          <li style="font-size:9.5px;color:var(--muted);line-height:1.5;padding-left:10px;border-left:2px solid rgba(239,68,68,0.4);"><strong style="color:var(--text);">$100M</strong> model credits to defenders · <strong style="color:var(--text);">$4M</strong> to open-source security orgs · findings published for industry</li>
+        </ul>
+        <div style="padding:8px 10px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.22);border-radius:4px;font-family:var(--mono);font-size:8px;color:#ef4444;line-height:1.55;margin-top:auto;">
+          Signal: Responsible disclosure now applies to frontier model <em>capabilities</em> — not just bugs. Models are becoming so powerful that creators cooperate with industry partners to patch infrastructure before public release.
+        </div>
+      </div>
+      <!-- Card 2: Gemma 4 -->
+      <div style="background:var(--bg2);border:1px solid var(--border);border-top:3px solid #4285f4;border-radius:7px;padding:14px 14px 12px;display:flex;flex-direction:column;gap:9px;overflow-y:auto;">
+        <div style="display:flex;flex-direction:column;gap:3px;">
+          <div style="font-family:var(--mono);font-size:7px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim2);">Google · April 2026</div>
+          <div style="font-family:var(--display);font-size:19px;letter-spacing:.04em;color:var(--text);">Google Gemma 4</div>
+          <div style="font-size:9px;color:var(--dim);font-style:italic;">Open-weight MoE · local-first wave</div>
+        </div>
+        <ul style="display:flex;flex-direction:column;gap:6px;list-style:none;padding:0;margin:0;">
+          <li style="font-size:9.5px;color:var(--muted);line-height:1.5;padding-left:10px;border-left:2px solid rgba(66,133,244,0.4);">4 variants: E2B (edge, 128k) → 31B dense (256k); <strong style="color:var(--text);">26B A4B MoE</strong> — frontier quality at ~4B active-param inference cost</li>
+          <li style="font-size:9.5px;color:var(--muted);line-height:1.5;padding-left:10px;border-left:2px solid rgba(66,133,244,0.4);">31B: AIME 2026 <strong style="color:var(--text);">89.2%</strong> · GPQA Diamond 84.3% · Arena Elo <strong style="color:var(--text);">~1452</strong> (#1 open-weight at launch)</li>
+          <li style="font-size:9.5px;color:var(--muted);line-height:1.5;padding-left:10px;border-left:2px solid rgba(66,133,244,0.4);"><strong style="color:var(--text);">Runs on iPhone 17 Pro at ~40 tok/s</strong> (E2B + MLX) · alternating local/global attention · shared KV cache</li>
+          <li style="font-size:9.5px;color:var(--muted);line-height:1.5;padding-left:10px;border-left:2px solid rgba(66,133,244,0.4);"><strong style="color:var(--text);">Apache 2.0</strong> · Day-0: HF, vLLM, Ollama, NVIDIA Blackwell, SGLang, Docker, Cloudflare</li>
+        </ul>
+        <div style="padding:8px 10px;background:rgba(66,133,244,0.08);border:1px solid rgba(66,133,244,0.22);border-radius:4px;font-family:var(--mono);font-size:8px;color:#4285f4;line-height:1.55;margin-top:auto;">
+          Signal: Free capable local inference → more agentic workflows deployed → more cloud compute demanded. Classic Jevons. MoE efficiency gains do not reduce total compute — they accelerate adoption.
+        </div>
+      </div>
+      <!-- Card 3: GLM-5.1 -->
+      <div style="background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--n);border-radius:7px;padding:14px 14px 12px;display:flex;flex-direction:column;gap:9px;overflow-y:auto;">
+        <div style="display:flex;flex-direction:column;gap:3px;">
+          <div style="font-family:var(--mono);font-size:7px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim2);">Z.ai · April 8, 2026</div>
+          <div style="font-family:var(--display);font-size:19px;letter-spacing:.04em;color:var(--text);">GLM-5.1</div>
+          <div style="font-size:9px;color:var(--dim);font-style:italic;">SOTA agentic coding — no NVIDIA hardware</div>
+        </div>
+        <ul style="display:flex;flex-direction:column;gap:6px;list-style:none;padding:0;margin:0;">
+          <li style="font-size:9.5px;color:var(--muted);line-height:1.5;padding-left:10px;border-left:2px solid rgba(16,185,129,0.4);">754B MoE · <strong style="color:var(--text);">40B active params</strong> · 200k context · 128k output tokens · Apache 2.0</li>
+          <li style="font-size:9.5px;color:var(--muted);line-height:1.5;padding-left:10px;border-left:2px solid rgba(16,185,129,0.4);">SWE-Bench Pro: <strong style="color:var(--text);">58.4 — #1</strong>, above GPT-5.4, Claude Opus 4.6, Gemini 3.1 Pro · AIME 2026: <strong style="color:var(--text);">95.3%</strong></li>
+          <li style="font-size:9.5px;color:var(--muted);line-height:1.5;padding-left:10px;border-left:2px solid rgba(16,185,129,0.4);">Sustains <strong style="color:var(--text);">8-hour autonomous coding loops</strong> (plan → execute → test → optimise) — a new infrastructure workload class</li>
+          <li style="font-size:9.5px;color:var(--muted);line-height:1.5;padding-left:10px;border-left:2px solid rgba(16,185,129,0.4);"><strong style="color:var(--text);">Trained entirely on Huawei Ascend chips</strong> — no NVIDIA hardware used at any stage</li>
+        </ul>
+        <div style="padding:8px 10px;background:var(--n-dim);border:1px solid rgba(16,185,129,0.22);border-radius:4px;font-family:var(--mono);font-size:8px;color:var(--n);line-height:1.55;margin-top:auto;">
+          Signal: China's frontier AI is now operational on domestic silicon. The NVIDIA dependency thesis has a credible challenger. Semiconductor export controls slow — they do not stop — frontier development.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ══ NAV ══ -->
 <nav class="nav">
   <button class="nav-btn" id="prev-btn" onclick="go(cur-1)" disabled>‹</button>
   <div class="nav-dots" id="dots"></div>
   <button class="nav-btn" id="next-btn" onclick="go(cur+1)">›</button>
 </nav>
-<div class="slide-counter"><span class="counter-cur" id="counter-cur">1</span> / <span id="counter-tot">14</span></div>
+<div class="slide-counter"><span class="counter-cur" id="counter-cur">1</span> / <span id="counter-tot">15</span></div>
 <div class="key-hint"><span class="key-badge">←</span><span class="key-badge">→</span> navigate</div>
 
 <script>
 /* ════ NAVIGATION ════ */
-const TOTAL=14;
-const ACT_DOTS=['d-a1','d-a1','d-a1','d-a1','d-a1','d-a1','d-a2','d-a2','d-a2','d-a2','d-a2','d-a3','d-a3','d-a3'];
-const ACT_COLORS=['#6366f1','#6366f1','#6366f1','#6366f1','#6366f1','#6366f1','#10b981','#10b981','#10b981','#10b981','#10b981','#f59e0b','#f59e0b','#f59e0b'];
+const TOTAL=15;
+const ACT_DOTS=['d-a1','d-a1','d-a1','d-a1','d-a1','d-a1','d-a2','d-a2','d-a2','d-a2','d-a2','d-a3','d-a3','d-a3','d-sig'];
+const ACT_COLORS=['#6366f1','#6366f1','#6366f1','#6366f1','#6366f1','#6366f1','#10b981','#10b981','#10b981','#10b981','#10b981','#f59e0b','#f59e0b','#f59e0b','#06b6d4'];
 let cur=0;
+const SLIDES=document.querySelectorAll('.slide');
+const prog=document.getElementById('progress');
+const btnPrev=document.getElementById('prev-btn');
+const btnNext=document.getElementById('next-btn');
+const ccur=document.getElementById('counter-cur');
+const dotsEl=document.getElementById('dots');
 
-(function init(){
+/* Init theme */
+(function(){
   const t=localStorage.getItem('deckTheme3');
   if(t==='dark'){document.documentElement.classList.remove('light');document.querySelectorAll('.tl').forEach(e=>e.textContent='Light');}
   else{document.querySelectorAll('.tl').forEach(e=>e.textContent='Dark');}
-  buildDots();update();
-  renderBMMatrix();
 })();
+
+/* Build nav dots */
+for(let i=0;i<TOTAL;i++){
+  const d=document.createElement('div');
+  d.className='dot '+ACT_DOTS[i]+(i===0?' active':'');
+  d.title='S'+(i+1);
+  d.onclick=(function(n){return function(){go(n);};})(i);
+  dotsEl.appendChild(d);
+}
+
+/* Initial state */
+update();
 
 function toggleTheme(){
   const isLight=document.documentElement.classList.contains('light');
@@ -773,41 +861,37 @@ function toggleTheme(){
   if(cur===4)renderLifecycle();
   if(cur===5)renderWorkloadChart();
   if(cur===7)renderTrajectory();
+  if(cur===9)renderBMMatrix();
 }
 
-function buildDots(){
-  const c=document.getElementById('dots');c.innerHTML='';
-  for(let i=0;i<TOTAL;i++){
-    const d=document.createElement('div');
-    d.className='dot '+ACT_DOTS[i]+(i===0?' active':'');
-    d.title='S'+(i+1);
-    d.onclick=(n=>()=>go(n,true))(i);
-    c.appendChild(d);
-  }
-}
-
-function go(n,direct){
+function go(n){
   if(n<0||n>=TOTAL)return;
-  const old=cur;cur=n;
-  document.querySelectorAll('.slide').forEach((s,i)=>{s.className='slide'+(i===cur?' active':i===old?' prev':'');});
+  const old=cur; cur=n;
+  SLIDES[old].classList.remove('active');
+  SLIDES[old].classList.add('prev');
+  var os=SLIDES[old];
+  setTimeout(function(){os.classList.remove('prev');},600);
+  SLIDES[cur].classList.remove('prev');
+  SLIDES[cur].classList.add('active');
   update();
-  if(cur===4)setTimeout(renderLifecycle,300);
-  if(cur===5)setTimeout(renderWorkloadChart,300);
-  if(cur===7)setTimeout(renderTrajectory,300);
+  if(cur===4)setTimeout(renderLifecycle,350);
+  if(cur===5)setTimeout(renderWorkloadChart,350);
+  if(cur===7)setTimeout(renderTrajectory,350);
+  if(cur===9)setTimeout(renderBMMatrix,350);
 }
 
 function update(){
-  document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===cur));
-  document.getElementById('counter-cur').textContent=cur+1;
-  document.getElementById('prev-btn').disabled=cur===0;
-  document.getElementById('next-btn').disabled=cur===TOTAL-1;
-  const pct=TOTAL>1?(cur/(TOTAL-1))*100:100;
-  const bar=document.getElementById('progress');bar.style.width=pct+'%';bar.style.background=ACT_COLORS[cur];
+  dotsEl.querySelectorAll('.dot').forEach(function(d,i){d.classList.toggle('active',i===cur);});
+  ccur.textContent=cur+1;
+  btnPrev.disabled=(cur===0);
+  btnNext.disabled=(cur===TOTAL-1);
+  prog.style.width=(TOTAL>1?(cur/(TOTAL-1)*100):100)+'%';
+  prog.style.background=ACT_COLORS[cur];
 }
 
-document.addEventListener('keydown',e=>{
+document.addEventListener('keydown',function(e){
   if(e.key==='ArrowRight'||e.key==='ArrowDown'||e.key===' '){e.preventDefault();go(cur+1);}
-  if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();go(cur-1);}
+  else if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();go(cur-1);}
 });
 
 /* ════ DETAIL PANEL ════ */
@@ -1190,12 +1274,24 @@ function renderBMMatrix(){
     h+=`<tr><td class="bm-rh" style="border-left:3px solid ${row.color};">${row.label}</td>`;
     const cells=BM_DATA[row.id];
     cells.forEach(function(cell,fi){
-      h+=`<td class="${cell.c==='g'?'bg':cell.c==='a'?'ba':'br'}" onclick="openDP('${row.label} × ${BM_FORCES[fi]}','Force ${fi+1} · ${row.id} Response','<div class=dp-body><p>${cell.t.replace(/'/g,"&#39;")}</p></div>')">${cell.v}</td>`;
+      h+=`<td class="${cell.c==='g'?'bg':cell.c==='a'?'ba':'br'}" data-bm="${row.id}" data-fi="${fi}">${cell.v}</td>`;
     });
     h+='</tr>';
   });
   h+='</tbody></table>';
   wrap.innerHTML=h;
+  wrap.querySelector('.bm-table').addEventListener('click',function(e){
+    var td=e.target.closest('td[data-bm]');if(!td)return;
+    var bm=td.dataset.bm,fi=parseInt(td.dataset.fi);
+    var row=BM_ROWS.find(function(r){return r.id===bm;});
+    var cell=BM_DATA[bm][fi];
+    document.getElementById('dp-title').textContent=row.label+' \u00d7 '+BM_FORCES[fi];
+    document.getElementById('dp-tag').textContent='Force '+(fi+1)+' \u00b7 '+bm+' Response';
+    var p=document.createElement('p');p.textContent=cell.t;
+    var dpb=document.getElementById('dp-body');dpb.innerHTML='';dpb.appendChild(p);
+    document.getElementById('dp').classList.add('open');
+    document.getElementById('dp-ov').classList.add('show');
+  });
 }
 </script>
 </body>
