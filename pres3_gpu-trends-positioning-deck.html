@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="light">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -171,11 +171,11 @@ html.light .toggle-thumb{transform:translateX(11px);}
 /* PRINT */
 @media print {
   @page{size:13.33in 7.5in;margin:0;}
-  html,body{width:13.33in!important;height:auto!important;overflow:visible!important;}
+  html,body{height:auto!important;overflow:visible!important;}
   .progress,.nav,.slide-counter,.key-hint,.theme-toggle,.pdf-btn{display:none!important;}
-  .slide{position:relative!important;display:flex!important;width:13.33in!important;height:7.5in!important;transform:none!important;opacity:1!important;overflow:hidden!important;page-break-after:always;break-after:page;page-break-inside:avoid;break-inside:avoid;}
+  .slide{position:relative!important;display:flex!important;zoom:0.75;width:calc(100vw / 0.75)!important;height:calc(100vh / 0.75)!important;transform:none!important;opacity:1!important;overflow:visible!important;page-break-after:always;break-after:page;page-break-inside:avoid;break-inside:avoid;}
   .slide:last-of-type{page-break-after:auto;break-after:auto;}
-  .slide-body{overflow:visible!important;padding-bottom:0!important;}
+  .slide-body{overflow:visible!important;padding-bottom:0!important;height:auto!important;}
 }
 </style>
 </head>
@@ -845,11 +845,11 @@ const btnNext=document.getElementById('next-btn');
 const ccur=document.getElementById('counter-cur');
 const dotsEl=document.getElementById('dots');
 
-/* Init theme */
+/* Init theme — default dark */
 (function(){
   const t=localStorage.getItem('deckTheme3');
-  if(t==='dark'){document.documentElement.classList.remove('light');document.querySelectorAll('.tl').forEach(e=>e.textContent='Light');}
-  else{document.querySelectorAll('.tl').forEach(e=>e.textContent='Dark');}
+  if(t==='light'){document.documentElement.classList.add('light');document.querySelectorAll('.tl').forEach(e=>e.textContent='Dark');}
+  else{document.documentElement.classList.remove('light');document.querySelectorAll('.tl').forEach(e=>e.textContent='Light');}
 })();
 
 /* Build nav dots */
@@ -916,6 +916,16 @@ function closeDP(){
   document.getElementById('dp').classList.remove('open');
   document.getElementById('dp-ov').classList.remove('show');
 }
+
+/* ════ PRINT ════ */
+var _wasLight=false;
+window.addEventListener('beforeprint',function(){
+  _wasLight=document.documentElement.classList.contains('light');
+  document.documentElement.classList.remove('light');
+});
+window.addEventListener('afterprint',function(){
+  if(_wasLight) document.documentElement.classList.add('light');
+});
 
 /* ════ NINE FORCES DATA (S3) ════ */
 const FORCES=[

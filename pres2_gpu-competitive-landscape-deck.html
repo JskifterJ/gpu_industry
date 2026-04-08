@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="light">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -528,25 +528,29 @@ details[open].co-expand summary::before{content:'▾';}
 /* ── PRINT / PDF EXPORT ── */
 @media print {
   @page { size: 13.33in 7.5in; margin: 0; }
-  html, body { width: 13.33in !important; height: auto !important; overflow: visible !important; background: var(--bg) !important; }
-  .progress, .slide-counter, .key-hint, .nav, #global-tip, .theme-toggle { display: none !important; }
+  html, body { height: auto !important; overflow: visible !important; }
+  .progress, .slide-counter, .key-hint, .nav, #global-tip, .theme-toggle, .pdf-btn, .s3-hint, .s4-hint { display: none !important; }
   .slide {
     position: relative !important;
     display: flex !important;
-    width: 13.33in !important;
-    height: 7.5in !important;
+    zoom: 0.75;
+    width: calc(100vw / 0.75) !important;
+    height: calc(100vh / 0.75) !important;
     transform: none !important;
     opacity: 1 !important;
-    overflow: hidden !important;
+    overflow: visible !important;
     page-break-after: always;
     break-after: page;
     page-break-inside: avoid;
     break-inside: avoid;
   }
   .slide:last-of-type { page-break-after: auto; break-after: auto; }
-  .slide-body { overflow: visible !important; padding-bottom: 0 !important; }
+  .slide-body { overflow: visible !important; padding-bottom: 0 !important; height: auto !important; }
   .deepdive-wrap, .dd-left, .dd-right,
   .top3-wrap, .matrix-wrap, .models-grid { overflow: visible !important; }
+  .huang-hidden { opacity: 1 !important; pointer-events: none; }
+  .s4-spectra { opacity: 1 !important; }
+  .s15a-card { opacity: 1 !important; }
 }
 </style>
 </head>
@@ -2291,12 +2295,11 @@ details[open].co-expand summary::before{content:'▾';}
 </div>
 
 <script>
-// ── THEME ──────────────────────────────────────────────
-// Default is light (set on html element). Toggle stores preference.
+// ── THEME ── default dark
 (function(){
   const t=localStorage.getItem('deckTheme2');
-  if(t==='dark'){document.documentElement.classList.remove('light');document.querySelectorAll('.tl').forEach(e=>e.textContent='Light');}
-  else{document.querySelectorAll('.tl').forEach(e=>e.textContent='Dark');}
+  if(t==='light'){document.documentElement.classList.add('light');document.querySelectorAll('.tl').forEach(e=>e.textContent='Dark');}
+  else{document.documentElement.classList.remove('light');document.querySelectorAll('.tl').forEach(e=>e.textContent='Light');}
 })();
 function toggleOracleCard(){
   const card=document.getElementById('oracle-card');
@@ -2446,6 +2449,26 @@ function hideS4Spectra(){
   const ct=document.querySelector('#s4 .chrome-title');
   if(ct) ct.textContent='Four Business Models';
 }
+
+/* ════ PRINT ════ */
+var _p2WasLight=false,_p2S3=0,_p2S4=0,_p2S15=0;
+window.addEventListener('beforeprint',function(){
+  // Force dark mode
+  _p2WasLight=document.documentElement.classList.contains('light');
+  document.documentElement.classList.remove('light');
+  // Advance all progressive reveals to final state
+  _p2S3=s3Step; _p2S4=s4Step; _p2S15=s15aStep;
+  if(s3Step===0) showHuangModel();
+  if(s4Step===0) showS4Spectra();
+  while(s15aStep<3) showNextS15aCard();
+});
+window.addEventListener('afterprint',function(){
+  if(_p2WasLight) document.documentElement.classList.add('light');
+  // Restore reveal states
+  if(_p2S3===0) hideHuangModel();
+  if(_p2S4===0) hideS4Spectra();
+  while(s15aStep>_p2S15) hidePrevS15aCard();
+});
 
 for(let i=0;i<TOTAL;i++){const d=document.createElement('div');d.className='dot'+(i===0?' active':'');d.onclick=()=>go(i,true);dotsEl.appendChild(d);}
 
