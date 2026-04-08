@@ -171,6 +171,7 @@ html.light .toggle-thumb{transform:translateX(11px);}
 /* PRINT */
 @media print {
   @page{size:13.33in 7.5in;margin:0;}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
   html,body{height:auto!important;overflow:visible!important;}
   .progress,.nav,.slide-counter,.key-hint,.theme-toggle,.pdf-btn{display:none!important;}
   .slide{position:relative!important;display:flex!important;zoom:0.75;width:calc(100vw / 0.75)!important;height:calc(100vh / 0.75)!important;transform:none!important;opacity:1!important;overflow:visible!important;page-break-after:always;break-after:page;page-break-inside:avoid;break-inside:avoid;}
@@ -845,11 +846,11 @@ const btnNext=document.getElementById('next-btn');
 const ccur=document.getElementById('counter-cur');
 const dotsEl=document.getElementById('dots');
 
-/* Init theme — default dark */
+/* Init theme — default dark; label shows current mode */
 (function(){
   const t=localStorage.getItem('deckTheme3');
-  if(t==='light'){document.documentElement.classList.add('light');document.querySelectorAll('.tl').forEach(e=>e.textContent='Dark');}
-  else{document.documentElement.classList.remove('light');document.querySelectorAll('.tl').forEach(e=>e.textContent='Light');}
+  if(t==='light'){document.documentElement.classList.add('light');document.querySelectorAll('.tl').forEach(e=>e.textContent='Light');}
+  else{document.documentElement.classList.remove('light');document.querySelectorAll('.tl').forEach(e=>e.textContent='Dark');}
 })();
 
 /* Build nav dots */
@@ -866,8 +867,8 @@ update();
 
 function toggleTheme(){
   const isLight=document.documentElement.classList.contains('light');
-  if(isLight){document.documentElement.classList.remove('light');localStorage.setItem('deckTheme3','dark');document.querySelectorAll('.tl').forEach(e=>e.textContent='Light');}
-  else{document.documentElement.classList.add('light');localStorage.setItem('deckTheme3','light');document.querySelectorAll('.tl').forEach(e=>e.textContent='Dark');}
+  if(isLight){document.documentElement.classList.remove('light');localStorage.setItem('deckTheme3','dark');document.querySelectorAll('.tl').forEach(e=>e.textContent='Dark');}
+  else{document.documentElement.classList.add('light');localStorage.setItem('deckTheme3','light');document.querySelectorAll('.tl').forEach(e=>e.textContent='Light');}
   if(cur===4)renderLifecycle();
   if(cur===5)renderWorkloadChart();
   if(cur===7)renderTrajectory();
@@ -917,15 +918,6 @@ function closeDP(){
   document.getElementById('dp-ov').classList.remove('show');
 }
 
-/* ════ PRINT ════ */
-var _wasLight=false;
-window.addEventListener('beforeprint',function(){
-  _wasLight=document.documentElement.classList.contains('light');
-  document.documentElement.classList.remove('light');
-});
-window.addEventListener('afterprint',function(){
-  if(_wasLight) document.documentElement.classList.add('light');
-});
 
 /* ════ NINE FORCES DATA (S3) ════ */
 const FORCES=[
