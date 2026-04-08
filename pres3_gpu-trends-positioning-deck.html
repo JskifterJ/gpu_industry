@@ -168,6 +168,15 @@ html.light .toggle-thumb{transform:translateX(11px);}
 .src-table a{color:var(--h);text-decoration:none;}
 .src-table a:hover{text-decoration:underline;}
 .src-table tr:hover td{background:var(--bg3);}
+/* PRINT */
+@media print {
+  @page{size:13.33in 7.5in;margin:0;}
+  html,body{width:13.33in!important;height:auto!important;overflow:visible!important;}
+  .progress,.nav,.slide-counter,.key-hint,.theme-toggle,.pdf-btn{display:none!important;}
+  .slide{position:relative!important;display:flex!important;width:13.33in!important;height:7.5in!important;transform:none!important;opacity:1!important;overflow:hidden!important;page-break-after:always;break-after:page;page-break-inside:avoid;break-inside:avoid;}
+  .slide:last-of-type{page-break-after:auto;break-after:auto;}
+  .slide-body{overflow:visible!important;padding-bottom:0!important;}
+}
 </style>
 </head>
 <body>
@@ -810,6 +819,7 @@ html.light .toggle-thumb{transform:translateX(11px);}
         </div>
       </div>
     </div>
+    <button class="pdf-btn" onclick="window.print()" style="position:absolute;bottom:58px;right:44px;z-index:50;font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;padding:5px 13px;border-radius:3px;border:1px solid var(--border);background:var(--bg2);color:var(--dim);cursor:pointer;">↓ Export PDF</button>
   </div>
 </div>
 
