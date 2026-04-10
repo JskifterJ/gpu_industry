@@ -7,12 +7,14 @@
 
 Replace `pres3_gpu-trends-positioning-deck.html` with a rebuilt deck that:
 - Reasons through the GPU compute market systematically using the **three-sphere framework** (Hardware / Software / AI/Models)
-- Uses **Jevons Paradox** as the unifying backbone/meta-law
+- Uses **Jevons Paradox** as the unifying backbone/meta-law — opened as a visually captivating historical story beat
 - Includes **data-driven charts** on every substantive slide
 - Uses **divider slides** (like pres2) to create a clear red thread for live presentation
 - Adds **SUNK vs Soperator** comparison (Software sphere)
 - Concludes with a **2×2 position map + BM response matrix** before the ICN play
-- Serves as the Monday Apr 13 Seb presentation AND as the pre–all-hands analytical deck (distribute as PDF ~May 1)
+- ICN's Play structured as **two avenues** (clean-slate vs IC-integrated) with a **full comparison table** (10 criteria incl. AI moat with definitions)
+- ICNT/fiat decision kept out of main deck → moved to **Appendix S24**
+- Serves as the ~Apr 16–17 Seb presentation AND as the pre–all-hands analytical deck (distribute as PDF ~May 1)
 
 Presentation date: **late next week (~Apr 16–17)**. All-hands document: **~May 1**.
 
@@ -94,23 +96,36 @@ Presentation date: **late next week (~Apr 16–17)**. All-hands document: **~May
 ### S3 — Jevons Paradox: The Meta-Law
 **Chrome:** The Jevons Lens · Foundational Frame
 **Act badge:** `JEVONS`
+**Design intent:** This is a story slide, not a data slide. Atmosphere first. The visual should arrest attention before the words do.
+
 **Content:**
-- Top: Definition card — "As technology increases the efficiency with which a resource is used, the total consumption of that resource increases rather than decreases." (William Stanley Jevons, 1865)
-- Three examples in pill-cards (row): Computing → Transportation → AI Compute
-- **Chart (left, 50% width):** Dual-line SVG chart:
-  - Line 1 (sw/teal): FLOP/$ improvement — 1.4× per year (Epoch AI data, 2013–2024)
-  - Line 2 (hw/purple): Training compute demand — 5× per year (Epoch AI data, 2020–2025)
-  - Gap between lines = Jevons effect. Annotated: "Efficiency ↑ → Demand ↑↑"
-  - Source: Epoch AI
-- **Stat callout (right):** McKinsey: total DC demand 82 GW (2025) → 219 GW (2030) · +166% despite efficiency gains
-- Bottom: Three-sphere icons with arrows → "Jevons operates in all 3 spheres"
+- **Atmospheric background:** Full-slide SVG — a dark, almost cinematic scene. Faint crosshatch texture suggesting coal mine timbering. A single light source (top-center). Mood: 1865 Britain.
+- **Large centered quote** (Bebas Neue, 56px, white, max-width 70%):
+  > "As technology increases the efficiency with which a resource is used,
+  > the total consumption of that resource **increases** — not decreases."
+  > — William Stanley Jevons, *The Coal Question*, 1865
+- **Below the quote — horizontal historical arc (SVG timeline, full width):**
+  Each node has an icon silhouette + label + short annotation in small type:
+
+  | Era | Efficiency gain | Paradox outcome |
+  |-----|----------------|----------------|
+  | Coal 1865 | Steam engines 3× more efficient | Coal consumption doubled |
+  | Oil 1970s | Fuel injection 30% more efficient | Car ownership tripled |
+  | Internet 2000s | Bandwidth 100× cheaper | Data consumption 10,000× |
+  | AI Compute today | Inference cost ↓ 280× (2yr) | GPU demand ↑ 35% CAGR |
+
+  - Timeline arrows connect each era → next. Final node (AI Compute) is highlighted in `--icn` green.
+  - Each node uses a minimal icon: coal cart · petrol pump · server rack · GPU chip
+
+- **Bottom anchor stat** (large, icn green): "Inference prices fell **280× in 2 years.** GPU demand grew **35% per year.**"
+- **Bottom-right footnote:** Source: Epoch AI / McKinsey
 
 ---
 
 ### S4 — Jevons in Action: Three Spheres, One Outcome
 **Chrome:** The Jevons Lens · How It Propagates
 **Act badge:** `JEVONS`
-**Content:** Flow diagram (SVG):
+**Content:** Flow diagram (SVG) — this slide is the analytical bridge from history to the three spheres:
 ```
 [HARDWARE]  cheaper FLOPs/$ ──┐
                                ├──▶ Lower cost/token ──▶ More consumption ──▶ More GPU demand
@@ -118,12 +133,17 @@ Presentation date: **late next week (~Apr 16–17)**. All-hands document: **~May
                                │
 [AI/MODELS] smaller models ───┘
 ```
-- Each sphere box uses its color. Arrow flow in white/dim.
-- Real examples below the flow:
-  - Hardware: B200 4,500 TFLOPS vs H100 989 TFLOPS → 4.5× more efficient → inference market explodes
-  - Software: FlashAttention 2-5× throughput → cost/token halved → more agentic jobs triggered
-  - AI/Models: Gemma 4 26B A4B = 4B active params → runs on edge → 1B new inference endpoints
-- Bottom stat: "Inference prices fell 280× in 2 years (Oct 2022: $20/M tokens → Oct 2024: $0.07/M). Inference demand grew 35% CAGR."
+- Each sphere box uses its color (`--hw`, `--sw`, `--llm`). Arrow flow in white/dim.
+- **Real evidence cards below each sphere** (3 cards, one per sphere, sphere-colored border):
+  - Hardware: "B200 = 4,500 TFLOPS vs H100 = 989 TFLOPS. 4.5× jump. Inference throughput explodes → more jobs per dollar → developers build more AI products."
+  - Software: "FlashAttention: 2–5× throughput vs stock vLLM. Speculative decoding: 2–3×. Cost/token halved — again. More agentic calls triggered."
+  - AI/Models: "Gemma 4 26B A4B: 4B active params at inference. Frontier-adjacent quality on a laptop GPU. 1B new inference endpoints by 2027."
+- **Dual-line SVG chart (right 40%):**
+  - Line 1 (sw/teal): FLOP/$ improvement — 1.4× per year (Epoch AI, 2013–2024)
+  - Line 2 (hw/purple): Training compute demand — 5× per year (Epoch AI, 2020–2025)
+  - Gap between lines = Jevons effect. Annotated: "Efficiency ↑ → Demand ↑↑"
+  - Source: Epoch AI
+- Bottom stat: McKinsey — total DC demand: **82 GW (2025) → 219 GW (2030)** · +166% despite efficiency gains
 
 ---
 
@@ -390,7 +410,7 @@ Presentation date: **late next week (~Apr 16–17)**. All-hands document: **~May
   - Stacked bar: IC compute (est.) + IC storage $7K/mo vs CoreWeave compute + CoreWeave storage $30K/mo
   - Label: "At 1PB training data: $23K/month savings on storage alone — before any egress fees"
 
-- **Bottom tension box (amber):** "Critical: ICNT token requirement. Enterprise ICP-4 will not use crypto rails. Leadership must decide: fiat pricing for ICP-4 or DePIN-only? These ICPs are mutually exclusive without explicit segmentation."
+- **Bottom tension box (amber):** "ICP-4 enterprises require fiat pricing — they will not use crypto rails. The avenue comparison table (S20) includes this as a criterion. See Appendix S24 for the full ICNT/fiat framework."
 
 ---
 
@@ -470,70 +490,90 @@ Presentation date: **late next week (~Apr 16–17)**. All-hands document: **~May
 
 ---
 
-### S19 — What We Bring to This Market
-**Chrome:** ICN's Play · Our Assets
+### S19 — ICN Key Resources & Capabilities
+**Chrome:** ICN's Play · R&Cs
 **Act badge:** `ICN`
-**Content:**
-- **Asset table (left 55%):**
+**Content:** Two-column R&C split — what ICN brings standalone vs. what becomes available when coupled with IC.
 
-| Asset | Description | Strategic value |
-|-------|-------------|----------------|
-| IC S3 Storage | ~$7/TB, zero egress, petabyte-scale | 4× cheaper than CoreWeave; data gravity moat |
-| Nitro | High-perf S3 for GPU workloads | Eliminates checkpointing idle time |
-| PoC Hardware | Blackwell 6000, MIG-capable | Inference + small fine-tuning (8–64 GPU range) |
-| IC Customer (1PB) | Training data on IC, compute on CoreWeave | First land-and-expand target |
-| ICNT Token | On-chain settlement, Base/Ethereum | DePIN positioning; also a GTM constraint |
+**Left — ICN standalone:**
+| Asset | Detail | Value |
+|-------|--------|-------|
+| PoC Hardware | Blackwell 6000, MIG-capable | Inference + QLoRA (8–64 GPU range) |
+| ICNT Token | On-chain settlement, Base/Ethereum | DePIN positioning (also a GTM constraint — see Appendix) |
+| ICN team | Strategy + technical PoC | Speed of execution |
 
-- **Gaps (right 45%, red-accented):**
-  - InfiniBand / high-speed interconnect (required for >32 GPU training)
-  - Managed orchestration layer (Kubernetes/Slurm) — Soperator is now available
-  - Compliance posture (SOC 2 Type II: 12–18 months)
-  - Developer experience layer (vLLM, Axolotl, ComfyUI pre-configured)
-  - Geographic expansion clarity
+**Right — IC-coupled (ICN + Impossible Cloud):**
+| Asset | Detail | Value |
+|-------|--------|-------|
+| IC S3 Storage | ~$7/TB, zero egress, petabyte-scale | 4.3× cheaper than CoreWeave; data gravity moat |
+| Nitro | High-performance S3 for GPU workloads | Eliminates checkpointing idle time; native vLLM/Axolotl backend |
+| 1PB anchor customer | Training data on IC, compute currently on CoreWeave | First land-and-expand target — "bring compute to the data" |
+| IC customer base | Established enterprise storage relationships | Warm pipeline for B1/B2 avenues |
 
-- **Bottom:** "Soperator changes the orchestration calculus — enterprise-grade Slurm+K8s is now open-source. ICN's gap is DX, compliance, and the fiat/token decision."
+**Bottom — Gaps (apply to both):**
+- InfiniBand / NVLink high-speed interconnect (required for >32 GPU training)
+- Managed orchestration (Soperator is now open-source — gap is deployment, not licensing)
+- Compliance posture (SOC 2 Type II: 12–18 months)
+- Developer experience layer (vLLM, Axolotl, ComfyUI pre-configured)
+- Fiat pricing rails (required for ICP-4 enterprise; see Appendix S24)
+
+**Callout (icn green):** "The IC-coupling multiplies ICN's defensibility. Standalone ICN competes with hundreds of GPU resellers. IC-integrated ICN competes with almost no one."
 
 ---
 
-### S20 — Positioning Options
+### S20 — Two Avenues into the Market
 **Chrome:** ICN's Play · Strategic Options
 **Act badge:** `ICN`
-**Content:**
-- **3 scenario columns** (scenario-col style from inference deck):
-  - **Option A2 — EU Neocloud-lite** (hw purple border):
-    - "ML-native cloud for European AI builders. Bare metal, zero egress, one-click fine-tuning, GDPR by default."
-    - ICP: ICP-2 (AI-native startups) + ICP-4 (fine-tuning SMEs)
-    - Capital: Medium-high · Timeline: Medium · Defensibility: Medium
-    - Requires: InfiniBand, compliance, DX layer
-  - **Option B2 — Fine-Tuning on IC Storage** (icn green border, highlighted as recommended):
-    - "Your training data is already on IC. Fine-tune here — zero egress, 4× cheaper storage."
-    - ICP: ICP-4 (fine-tuning SMEs with data on IC)
-    - Capital: Low-medium · Timeline: Fast · Defensibility: High (data gravity)
-    - Requires: Fiat pricing, managed Axolotl/QLoRA endpoint, Soperator integration
-  - **Option B3 — DePIN-first** (dim border):
-    - "ICNT-native compute marketplace for Web3 builders."
-    - ICP: DePIN / Web3 native
-    - Capital: Low · Timeline: Fast · Defensibility: Low (network effects only)
-    - Conflict: incompatible with ICP-4 enterprise without segmentation
+**Content:** Two avenue panels (top) + full comparison table (bottom).
+
+**Top — Avenue 1: Clean-Slate Entry** (neutral border, left panel ~50%):
+Two sub-options, horizontal within the panel:
+- **A1 — Orchestrator-only** (sw teal accent):
+  - "Software-only layer on third-party GPU inventory. Asset-light. Fast."
+  - ICP-2 / ICP-3 (AI startups, MLOps engineers)
+  - No hardware capex. Competes on DX. Soperator + managed APIs.
+- **A2 — EU Neocloud-lite** (hw purple accent):
+  - "ML-native bare-metal cloud for European AI builders. GDPR by default."
+  - ICP-2 + ICP-4 (AI startups + fine-tuning SMEs)
+  - Requires: InfiniBand, compliance posture, own hardware fleet
+
+**Top — Avenue 2: IC-Integrated (Reverse Playbook)** (icn green border, right panel ~50%):
+Three sub-options, vertical within the panel:
+- **B1 — Storage-adjacent inference** (sw teal accent):
+  - "Run inference on data already stored in IC. Zero egress."
+  - ICP-3 / ICP-4 (active IC customers with inference workloads)
+  - Lowest friction — no new acquisition needed
+- **B2 — Fine-tuning on IC storage** (icn green accent, **RECOMMENDED**):
+  - "Your training data is already on IC. Fine-tune here — zero egress, 4× cheaper storage."
+  - ICP-4 (fine-tuning SMEs with training data on IC)
+  - Highest defensibility (data gravity moat + IC synergy). Fast time to revenue.
+- **B4 — Sovereign EU compute** (amber accent):
+  - "Data residency + GDPR + EU AI Act compliance stack for regulated industries."
+  - ICP-5 (enterprise/regulated — pharma, finance, legal)
+  - High regulatory tailwind. Slower sales cycle. High capital.
+
+**Bottom — Full comparison table (10 criteria):**
+
+| Criterion | *Definition* | A1 Orch. | A2 EU Neo | B1 Inf. | B2 FineTune | B4 Sovereign |
+|-----------|-------------|----------|-----------|---------|------------|-------------|
+| Capital intensity | Upfront hardware + compliance capex required | Low | High | Medium | Low–Med | High |
+| Time to revenue | Months to first paying customer | 3–6 mo | 12–18 mo | 3–6 mo | 3–6 mo | 12–18 mo |
+| Gross margin ceiling | At scale, net revenue after COGS | ~50% | ~35% | ~45% | ~50% | ~30% |
+| Competitive pressure | Number of credible competitors today | High | Medium | Medium | Low | Low |
+| AI moat — external ¹ | How AI market trends (Jevons, cost deflation, open-weight) affect this position | Low | Medium | Med–High | High | Medium |
+| AI moat — internal ² | How ICN's own AI use creates compounding operational advantage | Low | Medium | High | High | Medium |
+| Data gravity | Whether data already on IC creates structural lock-in | None | None | High | Very high | Medium |
+| Regulatory tailwind | GDPR, EU AI Act, data residency as a GTM driver | Medium | High | Medium | Medium | Very high |
+| NVIDIA dependency | Exposure to NVIDIA pricing / supply constraints | Medium | High | High | Medium | High |
+| IC synergy | How much IC assets amplify ICN's competitive position | None | Low | Very high | Very high | Medium |
+
+**Footnote definitions:**
+> ¹ **AI moat — external:** How the AI market's structural trends (Jevons-driven cost deflation, open-weight model proliferation, Jevons demand explosion) erode or reinforce ICN's competitive position in this avenue. *High = trends reinforce; Low = trends erode.*
+> ² **AI moat — internal:** How ICN's own deployment of AI (fine-tuning on proprietary workload data, agentic infrastructure management, AI-optimized DX tooling) creates an operational advantage that compounds over time and is hard to replicate. *High = strong compounding advantage; Low = minimal differentiation from AI use.*
 
 ---
 
-### S21 — The Key Decision
-**Chrome:** ICN's Play · Decision Frame
-**Act badge:** `ICN`
-**Content:**
-- **Header:** "Before any enterprise sales motion, one decision must be made."
-- **Decision 1 — ICNT / Fiat (primary):**
-  - Table: ICP-4 enterprise SME (refuses crypto) vs ICP-2 AI startup (prefers fiat) vs DePIN native (requires token)
-  - Options: Dual-track / Enterprise-first fiat / DePIN-first
-  - Note: "These ICPs are mutually exclusive without explicit product segmentation."
-- **Decision 2 — ICP Priority:** ICP-4 (highest fit, B2) vs ICP-2 (broader market, A2) — choose one to lead
-- **Decision 3 — Orchestration:** Adopt Soperator (open-source, fast) vs build proprietary vs partner with existing neocloud
-- **Timeline callout (icn green):** "All-hands in Zug: ~May 1, 2026 · Decision deadline: before management presentation"
-
----
-
-### S22 — The Thesis
+### S21 — The Thesis
 **Chrome:** ICN's Play · The Thesis
 **Act badge:** `ICN`
 **Content:** Clean, high-impact thesis slide (minimal text, large type):
@@ -544,11 +584,14 @@ Presentation date: **late next week (~Apr 16–17)**. All-hands document: **~May
   2. ICN Compute: bring compute to the data → Axolotl/QLoRA on Blackwell 6000 + Soperator
   3. IC Inference: "train on IC, serve on IC" flywheel → agentic storage long-term moat
 - **Flywheel diagram:** Data → Compute → Output → Agent Memory → back to Storage
-- **Open question (amber):** "The critical prerequisite: ICNT/fiat decision. This is not technical — it's a leadership alignment between ICN and IC."
+- **Three immediate actions (icn green, bottom):**
+  1. Fiat pricing decision (prereq — see Appendix S24)
+  2. Soperator deployment on PoC hardware
+  3. Outreach to the 1PB IC anchor customer
 
 ---
 
-### S23 — Frontier Signals + Export
+### S22 — Frontier Signals + Export
 **Chrome:** Frontier Signals · April 2026
 **Act badge:** `SIGNALS`
 **Content:** 4 signal cards + PDF export button:
@@ -560,13 +603,38 @@ Presentation date: **late next week (~Apr 16–17)**. All-hands document: **~May
 
 ---
 
+### S24 — [APPENDIX] ICNT / Fiat Decision Framework
+**Chrome:** Appendix · ICNT / Fiat Decision
+**Act badge:** `APPENDIX`
+**Note:** This slide is outside the main deck flow. It is included for the all-hands document distribution and for leadership discussions in Zug. Not presented in the live Seb session unless specifically requested.
+
+**Content:**
+- **Header:** "Before any enterprise sales motion: one decision must be made."
+- **ICP compatibility table:**
+
+| ICP | Token preference | Fiat preference | Compatible with ICNT-only? |
+|-----|-----------------|-----------------|---------------------------|
+| ICP-2 AI startup | Neutral (prefers fiat) | Yes | No |
+| ICP-4 Fine-tuning SME | Refuses crypto rails | Yes | No |
+| ICP-5 Enterprise regulated | Refuses crypto rails | Yes | No |
+| DePIN / Web3 native | Requires ICNT | No | Yes |
+
+- **Three options (compact cards):**
+  - **Option 1 — Dual-track:** Fiat pricing for enterprise ICPs + ICNT for DePIN native. Requires product segmentation. Increases GTM complexity.
+  - **Option 2 — Enterprise-first fiat:** Launch with fiat for ICP-2/ICP-4. ICNT as optional settlement layer, not required. Broadest addressable market.
+  - **Option 3 — DePIN-first:** ICNT-native. Natural ICNT token utility. Excludes ICP-2/ICP-4 until fiat added. Narrower near-term market.
+- **Recommendation callout (amber):** "For B2 (highest-fit avenue), fiat pricing is a prerequisite. This is not a technical decision — it is a leadership alignment between ICN and IC. Recommend Option 2 as the default unless there is a specific reason to prioritize ICNT token utility over the enterprise pipeline."
+- **Timeline:** "Decision deadline: before all-hands in Zug (~May 1, 2026)"
+
+---
+
 ## Chart Summary
 
 | Slide | Chart type | Data source |
 |-------|-----------|-------------|
-| S3 | Dual-line SVG (FLOP/$ vs training compute) | Epoch AI (hardcoded from charts) |
-| S3 | McKinsey stacked bar (82→219 GW) | `gpu_AI_workloads_2025-2030.json` |
-| S4 | Flow diagram SVG | Hardcoded |
+| S3 | Historical arc SVG timeline (coal→cars→computing→AI) | Hardcoded + Epoch AI |
+| S4 | Flow diagram SVG + dual-line chart (FLOP/$ vs training compute) | Epoch AI (hardcoded from charts) |
+| S4 | McKinsey stacked bar (82→219 GW) | `gpu_AI_workloads_2025-2030.json` |
 | S5 | Horizontal timeline SVG (GPU lifecycle) | Hardcoded (from notes) |
 | S6 | Stacked area SVG (DC power TWh) | IEA/GS data (hardcoded) |
 | S7 | Comparison table | Hardcoded |
@@ -580,6 +648,7 @@ Presentation date: **late next week (~Apr 16–17)**. All-hands document: **~May
 | S15 | Cost waterfall bar SVG | Hardcoded |
 | S16 | 2×2 position map SVG (interactive, hover) | `market_positioning.json` |
 | S17 | Heatmap SVG | Hardcoded |
+| S20 | 5-option comparison table (10 criteria) | Hardcoded |
 
 ---
 
@@ -600,10 +669,10 @@ Presentation date: **late next week (~Apr 16–17)**. All-hands document: **~May
 
 ## Spec Self-Review
 
-- **Placeholders:** None. All data sources are specified (JSON files or hardcoded from confirmed numbers).
-- **Consistency:** Sphere colors consistent throughout (hw=purple, sw=teal, llm=amber, icn=green). Act badges match sphere naming.
-- **Scope:** 23 slides (5 dividers + 18 content). Appropriate for a 45–60min reasoning session. Could trim S4 (Jevons propagation) if time-pressured — it's a visual aid for the S3 argument.
-- **Ambiguity:** S16 2×2 company positions are approximate from market_positioning.json — not pixel-perfect coordinates but representative positioning. Noted in chart spec.
+- **Placeholders:** None. All data sources are specified (JSON files or hardcoded from confirmed numbers). AI moat criteria have explicit definitions in S20 footnotes.
+- **Consistency:** Sphere colors consistent throughout (hw=purple, sw=teal, llm=amber, icn=green). Act badges match sphere naming. ICNT/fiat removed from main flow — referenced only as footnote in S15 and full treatment in S24 Appendix.
+- **Scope:** 22 content slides + 1 appendix (S24) + 5 dividers = 28 total visual slides. S3 is now a story/atmosphere slide (lighter data load); S4 carries the data. Appropriate for a 45–60 min session — S4 can be skipped in a time-pressured live session if needed.
+- **Ambiguity:** S16 2×2 company positions are approximate from market_positioning.json — not pixel-perfect coordinates but representative positioning. Noted in chart spec. S20 comparison table ratings (Low/Medium/High) are directional judgements, not quantitative scores.
 - **ICN brand color:** `#5AF688` (neon green from icn-deck skill) used for ICN-specific slides and callouts.
 
 ---
