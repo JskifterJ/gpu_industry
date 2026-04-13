@@ -719,45 +719,100 @@ details[open] .fold-summary{color:var(--muted);}
   </div>
 </div>
 
-<!-- ══ S9 — ICP × BM MATRIX ══ -->
+<!-- ══ DIVIDER: SPHERE II ══ -->
+<div class="slide slide-divider" id="sdiv-sw">
+  <div class="div-eyebrow">Sphere II</div>
+  <div class="div-title" style="color:var(--sw);">SOFTWARE<br>/ STACK</div>
+  <div class="div-sub">Orchestration, inference serving, security, and storage. Where operational knowledge becomes durable advantage.</div>
+</div>
+
+<!-- ══ S9: ORCHESTRATION AS THE MOAT — OR IS IT? ══ -->
 <div class="slide" id="s9">
   <div class="slide-chrome">
-    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">ICP × Business Model Fit Matrix</div></div>
-    <div class="chrome-right"><span class="act-badge a2b">ACT II · THE MAP</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
+    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Sphere II · Software · The Orchestration Question</div></div>
+    <div class="chrome-right"><span class="act-badge asw">SOFTWARE</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
   </div>
   <div class="slide-body" style="flex-direction:column;padding:12px 44px 72px;gap:10px;overflow-y:auto;">
-    <div class="anim anim-1" style="font-family:var(--mono);font-size:8.5px;color:var(--dim);line-height:1.6;">Which business model serves which workload best? Hover cells for detail. <strong style="color:#10b981;">✓</strong> strong fit · <strong style="color:#f59e0b;">(✓)</strong> conditional · <strong style="color:var(--dim);">~</strong> partial · <strong style="color:var(--dim2);">−</strong> poor · <strong style="color:#06b6d4;">✦</strong> 2027+ agentic readiness</div>
-    <div class="icp-wrap anim anim-2">
-      <table class="icp-table">
-        <thead>
-          <tr>
-            <th style="text-align:left;min-width:200px;">Workload</th>
-            <th style="color:var(--h);">H · Hyperscaler</th>
-            <th style="color:var(--n);">N · Neocloud</th>
-            <th style="color:var(--o);">O · Orchestrator</th>
-            <th style="color:var(--a);">A · Aggregator</th>
-            <th style="color:#06b6d4;">2027+ Agentic</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td class="icp-grp" colspan="6">E · Enterprise / Regulated</td></tr>
-          <tr><td class="icp-wl">Compliance-gated inference</td><td class="fs" title="SOC2, HIPAA BAA, full audit trails. No other tier matches.">✓</td><td class="fc" title="Improving compliance posture but lacks full enterprise certifications at all providers.">(✓)</td><td class="fp" title="Orchestrators route to underlying compute — compliance depends on the provider, not the orchestrator.">~</td><td class="fn" title="P2P compute cannot meet regulated enterprise compliance requirements.">−</td><td class="fa" title="Agents need compliance-aware call logging and PII filtering. Hyperscalers best positioned.">✦</td></tr>
-          <tr><td class="icp-wl">Hybrid multi-cloud training</td><td class="fs" title="Native multi-cloud orchestration, Azure Arc, Google Anthos. Built for hybrid.">✓</td><td class="fp" title="Can participate in multi-cloud but doesn't coordinate across providers.">~</td><td class="fs" title="Multi-cloud orchestration is exactly what orchestrators do — Run:ai, Conductor, Armada.">✓</td><td class="fp" title="Aggregators can pool across providers but lack true orchestration.">~</td><td class="fp" title="Multi-cloud agent orchestration is technically complex; early-stage capability.">~</td></tr>
-          <tr><td class="icp-wl">Regulated data fine-tuning</td><td class="fs" title="Managed fine-tuning endpoints with data residency guarantees (Azure OpenAI, Vertex AI).">✓</td><td class="fc" title="Bare-metal isolation is excellent but managed services for regulated fine-tuning are nascent.">(✓)</td><td class="fp" title="Orchestrators can route fine-tuning jobs but don't own the compliance posture.">~</td><td class="fn" title="No compliance controls on shared/P2P hardware.">−</td><td class="fp" title="Fine-tuning for personalised agentic models — regulated context adds compliance complexity.">~</td></tr>
-          <tr><td class="icp-grp" colspan="6">S · AI-Native Startup</td></tr>
-          <tr><td class="icp-wl">Rapid prototyping / dev</td><td class="fc" title="Viable but costly. Complex setup. Overkill for prototyping.">(✓)</td><td class="fs" title="Developer-first UX (Lambda, Nebius). Fast onboarding. GPU spot access.">✓</td><td class="fs" title="Serverless GPU functions (Modal) are purpose-built for prototyping.">✓</td><td class="fs" title="Cheapest GPU access for experiments. Tolerable reliability for non-production.">✓</td><td class="fs" title="Startups are building agents now. All tiers compete here.">✦</td></tr>
-          <tr><td class="icp-wl">Mid-scale training runs</td><td class="fc" title="Works well but pricing is 3–5× neoclouds for equivalent hardware.">(✓)</td><td class="fs" title="Core neocloud use case. Bare metal, InfiniBand, high MFU. Competitive pricing.">✓</td><td class="fc" title="Orchestrators can schedule training but require the underlying compute to come from somewhere.">(✓)</td><td class="fp" title="Reliability and interconnect issues limit training viability on aggregated spot.">~</td><td class="fp" title="Training is less affected by agentic shift — primarily inference-side.">~</td></tr>
-          <tr><td class="icp-wl">Inference API serving</td><td class="fc" title="Scalable but hyperscaler tax adds 30–50% cost premium.">(✓)</td><td class="fs" title="Dedicated inference endpoints, managed K8s, competitive pricing. Growing capability.">✓</td><td class="fs" title="Inference orchestration (vLLM, SGLang routing) is the orchestrator's primary value proposition.">✓</td><td class="fp" title="Latency unpredictability makes aggregated compute unsuitable for production serving.">~</td><td class="fs" title="Inference API is the backbone of agentic architectures. All tiers compete heavily here.">✦</td></tr>
-          <tr><td class="icp-grp" colspan="6">L · Foundation Lab</td></tr>
-          <tr><td class="icp-wl">Frontier pre-training (&gt;10K GPUs)</td><td class="fs" title="Only hyperscalers can reliably assemble 10K+ GPU clusters with guaranteed availability.">✓</td><td class="fs" title="CoreWeave, Crusoe: can match hyperscaler scale. SUNK/NVLink fabric required.">✓</td><td class="fp" title="Orchestrators can schedule across clusters but don't own the hardware at frontier scale.">~</td><td class="fn" title="Aggregated/P2P compute cannot support coordinated large-scale training.">−</td><td class="fp" title="Frontier training is less agentic-specific — remains primarily a compute density problem.">~</td></tr>
-          <tr><td class="icp-wl">RLHF / post-training</td><td class="fc" title="Works well. RLHF is less hardware-intensive than pre-training.">(✓)</td><td class="fs" title="Purpose-built for post-training workloads. Bare-metal isolation. Good pricing.">✓</td><td class="fc" title="Can orchestrate RLHF pipelines across heterogeneous hardware.">(✓)</td><td class="fn" title="RLHF requires stable, low-latency interconnect that aggregated compute cannot guarantee.">−</td><td class="fp" title="RLHF for agentic feedback loops is emerging use case.">~</td></tr>
-          <tr><td class="icp-wl">Multi-node sync training</td><td class="fs" title="Native high-bandwidth interconnect. Best multi-node guarantee in the market.">✓</td><td class="fs" title="InfiniBand / NVLink. Top neoclouds match hyperscalers on interconnect.">✓</td><td class="fp" title="Orchestrators route but don't control the physical interconnect — multi-node sync requires owned hardware.">~</td><td class="fn" title="Multi-node sync training is fundamentally incompatible with aggregated/distributed compute.">−</td><td class="fn" title="Multi-node sync training is a training-side workload, orthogonal to agentic inference.">−</td></tr>
-          <tr><td class="icp-grp" colspan="6">M · SME Developer</td></tr>
-          <tr><td class="icp-wl">Low-volume inference</td><td class="fc" title="Works but minimum commitment and complexity is overkill for SME inference.">(✓)</td><td class="fp" title="Minimum cluster sizes often too large for SME inference volumes.">~</td><td class="fp" title="Serverless inference (Modal, Baseten) works but adds latency overhead.">~</td><td class="fs" title="Spot GPU access at lowest cost. Ideal for bursty low-volume inference.">✓</td><td class="fs" title="SME agents will drive massive low-volume inference demand from 2026.">✦</td></tr>
-          <tr><td class="icp-wl">LoRA / QLoRA fine-tuning</td><td class="fc" title="Managed fine-tuning endpoints (Azure, Vertex) available but expensive.">(✓)</td><td class="fp" title="Can run LoRA but no managed fine-tuning tooling — requires hands-on ML engineer.">~</td><td class="fs" title="Orchestrators (Conductor, Anyscale) provide managed LoRA pipelines with good UX.">✓</td><td class="fs" title="Cheapest GPU access for LoRA experiments. Tolerable for non-time-critical jobs.">✓</td><td class="fs" title="LoRA fine-tuning for personalised agentic models is the primary SME AI investment from 2026.">✦</td></tr>
-          <tr><td class="icp-wl">Experimental / one-off GPU access</td><td class="fp" title="No per-hour spot access for SMEs at hyperscaler pricing.">~</td><td class="fp" title="Minimum commitment periods exclude most experimental use cases.">~</td><td class="fc" title="Serverless GPU functions ideal for experimental workloads — pay only for execution time.">(✓)</td><td class="fs" title="Purpose-built for spot / experimental access. Maximum flexibility, lowest cost.">✓</td><td class="fs" title="Developers experimenting with agentic architectures need exactly this — cheap, flexible, no commitment.">✦</td></tr>
-        </tbody>
-      </table>
+    <div class="anim anim-1" style="display:flex;flex-direction:column;gap:3px;">
+      <div style="font-family:var(--display);font-size:28px;letter-spacing:.03em;line-height:1.1;">ORCHESTRATION AS THE MOAT<br>— OR IS IT?</div>
+      <div style="font-family:var(--mono);font-size:8.5px;color:var(--dim);line-height:1.6;max-width:820px;">Bare metal is the table stake. The moat <em>was</em> in the orchestration layer — SUNK's 96% goodput, topology-aware gang scheduling. But Soperator's open-source release changed the equation. And agentic coding tools are lowering the cost of writing infrastructure software faster than any prior technology cycle.</div>
+    </div>
+    <div class="anim anim-2" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;flex:1;min-height:0;">
+      <!-- LEFT: SUNK vs Soperator comparison table -->
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);border-bottom:1px solid var(--border);padding-bottom:4px;">SUNK vs Soperator — Orchestration Layer</div>
+        <table style="width:100%;border-collapse:collapse;font-family:var(--mono);font-size:8px;">
+          <thead><tr>
+            <th style="text-align:left;padding:4px 6px;border-bottom:1px solid var(--border);color:var(--dim2);font-size:7px;letter-spacing:.08em;text-transform:uppercase;">Dimension</th>
+            <th style="padding:4px 6px;border-bottom:1px solid var(--border);color:var(--sw);" data-term="sunk">SUNK (CoreWeave)</th>
+            <th style="padding:4px 6px;border-bottom:1px solid var(--border);color:var(--dim);" data-term="soperator">Soperator (Nebius)</th>
+          </tr></thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border);"><td style="padding:4px 6px;color:var(--muted);">Goodput</td><td style="padding:4px 6px;text-align:center;color:var(--sw);font-weight:600;">~96%</td><td style="padding:4px 6px;text-align:center;color:var(--dim);">~92%</td></tr>
+            <tr style="border-bottom:1px solid var(--border);"><td style="padding:4px 6px;color:var(--muted);">Gang scheduling</td><td style="padding:4px 6px;text-align:center;color:var(--sw);">Topology-aware</td><td style="padding:4px 6px;text-align:center;color:var(--dim);">Yes (open)</td></tr>
+            <tr style="border-bottom:1px solid var(--border);"><td style="padding:4px 6px;color:var(--muted);">DPU offload</td><td style="padding:4px 6px;text-align:center;color:var(--sw);">BlueField-3</td><td style="padding:4px 6px;text-align:center;color:var(--dim);">No</td></tr>
+            <tr style="border-bottom:1px solid var(--border);"><td style="padding:4px 6px;color:var(--muted);">Open-source?</td><td style="padding:4px 6px;text-align:center;color:var(--dim2);">No (proprietary)</td><td style="padding:4px 6px;text-align:center;color:var(--text);font-weight:600;">Yes — GitHub</td></tr>
+            <tr><td style="padding:4px 6px;color:var(--muted);">Self-hostable?</td><td style="padding:4px 6px;text-align:center;color:var(--dim2);">No</td><td style="padding:4px 6px;text-align:center;color:var(--text);font-weight:600;">Yes</td></tr>
+          </tbody>
+        </table>
+        <!-- Goodput bar comparison -->
+        <div style="display:flex;flex-direction:column;gap:4px;margin-top:4px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div style="font-family:var(--mono);font-size:7.5px;color:var(--sw);width:80px;">SUNK 96%</div>
+            <div style="flex:1;height:10px;background:var(--bg3);border-radius:2px;overflow:hidden;"><div style="width:96%;height:100%;background:var(--sw);border-radius:2px;"></div></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div style="font-family:var(--mono);font-size:7.5px;color:var(--dim);width:80px;">Soperator 92%</div>
+            <div style="flex:1;height:10px;background:var(--bg3);border-radius:2px;overflow:hidden;"><div style="width:92%;height:100%;background:var(--dim2);border-radius:2px;"></div></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div style="font-family:var(--mono);font-size:7.5px;color:var(--dim2);width:80px;">Std VM cloud</div>
+            <div style="flex:1;height:10px;background:var(--bg3);border-radius:2px;overflow:hidden;"><div style="width:80%;height:100%;background:var(--dim2);opacity:0.5;border-radius:2px;"></div></div>
+          </div>
+          <div style="font-family:var(--mono);font-size:7px;color:var(--dim2);" data-term="goodput">goodput = valid compute / total GPU time</div>
+        </div>
+      </div>
+      <!-- RIGHT: Scale/balance SVG + moat tension -->
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);border-bottom:1px solid var(--border);padding-bottom:4px;">Moat Tension</div>
+        <!-- Balance SVG — slightly tilted toward bare-metal side -->
+        <div style="display:flex;justify-content:center;">
+          <svg viewBox="0 0 500 140" width="440" height="120">
+            <!-- Fulcrum -->
+            <polygon points="250,128 232,142 268,142" fill="var(--dim2)"/>
+            <rect x="245" y="90" width="10" height="38" fill="var(--dim2)"/>
+            <!-- Beam: tilted right (software side up, bare-metal side down) -->
+            <line x1="60" y1="82" x2="440" y2="98" stroke="var(--dim)" stroke-width="3" stroke-linecap="round"/>
+            <!-- Left pan (software moat — higher) -->
+            <ellipse cx="60" cy="82" rx="55" ry="6" fill="var(--sw)" fill-opacity="0.2" stroke="var(--sw)" stroke-opacity="0.5" stroke-width="1.5"/>
+            <text x="35" y="72" font-family="'Bebas Neue',sans-serif" font-size="8" fill="var(--sw)">Software moat</text>
+            <!-- Right pan (bare-metal moat — lower) -->
+            <ellipse cx="440" cy="98" rx="55" ry="6" fill="var(--hw)" fill-opacity="0.2" stroke="var(--hw)" stroke-opacity="0.5" stroke-width="1.5"/>
+            <text x="395" y="116" font-family="'Bebas Neue',sans-serif" font-size="8" fill="var(--hw)">Bare-metal moat</text>
+          </svg>
+        </div>
+        <!-- Two-column bullet lists -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:8.5px;">
+          <div style="display:flex;flex-direction:column;gap:4px;">
+            <div style="font-family:var(--mono);font-size:7px;color:var(--sw);letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;">Software moat arguments</div>
+            <div style="color:var(--muted);padding-left:8px;border-left:2px solid rgba(45,212,191,0.3);line-height:1.5;">Orchestration complexity is real</div>
+            <div style="color:var(--muted);padding-left:8px;border-left:2px solid rgba(45,212,191,0.3);line-height:1.5;" data-term="mfu">Goodput gap (80% → 96%) is commercial</div>
+            <div style="color:var(--muted);padding-left:8px;border-left:2px solid rgba(45,212,191,0.3);line-height:1.5;">Inference serving (FlashAttention, vLLM) compounds</div>
+            <div style="color:var(--muted);padding-left:8px;border-left:2px solid rgba(45,212,191,0.3);line-height:1.5;">Developer experience (DX) creates retention</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px;">
+            <div style="font-family:var(--mono);font-size:7px;color:var(--hw);letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;">Bare-metal moat arguments</div>
+            <div style="color:var(--muted);padding-left:8px;border-left:2px solid var(--hw-b);line-height:1.5;">Physical infra cannot be open-sourced</div>
+            <div style="color:var(--muted);padding-left:8px;border-left:2px solid var(--hw-b);line-height:1.5;">Predictive failure detection = operational knowledge</div>
+            <div style="color:var(--muted);padding-left:8px;border-left:2px solid var(--hw-b);line-height:1.5;">HW-SW co-opt (CAIOS, BlueField-3)</div>
+            <div style="color:var(--muted);padding-left:8px;border-left:2px solid var(--hw-b);line-height:1.5;">Energy access, location strategy</div>
+            <div style="color:var(--muted);padding-left:8px;border-left:2px solid var(--hw-b);line-height:1.5;font-weight:600;color:var(--hw);">96% goodput at 10k GPU scale ≠ software recipe</div>
+          </div>
+        </div>
+        <div style="padding:8px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:4px;font-family:var(--mono);font-size:8px;color:var(--dim);line-height:1.6;margin-top:auto;font-style:italic;">
+          "Soperator is open-source. AI coding tools write K8s manifests in minutes. The question is no longer <em>whether</em> you can build the orchestration — it's whether you can <em>run</em> it at 96% goodput, and whether that gap persists as coding tools accelerate."
+        </div>
+      </div>
     </div>
   </div>
 </div>
