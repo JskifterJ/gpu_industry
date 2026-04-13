@@ -1000,47 +1000,70 @@ details[open] .fold-summary{color:var(--muted);}
   </div>
 </div>
 
-<!-- ══ S13 — STRATEGIC POSITIONING OPTIONS ══ -->
+<!-- ══ DIVIDER: SPHERE III ══ -->
+<div class="slide slide-divider" id="sdiv-llm">
+  <div class="div-eyebrow">Sphere III</div>
+  <div class="div-title" style="color:var(--llm);">AI / MODELS</div>
+  <div class="div-sub">The model layer: frontier capability, open-weight compression, MoE architecture, agentic workloads, and the edge distribution wave.</div>
+</div>
+
+<!-- ══ S13: OPEN-WEIGHT MEETS FRONTIER ══ -->
 <div class="slide" id="s13">
   <div class="slide-chrome">
-    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Strategic Positioning Options · Three Scenarios</div></div>
-    <div class="chrome-right"><span class="act-badge a3b">ACT III · ICN'S PLAY</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
+    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Sphere III · AI/Models · The Model Landscape</div></div>
+    <div class="chrome-right"><span class="act-badge allm">AI/MODELS</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
   </div>
-  <div class="slide-body" style="flex-direction:column;padding:14px 44px 72px;gap:12px;overflow-y:auto;">
-    <div class="anim anim-1" style="font-family:var(--mono);font-size:8.5px;color:var(--dim);line-height:1.6;">Three scenarios evaluated — clean slate, storage synergy, and full platform. Scenario B is the recommended starting point given IC's existing storage moat.</div>
-    <div style="display:flex;flex-direction:column;gap:10px;">
-      <div class="scenario-card anim anim-2" style="border-color:rgba(99,102,241,.3);border-left:3px solid var(--h);">
-        <div class="sc-label">Scenario A</div>
-        <div class="sc-title" style="color:var(--h);">Clean Slate Entry</div>
-        <div class="sc-sub">"If entering as a well-funded startup with no prior IC relationship."</div>
-        <div class="sc-grid">
-          <div class="sc-field"><div class="sf-lbl">Play</div><div class="sf-val">Inference-first neocloud targeting AI-native startups + mid-market. Stack L2–L4. Bare metal, MIG-based multi-tenant inference, managed K8s.</div></div>
-          <div class="sc-field"><div class="sf-lbl">Moat</div><div class="sf-val">Developer experience (Lambda-style 1-click), zero egress, vLLM/SGLang native. Storage sourced externally.</div></div>
-          <div class="sc-field"><div class="sf-lbl">Risk</div><div class="sf-val">Competing directly with CoreWeave, Nebius, Lambda on their home turf without storage differentiation. Commoditisation headwind.</div></div>
-          <div class="sc-field"><div class="sf-lbl">Timeline</div><div class="sf-val">12–18 months to first meaningful revenue. High capex. No natural ICP pull-through.</div></div>
+  <div class="slide-body" style="flex-direction:column;padding:12px 44px 72px;gap:10px;overflow-y:auto;">
+    <div class="anim anim-1" style="display:flex;flex-direction:column;gap:3px;">
+      <div style="font-family:var(--display);font-size:30px;letter-spacing:.03em;line-height:1.1;">OPEN-WEIGHT MEETS FRONTIER</div>
+      <div style="font-family:var(--mono);font-size:8.5px;color:var(--dim);">Frontier labs set the ceiling. Open-weight models chase it with a 6–12 month lag, at 10–100× lower inference cost.</div>
+    </div>
+    <div class="anim anim-2" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;flex:1;min-height:0;">
+      <!-- LEFT: Frontier / Proprietary -->
+      <div style="display:flex;flex-direction:column;gap:7px;">
+        <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--llm);border-bottom:2px solid var(--llm-b);padding-bottom:4px;">Frontier / Proprietary — Pushing the Ceiling</div>
+        <div style="padding:8px 10px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--llm);border-radius:4px;display:flex;flex-direction:column;gap:3px;">
+          <div style="font-family:var(--mono);font-size:8px;color:var(--llm);font-weight:600;" data-term="managed-agents">Anthropic — Claude Opus 4.6 + Managed Agents</div>
+          <div style="font-size:9.5px;color:var(--muted);line-height:1.55;">$15/M tokens · ~1450 ELO · Managed Agents (Apr 8 2026): fully hosted agent infra. Days to production vs. months. $0.08/session-hr.</div>
         </div>
-      </div>
-      <div class="scenario-card anim anim-3" style="border-color:rgba(16,185,129,.35);border-left:3px solid var(--n);">
-        <div class="rec-badge">★ Recommended starting point</div>
-        <div class="sc-label">Scenario B</div>
-        <div class="sc-title" style="color:var(--n);">Storage Synergy Play</div>
-        <div class="sc-sub">"Leverage the $7/TB vs $30/TB storage delta as the wedge — no other neocloud can replicate this."</div>
-        <div class="sc-grid">
-          <div class="sc-field"><div class="sf-lbl">Play</div><div class="sf-val">Storage-adjacent inference cloud. IC storage customers bring compute workloads to ICN — zero egress, immediate 20–40% TCO advantage. Stack L2–L4 initially.</div></div>
-          <div class="sc-field"><div class="sf-lbl">Moat</div><div class="sf-val">Only platform where storage AND compute are the same economic entity. $7/TB + zero egress is structurally uncopyable by any neocloud without its own storage platform.</div></div>
-          <div class="sc-field"><div class="sf-lbl">Target ICP</div><div class="sf-val">AI startups running training data on IC today (existing pipeline). SMEs running parallel inference. Fine-tuning shops (LoRA/QLoRA on Llama, Qwen, Mistral).</div></div>
-          <div class="sc-field"><div class="sf-lbl">Build &amp; Timeline</div><div class="sf-val">PoC: 12× Blackwell 6000 GPUs, 3–6 months. Validate MFU + customer demand. Revenue: 6–12 months. Nitro + GPU networking integration required.</div></div>
+        <div style="padding:8px 10px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--llm);border-radius:4px;display:flex;flex-direction:column;gap:3px;">
+          <div style="font-family:var(--mono);font-size:8px;color:var(--llm);font-weight:600;">OpenAI — GPT-5 class</div>
+          <div style="font-size:9.5px;color:var(--muted);line-height:1.55;">Frontier training at scale, reinforcement learning from human feedback. Sets quality benchmarks that open-weight tracks.</div>
         </div>
+        <div style="padding:8px 10px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--llm);border-radius:4px;display:flex;flex-direction:column;gap:3px;">
+          <div style="font-family:var(--mono);font-size:8px;color:var(--llm);font-weight:600;">Google — Gemini 3.1 Pro</div>
+          <div style="font-size:9.5px;color:var(--muted);line-height:1.55;">Multimodal frontier. Vertex AI integration. Long context (1M+ tokens). Powers Google Workspace AI at hyperscale.</div>
+        </div>
+        <div style="padding:8px 10px;background:var(--llm-dim);border:1px solid var(--llm-b);border-radius:4px;font-family:var(--mono);font-size:8px;color:var(--llm);line-height:1.55;margin-top:auto;">Frontier labs set the ceiling — open weights chase it with 6–12 month lag, at 10–100× lower inference cost. The gap is competition, not elimination.</div>
       </div>
-      <div class="scenario-card anim anim-4" style="border-color:rgba(245,158,11,.3);border-left:3px solid var(--a);">
-        <div class="sc-label">Scenario C · Long-term vision</div>
-        <div class="sc-title" style="color:var(--a);">Full-Stack ICN Platform</div>
-        <div class="sc-sub">"Combine IC storage + ICN compute + managed orchestration into an L1–L5 platform."</div>
-        <div class="sc-grid">
-          <div class="sc-field"><div class="sf-lbl">Play</div><div class="sf-val">Fully integrated AI cloud: IC owns L1 storage + L2 GPU hardware; ICN builds L3 bare metal + L4 managed K8s/Slurm + L5 inference endpoints.</div></div>
-          <div class="sc-field"><div class="sf-lbl">Moat</div><div class="sf-val">Full-stack TCO advantage. Only non-hyperscaler with both storage and compute economics at scale. Storage $7/TB + zero egress + competitive compute = lowest TCO outside AWS/Azure.</div></div>
-          <div class="sc-field"><div class="sf-lbl">Risk</div><div class="sf-val">High capex. Significant org build (ML platform engineers, DevOps, security). Competing in convergence zone vs CoreWeave, Nebius, Lambda simultaneously.</div></div>
-          <div class="sc-field"><div class="sf-lbl">Timeline</div><div class="sf-val">18–36 months to differentiated platform. Requires Scenario B validation first — B is the PoC, C is the scale-up.</div></div>
+      <!-- RIGHT: Open-Weight compression (scatter chart + model cards) -->
+      <div style="display:flex;flex-direction:column;gap:7px;">
+        <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);border-bottom:2px solid var(--border);padding-bottom:4px;">Open-Weight Compression — Frontier at Fraction of Cost</div>
+        <!-- ELO vs $/M scatter (simplified as table) -->
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:5px;overflow:hidden;">
+          <table style="width:100%;border-collapse:collapse;font-family:var(--mono);font-size:8px;">
+            <thead><tr style="background:var(--bg3);">
+              <th style="text-align:left;padding:4px 7px;color:var(--dim2);font-size:7px;">Model</th>
+              <th style="padding:4px 7px;color:var(--dim2);font-size:7px;">Arena ELO</th>
+              <th style="padding:4px 7px;color:var(--dim2);font-size:7px;">$/M tokens</th>
+              <th style="padding:4px 7px;color:var(--dim2);font-size:7px;">Active params</th>
+            </tr></thead>
+            <tbody>
+              <tr style="border-top:1px solid var(--border);"><td style="padding:4px 7px;color:var(--muted);">Claude Opus 4.6</td><td style="padding:4px 7px;text-align:center;color:var(--llm);">~1450</td><td style="padding:4px 7px;text-align:center;color:var(--dim);">$15</td><td style="padding:4px 7px;text-align:center;color:var(--dim2);">N/A (closed)</td></tr>
+              <tr style="border-top:1px solid var(--border);"><td style="padding:4px 7px;color:var(--muted);">GLM-5.1 (Z.ai)</td><td style="padding:4px 7px;text-align:center;color:var(--llm);">~1440</td><td style="padding:4px 7px;text-align:center;color:var(--text);font-weight:600;">$0.50–2</td><td style="padding:4px 7px;text-align:center;color:var(--text);">40B (754B total)</td></tr>
+              <tr style="border-top:1px solid var(--border);"><td style="padding:4px 7px;color:var(--muted);">Gemma 4 31B</td><td style="padding:4px 7px;text-align:center;color:var(--text);">~1452</td><td style="padding:4px 7px;text-align:center;color:var(--text);font-weight:600;">$0.15–0.50</td><td style="padding:4px 7px;text-align:center;color:var(--text);">31B (dense)</td></tr>
+              <tr style="border-top:1px solid var(--border);" data-term="moe"><td style="padding:4px 7px;color:var(--muted);" data-term="moe">Gemma 4 26B A4B</td><td style="padding:4px 7px;text-align:center;color:var(--text);">~1410</td><td style="padding:4px 7px;text-align:center;color:var(--icn);font-weight:600;">$0.03–0.08</td><td style="padding:4px 7px;text-align:center;color:var(--icn);">4B (MoE)</td></tr>
+              <tr style="border-top:1px solid var(--border);"><td style="padding:4px 7px;color:var(--muted);">DeepSeek-R1</td><td style="padding:4px 7px;text-align:center;color:var(--dim);">~1380</td><td style="padding:4px 7px;text-align:center;color:var(--text);">$0.55/1M</td><td style="padding:4px 7px;text-align:center;color:var(--dim2);">37B (671B total)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- Managed Agents callout -->
+        <div style="padding:8px 10px;background:var(--icn-dim);border:1px solid var(--icn-b);border-radius:4px;font-family:var(--mono);font-size:8px;color:var(--icn);line-height:1.6;" data-term="managed-agents">
+          <strong>Managed Agents (Anthropic, Apr 8 2026):</strong> Fully hosted agent infrastructure. "Get to production 10× faster." Session runtime at $0.08/session-hr. Signals: agent workloads are becoming infrastructure-grade, not research experiments.
+        </div>
+        <!-- Jevons marker -->
+        <div style="padding:7px 10px;background:var(--bg3);border-left:3px solid var(--llm);border-radius:4px;font-family:var(--mono);font-size:7.5px;color:var(--dim);line-height:1.55;" data-term="jevons-paradox">
+          <strong style="color:var(--llm);">Jevons:</strong> Inference cost ↓ 280× in 2 years (GPT-3.5 class: $20/M → $0.07/M). GPU demand ↑ 35% CAGR. Efficiency is the accelerant.
         </div>
       </div>
     </div>
