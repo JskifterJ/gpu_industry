@@ -267,36 +267,54 @@ details[open] .fold-summary{color:var(--muted);}
 <!-- ══ S2 — DECK ORIENTATION ══ -->
 <div class="slide" id="s2">
   <div class="slide-chrome">
-    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Deck 3 · Three Spheres · Session Overview</div></div>
+    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Deck 3 of 3 · Session Overview</div></div>
     <div class="chrome-right"><span class="act-badge a1b">FOUNDATIONS</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
   </div>
-  <div class="slide-body" style="flex-direction:column;padding:18px 44px 72px;gap:20px;align-items:center;justify-content:center;">
-    <div class="anim anim-1" style="font-family:var(--mono);font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);text-align:center;">Deck 3 of 3 · Sessions 1–2 established the opportunity. This session diagnoses the market.</div>
-    <div class="anim anim-2" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:16px;width:100%;max-width:960px;">
-      <div style="padding:16px 14px;background:var(--bg2);border:1px solid var(--border);border-top:3px solid #6366f1;border-radius:6px;display:flex;flex-direction:column;gap:6px;">
-        <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:#6366f1;">THE RED THREAD</div>
-        <div style="font-family:var(--display);font-size:20px;letter-spacing:.02em;line-height:1.1;color:var(--text);">Jevons Paradox</div>
-        <div style="font-size:9px;color:var(--muted);line-height:1.55;">Every efficiency gain in AI compute creates more demand, not less. This drives everything in this deck.</div>
+  <div class="slide-body" style="flex-direction:row;padding:18px 44px 72px;gap:28px;align-items:stretch;">
+    <!-- Left: Sessions 1 & 2 recap -->
+    <div class="anim anim-1" style="flex:1;display:flex;flex-direction:column;gap:12px;">
+      <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);border-bottom:1px solid var(--border);padding-bottom:6px;">Sessions 1 &amp; 2 · What We Covered</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="padding:12px 14px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--dim);border-radius:5px;">
+          <div style="font-family:var(--mono);font-size:7px;letter-spacing:.1em;color:var(--dim2);text-transform:uppercase;margin-bottom:4px;">Session 1 · Product &amp; Vision</div>
+          <div style="font-size:9.5px;color:var(--muted);line-height:1.55;">IC storage platform · ICN compute thesis · Zero-egress S3 · ICNT token model · Why sovereign cloud matters</div>
+        </div>
+        <div style="padding:12px 14px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--dim);border-radius:5px;">
+          <div style="font-family:var(--mono);font-size:7px;letter-spacing:.1em;color:var(--dim2);text-transform:uppercase;margin-bottom:4px;">Session 2 · Competitive Landscape</div>
+          <div style="font-size:9.5px;color:var(--muted);line-height:1.55;">4 customer archetypes (E/S/L/M) · Business model taxonomy (H/N/O/A) · 9-layer GPU stack · Competitor positioning · IC coupling as moat</div>
+        </div>
       </div>
-      <div style="padding:16px 14px;background:var(--hw-dim);border:1px solid var(--hw-b);border-top:3px solid var(--hw);border-radius:6px;display:flex;flex-direction:column;gap:6px;">
-        <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--hw);">SPHERE I</div>
-        <div style="font-family:var(--display);font-size:20px;letter-spacing:.02em;line-height:1.1;color:var(--text);">Hardware</div>
-        <div style="font-size:9px;color:var(--muted);line-height:1.55;">Energy wall, silicon cycles, memory constraints. The physical layer is the binding limit.</div>
-      </div>
-      <div style="padding:16px 14px;background:var(--sw-dim);border:1px solid var(--sw-b);border-top:3px solid var(--sw);border-radius:6px;display:flex;flex-direction:column;gap:6px;">
-        <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--sw);">SPHERE II</div>
-        <div style="font-family:var(--display);font-size:20px;letter-spacing:.02em;line-height:1.1;color:var(--text);">Software</div>
-        <div style="font-size:9px;color:var(--muted);line-height:1.55;">Inference efficiency, orchestration moats, context as infrastructure. The stack commoditises unevenly.</div>
-      </div>
-      <div style="padding:16px 14px;background:var(--llm-dim);border:1px solid var(--llm-b);border-top:3px solid var(--llm);border-radius:6px;display:flex;flex-direction:column;gap:6px;">
-        <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--llm);">SPHERE III</div>
-        <div style="font-family:var(--display);font-size:20px;letter-spacing:.02em;line-height:1.1;color:var(--text);">AI / Models</div>
-        <div style="font-size:9px;color:var(--muted);line-height:1.55;">Frontier chasing open-weight, agentic demand, fine-tuning proliferation. New compute shapes emerging.</div>
-      </div>
+      <div style="padding:8px 12px;background:var(--bg3);border-radius:4px;font-family:var(--mono);font-size:8px;color:var(--dim);line-height:1.5;margin-top:auto;">Sessions 1–2 established the opportunity and the competitive map.<br>This session diagnoses the market forces that shape it.</div>
     </div>
-    <div class="anim anim-3" style="padding:12px 20px;background:var(--icn-dim);border:1px solid var(--icn-b);border-radius:5px;text-align:center;max-width:760px;">
-      <span style="font-family:var(--mono);font-size:9px;color:var(--icn);">↓ ICN's Play: </span>
-      <span style="font-size:9px;color:var(--muted);">Where the three spheres converge is where ICN competes — sovereign, AI-optimised infrastructure at the intersection of all three forces.</span>
+    <!-- Right: Today's agenda -->
+    <div class="anim anim-2" style="flex:1;display:flex;flex-direction:column;gap:10px;">
+      <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);border-bottom:1px solid var(--border);padding-bottom:6px;">Today · GPU Industry Trends &amp; Positioning</div>
+      <div style="display:flex;flex-direction:column;gap:7px;">
+        <div style="padding:9px 14px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid #6366f1;border-radius:5px;display:flex;align-items:center;gap:10px;">
+          <div style="font-family:var(--mono);font-size:8px;color:#6366f1;white-space:nowrap;min-width:70px;">FOUNDATIONS</div>
+          <div style="font-size:9px;color:var(--muted);">Jevons Paradox — the red thread · Industry signals · Three spheres framework</div>
+        </div>
+        <div style="padding:9px 14px;background:var(--hw-dim);border:1px solid var(--hw-b);border-left:3px solid var(--hw);border-radius:5px;display:flex;align-items:center;gap:10px;">
+          <div style="font-family:var(--mono);font-size:8px;color:var(--hw);white-space:nowrap;min-width:70px;">SPHERE I</div>
+          <div style="font-size:9px;color:var(--muted);">Hardware — energy wall, GPU cycles, silicon diversification, memory constraints</div>
+        </div>
+        <div style="padding:9px 14px;background:var(--sw-dim);border:1px solid var(--sw-b);border-left:3px solid var(--sw);border-radius:5px;display:flex;align-items:center;gap:10px;">
+          <div style="font-family:var(--mono);font-size:8px;color:var(--sw);white-space:nowrap;min-width:70px;">SPHERE II</div>
+          <div style="font-size:9px;color:var(--muted);">Software — orchestration, inference efficiency, context infrastructure, agentic shift</div>
+        </div>
+        <div style="padding:9px 14px;background:var(--llm-dim);border:1px solid var(--llm-b);border-left:3px solid var(--llm);border-radius:5px;display:flex;align-items:center;gap:10px;">
+          <div style="font-family:var(--mono);font-size:8px;color:var(--llm);white-space:nowrap;min-width:70px;">SPHERE III</div>
+          <div style="font-size:9px;color:var(--muted);">AI/Models — open-weight vs frontier, fine-tuning wave, edge distribution</div>
+        </div>
+        <div style="padding:9px 14px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid #8898b0;border-radius:5px;display:flex;align-items:center;gap:10px;">
+          <div style="font-family:var(--mono);font-size:8px;color:#8898b0;white-space:nowrap;min-width:70px;">MARKET</div>
+          <div style="font-size:9px;color:var(--muted);">Stack position × asset model · Business model responses · Competitor movements</div>
+        </div>
+        <div style="padding:9px 14px;background:var(--icn-dim);border:1px solid var(--icn-b);border-left:3px solid var(--icn);border-radius:5px;display:flex;align-items:center;gap:10px;">
+          <div style="font-family:var(--mono);font-size:8px;color:var(--icn);white-space:nowrap;min-width:70px;">ICN'S PLAY</div>
+          <div style="font-size:9px;color:var(--muted);">Customer profiles · Key R&amp;Cs · Two avenues · The thesis</div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -307,115 +325,94 @@ details[open] .fold-summary{color:var(--muted);}
     <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Foundations · The Jevons Paradox</div></div>
     <div class="chrome-right"><span class="act-badge a1b">FOUNDATIONS</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
   </div>
-  <div class="slide-body" style="flex-direction:column;padding:18px 44px 72px;gap:18px;">
-    <div class="anim anim-1" style="text-align:center;max-width:860px;margin:0 auto;">
-      <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin-bottom:10px;">William Stanley Jevons · 1865 · Applies exactly to AI compute in 2026</div>
-      <div style="font-family:var(--display);font-size:clamp(22px,4vw,46px);line-height:1.05;letter-spacing:.03em;color:var(--text);" data-term="jevons-paradox">"As AI compute becomes more efficient,<br>total compute consumption grows — not shrinks."</div>
-    </div>
-    <div class="anim anim-2" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;flex:1;">
-      <div style="padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;display:flex;flex-direction:column;gap:5px;">
-        <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);">DeepSeek R1 · Jan 2026</div>
-        <div style="font-family:var(--display);font-size:36px;letter-spacing:.02em;color:var(--h);">−97%</div>
-        <div style="font-size:10px;color:var(--text);font-weight:500;">Training cost vs GPT-4o</div>
-        <div style="font-size:9px;color:var(--muted);line-height:1.5;margin-top:2px;">Result: API traffic exploded <strong style="color:var(--text);">10–40× within weeks</strong>. Cheaper model → more calls, not fewer.</div>
+  <div class="slide-body" style="flex-direction:column;padding:14px 44px 72px;gap:12px;">
+    <div class="anim anim-1" style="display:flex;align-items:flex-start;gap:20px;">
+      <div style="flex:1;">
+        <div style="font-family:var(--mono);font-size:7px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);">William Stanley Jevons · The Coal Question · 1865</div>
+        <div style="font-family:var(--display);font-size:clamp(18px,3.2vw,34px);letter-spacing:.03em;line-height:1.08;color:var(--text);margin-top:6px;" data-term="jevons-paradox">"It is a confusion of ideas to suppose that the economical use of fuel is equivalent to diminished consumption. The very contrary is the truth."</div>
       </div>
-      <div style="padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;display:flex;flex-direction:column;gap:5px;">
-        <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);">Epoch AI · 2022–2026</div>
-        <div style="font-family:var(--display);font-size:36px;letter-spacing:.02em;color:var(--h);">~280×</div>
-        <div style="font-size:10px;color:var(--text);font-weight:500;">Inference cost reduction</div>
-        <div style="font-size:9px;color:var(--muted);line-height:1.5;margin-top:2px;">$20/1M tokens (2022) → $0.07/1M (2026). GPU demand: <strong style="color:var(--text);">+35% CAGR</strong>. Efficiency is the accelerant.</div>
-      </div>
-      <div style="padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;display:flex;flex-direction:column;gap:5px;">
-        <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);">Epoch AI · Jan 2026</div>
-        <div style="font-family:var(--display);font-size:36px;letter-spacing:.02em;color:var(--h);">3.3×/yr</div>
-        <div style="font-size:10px;color:var(--text);font-weight:500;">Algorithmic efficiency gain</div>
-        <div style="font-size:9px;color:var(--muted);line-height:1.5;margin-top:2px;">Each generation trains <strong style="color:var(--text);">larger models on the same hardware budget</strong>. Compute demand compounds.</div>
+      <div style="flex-shrink:0;width:140px;text-align:center;">
+        <svg viewBox="0 0 120 80" width="120" height="80">
+          <text x="60" y="10" text-anchor="middle" fill="var(--dim2)" font-family="'JetBrains Mono',monospace" font-size="6.5" letter-spacing=".5">THE PATTERN</text>
+          <polyline points="12,24 35,30 60,42 85,52 108,62" fill="none" stroke="rgba(239,68,68,0.45)" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="3,2"/>
+          <polyline points="12,64 35,54 60,36 85,22 108,14" fill="none" stroke="#10b981" stroke-width="2.2" stroke-linecap="round"/>
+          <text x="112" y="66" fill="rgba(239,68,68,0.55)" font-family="'JetBrains Mono',monospace" font-size="5.5">cost</text>
+          <text x="112" y="18" fill="#10b981" font-family="'JetBrains Mono',monospace" font-size="5.5">demand</text>
+          <text x="60" y="76" text-anchor="middle" fill="var(--dim2)" font-family="'JetBrains Mono',monospace" font-size="5.5">efficiency gain →</text>
+        </svg>
       </div>
     </div>
-    <div class="anim anim-3" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:8px 0;flex-wrap:wrap;">
-      <div style="font-family:var(--mono);font-size:8.5px;color:var(--dim2);">efficiency ↑</div>
-      <div style="color:var(--h);font-size:14px;">→</div>
-      <div style="font-family:var(--mono);font-size:8.5px;color:var(--dim2);">cost ↓</div>
-      <div style="color:var(--h);font-size:14px;">→</div>
-      <div style="font-family:var(--mono);font-size:8.5px;color:var(--dim2);">adoption ↑</div>
-      <div style="color:var(--h);font-size:14px;">→</div>
-      <div style="font-family:var(--mono);font-size:8.5px;color:var(--dim2);">demand ↑</div>
-      <div style="color:var(--h);font-size:14px;">→</div>
-      <div style="font-family:var(--mono);font-size:8.5px;color:var(--h);font-weight:600;">more infrastructure required</div>
-      <div style="font-family:var(--mono);font-size:12px;color:var(--dim2);">↻</div>
+    <!-- Historical cases: same pattern, 160 years apart -->
+    <div class="anim anim-2" style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;flex:1;min-height:0;">
+      <!-- Case 1: Coal -->
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:10px 11px;display:flex;flex-direction:column;gap:4px;">
+        <svg viewBox="0 0 130 38" width="100%" height="38" preserveAspectRatio="xMidYMid meet">
+          <polyline points="8,6 32,10 65,20 98,28 122,34" fill="none" stroke="rgba(239,68,68,0.35)" stroke-width="1.3" stroke-dasharray="2.5,1.5"/>
+          <polyline points="8,34 32,28 65,16 98,8 122,3" fill="none" stroke="#10b981" stroke-width="1.8"/>
+        </svg>
+        <div style="font-family:var(--display);font-size:14px;color:var(--text);letter-spacing:.02em;line-height:1;">Coal</div>
+        <div style="font-family:var(--mono);font-size:6.5px;color:var(--dim2);letter-spacing:.08em;">1865 · ORIGINAL OBSERVATION</div>
+        <div style="font-size:8px;color:var(--muted);line-height:1.4;">Watt's engine: <strong style="color:var(--text);">3× efficiency</strong>. UK coal use: <strong style="color:var(--text);">10× in 40 years</strong></div>
+      </div>
+      <!-- Case 2: Semiconductors -->
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:10px 11px;display:flex;flex-direction:column;gap:4px;">
+        <svg viewBox="0 0 130 38" width="100%" height="38" preserveAspectRatio="xMidYMid meet">
+          <polyline points="8,6 32,10 65,20 98,28 122,34" fill="none" stroke="rgba(239,68,68,0.35)" stroke-width="1.3" stroke-dasharray="2.5,1.5"/>
+          <polyline points="8,34 32,28 65,16 98,8 122,3" fill="none" stroke="#10b981" stroke-width="1.8"/>
+        </svg>
+        <div style="font-family:var(--display);font-size:14px;color:var(--text);letter-spacing:.02em;line-height:1;">Semiconductors</div>
+        <div style="font-family:var(--mono);font-size:6.5px;color:var(--dim2);letter-spacing:.08em;">1965 · MOORE'S LAW</div>
+        <div style="font-size:8px;color:var(--muted);line-height:1.4;">Transistor cost: <strong style="color:var(--text);">10M× cheaper</strong>. Computing: mainframes → pockets</div>
+      </div>
+      <!-- Case 3: Telecom -->
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:10px 11px;display:flex;flex-direction:column;gap:4px;">
+        <svg viewBox="0 0 130 38" width="100%" height="38" preserveAspectRatio="xMidYMid meet">
+          <polyline points="8,6 32,10 65,20 98,28 122,34" fill="none" stroke="rgba(239,68,68,0.35)" stroke-width="1.3" stroke-dasharray="2.5,1.5"/>
+          <polyline points="8,34 32,28 65,16 98,8 122,3" fill="none" stroke="#10b981" stroke-width="1.8"/>
+        </svg>
+        <div style="font-family:var(--display);font-size:14px;color:var(--text);letter-spacing:.02em;line-height:1;">Bandwidth</div>
+        <div style="font-family:var(--mono);font-size:6.5px;color:var(--dim2);letter-spacing:.08em;">1995 · FIBER &amp; BROADBAND</div>
+        <div style="font-size:8px;color:var(--muted);line-height:1.4;">Cost/GB: <strong style="color:var(--text);">100× cheaper</strong>. Data traffic: <strong style="color:var(--text);">1,000× in 20 yrs</strong></div>
+      </div>
+      <!-- Case 4: Cloud -->
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:10px 11px;display:flex;flex-direction:column;gap:4px;">
+        <svg viewBox="0 0 130 38" width="100%" height="38" preserveAspectRatio="xMidYMid meet">
+          <polyline points="8,6 32,10 65,20 98,28 122,34" fill="none" stroke="rgba(239,68,68,0.35)" stroke-width="1.3" stroke-dasharray="2.5,1.5"/>
+          <polyline points="8,34 32,28 65,16 98,8 122,3" fill="none" stroke="#10b981" stroke-width="1.8"/>
+        </svg>
+        <div style="font-family:var(--display);font-size:14px;color:var(--text);letter-spacing:.02em;line-height:1;">Cloud</div>
+        <div style="font-family:var(--mono);font-size:6.5px;color:var(--dim2);letter-spacing:.08em;">2006 · AWS LAUNCH</div>
+        <div style="font-size:8px;color:var(--muted);line-height:1.4;">Server cost: <strong style="color:var(--text);">10× cheaper</strong>. Cloud spend: <strong style="color:var(--text);">$0 → $600B/yr</strong></div>
+      </div>
+      <!-- Case 5: AI (current) — highlighted -->
+      <div style="background:var(--bg2);border:1px solid rgba(99,102,241,0.4);border-top:3px solid #6366f1;border-radius:6px;padding:10px 11px;display:flex;flex-direction:column;gap:4px;">
+        <svg viewBox="0 0 130 38" width="100%" height="38" preserveAspectRatio="xMidYMid meet">
+          <polyline points="8,6 32,10 65,20 98,28 122,34" fill="none" stroke="rgba(239,68,68,0.35)" stroke-width="1.3" stroke-dasharray="2.5,1.5"/>
+          <polyline points="8,34 32,28 65,16 98,8 122,3" fill="none" stroke="#6366f1" stroke-width="2.2"/>
+          <circle cx="98" cy="8" r="2.5" fill="#6366f1" opacity="0.6"/>
+          <text x="98" y="5" text-anchor="middle" fill="#6366f1" font-size="4.5" font-family="'JetBrains Mono',monospace">NOW</text>
+        </svg>
+        <div style="font-family:var(--display);font-size:14px;color:#6366f1;letter-spacing:.02em;line-height:1;">AI Compute</div>
+        <div style="font-family:var(--mono);font-size:6.5px;color:var(--dim2);letter-spacing:.08em;">2024 · THE CURRENT CYCLE</div>
+        <div style="font-size:8px;color:var(--muted);line-height:1.4;">Inference: <strong style="color:var(--text);">280× cheaper</strong>. GPU demand: <strong style="color:#6366f1;">+35% CAGR</strong></div>
+      </div>
     </div>
-  </div>
-</div>
-
-<!-- ══ S4 — JEVONS IN ACTION ══ -->
-<div class="slide" id="s4">
-  <div class="slide-chrome">
-    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Foundations · Jevons in Action — Three Spheres</div></div>
-    <div class="chrome-right"><span class="act-badge a1b">FOUNDATIONS</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
-  </div>
-  <div class="slide-body" style="flex-direction:column;padding:14px 44px 72px;gap:14px;">
-    <div class="anim anim-1" style="font-family:var(--display);font-size:clamp(18px,2.8vw,28px);letter-spacing:.04em;color:var(--text);line-height:1.1;">One loop. Three spheres. Each efficiency gain compounds the next.</div>
-    <div class="anim anim-2" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;flex:1;">
-      <div style="background:var(--hw-dim);border:1px solid var(--hw-b);border-radius:7px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;">
-        <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--hw);">Sphere I · Hardware</div>
-        <div style="display:flex;flex-direction:column;gap:5px;">
-          <div style="display:flex;align-items:flex-start;gap:8px;">
-            <div style="font-family:var(--mono);font-size:7px;color:var(--hw);padding-top:2px;flex-shrink:0;min-width:58px;">EFFICIENCY</div>
-            <div style="font-size:9.5px;color:var(--text);line-height:1.4;">H100 → B200: <strong>25× better tokens/watt</strong></div>
-          </div>
-          <div style="width:100%;height:1px;background:var(--hw-b);margin:2px 0;"></div>
-          <div style="display:flex;align-items:flex-start;gap:8px;">
-            <div style="font-family:var(--mono);font-size:7px;color:var(--hw);padding-top:2px;flex-shrink:0;min-width:58px;">JEVONS</div>
-            <div style="font-size:9.5px;color:var(--muted);line-height:1.4;">Same CapEx → <strong style="color:var(--text);">bigger models deployed</strong>. Not less hardware needed — more.</div>
-          </div>
-          <div style="width:100%;height:1px;background:var(--hw-b);margin:2px 0;"></div>
-          <div style="display:flex;align-items:flex-start;gap:8px;">
-            <div style="font-family:var(--mono);font-size:7px;color:var(--hw);padding-top:2px;flex-shrink:0;min-width:58px;">SIGNAL</div>
-            <div style="font-size:9.5px;color:var(--muted);line-height:1.4;">US DC power: <strong style="color:var(--text);">20 GW → 90 GW by 2030</strong> (Grid Strategies 2025)</div>
-          </div>
+    <!-- AI proof points -->
+    <div class="anim anim-3" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+      <div style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;text-align:center;">
+        <div style="font-family:var(--display);font-size:28px;color:var(--text);letter-spacing:.02em;">−97%</div>
+        <div style="font-size:8px;color:var(--muted);line-height:1.4;">DeepSeek R1 training cost vs GPT-4o. Result: API traffic <strong style="color:var(--text);">10–40× in weeks</strong></div>
+      </div>
+      <div style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;text-align:center;">
+        <div style="font-family:var(--display);font-size:28px;color:var(--text);letter-spacing:.02em;">3.3×/yr</div>
+        <div style="font-size:8px;color:var(--muted);line-height:1.4;">Algorithmic efficiency gain (Epoch AI). Bigger models on same hardware budget — <strong style="color:var(--text);">compounds annually</strong></div>
+      </div>
+      <div style="padding:8px 12px;background:var(--bg2);border:1px solid rgba(99,102,241,0.3);border-radius:4px;text-align:center;">
+        <div style="font-family:var(--mono);font-size:8px;color:#6366f1;display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;">
+          <span>efficiency ↑</span><span style="opacity:0.5;">→</span><span>cost ↓</span><span style="opacity:0.5;">→</span><span>adoption ↑</span><span style="opacity:0.5;">→</span><span>demand ↑</span><span style="opacity:0.5;">→</span><span style="font-weight:600;">more infra required</span><span>↻</span>
         </div>
+        <div style="font-size:7.5px;color:var(--dim);margin-top:3px;">Same loop. Every time. 160 years and counting.</div>
       </div>
-      <div style="background:var(--sw-dim);border:1px solid var(--sw-b);border-radius:7px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;">
-        <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--sw);">Sphere II · Software</div>
-        <div style="display:flex;flex-direction:column;gap:5px;">
-          <div style="display:flex;align-items:flex-start;gap:8px;">
-            <div style="font-family:var(--mono);font-size:7px;color:var(--sw);padding-top:2px;flex-shrink:0;min-width:58px;">EFFICIENCY</div>
-            <div style="font-size:9.5px;color:var(--text);line-height:1.4;">FlashAttention + MoE: <strong>$30 → $0.15/1M tokens</strong> (200×)</div>
-          </div>
-          <div style="width:100%;height:1px;background:var(--sw-b);margin:2px 0;"></div>
-          <div style="display:flex;align-items:flex-start;gap:8px;">
-            <div style="font-family:var(--mono);font-size:7px;color:var(--sw);padding-top:2px;flex-shrink:0;min-width:58px;">JEVONS</div>
-            <div style="font-size:9.5px;color:var(--muted);line-height:1.4;">200× cheaper → <strong style="color:var(--text);">entirely new classes of use case</strong> become viable. Call volume explodes.</div>
-          </div>
-          <div style="width:100%;height:1px;background:var(--sw-b);margin:2px 0;"></div>
-          <div style="display:flex;align-items:flex-start;gap:8px;">
-            <div style="font-family:var(--mono);font-size:7px;color:var(--sw);padding-top:2px;flex-shrink:0;min-width:58px;">SIGNAL</div>
-            <div style="font-size:9.5px;color:var(--muted);line-height:1.4;">Agentic tasks spawn <strong style="color:var(--text);">5–15 sub-agent calls</strong> per user request. Structural demand multiplier.</div>
-          </div>
-        </div>
-      </div>
-      <div style="background:var(--llm-dim);border:1px solid var(--llm-b);border-radius:7px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;">
-        <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--llm);">Sphere III · AI / Models</div>
-        <div style="display:flex;flex-direction:column;gap:5px;">
-          <div style="display:flex;align-items:flex-start;gap:8px;">
-            <div style="font-family:var(--mono);font-size:7px;color:var(--llm);padding-top:2px;flex-shrink:0;min-width:58px;">EFFICIENCY</div>
-            <div style="font-size:9.5px;color:var(--text);line-height:1.4;">Gemma 4 26B: <strong>frontier quality at 4B active-param cost</strong></div>
-          </div>
-          <div style="width:100%;height:1px;background:var(--llm-b);margin:2px 0;"></div>
-          <div style="display:flex;align-items:flex-start;gap:8px;">
-            <div style="font-family:var(--mono);font-size:7px;color:var(--llm);padding-top:2px;flex-shrink:0;min-width:58px;">JEVONS</div>
-            <div style="font-size:9.5px;color:var(--muted);line-height:1.4;">Cheaper models → <strong style="color:var(--text);">mass fine-tuning proliferation</strong> → 1,000s of deployed custom models needing inference infrastructure.</div>
-          </div>
-          <div style="width:100%;height:1px;background:var(--llm-b);margin:2px 0;"></div>
-          <div style="display:flex;align-items:flex-start;gap:8px;">
-            <div style="font-family:var(--mono);font-size:7px;color:var(--llm);padding-top:2px;flex-shrink:0;min-width:58px;">SIGNAL</div>
-            <div style="font-size:9.5px;color:var(--muted);line-height:1.4;">8-hour agentic coding sessions (GLM-5.1) = <strong style="color:var(--text);">a new class of sustained compute demand</strong></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="anim anim-3" style="padding:10px 16px;background:var(--icn-dim);border:1px solid var(--icn-b);border-radius:5px;font-family:var(--mono);font-size:8.5px;color:var(--icn);text-align:center;">
-      The Jevons loop amplifies all three spheres simultaneously — and their intersection is where ICN's structural opportunity lives.
     </div>
   </div>
 </div>
@@ -508,6 +505,95 @@ details[open] .fold-summary{color:var(--muted);}
     <div>"Knowledge firms hire frontier lab researchers to fine-tune open-weight models on proprietary data. The fine-tune is the moat."</div>
     <div class="venn-card-attr">Lambert &amp; Raschka · Lex Fridman, 2025</div>
   </div>
+  <!-- NoteGPT sources + additional AI/LLM cards -->
+  <div class="venn-card" id="vc-m5" style="--vd:0.48s;border-left:3px solid #fbbf24;left:180px;top:165px;transform:rotate(2deg);">
+    <div>"AGI will be 10× the magnitude of the Industrial Revolution, at 10× the speed — unfolding over a decade, not a century."</div>
+    <div class="venn-card-attr">Demis Hassabis · DeepMind CEO, 2025</div>
+  </div>
+  <div class="venn-card" id="vc-ha1" style="--vd:0.52s;border-left:3px solid #c084fc;left:780px;top:155px;transform:rotate(-3deg);">
+    <div>"Compute remains the primary bottleneck. Current long-context windows are brute-force — entirely new memory architectures still need to be invented."</div>
+    <div class="venn-card-attr">Demis Hassabis · DeepMind CEO, 2025</div>
+  </div>
+  <div class="venn-card" id="vc-h5" style="--vd:0.56s;border-left:3px solid #c084fc;left:450px;top:490px;transform:rotate(-2deg);">
+    <div>"CPUs are the new AI bottleneck. Agentic RL loops demand constant verification — unit tests, DB calls, physics sims. Global CPU shortage has destabilised GitHub."</div>
+    <div class="venn-card-attr">Dylan Patel · SemiAnalysis, 2026</div>
+  </div>
+</div>
+
+<!-- ══ S4 — ZOOMING OUT: THREE SPHERES ══ -->
+<div class="slide" id="s4">
+  <div class="slide-chrome">
+    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Foundations · Three Spheres</div></div>
+    <div class="chrome-right"><span class="act-badge a1b">FOUNDATIONS</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
+  </div>
+  <div class="slide-body" style="flex-direction:column;padding:14px 44px 72px;gap:12px;">
+    <div class="anim anim-1" style="display:flex;flex-direction:column;gap:4px;">
+      <div style="font-family:var(--display);font-size:clamp(18px,2.8vw,28px);letter-spacing:.04em;color:var(--text);line-height:1.1;">ZOOMING OUT: THREE SPHERES</div>
+      <div style="font-family:var(--mono);font-size:8.5px;color:var(--dim);">Each of these signals falls into one of three spheres. To understand where to position, we need to see the trajectory of all three — and where they intersect.</div>
+    </div>
+    <div class="anim anim-2" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;flex:1;">
+      <div style="background:var(--hw-dim);border:1px solid var(--hw-b);border-radius:7px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;">
+        <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--hw);">Sphere I · Hardware</div>
+        <div style="display:flex;flex-direction:column;gap:5px;">
+          <div style="display:flex;align-items:flex-start;gap:8px;">
+            <div style="font-family:var(--mono);font-size:7px;color:var(--hw);padding-top:2px;flex-shrink:0;min-width:58px;">EFFICIENCY</div>
+            <div style="font-size:9.5px;color:var(--text);line-height:1.4;">H100 → B200: <strong>25× better tokens/watt</strong></div>
+          </div>
+          <div style="width:100%;height:1px;background:var(--hw-b);margin:2px 0;"></div>
+          <div style="display:flex;align-items:flex-start;gap:8px;">
+            <div style="font-family:var(--mono);font-size:7px;color:var(--hw);padding-top:2px;flex-shrink:0;min-width:58px;">JEVONS</div>
+            <div style="font-size:9.5px;color:var(--muted);line-height:1.4;">Same CapEx → <strong style="color:var(--text);">bigger models deployed</strong>. Not less hardware needed — more.</div>
+          </div>
+          <div style="width:100%;height:1px;background:var(--hw-b);margin:2px 0;"></div>
+          <div style="display:flex;align-items:flex-start;gap:8px;">
+            <div style="font-family:var(--mono);font-size:7px;color:var(--hw);padding-top:2px;flex-shrink:0;min-width:58px;">SIGNAL</div>
+            <div style="font-size:9.5px;color:var(--muted);line-height:1.4;">US DC power: <strong style="color:var(--text);">20 GW → 90 GW by 2030</strong> (Grid Strategies 2025)</div>
+          </div>
+        </div>
+      </div>
+      <div style="background:var(--sw-dim);border:1px solid var(--sw-b);border-radius:7px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;">
+        <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--sw);">Sphere II · Software</div>
+        <div style="display:flex;flex-direction:column;gap:5px;">
+          <div style="display:flex;align-items:flex-start;gap:8px;">
+            <div style="font-family:var(--mono);font-size:7px;color:var(--sw);padding-top:2px;flex-shrink:0;min-width:58px;">EFFICIENCY</div>
+            <div style="font-size:9.5px;color:var(--text);line-height:1.4;">FlashAttention + MoE: <strong>$30 → $0.15/1M tokens</strong> (200×)</div>
+          </div>
+          <div style="width:100%;height:1px;background:var(--sw-b);margin:2px 0;"></div>
+          <div style="display:flex;align-items:flex-start;gap:8px;">
+            <div style="font-family:var(--mono);font-size:7px;color:var(--sw);padding-top:2px;flex-shrink:0;min-width:58px;">JEVONS</div>
+            <div style="font-size:9.5px;color:var(--muted);line-height:1.4;">200× cheaper → <strong style="color:var(--text);">entirely new classes of use case</strong> become viable. Call volume explodes.</div>
+          </div>
+          <div style="width:100%;height:1px;background:var(--sw-b);margin:2px 0;"></div>
+          <div style="display:flex;align-items:flex-start;gap:8px;">
+            <div style="font-family:var(--mono);font-size:7px;color:var(--sw);padding-top:2px;flex-shrink:0;min-width:58px;">SIGNAL</div>
+            <div style="font-size:9.5px;color:var(--muted);line-height:1.4;">Agentic tasks spawn <strong style="color:var(--text);">5–15 sub-agent calls</strong> per user request. Structural demand multiplier.</div>
+          </div>
+        </div>
+      </div>
+      <div style="background:var(--llm-dim);border:1px solid var(--llm-b);border-radius:7px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;">
+        <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--llm);">Sphere III · AI / Models</div>
+        <div style="display:flex;flex-direction:column;gap:5px;">
+          <div style="display:flex;align-items:flex-start;gap:8px;">
+            <div style="font-family:var(--mono);font-size:7px;color:var(--llm);padding-top:2px;flex-shrink:0;min-width:58px;">EFFICIENCY</div>
+            <div style="font-size:9.5px;color:var(--text);line-height:1.4;">Gemma 4 26B: <strong>frontier quality at 4B active-param cost</strong></div>
+          </div>
+          <div style="width:100%;height:1px;background:var(--llm-b);margin:2px 0;"></div>
+          <div style="display:flex;align-items:flex-start;gap:8px;">
+            <div style="font-family:var(--mono);font-size:7px;color:var(--llm);padding-top:2px;flex-shrink:0;min-width:58px;">JEVONS</div>
+            <div style="font-size:9.5px;color:var(--muted);line-height:1.4;">Cheaper models → <strong style="color:var(--text);">mass fine-tuning proliferation</strong> → 1,000s of deployed custom models.</div>
+          </div>
+          <div style="width:100%;height:1px;background:var(--llm-b);margin:2px 0;"></div>
+          <div style="display:flex;align-items:flex-start;gap:8px;">
+            <div style="font-family:var(--mono);font-size:7px;color:var(--llm);padding-top:2px;flex-shrink:0;min-width:58px;">SIGNAL</div>
+            <div style="font-size:9.5px;color:var(--muted);line-height:1.4;">8-hour agentic coding sessions (GLM-5.1) = <strong style="color:var(--text);">a new class of sustained compute demand</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="anim anim-3" style="padding:10px 16px;background:var(--icn-dim);border:1px solid var(--icn-b);border-radius:5px;font-family:var(--mono);font-size:8.5px;color:var(--icn);text-align:center;">
+      The Jevons loop amplifies all three spheres simultaneously — and their intersection is where ICN's structural opportunity lives. Let's dive into each.
+    </div>
+  </div>
 </div>
 
 <!-- ══ DIVIDER: SPHERE I ══ -->
@@ -520,11 +606,14 @@ details[open] .fold-summary{color:var(--muted);}
 <!-- ══ S5 — GPU GENERATION LIFECYCLE ══ -->
 <div class="slide" id="s5">
   <div class="slide-chrome">
-    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">F3 · GPU Generation Lifecycle · Acquisition → Lock → Flood</div></div>
-    <div class="chrome-right"><span class="act-badge a1b">ACT I · THE FORCES</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
+    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Sphere I · Hardware · GPU Generation Lifecycle</div></div>
+    <div class="chrome-right"><span class="act-badge ahw">HARDWARE</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
   </div>
   <div class="slide-body" style="flex-direction:column;padding:12px 44px 72px;gap:12px;overflow-y:auto;">
-    <div class="anim anim-1" style="font-family:var(--mono);font-size:8.5px;color:var(--dim);line-height:1.6;">Hyperscalers and neoclouds lock up each GPU generation in multi-year contracts. When contracts expire, chips cascade to the mid-market. <strong style="color:var(--muted);">Hover to inspect · Click generation labels for detail.</strong></div>
+    <div class="anim anim-1" style="display:flex;flex-direction:column;gap:3px;">
+      <div style="font-family:var(--display);font-size:28px;letter-spacing:.03em;line-height:1.1;">GPU GENERATION LIFECYCLE</div>
+      <div style="font-family:var(--mono);font-size:8.5px;color:var(--dim);">Hyperscalers and neoclouds lock up each GPU generation in multi-year contracts. When contracts expire, chips cascade to the mid-market.</div>
+    </div>
     <div class="anim anim-2" style="flex:1;min-height:0;position:relative;" id="lifecycle-wrap">
       <svg id="lifecycle-svg" width="100%" style="display:block;"></svg>
     </div>
@@ -540,9 +629,14 @@ details[open] .fold-summary{color:var(--muted);}
     <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Sphere I · Hardware · The Energy Wall</div></div>
     <div class="chrome-right"><span class="act-badge ahw">HARDWARE</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
   </div>
-  <div class="slide-body" style="flex-direction:row;padding:12px 44px 72px;gap:20px;overflow-y:auto;">
+  <div class="slide-body" style="flex-direction:column;padding:12px 44px 72px;gap:10px;overflow-y:auto;">
+    <div class="anim anim-1" style="display:flex;flex-direction:column;gap:3px;">
+      <div style="font-family:var(--display);font-size:28px;letter-spacing:.03em;line-height:1.1;">THE ENERGY WALL</div>
+      <div style="font-family:var(--mono);font-size:8.5px;color:var(--dim);">Power has replaced silicon as the binding constraint on AI infrastructure.</div>
+    </div>
+    <div style="display:flex;flex-direction:row;gap:20px;flex:1;min-height:0;">
     <!-- LEFT: TWh chart (55% width) -->
-    <div class="anim anim-1" style="flex:0 0 55%;display:flex;flex-direction:column;gap:8px;">
+    <div class="anim anim-2" style="flex:0 0 55%;display:flex;flex-direction:column;gap:8px;">
       <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);border-bottom:1px solid var(--border);padding-bottom:5px;">Global Datacenter Electricity Demand (TWh) · IEA Base Case</div>
       <!-- SVG stacked area chart: pre-AI vs AI era -->
       <div style="flex:1;min-height:220px;position:relative;">
@@ -635,6 +729,7 @@ details[open] .fold-summary{color:var(--muted);}
         <div style="font-family:var(--mono);font-size:8px;color:var(--hw);font-weight:600;margin-bottom:2px;" data-term="ppa">Nuclear: The New Power Strategy</div>
         <div style="font-size:10px;color:var(--muted);line-height:1.55;">Big Tech contracted <strong style="color:var(--text);">10+ GW of US nuclear</strong> in 2025 (Microsoft TMI restart 835 MW · Amazon Susquehanna 1.9 GW · Meta 1.1 GW · Google Kairos SMR). <strong style="color:var(--text);">Power location strategy is now a primary competitive moat — above GPU procurement.</strong></div>
       </div>
+    </div>
     </div>
   </div>
 </div>
@@ -1691,64 +1786,11 @@ details[open] .fold-summary{color:var(--muted);}
   </div>
 </div>
 
-<!-- ══ S22: FRONTIER SIGNALS ══ -->
-<div class="slide" id="s22">
-  <div class="slide-chrome">
-    <div class="chrome-left"><div class="chrome-logo">ClusterMAX · ICN</div><div class="chrome-sep"></div><div class="chrome-title">Frontier Signals · April 2026</div></div>
-    <div class="chrome-right"><span class="act-badge asig">SIGNALS · APRIL 2026</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
-  </div>
-  <div class="slide-body" style="flex-direction:column;padding:14px 44px 72px;gap:10px;overflow-y:auto;">
-    <div class="anim anim-1" style="display:flex;flex-direction:column;gap:4px;">
-      <div style="font-family:var(--display);font-size:30px;letter-spacing:.03em;line-height:1;">FRONTIER SIGNALS</div>
-      <div style="font-family:var(--mono);font-size:8.5px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;">Five developments reshaping the AI infrastructure calculus — April 2026</div>
-    </div>
-    <div class="anim anim-2" style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;flex:1;min-height:0;">
-      <!-- Card 1: Glasswing -->
-      <div style="background:var(--bg2);border:1px solid var(--border);border-top:3px solid #ef4444;border-radius:7px;padding:12px 11px;display:flex;flex-direction:column;gap:7px;overflow-y:auto;">
-        <div style="font-family:var(--mono);font-size:7px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim2);">Anthropic · Apr 2026</div>
-        <div style="font-family:var(--display);font-size:16px;letter-spacing:.04em;">Project Glasswing</div>
-        <div style="font-size:8.5px;color:var(--muted);line-height:1.5;">Claude Mythos Preview: 83.1% on cyber benchmarks. Zero-days found across every major OS &amp; browser. Withheld until 12 industry partners patched. $100M model credits to defenders.</div>
-        <div style="padding:6px 8px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.22);border-radius:4px;font-family:var(--mono);font-size:7px;color:#ef4444;line-height:1.5;margin-top:auto;">Signal: responsible disclosure now applies to model capabilities.</div>
-      </div>
-      <!-- Card 2: GLM-5.1 -->
-      <div style="background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--n);border-radius:7px;padding:12px 11px;display:flex;flex-direction:column;gap:7px;overflow-y:auto;">
-        <div style="font-family:var(--mono);font-size:7px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim2);">Z.ai · Apr 8, 2026</div>
-        <div style="font-family:var(--display);font-size:16px;letter-spacing:.04em;">GLM-5.1</div>
-        <div style="font-size:8.5px;color:var(--muted);line-height:1.5;">754B MoE · #1 SWE-Bench Pro · 8-hour autonomous coding loops. <strong style="color:var(--text);">Trained entirely on Huawei Ascend</strong> — no NVIDIA hardware.</div>
-        <div style="padding:6px 8px;background:var(--n-dim);border:1px solid rgba(16,185,129,0.22);border-radius:4px;font-family:var(--mono);font-size:7px;color:var(--n);line-height:1.5;margin-top:auto;">Signal: China's frontier AI is operational on domestic silicon.</div>
-      </div>
-      <!-- Card 3: Gemma 4 -->
-      <div style="background:var(--bg2);border:1px solid var(--border);border-top:3px solid #4285f4;border-radius:7px;padding:12px 11px;display:flex;flex-direction:column;gap:7px;overflow-y:auto;">
-        <div style="font-family:var(--mono);font-size:7px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim2);">Google · Apr 2026</div>
-        <div style="font-family:var(--display);font-size:16px;letter-spacing:.04em;">Google Gemma 4</div>
-        <div style="font-size:8.5px;color:var(--muted);line-height:1.5;">E2B: 11 tok/sec on iPhone (2W). 26B A4B MoE: frontier quality at 4B cost. <strong style="color:var(--text);">Apache 2.0, Day-0</strong> on vLLM, Ollama, Blackwell.</div>
-        <div style="padding:6px 8px;background:rgba(66,133,244,0.08);border:1px solid rgba(66,133,244,0.22);border-radius:4px;font-family:var(--mono);font-size:7px;color:#4285f4;line-height:1.5;margin-top:auto;">Signal: edge inference wave + Jevons. On-device expands cloud demand.</div>
-      </div>
-      <!-- Card 4: OpenClaw/NemoClaw -->
-      <div style="background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--hw);border-radius:7px;padding:12px 11px;display:flex;flex-direction:column;gap:7px;overflow-y:auto;">
-        <div style="font-family:var(--mono);font-size:7px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim2);">NVIDIA · GTC 2026</div>
-        <div style="font-family:var(--display);font-size:16px;letter-spacing:.04em;">OpenClaw / NemoClaw</div>
-        <div style="font-size:8.5px;color:var(--muted);line-height:1.5;">Agentic OS layer for resource management, scheduling, IO. Enterprise-ready with policy engines. NVIDIA is building the OS of the AI era.</div>
-        <div style="padding:6px 8px;background:var(--hw-dim);border:1px solid var(--hw-b);border-radius:4px;font-family:var(--mono);font-size:7px;color:var(--hw);line-height:1.5;margin-top:auto;">Signal: agentic orchestration is moving to the infrastructure layer — not just application code.</div>
-      </div>
-      <!-- Card 5: Managed Agents -->
-      <div style="background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--icn);border-radius:7px;padding:12px 11px;display:flex;flex-direction:column;gap:7px;overflow-y:auto;">
-        <div style="font-family:var(--mono);font-size:7px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim2);" data-term="managed-agents">Anthropic · Apr 8, 2026</div>
-        <div style="font-family:var(--display);font-size:16px;letter-spacing:.04em;color:var(--icn);">Managed Agents</div>
-        <div style="font-size:8.5px;color:var(--muted);line-height:1.5;">"Get to production <strong style="color:var(--text);">10× faster</strong>." $0.08/session-hr. Brain (Claude+tools) decoupled from hands (containers). Notion, Rakuten, Asana as launch customers.</div>
-        <div style="padding:6px 8px;background:var(--icn-dim);border:1px solid var(--icn-b);border-radius:4px;font-family:var(--mono);font-size:7px;color:var(--icn);line-height:1.5;margin-top:auto;">Signal: agent workloads are infrastructure-grade. Event logs → storage standing workload → IC S3.</div>
-      </div>
-    </div>
-    <button class="pdf-btn" onclick="window.print()" style="position:absolute;bottom:58px;right:44px;z-index:50;font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;padding:5px 13px;border-radius:3px;border:1px solid var(--border);background:var(--bg2);color:var(--dim);cursor:pointer;">↓ Export PDF</button>
-    <button onclick="document.getElementById('s24').style.display='flex';" style="position:absolute;bottom:58px;right:160px;z-index:50;font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;padding:5px 13px;border-radius:3px;border:1px solid var(--icn-b);background:var(--icn-dim);color:var(--icn);cursor:pointer;">↗ Appendix</button>
-  </div>
-</div>
-
 <!-- ══ S24: APPENDIX (hidden from nav) ══ -->
 <div class="slide" id="s24" style="display:none;">
   <div class="slide-chrome">
     <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Appendix · ICNT / Fiat Decision Framework</div></div>
-    <div class="chrome-right"><button onclick="document.getElementById('s24').style.display='none';go(30);" style="font-family:var(--mono);font-size:8px;padding:3px 8px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;border-radius:3px;">← Back</button><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
+    <div class="chrome-right"><button onclick="document.getElementById('s24').style.display='none';go(29);" style="font-family:var(--mono);font-size:8px;padding:3px 8px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;border-radius:3px;">← Back</button><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
   </div>
   <div class="slide-body" style="flex-direction:column;padding:14px 44px 72px;gap:14px;overflow-y:auto;">
     <div style="font-family:var(--display);font-size:28px;letter-spacing:.03em;line-height:1.1;">APPENDIX: ICNT / FIAT DECISION FRAMEWORK</div>
@@ -1764,14 +1806,14 @@ details[open] .fold-summary{color:var(--muted);}
   <div class="nav-dots" id="dots"></div>
   <button class="nav-btn" id="next-btn" onclick="go(cur+1)">›</button>
 </nav>
-<div class="slide-counter"><span class="counter-cur" id="counter-cur">1</span> / <span id="counter-tot">31</span></div>
+<div class="slide-counter"><span class="counter-cur" id="counter-cur">1</span> / <span id="counter-tot">30</span></div>
 <div class="key-hint"><span class="key-badge">←</span><span class="key-badge">→</span> navigate</div>
 
 <script>
 /* ════ NAVIGATION ════ */
-const TOTAL=31;
-const ACT_DOTS=['d-a1','d-a1','d-a1','d-a1','d-a1','d-a1','d-hw','d-hw','d-hw','d-hw','d-hw','d-sw','d-sw','d-sw','d-sw','d-sw','d-llm','d-llm','d-llm','d-llm','d-llm','d-market','d-market','d-market','d-market','d-icn','d-icn','d-icn','d-icn','d-icn','d-icn'];
-const ACT_COLORS=['#6366f1','#6366f1','#6366f1','#6366f1','#6366f1','#6366f1','#c084fc','#c084fc','#c084fc','#c084fc','#c084fc','#2dd4bf','#2dd4bf','#2dd4bf','#2dd4bf','#2dd4bf','#fbbf24','#fbbf24','#fbbf24','#fbbf24','#fbbf24','#8898b0','#8898b0','#8898b0','#8898b0','#5AF688','#5AF688','#5AF688','#5AF688','#5AF688','#5AF688'];
+const TOTAL=30;
+const ACT_DOTS=['d-a1','d-a1','d-a1','d-a1','d-a1','d-a1','d-hw','d-hw','d-hw','d-hw','d-hw','d-sw','d-sw','d-sw','d-sw','d-sw','d-llm','d-llm','d-llm','d-llm','d-llm','d-market','d-market','d-market','d-market','d-icn','d-icn','d-icn','d-icn','d-icn'];
+const ACT_COLORS=['#6366f1','#6366f1','#6366f1','#6366f1','#6366f1','#6366f1','#c084fc','#c084fc','#c084fc','#c084fc','#c084fc','#2dd4bf','#2dd4bf','#2dd4bf','#2dd4bf','#2dd4bf','#fbbf24','#fbbf24','#fbbf24','#fbbf24','#fbbf24','#8898b0','#8898b0','#8898b0','#8898b0','#5AF688','#5AF688','#5AF688','#5AF688','#5AF688'];
 let cur=0;
 const SLIDES=document.querySelectorAll('.slide');
 const prog=document.getElementById('progress');
@@ -1804,19 +1846,19 @@ function toggleTheme(){
   if(isLight){document.documentElement.classList.remove('light');localStorage.setItem('deckTheme3','dark');document.querySelectorAll('.tl').forEach(e=>e.textContent='Dark');}
   else{document.documentElement.classList.add('light');localStorage.setItem('deckTheme3','light');document.querySelectorAll('.tl').forEach(e=>e.textContent='Light');}
   if(cur===7)renderLifecycle();
-  if(cur===5)renderWorkloadChart();
+  if(cur===4)renderWorkloadChart();
   if(cur===7)renderTrajectory();
   if(cur===23)renderBMMatrix();
 }
 
 function go(n){
   // Venn phase intercept: first → from Venn slide triggers Phase 2, not slide advance
-  if(cur===5 && n===6 && vennPhase===0){
+  if(cur===4 && n===5 && vennPhase===0){
     triggerVennPhase2();
     return;
   }
   // If navigating back to Venn, reset to Phase 1
-  if(n===5 && vennPhase===1){
+  if(n===4 && vennPhase===1){
     resetVennPhase1();
   }
   if(n<0||n>=TOTAL)return;
@@ -2142,9 +2184,7 @@ const BM_ROWS=[
   {id:'H',label:'H · Hyperscaler',color:'#6366f1'},
   {id:'N',label:'N · Neocloud',color:'#10b981'},
   {id:'O',label:'O · Orchestrator',color:'#a855f7'},
-  {id:'A',label:'A · Aggregator',color:'#f59e0b'},
-  {id:'E',label:'E · Emerging',color:'#06b6d4'},
-  {id:'ICN',label:'ICN / IC · Entry',color:'#f97316'}
+  {id:'A',label:'A · Aggregator',color:'#f59e0b'}
 ];
 const BM_FORCES=['Energy Wall','Inference Inversion','GPU Gen Cycle','Commod→Orch','Financialisation','Custom Silicon','Agentic Multi.','Fine-tuning','Security'];
 // v: ✦/~/▼  c: g/a/r  t: tooltip text
@@ -2192,28 +2232,6 @@ const BM_DATA={
     {v:'▼',c:'r',t:'Agentic workloads require sub-100ms latency and predictable VRAM allocation. Distributed/P2P compute introduces network jitter and resource unpredictability that makes agentic loop execution unreliable.'},
     {v:'~',c:'a',t:'Opportunistic for batch fine-tuning (not time-critical, tolerates spot interruption). Cost advantage vs neoclouds for experimental LoRA runs. Not suitable for production fine-tuning pipelines.'},
     {v:'▼',c:'r',t:'P2P and shared consumer hardware is the hardest environment to secure. LiteLLM-style attacks propagate most easily across distributed networks. Multi-tenant supply chain attack surface is structurally exposed.'}
-  ],
-  E:[
-    {v:'✦',c:'g',t:'Sovereign AI clouds co-locate with national/regional power sources. Inference-First clouds optimise energy efficiency (tokens per watt). New entrants can choose sites with stranded renewables or nuclear — structural energy advantage.'},
-    {v:'✦',c:'g',t:'Inference-First Cloud is literally this archetype. Purpose-built for inference serving (prefill-decode disaggregation, high-throughput, low-latency). Capture the 35% CAGR inference growth from a standing start.'},
-    {v:'✦',c:'g',t:'Timing market entry to the H100 flood enables cost-effective entry point. New entrants buying H100 clusters in 2025–2026 at flooded prices can undercut established neoclouds on inference pricing.'},
-    {v:'✦',c:'g',t:'New entrants are built for the post-commodity era. No legacy hardware depreciation. No sunk cost in L1–L2 infrastructure before the orchestration moat era. Native software-first architecture.'},
-    {v:'~',c:'a',t:'Less capital locked in than established neoclouds. Can move fast without legacy infrastructure commitments. Not yet embedded in the NVIDIA→Neocloud capital loop — lower fragility, lower scale.'},
-    {v:'~',c:'a',t:'Mixed: inference-first clouds may support AMD MI300X, Groq LPU, or Cerebras alongside NVIDIA. Custom silicon diversity is a hedging opportunity for well-capitalised emerging players.'},
-    {v:'✦',c:'g',t:'Native agentic design in new platforms. No legacy training-optimised architecture to retrofit. Can design L3–L5 orchestration specifically for multi-agent workloads from day one.'},
-    {v:'✦',c:'g',t:'Vertical stack entrants (healthcare AI, legal AI) are built around fine-tuning on proprietary data. Core use case of the Vertical AI Stack archetype — fine-tuning is the primary product, not an add-on.'},
-    {v:'~',c:'a',t:'Newer stacks can bake in security from the ground up. But also lack the mature security programmes of hyperscalers. Net-neutral: advantage of clean architecture, disadvantage of unproven security posture.'}
-  ],
-  ICN:[
-    {v:'~',c:'a',t:'IC\'s data center infrastructure provides power access but not at gigawatt scale initially. Near-term: dependent on Danish/Nordic grid mix (relatively green). Medium-term: potential for direct renewable PPA as capacity scales.'},
-    {v:'✦',c:'g',t:'Storage-adjacent inference is the core entry thesis. IC training data pipelines (600TB+ customers) generate immediate inference demand adjacent to the storage. Zero egress creates a natural pull toward ICN compute.'},
-    {v:'✦',c:'g',t:'PoC timing to the H100 flood is optimal. H100s available at $2–3.50/GPU-hr vs $8–10 at peak. Alternatively, B200 lock-in now for production inference from 2026. Timing the cycle is a key cost lever.'},
-    {v:'✦',c:'g',t:'IC\'s storage moat differentiates ICN beyond raw compute. $7/TB + zero egress is structurally uncopyable by any neocloud without its own storage platform. The moat is not the GPU — it\'s the storage integration.'},
-    {v:'~',c:'a',t:'No VC overleverage. IC balance sheet. No circular NVIDIA capital dependency. Lower risk profile than CoreWeave. Constraint: growth limited by IC\'s capital appetite, not by external market conditions.'},
-    {v:'~',c:'a',t:'NVIDIA-first initially (Blackwell 6000). Not locked into custom silicon. Can evaluate AMD or Groq additions based on customer workload demand. No custom silicon dependency risk.'},
-    {v:'✦',c:'g',t:'Tiered storage architecture is the natural agentic AI stack: hot (NVMe near GPU) → warm (IC S3 at $7/TB) → cold (IC deep archive). IC owns warm/cold by default. ICN adds the hot tier. Native agentic architecture.'},
-    {v:'✦',c:'g',t:'IC training data customers are the natural ICP for fine-tuning. Data is already on IC at $7/TB. Fine-tune on ICN compute → serve inference on ICN → store model weights on IC. Integrated end-to-end pipeline with no egress.'},
-    {v:'~',c:'a',t:'Starting clean: no legacy vulnerabilities, no established bad practices. Needs to build security programme from scratch (advantage: no technical debt). IC\'s existing data center security posture provides foundation.'}
   ]
 };
 
@@ -2253,18 +2271,20 @@ document.addEventListener('mouseleave',function(){tipEl.style.display='none';});
 
 /* ════ VENN ANIMATION ════ */
 const VENN_TARGETS={
-  // Pure HW zone (bottom-left circle interior)
-  'vc-h2':{l:115,t:390},'vc-h3':{l:160,t:465},'vc-h4':{l:135,t:530},
+  // Pure HW zone (bottom-left circle)
+  'vc-h2':{l:90,t:370},'vc-h3':{l:90,t:455},'vc-h4':{l:90,t:530},
   // HW ↔ SW overlap (bottom center)
-  'vc-h1':{l:480,t:520},'vc-s1':{l:610,t:545},'vc-s3':{l:740,t:520},
-  // Pure SW zone (bottom-right circle interior)
-  'vc-s2':{l:1010,t:430},
-  // SW ↔ AI/Models overlap (right)
-  'vc-s4':{l:870,t:270},'vc-m2':{l:825,t:355},'vc-m4':{l:900,t:375},
-  // HW ↔ AI/Models overlap (left)
-  'vc-m1':{l:355,t:265},
-  // Center (M3 / Jevons — moved off-screen to let center callout dominate)
-  'vc-m3':{l:550,t:390}
+  'vc-h1':{l:470,t:510},'vc-h5':{l:625,t:510},'vc-s3':{l:470,t:435},
+  // Pure SW zone (bottom-right circle)
+  'vc-s1':{l:1010,t:370},'vc-s2':{l:1010,t:455},
+  // SW ↔ AI/Models overlap (right band)
+  'vc-s4':{l:850,t:260},'vc-m4':{l:850,t:350},
+  // HW ↔ AI/Models overlap (left band)
+  'vc-m1':{l:340,t:245},'vc-ha1':{l:340,t:335},
+  // Pure AI zone (top center)
+  'vc-m5':{l:540,t:55},'vc-m2':{l:700,t:55},
+  // Center (all three — Jevons fades)
+  'vc-m3':{l:550,t:380}
 };
 let vennPhase=0,_m3FadeTimer=null;
 
@@ -2292,9 +2312,10 @@ function resetVennPhase1(){
   // Re-apply scatter positions (must match Task 3 inline styles)
   const scatter={
     'vc-h1':{l:60,t:55,r:-3},'vc-h2':{l:350,t:45,r:2},'vc-h3':{l:640,t:38,r:-1},
-    'vc-h4':{l:900,t:75,r:4},'vc-s1':{l:1100,t:58,r:-2},'vc-s2':{l:90,t:290,r:3},
-    'vc-s3':{l:390,t:275,r:-4},'vc-s4':{l:680,t:310,r:2},'vc-m1':{l:950,t:245,r:-3},
-    'vc-m2':{l:175,t:510,r:4},'vc-m3':{l:580,t:505,r:-2},'vc-m4':{l:1040,t:475,r:3}
+    'vc-h4':{l:900,t:75,r:4},'vc-h5':{l:450,t:490,r:-2},'vc-s1':{l:1100,t:58,r:-2},
+    'vc-s2':{l:90,t:290,r:3},'vc-s3':{l:390,t:275,r:-4},'vc-s4':{l:680,t:310,r:2},
+    'vc-m1':{l:950,t:245,r:-3},'vc-m2':{l:175,t:510,r:4},'vc-m3':{l:580,t:505,r:-2},
+    'vc-m4':{l:1040,t:475,r:3},'vc-m5':{l:180,t:165,r:2},'vc-ha1':{l:780,t:155,r:-3}
   };
   Object.keys(scatter).forEach(function(id){
     const card=document.getElementById(id);
