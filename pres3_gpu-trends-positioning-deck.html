@@ -818,88 +818,86 @@ details[open] .fold-summary{color:var(--muted);}
 </div>
 
 <!-- ══ S10 — BM RESPONSE MATRIX ══ -->
+<!-- ══ S10: INFERENCE EFFICIENCY RACE ══ -->
 <div class="slide" id="s10">
   <div class="slide-chrome">
-    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Business Model × Nine Forces Response Matrix</div></div>
-    <div class="chrome-right"><span class="act-badge a2b">ACT II · THE MAP</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
+    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Sphere II · Software · The Inference Efficiency Race</div></div>
+    <div class="chrome-right"><span class="act-badge asw">SOFTWARE</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
   </div>
   <div class="slide-body" style="flex-direction:column;padding:12px 44px 72px;gap:10px;overflow-y:auto;">
-    <div class="anim anim-1" style="font-family:var(--mono);font-size:8.5px;color:var(--dim);line-height:1.6;">How each business model responds to the nine structural forces. <strong style="color:#10b981;">✦ Benefits</strong> · <strong style="color:#f59e0b;">~ Neutral</strong> · <strong style="color:#ef4444;">▼ Threatened</strong>. <strong style="color:var(--muted);">Click any cell for detail.</strong></div>
-    <div class="bm-wrap anim anim-2" id="bm-matrix-wrap"></div>
-    <div class="anim anim-3" style="display:flex;gap:14px;font-family:var(--mono);font-size:8px;color:var(--dim);">
-      <span><span style="display:inline-block;width:10px;height:10px;background:rgba(16,185,129,.25);border-radius:2px;margin-right:4px;vertical-align:middle;"></span>Benefits / Opportunity</span>
-      <span><span style="display:inline-block;width:10px;height:10px;background:rgba(245,158,11,.2);border-radius:2px;margin-right:4px;vertical-align:middle;"></span>Neutral exposure</span>
-      <span><span style="display:inline-block;width:10px;height:10px;background:rgba(239,68,68,.2);border-radius:2px;margin-right:4px;vertical-align:middle;"></span>Threatened / Risk</span>
+    <div class="anim anim-1" style="display:flex;flex-direction:column;gap:3px;">
+      <div style="font-family:var(--display);font-size:30px;letter-spacing:.03em;line-height:1.1;">THE INFERENCE EFFICIENCY RACE</div>
+      <div style="font-family:var(--mono);font-size:8.5px;color:var(--dim);max-width:820px;line-height:1.6;">Inference cost dropped <strong style="color:var(--text);" data-term="jevons-paradox">~280× in 2 years</strong>. The software layer drove most of it. The race is now about who captures that margin — and in what new workload shapes.</div>
     </div>
-    <div style="padding:10px 12px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--icn);border-radius:5px;">
-      <div style="font-family:var(--mono);font-size:8px;color:var(--icn);font-weight:600;margin-bottom:3px;" data-term="managed-agents">Managed Agents (Anthropic, Apr 2026)</div>
-      <div style="font-size:10px;color:var(--muted);line-height:1.6;">Decouples the <em>brain</em> (Claude + tools) from the <em>hands</em> (sandbox containers) — provisioned on-demand only when compute is needed. p50 latency −60%, p95 −90%. Session runtime: <strong style="color:var(--text);">$0.08/session-hr</strong>. New workload shape: sustained sessions vs. burst requests.</div>
+    <div class="anim anim-2" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+      <!-- vLLM / SGLang -->
+      <div style="padding:10px 12px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--sw);border-radius:5px;">
+        <div style="font-family:var(--mono);font-size:8px;color:var(--sw);font-weight:600;margin-bottom:3px;">vLLM / SGLang / TRT-LLM</div>
+        <div style="font-size:10px;color:var(--muted);line-height:1.6;">PagedAttention (vLLM): <strong style="color:var(--text);">2–4× throughput</strong> vs naïve batching. SGLang's RadixAttention: cross-request KV cache reuse. NVIDIA TRT-LLM: hardware-optimised engine. The open-source inference stack is approaching proprietary performance.</div>
+      </div>
+      <!-- FlashAttention / Speculative Decoding -->
+      <div style="padding:10px 12px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--sw);border-radius:5px;">
+        <div style="font-family:var(--mono);font-size:8px;color:var(--sw);font-weight:600;margin-bottom:3px;">FlashAttention + Speculative Decoding</div>
+        <div style="font-size:10px;color:var(--muted);line-height:1.6;">FlashAttention-3: <strong style="color:var(--text);">up to 75% GPU utilisation</strong> on H100 (vs ~35% without). Speculative decoding (draft + verify): <strong style="color:var(--text);">2–3× tokens/sec</strong> for long generation tasks. Kernel-level optimisation now compounds with serving-level gains.</div>
+      </div>
+      <!-- MIG partitioning -->
+      <div style="padding:10px 12px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--hw);border-radius:5px;">
+        <div style="font-family:var(--mono);font-size:8px;color:var(--hw);font-weight:600;margin-bottom:3px;" data-term="mig">MIG — Multi-Instance GPU</div>
+        <div style="font-size:10px;color:var(--muted);line-height:1.6;">Blackwell 6000: up to <strong style="color:var(--text);">7 isolated instances per GPU</strong> with dedicated HBM bandwidth. Inference workloads ≤13B parameters use &lt;1/7th of a GPU — MIG lets you sell 7 inference slices from one card. Critical for inference-heavy clouds.</div>
+      </div>
+      <!-- Cost trajectory -->
+      <div style="padding:10px 12px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--llm);border-radius:5px;">
+        <div style="font-family:var(--mono);font-size:8px;color:var(--llm);font-weight:600;margin-bottom:3px;">Cost Trajectory</div>
+        <div style="font-size:10px;color:var(--muted);line-height:1.6;">GPT-4-class inference: <strong style="color:var(--text);">~$60/1M tokens (Jun 2023) → ~$0.30/1M tokens (Apr 2026)</strong>. 200× reduction. MoE architecture (Gemma 4 26B A4B): inference cost now tracks <em>active params</em> — 4B active of 26B total. <span data-term="moe">MoE</span> repriced the inference market.</div>
+      </div>
+      <!-- L4/L40S for inference -->
+      <div style="padding:10px 12px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--sw);border-radius:5px;">
+        <div style="font-family:var(--mono);font-size:8px;color:var(--sw);font-weight:600;margin-bottom:3px;">L40S / A40 as Inference Tier</div>
+        <div style="font-size:10px;color:var(--muted);line-height:1.6;">Not every inference workload needs H100. L40S: <strong style="color:var(--text);">48 GB GDDR6 at $7–8K/card</strong>. Cost-optimised tier for &lt;70B inference. Hardware stratification is happening — inference ≠ training hardware. ICN's Blackwell mix allows tiering.</div>
+      </div>
+      <!-- Managed Agents (NEW) -->
+      <div style="padding:10px 12px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--icn);border-radius:5px;">
+        <div style="font-family:var(--mono);font-size:8px;color:var(--icn);font-weight:600;margin-bottom:3px;" data-term="managed-agents">Managed Agents (Anthropic, Apr 2026)</div>
+        <div style="font-size:10px;color:var(--muted);line-height:1.6;">Decouples the <em>brain</em> (Claude + tools) from the <em>hands</em> (sandbox containers) — provisioned on-demand only when compute is needed. p50 latency −60%, p95 −90%. Session runtime: <strong style="color:var(--text);">$0.08/session-hr</strong>. New workload shape: sustained sessions vs. burst requests.</div>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- ══ S11 — EMERGING ARCHETYPES ══ -->
+<!-- ══ S11: BARRIER TO CODE ══ -->
 <div class="slide" id="s11">
   <div class="slide-chrome">
-    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Emerging Business Models · Next Archetypes</div></div>
-    <div class="chrome-right"><span class="act-badge a2b">ACT II · THE MAP</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
+    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Sphere II · Software · The Durable Moat</div></div>
+    <div class="chrome-right"><span class="act-badge asw">SOFTWARE</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
   </div>
-  <div class="slide-body" style="flex-direction:column;padding:12px 44px 72px;gap:12px;overflow-y:auto;">
-    <div class="anim anim-1" style="font-family:var(--mono);font-size:8.5px;color:var(--dim);line-height:1.6;">Six archetypes emerging beyond H/N/O/A — each driven by one or more of the nine forces. These are the stepping stones for new market entrants.</div>
-    <div class="emerging-grid anim anim-2">
-      <div class="em-card" style="border-top:3px solid var(--h);">
-        <div style="font-size:19px;">🏛️</div>
-        <div class="em-title">Sovereign AI Cloud</div>
-        <div class="em-stage" style="background:var(--h-dim);color:var(--h);">Early · Growing Fast</div>
-        <div class="em-desc">Government-owned or government-contracted GPU infrastructure. Nations building AI compute independence. France (OVHcloud), Saudi Arabia (Humain/SoftBank), UAE (G42), India (Neysa).</div>
-        <div class="em-driver">Forces: F1 Energy Wall (co-locate with national grid) · F6 Custom Silicon (avoid US lock-in)</div>
-      </div>
-      <div class="em-card" style="border-top:3px solid var(--n);">
-        <div style="font-size:19px;">🔬</div>
-        <div class="em-title">Vertical AI Stack</div>
-        <div class="em-stage" style="background:var(--n-dim);color:var(--n);">Emerging</div>
-        <div class="em-desc">Full-stack AI provider with compliant compute, domain models, and workflow integration for a single vertical: healthcare (HIPAA+BAA+clinical LLMs), legal, or financial services.</div>
-        <div class="em-driver">Forces: F4 Commoditisation (software moat) · F8 Fine-tuning (domain models on open weights)</div>
-      </div>
-      <div class="em-card" style="border-top:3px solid var(--a);">
-        <div style="font-size:19px;">⚡</div>
-        <div class="em-title">Inference-First Cloud</div>
-        <div class="em-stage" style="background:var(--a-dim);color:var(--a);">Now · Rapid Growth</div>
-        <div class="em-desc">Infrastructure purpose-built for agentic inference, not training. Prefill-decode disaggregated clusters. Hardware mix of GB200 UltraServers (inference) + H100 SXM (training) in same facility.</div>
-        <div class="em-driver">Forces: F2 Inference Inversion (65–80% of GPU-hours) · F7 Agentic Multiplier</div>
-      </div>
-      <div class="em-card" style="border-top:3px solid var(--o);">
-        <div style="font-size:19px;">🔗</div>
-        <div class="em-title">Compute Finance</div>
-        <div class="em-stage" style="background:var(--o-dim);color:var(--o);">Nascent · High Potential</div>
-        <div class="em-desc">GPU compute as a financial asset. RPO-backed debt, GPU futures, institutional asset management. Ornn Compute went live 2025. CoreWeave IPO validated compute as institutional collateral.</div>
-        <div class="em-driver">Force: F5 Financialisation Loop ($400B+ collective neocould RPOs)</div>
-      </div>
-      <div class="em-card" style="border-top:3px solid #06b6d4;">
-        <div style="font-size:19px;">🌐</div>
-        <div class="em-title">Edge AI Fabric</div>
-        <div class="em-stage" style="background:rgba(6,182,212,0.10);color:#0e7490;">Speculative · 3–5yr</div>
-        <div class="em-desc">Distributed inference at network edge — telco PoPs, CDN nodes, enterprise on-prem interconnected into a unified inference fabric. Sub-20ms latency for real-time AI applications.</div>
-        <div class="em-driver">Force: F7 Agentic Multiplier (real-time agents need &lt;20ms · cloud adds 50–200ms)</div>
-      </div>
-      <div class="em-card" style="border-top:3px solid #f97316;">
-        <div style="font-size:19px;">📊</div>
-        <div class="em-title">Compute Market Infrastructure</div>
-        <div class="em-stage" style="background:rgba(249,115,22,0.10);color:#c2410c;">Live · Early Liquidity</div>
-        <div class="em-desc">Standardised compute units, futures contracts, securitised hardware purchases. Ornn futures went live 2025. Goal: liquid, exchange-traded GPU capacity market resolving information asymmetry.</div>
-        <div class="em-driver">Forces: F3 GPU Cycle (timing arbitrage) · F5 Financialisation (institutional asset class)</div>
-      </div>
+  <div class="slide-body" style="flex-direction:column;padding:12px 44px 72px;gap:10px;overflow-y:auto;">
+    <div class="anim anim-1" style="display:flex;flex-direction:column;gap:3px;">
+      <div style="font-family:var(--display);font-size:30px;letter-spacing:.03em;line-height:1.1;">BARRIER TO CODE:<br>WHAT AI ERODES — AND WHAT IT DOESN'T</div>
+      <div style="font-family:var(--mono);font-size:8.5px;color:var(--dim);max-width:820px;line-height:1.6;">AI coding tools (GitHub Copilot, Claude Code, Cursor) can write CRUD APIs, K8s manifests, and integration scaffolding in minutes. The competitive moat in GPU infrastructure is moving to things code cannot replicate.</div>
     </div>
-    <div class="anim anim-3" style="display:flex;flex-direction:column;gap:5px;">
-      <div style="font-family:var(--mono);font-size:7.5px;color:var(--hw);letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px;">What AI coding tools do NOT erode</div>
-      <div style="font-size:9.5px;color:var(--muted);line-height:1.55;padding-left:10px;border-left:2px solid var(--hw-b);" data-term="sunk">Hardware-software co-optimisation (CAIOS, BlueField-3 DPU offload) — expert GPU engineering, not vibe-coded</div>
-      <div style="font-size:9.5px;color:var(--muted);line-height:1.55;padding-left:10px;border-left:2px solid var(--hw-b);">Proprietary inference kernels (Together AI's FlashAttention took expert GPU researchers)</div>
-      <div style="font-size:9.5px;color:var(--muted);line-height:1.55;padding-left:10px;border-left:2px solid var(--hw-b);font-weight:600;color:var(--text);" data-term="mfu">96% goodput at 10,000-GPU scale — operational knowledge from years of failure data, not a software recipe</div>
-      <div style="font-size:9.5px;color:var(--muted);line-height:1.55;padding-left:10px;border-left:2px solid var(--hw-b);">Predictive failure detection ("Mission Control") — depends on telemetry and hardware failure models</div>
-      <div style="font-size:9.5px;color:var(--muted);line-height:1.55;padding-left:10px;border-left:2px solid var(--hw-b);">Energy access and location strategy — fully physical, zero code component</div>
-      <div style="padding:8px 10px;background:var(--icn-dim);border:1px solid var(--icn-b);border-radius:4px;margin-top:6px;font-family:var(--mono);font-size:8px;color:var(--icn);line-height:1.55;font-style:italic;">"The moat that remains is not what you can write — it's what you know and what you own."</div>
-      <div style="padding:8px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;margin-top:4px;font-size:9px;color:var(--muted);line-height:1.6;">
-        <strong style="color:var(--icn);">ICN angle:</strong> The right question is which layer AI tools don't reach. Answer: (1) the data layer — IC S3 creates structural lock-in no code can replicate; (2) the physical hardware — Blackwell 6000 <span data-term="mig">MIG</span> provisioned correctly outperforms virtualised clouds regardless of orchestration software.
+    <div class="anim anim-2" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;flex:1;min-height:0;">
+      <!-- LEFT: What AI erodes -->
+      <div style="display:flex;flex-direction:column;gap:5px;">
+        <div style="font-family:var(--mono);font-size:7.5px;color:var(--sw);letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px;border-bottom:1px solid var(--border);padding-bottom:4px;">What AI coding tools DO erode</div>
+        <div style="font-size:9.5px;color:var(--muted);line-height:1.55;padding-left:10px;border-left:2px solid rgba(45,212,191,0.3);">CRUD APIs, REST endpoints, integration scaffolding</div>
+        <div style="font-size:9.5px;color:var(--muted);line-height:1.55;padding-left:10px;border-left:2px solid rgba(45,212,191,0.3);">Kubernetes manifests, Helm charts, Terraform configs</div>
+        <div style="font-size:9.5px;color:var(--muted);line-height:1.55;padding-left:10px;border-left:2px solid rgba(45,212,191,0.3);">Monitoring dashboards, alerting rules, runbooks</div>
+        <div style="font-size:9.5px;color:var(--muted);line-height:1.55;padding-left:10px;border-left:2px solid rgba(45,212,191,0.3);">Benchmark suites, evaluation harnesses, test scaffolding</div>
+        <div style="font-size:9.5px;color:var(--muted);line-height:1.55;padding-left:10px;border-left:2px solid rgba(45,212,191,0.3);">Customer portal UX, billing integrations, audit logging</div>
+        <div style="padding:8px 10px;background:rgba(45,212,191,0.07);border:1px solid rgba(45,212,191,0.25);border-radius:4px;margin-top:6px;font-family:var(--mono);font-size:8px;color:var(--sw);line-height:1.55;font-style:italic;">The commoditisation of software is accelerating. The barrier to building a GPU cloud portal is nearly zero.</div>
+      </div>
+      <!-- RIGHT: What AI does NOT erode -->
+      <div style="display:flex;flex-direction:column;gap:5px;">
+        <div style="font-family:var(--mono);font-size:7.5px;color:var(--hw);letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px;border-bottom:1px solid var(--border);padding-bottom:4px;">What AI coding tools do NOT erode</div>
+        <div style="font-size:9.5px;color:var(--muted);line-height:1.55;padding-left:10px;border-left:2px solid var(--hw-b);" data-term="sunk">Hardware-software co-optimisation (CAIOS, BlueField-3 DPU offload) — expert GPU engineering, not vibe-coded</div>
+        <div style="font-size:9.5px;color:var(--muted);line-height:1.55;padding-left:10px;border-left:2px solid var(--hw-b);">Proprietary inference kernels (Together AI's FlashAttention took expert GPU researchers)</div>
+        <div style="font-size:9.5px;color:var(--muted);line-height:1.55;padding-left:10px;border-left:2px solid var(--hw-b);font-weight:600;color:var(--text);" data-term="mfu">96% goodput at 10,000-GPU scale — operational knowledge from years of failure data, not a software recipe</div>
+        <div style="font-size:9.5px;color:var(--muted);line-height:1.55;padding-left:10px;border-left:2px solid var(--hw-b);">Predictive failure detection ("Mission Control") — depends on telemetry and hardware failure models</div>
+        <div style="font-size:9.5px;color:var(--muted);line-height:1.55;padding-left:10px;border-left:2px solid var(--hw-b);">Energy access and location strategy — fully physical, zero code component</div>
+        <div style="padding:8px 10px;background:var(--icn-dim);border:1px solid var(--icn-b);border-radius:4px;margin-top:6px;font-family:var(--mono);font-size:8px;color:var(--icn);line-height:1.55;font-style:italic;">"The moat that remains is not what you can write — it's what you know and what you own."</div>
+        <div style="padding:8px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;margin-top:4px;font-size:9px;color:var(--muted);line-height:1.6;">
+          <strong style="color:var(--icn);">ICN angle:</strong> The right question is which layer AI tools don't reach. Answer: (1) the data layer — IC S3 creates structural lock-in no code can replicate; (2) the physical hardware — Blackwell 6000 <span data-term="mig">MIG</span> provisioned correctly outperforms virtualised clouds regardless of orchestration software.
+        </div>
       </div>
     </div>
   </div>
