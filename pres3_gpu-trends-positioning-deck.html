@@ -1005,6 +1005,15 @@ function toggleTheme(){
 }
 
 function go(n){
+  // Venn phase intercept: first → from Venn slide triggers Phase 2, not slide advance
+  if(cur===5 && n===6 && vennPhase===0){
+    triggerVennPhase2();
+    return;
+  }
+  // If navigating back to Venn, reset to Phase 1
+  if(n===5 && vennPhase===1){
+    resetVennPhase1();
+  }
   if(n<0||n>=TOTAL)return;
   const old=cur; cur=n;
   SLIDES[old].classList.remove('active');
@@ -1014,10 +1023,6 @@ function go(n){
   SLIDES[cur].classList.remove('prev');
   SLIDES[cur].classList.add('active');
   update();
-  if(cur===4)setTimeout(renderLifecycle,350);
-  if(cur===5)setTimeout(renderWorkloadChart,350);
-  if(cur===7)setTimeout(renderTrajectory,350);
-  if(cur===9)setTimeout(renderBMMatrix,350);
 }
 
 function update(){
@@ -1438,6 +1443,62 @@ document.addEventListener('mousemove',function(e){
   tipEl.style.left=x+'px';tipEl.style.top=y+'px';
 });
 document.addEventListener('mouseleave',function(){tipEl.style.display='none';});
+
+/* ════ VENN ANIMATION ════ */
+const VENN_TARGETS={
+  // Pure HW zone (bottom-left circle interior)
+  'vc-h2':{l:115,t:390},'vc-h3':{l:160,t:465},'vc-h4':{l:135,t:530},
+  // HW ↔ SW overlap (bottom center)
+  'vc-h1':{l:480,t:520},'vc-s1':{l:610,t:545},'vc-s3':{l:740,t:520},
+  // Pure SW zone (bottom-right circle interior)
+  'vc-s2':{l:1010,t:430},
+  // SW ↔ AI/Models overlap (right)
+  'vc-s4':{l:870,t:270},'vc-m2':{l:825,t:355},'vc-m4':{l:900,t:375},
+  // HW ↔ AI/Models overlap (left)
+  'vc-m1':{l:355,t:265},
+  // Center (M3 / Jevons — moved off-screen to let center callout dominate)
+  'vc-m3':{l:550,t:390}
+};
+let vennPhase=0;
+
+function triggerVennPhase2(){
+  const slide=document.getElementById('svenn');
+  slide.classList.add('venn-active');
+  Object.keys(VENN_TARGETS).forEach(function(id){
+    const card=document.getElementById(id);
+    if(!card)return;
+    const t=VENN_TARGETS[id];
+    card.style.left=t.l+'px';
+    card.style.top=t.t+'px';
+    card.style.transform='rotate(0deg)';
+  });
+  // Hide M3 card behind center callout
+  const m3=document.getElementById('vc-m3');
+  if(m3)setTimeout(function(){m3.style.opacity='0';},750);
+  vennPhase=1;
+}
+
+function resetVennPhase1(){
+  const slide=document.getElementById('svenn');
+  slide.classList.remove('venn-active');
+  // Re-apply scatter positions (must match Task 3 inline styles)
+  const scatter={
+    'vc-h1':{l:60,t:55,r:-3},'vc-h2':{l:350,t:45,r:2},'vc-h3':{l:640,t:38,r:-1},
+    'vc-h4':{l:900,t:75,r:4},'vc-s1':{l:1100,t:58,r:-2},'vc-s2':{l:90,t:290,r:3},
+    'vc-s3':{l:390,t:275,r:-4},'vc-s4':{l:680,t:310,r:2},'vc-m1':{l:950,t:245,r:-3},
+    'vc-m2':{l:175,t:510,r:4},'vc-m3':{l:580,t:505,r:-2},'vc-m4':{l:1040,t:475,r:3}
+  };
+  Object.keys(scatter).forEach(function(id){
+    const card=document.getElementById(id);
+    if(!card)return;
+    const s=scatter[id];
+    card.style.left=s.l+'px';
+    card.style.top=s.t+'px';
+    card.style.transform='rotate('+s.r+'deg)';
+    card.style.opacity='';
+  });
+  vennPhase=0;
+}
 
 function renderBMMatrix(){
   const wrap=document.getElementById('bm-matrix-wrap');
