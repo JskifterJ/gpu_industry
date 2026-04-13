@@ -1459,7 +1459,7 @@ const VENN_TARGETS={
   // Center (M3 / Jevons — moved off-screen to let center callout dominate)
   'vc-m3':{l:550,t:390}
 };
-let vennPhase=0;
+let vennPhase=0,_m3FadeTimer=null;
 
 function triggerVennPhase2(){
   const slide=document.getElementById('svenn');
@@ -1474,11 +1474,12 @@ function triggerVennPhase2(){
   });
   // Hide M3 card behind center callout
   const m3=document.getElementById('vc-m3');
-  if(m3)setTimeout(function(){m3.style.opacity='0';},750);
+  if(m3)_m3FadeTimer=setTimeout(function(){m3.style.opacity='0';},750);
   vennPhase=1;
 }
 
 function resetVennPhase1(){
+  if(_m3FadeTimer){clearTimeout(_m3FadeTimer);_m3FadeTimer=null;}
   const slide=document.getElementById('svenn');
   slide.classList.remove('venn-active');
   // Re-apply scatter positions (must match Task 3 inline styles)
