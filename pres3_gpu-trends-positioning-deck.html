@@ -577,6 +577,12 @@ details[open] .fold-summary{color:var(--muted);}
   <div class="div-eyebrow">Sphere I</div>
   <div class="div-title" style="color:var(--hw);">HARDWARE</div>
   <div class="div-sub">The physical layer: chips, racks, energy, interconnect. Where the physics of computation collide with the economics of scale.</div>
+  <div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap;">
+    <div style="font-family:var(--mono);font-size:8px;color:var(--hw);padding:4px 10px;border:1px solid var(--hw-b);border-radius:12px;background:var(--hw-dim);">GPU Generation Lifecycle</div>
+    <div style="font-family:var(--mono);font-size:8px;color:var(--hw);padding:4px 10px;border:1px solid var(--hw-b);border-radius:12px;background:var(--hw-dim);">The Energy Wall</div>
+    <div style="font-family:var(--mono);font-size:8px;color:var(--hw);padding:4px 10px;border:1px solid var(--hw-b);border-radius:12px;background:var(--hw-dim);">Silicon Beyond NVIDIA</div>
+    <div style="font-family:var(--mono);font-size:8px;color:var(--hw);padding:4px 10px;border:1px solid var(--hw-b);border-radius:12px;background:var(--hw-dim);">Memory Bandwidth</div>
+  </div>
 </div>
 
 <!-- ══ S5 — GPU GENERATION LIFECYCLE ══ -->
@@ -683,28 +689,62 @@ details[open] .fold-summary{color:var(--muted);}
         </div>
       </details>
     </div>
-    <!-- RIGHT: 5 stat cards -->
-    <div class="anim anim-2" style="flex:1;display:flex;flex-direction:column;gap:8px;">
-      <div style="padding:9px 12px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--hw);border-radius:5px;">
-        <div style="font-family:var(--mono);font-size:8px;color:var(--hw);font-weight:600;margin-bottom:2px;">Rack Power Density</div>
-        <div style="font-size:10px;color:var(--muted);line-height:1.55;">GB200 NVL72 rack: <strong style="color:var(--text);" data-term="ppa">~120 kW</strong> continuous draw (132 kW TDP). One rack = ~102 average US homes.</div>
+    <!-- RIGHT: cluster power escalation + why -->
+    <div class="anim anim-2" style="flex:1;display:flex;flex-direction:column;gap:7px;">
+      <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--hw);border-bottom:1px solid var(--hw-b);padding-bottom:4px;">Power per Rack — Each Generation Demands More</div>
+      <!-- Cluster power escalation SVG -->
+      <svg viewBox="0 0 320 145" width="100%" height="145" preserveAspectRatio="xMidYMid meet">
+        <!-- Bar chart: power per rack across generations -->
+        <rect x="10" y="118" width="48" height="22" fill="var(--hw)" fill-opacity="0.2" rx="2"/>
+        <text x="34" y="133" text-anchor="middle" fill="var(--dim)" font-family="'JetBrains Mono',monospace" font-size="7">35 kW</text>
+        <text x="34" y="145" text-anchor="middle" fill="var(--dim2)" font-family="'JetBrains Mono',monospace" font-size="5.5">A100 '20</text>
+
+        <rect x="68" y="111" width="48" height="29" fill="var(--hw)" fill-opacity="0.3" rx="2"/>
+        <text x="92" y="129" text-anchor="middle" fill="var(--dim)" font-family="'JetBrains Mono',monospace" font-size="7">45 kW</text>
+        <text x="92" y="145" text-anchor="middle" fill="var(--dim2)" font-family="'JetBrains Mono',monospace" font-size="5.5">H100 '22</text>
+
+        <rect x="126" y="78" width="48" height="62" fill="var(--hw)" fill-opacity="0.5" rx="2"/>
+        <text x="150" y="113" text-anchor="middle" fill="var(--text)" font-family="'JetBrains Mono',monospace" font-size="7" font-weight="600">130 kW</text>
+        <text x="150" y="145" text-anchor="middle" fill="var(--dim2)" font-family="'JetBrains Mono',monospace" font-size="5.5">GB200 '25</text>
+
+        <rect x="184" y="52" width="48" height="88" fill="var(--hw)" fill-opacity="0.65" rx="2"/>
+        <text x="208" y="100" text-anchor="middle" fill="var(--text)" font-family="'JetBrains Mono',monospace" font-size="7" font-weight="600">200 kW</text>
+        <text x="208" y="145" text-anchor="middle" fill="var(--dim2)" font-family="'JetBrains Mono',monospace" font-size="5.5">Rubin '26</text>
+
+        <rect x="242" y="2" width="58" height="138" fill="var(--hw)" fill-opacity="0.85" rx="2"/>
+        <text x="271" y="80" text-anchor="middle" fill="var(--text)" font-family="'JetBrains Mono',monospace" font-size="8" font-weight="700">600 kW</text>
+        <text x="271" y="145" text-anchor="middle" fill="var(--hw)" font-family="'JetBrains Mono',monospace" font-size="5.5" font-weight="600">Ultra '27</text>
+
+        <text x="10" y="10" fill="var(--dim2)" font-family="'JetBrains Mono',monospace" font-size="6">1 rack = 102–508 US homes (continuous)</text>
+      </svg>
+      <!-- WHY this is the bottleneck -->
+      <div style="padding:8px 11px;background:var(--hw-dim);border:1px solid var(--hw-b);border-radius:5px;">
+        <div style="font-family:var(--mono);font-size:7.5px;color:var(--hw);font-weight:600;margin-bottom:3px;">WHY Energy Is the Bottleneck — The Asymmetry</div>
+        <div style="font-size:9px;color:var(--muted);line-height:1.5;">Procure GPUs: <strong style="color:var(--text);">months</strong>. Connect to the grid: <strong style="color:var(--text);">5+ years</strong> (median US interconnection queue). Equipment lead times for transformers/cables doubled in 3 years. <strong style="color:var(--hw);">40% of AI datacenters will be power-constrained by 2027</strong> (Gartner, Nov 2024).</div>
       </div>
-      <div style="padding:9px 12px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--hw);border-radius:5px;">
-        <div style="font-family:var(--mono);font-size:8px;color:var(--hw);font-weight:600;margin-bottom:2px;">Frontier Cluster Scale</div>
-        <div style="font-size:10px;color:var(--muted);line-height:1.55;">Training clusters draw <strong style="color:var(--text);">40–100 MW</strong> — equivalent to a small town's electricity demand. AI-ready DC: <strong style="color:var(--text);">$10–12M per MW</strong> to build (2× conventional).</div>
+      <!-- Updated numbers -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+        <div style="padding:7px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;">
+          <div style="font-family:var(--mono);font-size:16px;color:var(--hw);font-weight:700;">448 TWh</div>
+          <div style="font-size:8px;color:var(--dim);">DC electricity 2025 (Gartner Nov '25)</div>
+        </div>
+        <div style="padding:7px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;">
+          <div style="font-family:var(--mono);font-size:16px;color:var(--hw);font-weight:700;">980 TWh</div>
+          <div style="font-size:8px;color:var(--dim);">by 2030 — AI servers: 21% → 44%</div>
+        </div>
+        <div style="padding:7px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;">
+          <div style="font-family:var(--mono);font-size:16px;color:var(--hw);font-weight:700;">1,700 TWh</div>
+          <div style="font-size:8px;color:var(--dim);">2035 IEA lift-off scenario (~4.4% global)</div>
+        </div>
+        <div style="padding:7px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;">
+          <div style="font-family:var(--mono);font-size:16px;color:var(--hw);font-weight:700;">2,600 GW</div>
+          <div style="font-size:8px;color:var(--dim);">stuck in US interconnection queue</div>
+        </div>
       </div>
-      <div style="padding:9px 12px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--hw);border-radius:5px;">
-        <div style="font-family:var(--mono);font-size:8px;color:var(--hw);font-weight:600;margin-bottom:2px;">Efficiency ≠ Less Demand</div>
-        <div style="font-size:10px;color:var(--muted);line-height:1.55;"><strong style="color:var(--text);" data-term="jevons-paradox">H100 → B200: 25× better tokens/watt</strong>. Jevons outcome: GPU demand ↑35% CAGR. Efficiency is the accelerant.</div>
+      <div style="padding:7px 10px;background:var(--bg2);border:1px solid var(--hw-b);border-radius:4px;font-size:8.5px;color:var(--muted);line-height:1.5;">
+        <strong style="color:var(--hw);">Nuclear as strategy:</strong> Big Tech locked <strong style="color:var(--text);">10+ GW of nuclear</strong> (Microsoft TMI 835 MW, Amazon 1.9 GW, Meta 1.1 GW). Power location is now a moat above GPU procurement.
       </div>
-      <div style="padding:9px 12px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--hw);border-radius:5px;">
-        <div style="font-family:var(--mono);font-size:8px;color:var(--hw);font-weight:600;margin-bottom:2px;">Global Demand Trajectory</div>
-        <div style="font-size:10px;color:var(--muted);line-height:1.55;"><strong style="color:var(--text);">415 TWh (2024) → 945 TWh (2030)</strong>. AI/GPU servers: +30%/yr vs conventional: +9%/yr. Pre-AI (2020): efficiency gains were <em>flattening</em> the curve — AI reversed it.</div>
-      </div>
-      <div style="padding:9px 12px;background:var(--bg2);border:1px solid var(--hw-b);border-left:3px solid var(--hw);border-radius:5px;background:var(--hw-dim);">
-        <div style="font-family:var(--mono);font-size:8px;color:var(--hw);font-weight:600;margin-bottom:2px;" data-term="ppa">Nuclear: The New Power Strategy</div>
-        <div style="font-size:10px;color:var(--muted);line-height:1.55;">Big Tech contracted <strong style="color:var(--text);">10+ GW of US nuclear</strong> in 2025 (Microsoft TMI restart 835 MW · Amazon Susquehanna 1.9 GW · Meta 1.1 GW · Google Kairos SMR). <strong style="color:var(--text);">Power location strategy is now a primary competitive moat — above GPU procurement.</strong></div>
-      </div>
+      <div style="font-family:var(--mono);font-size:6.5px;color:var(--dim2);">Sources: IEA Energy &amp; AI Apr 2025 · Gartner Nov 2025 · Epoch AI 2025 · NVIDIA datasheets</div>
     </div>
     </div>
   </div>
@@ -838,6 +878,12 @@ details[open] .fold-summary{color:var(--muted);}
   <div class="div-eyebrow">Sphere II</div>
   <div class="div-title" style="color:var(--sw);">SOFTWARE<br>/ STACK</div>
   <div class="div-sub">Orchestration, inference serving, security, and storage. Where operational knowledge becomes durable advantage.</div>
+  <div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap;">
+    <div style="font-family:var(--mono);font-size:8px;color:var(--sw);padding:4px 10px;border:1px solid var(--sw-b);border-radius:12px;background:var(--sw-dim);">Orchestration Moats</div>
+    <div style="font-family:var(--mono);font-size:8px;color:var(--sw);padding:4px 10px;border:1px solid var(--sw-b);border-radius:12px;background:var(--sw-dim);">Inference Efficiency Race</div>
+    <div style="font-family:var(--mono);font-size:8px;color:var(--sw);padding:4px 10px;border:1px solid var(--sw-b);border-radius:12px;background:var(--sw-dim);">Barrier to Code</div>
+    <div style="font-family:var(--mono);font-size:8px;color:var(--sw);padding:4px 10px;border:1px solid var(--sw-b);border-radius:12px;background:var(--sw-dim);">Context is Gold</div>
+  </div>
 </div>
 
 <!-- ══ S9: ORCHESTRATION AS THE MOAT — OR IS IT? ══ -->
@@ -1025,91 +1071,75 @@ details[open] .fold-summary{color:var(--muted);}
   </div>
   <div class="slide-body" style="flex-direction:column;padding:12px 44px 72px;gap:10px;overflow-y:auto;">
     <div class="anim anim-1" style="display:flex;flex-direction:column;gap:3px;">
-      <div style="font-family:var(--display);font-size:30px;letter-spacing:.03em;line-height:1.1;">"CONTEXT IS GOLD"</div>
-      <div style="font-family:var(--mono);font-size:8.5px;color:var(--dim);max-width:820px;line-height:1.6;">Storage is not the quiet back-end of AI infrastructure. It is the layer where enterprise value compounds. Conversation history, RAG indices, fine-tuned weights, agent memory — this context is what makes AI useful for <em>that specific enterprise</em>. It is not easily moved. It grows over time. IC S3 at $7/TB is positioned to be where that context lives.</div>
+      <div style="font-family:var(--display);font-size:30px;letter-spacing:.03em;line-height:1.1;">CONTEXT IS GOLD</div>
+      <div style="font-family:var(--mono);font-size:8.5px;color:var(--dim);">Every AI workload generates context. Context is what makes AI useful for <em>that specific enterprise</em>. It grows every day, it's hard to move, and whoever stores it owns the relationship.</div>
     </div>
-    <!-- Zone 1 + Zone 2 side by side -->
-    <div class="anim anim-2" style="display:grid;grid-template-columns:240px 1fr;gap:16px;flex:1;min-height:0;">
-      <!-- Zone 1: TCO bar chart -->
-      <div style="display:flex;flex-direction:column;gap:6px;">
-        <div style="font-family:var(--mono);font-size:7px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);border-bottom:1px solid var(--border);padding-bottom:4px;">Storage TCO at 1 PB/mo</div>
-        <svg viewBox="0 0 200 160" width="100%" style="max-height:160px;">
-          <!-- Bars: AWS=$23k, CoreWeave=$30k, GCP=$20k, IC=$7k — scale: 30k=140px, so 1k=4.67px -->
-          <text x="0" y="15" font-family="'JetBrains Mono',monospace" font-size="7" fill="var(--dim2)">$30K</text>
-          <text x="0" y="55" font-family="'JetBrains Mono',monospace" font-size="7" fill="var(--dim2)">$23K</text>
-          <text x="0" y="75" font-family="'JetBrains Mono',monospace" font-size="7" fill="var(--dim2)">$20K</text>
-          <text x="0" y="125" font-family="'JetBrains Mono',monospace" font-size="7" fill="var(--dim2)">$7K</text>
-          <!-- CoreWeave bar (30k = full height 140px) -->
-          <rect x="32" y="10" width="28" height="140" fill="var(--dim2)" opacity="0.4" rx="2"/>
-          <text x="36" y="158" font-family="'JetBrains Mono',monospace" font-size="7" fill="var(--dim2)">CW</text>
-          <!-- AWS bar (23k = 107px) -->
-          <rect x="72" y="43" width="28" height="107" fill="var(--dim2)" opacity="0.4" rx="2"/>
-          <text x="76" y="158" font-family="'JetBrains Mono',monospace" font-size="7" fill="var(--dim2)">AWS</text>
-          <!-- GCP bar (20k = 93px) -->
-          <rect x="112" y="57" width="28" height="93" fill="var(--dim2)" opacity="0.4" rx="2"/>
-          <text x="116" y="158" font-family="'JetBrains Mono',monospace" font-size="7" fill="var(--dim2)">GCP</text>
-          <!-- IC bar (7k = 33px) — highlighted -->
-          <rect x="152" y="117" width="28" height="33" fill="var(--icn)" opacity="0.8" rx="2"/>
-          <text x="153" y="158" font-family="'JetBrains Mono',monospace" font-size="7" fill="var(--icn)" font-weight="600">IC S3</text>
-          <text x="156" y="112" font-family="'JetBrains Mono',monospace" font-size="7" fill="var(--icn)" font-weight="600">4.3×</text>
-        </svg>
-        <div style="font-family:var(--mono);font-size:7.5px;color:var(--icn);line-height:1.5;">$7K/mo at 1 PB vs $30K (CoreWeave)<br><strong>$276K/year savings at 1 PB</strong></div>
-      </div>
-      <!-- Zone 2: What needs storing -->
-      <div style="display:flex;flex-direction:column;gap:6px;">
-        <div style="font-family:var(--mono);font-size:7px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);border-bottom:1px solid var(--border);padding-bottom:4px;">What Needs Storing — Agentic Enterprise</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">
-          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:6px 8px;">
-            <div style="font-family:var(--mono);font-size:7px;color:var(--dim2);text-transform:uppercase;margin-bottom:2px;">Conversation history</div>
-            <div style="font-size:9px;color:var(--muted);">~2–5 MB/user/month · <strong style="color:var(--text);">~6 GB/year</strong> (100 users)</div>
-          </div>
-          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:6px 8px;">
-            <div style="font-family:var(--mono);font-size:7px;color:var(--dim2);text-transform:uppercase;margin-bottom:2px;">RAG index (1M docs)</div>
-            <div style="font-size:9px;color:var(--muted);">~1.5 GB vectors + ~300 GB source docs · <strong style="color:var(--text);">10× amplification</strong></div>
-          </div>
-          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:6px 8px;">
-            <div style="font-family:var(--mono);font-size:7px;color:var(--dim2);text-transform:uppercase;margin-bottom:2px;">Agent session logs</div>
-            <div style="font-size:9px;color:var(--muted);">~10–50 MB/session · <strong style="color:var(--text);">~50–240 GB/year</strong> (1 session/user/day)</div>
-          </div>
-          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:6px 8px;">
-            <div style="font-family:var(--mono);font-size:7px;color:var(--dim2);text-transform:uppercase;margin-bottom:2px;" data-term="qlora">Model artefacts</div>
-            <div style="font-size:9px;color:var(--muted);">70B BF16 weights: ~140 GB · QLoRA adapter: ~2–8 GB · Full checkpoint: <strong style="color:var(--text);">~782 GB</strong></div>
-          </div>
-          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:6px 8px;">
-            <div style="font-family:var(--mono);font-size:7px;color:var(--dim2);text-transform:uppercase;margin-bottom:2px;">Fine-tune runs (10/yr)</div>
-            <div style="font-size:9px;color:var(--muted);">~500 GB–1 TB checkpoint scratch · LoRA adapters: ~20–80 GB</div>
-          </div>
-          <div style="background:var(--icn-dim);border:1px solid var(--icn-b);border-radius:4px;padding:6px 8px;">
-            <div style="font-family:var(--mono);font-size:7px;color:var(--icn);text-transform:uppercase;margin-bottom:2px;">Total (100 users, 1 yr)</div>
-            <div style="font-size:9px;color:var(--muted);">Inference-only: <strong style="color:var(--icn);">240 GB–1 TB</strong><br>With QLoRA runs: <strong style="color:var(--icn);">2–5 TB</strong></div>
-          </div>
+    <!-- Building blocks: visual equation -->
+    <div class="anim anim-2" style="display:flex;flex-direction:column;gap:10px;flex:1;">
+      <!-- Row 1: Building blocks — what generates context -->
+      <div style="display:flex;align-items:stretch;gap:6px;">
+        <!-- Block 1: Training data -->
+        <div style="flex:1;padding:10px;background:var(--llm-dim);border:1px solid var(--llm-b);border-radius:6px;text-align:center;display:flex;flex-direction:column;justify-content:center;">
+          <div style="font-family:var(--mono);font-size:7px;color:var(--llm);text-transform:uppercase;letter-spacing:.08em;">Training Data</div>
+          <div style="font-family:var(--display);font-size:22px;color:var(--text);line-height:1;">500 GB</div>
+          <div style="font-size:7.5px;color:var(--dim);margin-top:2px;">proprietary dataset</div>
+        </div>
+        <div style="display:flex;align-items:center;font-family:var(--display);font-size:22px;color:var(--dim2);padding:0 2px;">+</div>
+        <!-- Block 2: Fine-tune artefacts -->
+        <div style="flex:1;padding:10px;background:var(--sw-dim);border:1px solid var(--sw-b);border-radius:6px;text-align:center;display:flex;flex-direction:column;justify-content:center;">
+          <div style="font-family:var(--mono);font-size:7px;color:var(--sw);text-transform:uppercase;letter-spacing:.08em;">Fine-Tune Artefacts</div>
+          <div style="font-family:var(--display);font-size:22px;color:var(--text);line-height:1;">800 GB</div>
+          <div style="font-size:7.5px;color:var(--dim);margin-top:2px;">checkpoints + LoRA adapters</div>
+        </div>
+        <div style="display:flex;align-items:center;font-family:var(--display);font-size:22px;color:var(--dim2);padding:0 2px;">+</div>
+        <!-- Block 3: RAG corpus -->
+        <div style="flex:1;padding:10px;background:var(--hw-dim);border:1px solid var(--hw-b);border-radius:6px;text-align:center;display:flex;flex-direction:column;justify-content:center;">
+          <div style="font-family:var(--mono);font-size:7px;color:var(--hw);text-transform:uppercase;letter-spacing:.08em;">RAG Corpus</div>
+          <div style="font-family:var(--display);font-size:22px;color:var(--text);line-height:1;">300 GB</div>
+          <div style="font-size:7.5px;color:var(--dim);margin-top:2px;">1M docs + vector indices</div>
+        </div>
+        <div style="display:flex;align-items:center;font-family:var(--display);font-size:22px;color:var(--dim2);padding:0 2px;">+</div>
+        <!-- Block 4: Inference context -->
+        <div style="flex:1;padding:10px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;text-align:center;display:flex;flex-direction:column;justify-content:center;">
+          <div style="font-family:var(--mono);font-size:7px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;">Inference Logs</div>
+          <div style="font-family:var(--display);font-size:22px;color:var(--text);line-height:1;">240 GB</div>
+          <div style="font-size:7.5px;color:var(--dim);margin-top:2px;">conversations + agent sessions</div>
+        </div>
+        <div style="display:flex;align-items:center;font-family:var(--display);font-size:22px;color:var(--dim2);padding:0 2px;">=</div>
+        <!-- Total -->
+        <div style="flex:1.2;padding:10px;background:var(--icn-dim);border:2px solid var(--icn-b);border-radius:6px;text-align:center;display:flex;flex-direction:column;justify-content:center;">
+          <div style="font-family:var(--mono);font-size:7px;color:var(--icn);text-transform:uppercase;letter-spacing:.08em;font-weight:600;">Year 1 Total</div>
+          <div style="font-family:var(--display);font-size:28px;color:var(--icn);line-height:1;">~2 TB</div>
+          <div style="font-size:7.5px;color:var(--icn);margin-top:2px;font-weight:500;">≈ 570,000 iPhone 15 photos</div>
         </div>
       </div>
-    </div>
-    <!-- Zone 3: SwitchingOps panel -->
-    <div class="anim anim-3" style="display:flex;flex-direction:column;gap:6px;">
-      <div style="padding:8px 12px;background:var(--llm-dim);border:1px solid var(--llm-b);border-radius:5px;font-family:var(--mono);font-size:8px;color:var(--llm);line-height:1.6;" data-term="switching-ops">
-        <strong>"Context is Gold" moment:</strong> When an enterprise switches models — re-embedding a 1M-document RAG corpus: ~$200–500 compute, ~1–2 days processing. Data on IC = re-embed <em>in place</em>. <span data-term="switching-ops">SwitchingOps</span> becomes a compute event, not a migration event.
-      </div>
+      <!-- Row 2: Three-column insight panel -->
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
-        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:8px 10px;font-size:9px;color:var(--muted);line-height:1.55;">
-          <strong style="color:var(--text);font-family:var(--mono);font-size:7.5px;display:block;margin-bottom:3px;">RAG re-indexing</strong>
-          When moving to a new embedding model, all vector indices must be rebuilt. At 1M docs: ~2 days + ~$300 compute. Data on IC = re-embed in place — no egress.
+        <div style="padding:9px 11px;background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--llm);border-radius:5px;">
+          <div style="font-family:var(--mono);font-size:7.5px;color:var(--llm);margin-bottom:4px;">WHY IT'S GOLD</div>
+          <div style="font-size:8.5px;color:var(--muted);line-height:1.5;">This context is what makes AI useful for <strong style="color:var(--text);">that specific enterprise</strong>. Generic models are free. The context layer is proprietary. Whoever stores it controls the switching cost.</div>
         </div>
-        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:8px 10px;font-size:9px;color:var(--muted);line-height:1.55;">
-          <strong style="color:var(--text);font-family:var(--mono);font-size:7.5px;display:block;margin-bottom:3px;">Fine-tune porting</strong>
-          LoRA adapters trained on one base model can't port to a different architecture. But the training <em>data</em> is reusable. IC stores the dataset — new fine-tune run stays local.
+        <div style="padding:9px 11px;background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--sw);border-radius:5px;">
+          <div style="font-family:var(--mono);font-size:7.5px;color:var(--sw);margin-bottom:4px;">IT GROWS EVERY MONTH</div>
+          <div style="font-size:8.5px;color:var(--muted);line-height:1.5;">Month 1: 50 GB, easy to move. Month 12: <strong style="color:var(--text);">2+ TB</strong>, deeply embedded. Exit cost = weeks of reprocessing + re-embedding + data transfer. Data gravity deepens with usage.</div>
         </div>
-        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:8px 10px;font-size:9px;color:var(--muted);line-height:1.55;">
-          <strong style="color:var(--text);font-family:var(--mono);font-size:7.5px;display:block;margin-bottom:3px;">Context migration</strong>
-          Agent session history is model-agnostic (text). Switching models requires re-processing for RAG retrieval. Data gravity means this stays on IC — every month of usage deepens the moat.
+        <div style="padding:9px 11px;background:var(--icn-dim);border:1px solid var(--icn-b);border-top:3px solid var(--icn);border-radius:5px;">
+          <div style="font-family:var(--mono);font-size:7.5px;color:var(--icn);margin-bottom:4px;">IC COST ADVANTAGE</div>
+          <div style="font-size:8.5px;color:var(--muted);line-height:1.5;">IC S3: <strong style="color:var(--icn);">$7/TB/mo</strong> vs CoreWeave $30, AWS $23, GCP $20. At 2 TB/yr: <strong style="color:var(--icn);">$14/mo vs $46–60</strong>. At 1 PB: <strong style="color:var(--icn);">$276K/yr saved</strong>. Zero egress = no exit penalty.</div>
         </div>
       </div>
-      <div style="padding:8px 12px;background:var(--icn-dim);border:1px solid var(--icn-b);border-radius:4px;font-family:var(--mono);font-size:8px;color:var(--icn);line-height:1.6;">"Bring compute to your data, not data to compute." IC's existing 1 PB customer (currently on CoreWeave) is the first land-and-expand target — they've already built the context gravity.</div>
-      <details class="fold-detail">
-        <summary class="fold-summary">↓ Context gravity: how lock-in compounds over time</summary>
-        <div class="fold-body">Month 1: small dataset, easy to move. Month 12: TBs of history, re-indexed RAG, trained adapters, months of conversation context. Exit cost at month 12 = weeks of reprocessing + data transfer + re-embedding compute. IC's data gravity moat deepens with every month of usage. IC cost advantage compounds: $276K/year savings at 1 PB grows with every GB added.</div>
-      </details>
+      <!-- Row 3: Context flow diagram -->
+      <div style="display:flex;align-items:center;justify-content:center;gap:6px;padding:6px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:5px;">
+        <div style="font-family:var(--mono);font-size:8px;color:var(--llm);text-align:center;padding:3px 8px;border:1px solid var(--llm-b);border-radius:3px;background:var(--llm-dim);">Training data<br><span style="font-size:6.5px;color:var(--dim);">on IC S3</span></div>
+        <div style="color:var(--dim2);font-size:12px;">→</div>
+        <div style="font-family:var(--mono);font-size:8px;color:var(--sw);text-align:center;padding:3px 8px;border:1px solid var(--sw-b);border-radius:3px;background:var(--sw-dim);">Fine-tune<br><span style="font-size:6.5px;color:var(--dim);">on ICN GPUs</span></div>
+        <div style="color:var(--dim2);font-size:12px;">→</div>
+        <div style="font-family:var(--mono);font-size:8px;color:var(--hw);text-align:center;padding:3px 8px;border:1px solid var(--hw-b);border-radius:3px;background:var(--hw-dim);">Serve inference<br><span style="font-size:6.5px;color:var(--dim);">on ICN</span></div>
+        <div style="color:var(--dim2);font-size:12px;">→</div>
+        <div style="font-family:var(--mono);font-size:8px;color:var(--icn);text-align:center;padding:3px 8px;border:1px solid var(--icn-b);border-radius:3px;background:var(--icn-dim);">Logs + history<br><span style="font-size:6.5px;color:var(--icn);">back to IC S3</span></div>
+        <div style="color:var(--dim2);font-size:12px;">↻</div>
+        <div style="font-family:var(--mono);font-size:7px;color:var(--dim2);max-width:100px;">Zero egress loop. Data never leaves. Context compounds.</div>
+      </div>
     </div>
   </div>
 </div>
@@ -1118,7 +1148,13 @@ details[open] .fold-summary{color:var(--muted);}
 <div class="slide slide-divider" id="sdiv-llm">
   <div class="div-eyebrow">Sphere III</div>
   <div class="div-title" style="color:var(--llm);">AI / MODELS</div>
-  <div class="div-sub">The model layer: frontier capability, open-weight compression, MoE architecture, agentic workloads, and the edge distribution wave.</div>
+  <div class="div-sub">The model layer: frontier capability, open-weight compression, agentic workloads, and the edge distribution wave.</div>
+  <div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap;">
+    <div style="font-family:var(--mono);font-size:8px;color:var(--llm);padding:4px 10px;border:1px solid var(--llm-b);border-radius:12px;background:var(--llm-dim);">Open-Weight vs Frontier</div>
+    <div style="font-family:var(--mono);font-size:8px;color:var(--llm);padding:4px 10px;border:1px solid var(--llm-b);border-radius:12px;background:var(--llm-dim);">The Agentic Shift</div>
+    <div style="font-family:var(--mono);font-size:8px;color:var(--llm);padding:4px 10px;border:1px solid var(--llm-b);border-radius:12px;background:var(--llm-dim);">Fine-Tuning Wave</div>
+    <div style="font-family:var(--mono);font-size:8px;color:var(--llm);padding:4px 10px;border:1px solid var(--llm-b);border-radius:12px;background:var(--llm-dim);">Edge Distribution</div>
+  </div>
 </div>
 
 <!-- ══ S13: OPEN-WEIGHT MEETS FRONTIER ══ -->
@@ -1414,6 +1450,11 @@ details[open] .fold-summary{color:var(--muted);}
   <div class="div-eyebrow">The Market</div>
   <div class="div-title" style="color:var(--text);">THE MARKET<br>RESPONSE</div>
   <div class="div-sub">How different players respond to the same forces — differentiated by stack position, asset model, and business logic.</div>
+  <div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap;">
+    <div style="font-family:var(--mono);font-size:8px;color:var(--muted);padding:4px 10px;border:1px solid var(--border);border-radius:12px;background:var(--bg2);">Stack × Asset Matrix</div>
+    <div style="font-family:var(--mono);font-size:8px;color:var(--muted);padding:4px 10px;border:1px solid var(--border);border-radius:12px;background:var(--bg2);">BM × Sphere Responses</div>
+    <div style="font-family:var(--mono);font-size:8px;color:var(--muted);padding:4px 10px;border:1px solid var(--border);border-radius:12px;background:var(--bg2);">Competitor Movements</div>
+  </div>
 </div>
 
 <!-- ══ S16: 2×2 ══ -->
@@ -1538,6 +1579,12 @@ details[open] .fold-summary{color:var(--muted);}
   <div class="div-eyebrow">ICN</div>
   <div class="div-title" style="color:var(--icn);">ICN'S<br>PLAY</div>
   <div class="div-sub">How ICN navigates the three spheres. The IC coupling. The thesis. The signals that confirm it.</div>
+  <div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap;">
+    <div style="font-family:var(--mono);font-size:8px;color:var(--icn);padding:4px 10px;border:1px solid var(--icn-b);border-radius:12px;background:var(--icn-dim);">Customer Profiles</div>
+    <div style="font-family:var(--mono);font-size:8px;color:var(--icn);padding:4px 10px;border:1px solid var(--icn-b);border-radius:12px;background:var(--icn-dim);">Key R&amp;Cs</div>
+    <div style="font-family:var(--mono);font-size:8px;color:var(--icn);padding:4px 10px;border:1px solid var(--icn-b);border-radius:12px;background:var(--icn-dim);">Two Avenues</div>
+    <div style="font-family:var(--mono);font-size:8px;color:var(--icn);padding:4px 10px;border:1px solid var(--icn-b);border-radius:12px;background:var(--icn-dim);">The Thesis</div>
+  </div>
 </div>
 
 <!-- ══ S-ICP: WHO BUYS GPU COMPUTE ══ -->
