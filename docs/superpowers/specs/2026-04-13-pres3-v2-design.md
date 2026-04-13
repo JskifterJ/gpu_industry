@@ -364,16 +364,19 @@ Minor update: add Managed Agents (Anthropic) to the MIG card or as a 5th card:
 |-------------|--------------|-------|
 | Conversation history | ~2–5 MB / user / month (text) | Grows linearly with usage |
 | RAG index (embeddings) | ~1.5 GB per 1M documents | Re-embedding needed on model switch |
-| Training checkpoints (70B QLoRA) | ~34–140 GB per run | Saved every 10–30 min |
+| QLoRA adapter (fine-tuned, 70B) | ~2–8 GB per adapter | Adapter only — not base weights |
+| Full 70B model checkpoint (BF16) | **~782 GB** | Base weights + optimiser states |
 | Agent session event logs | ~10–50 MB / session | Durable, append-only |
 | Fine-tuned weights (LoRA adapters) | ~2–8 GB per adapter | Per use case / per model version |
-| Model artefacts (base + adapters) | 140 GB (70B BF16) | Stored once, served many times |
+| Model artefacts (base + adapters) | 140 GB (70B BF16 weights) | Stored once, served many times |
 
-*Enterprise scale (100 active AI users, 1 year):*
+*Enterprise scale (100 active AI users, 1 year — inference + fine-tuning:)*
 - Conversation history: ~6 GB/year (text-only)
-- RAG corpus (1M company documents): ~1.5 GB vectors + ~500 GB source docs
-- 10 fine-tuning runs/year: ~500 GB–1 TB checkpoint data
-- **Total reasonable estimate: 2–5 TB/year per 100 AI users, growing with agentic adoption**
+- RAG corpus (1M company documents): ~1.5 GB vectors + ~200–500 GB source docs
+- Agent session logs (1 session/user/day): ~50–240 GB/year
+- **Without training:** ~240 GB – 1 TB/year
+- **With QLoRA training runs (10/year):** add ~200–500 GB checkpoint scratch → total 2–5 TB/year
+- **RAG 10× amplification:** orgs that add RAG see ~10× more storage vs. inference-only (source docs + indices + re-indexing scratch)
 
 *At 10 TB/year:* IC = $840/year storage. CoreWeave = $3,600/year. AWS = $2,760/year.
 
@@ -478,9 +481,10 @@ Gemma 4 E2B on iPhone    Gemma 4 26B A4B API      GLM-5.1 754B MoE
 **Three zone cards:**
 
 **Left — Edge / On-Device (llm amber):**
-- Gemma 4 E2B: ~2.3B params, runs at ~40 tok/s on iPhone 17 Pro (MLX)
-- Qualcomm Snapdragon: 45+ TOPS NPU for on-device inference
-- Apple Neural Engine: 38 TOPS (M4 chip) — Siri 2.0 class
+- Gemma 4 E2B: ~2B active params, runs at **~11 tok/sec on iPhone** (250MB, ~2W power draw)
+- MediaTek Dimensity 9400 NPU: **~1,600 tok/sec** — edge latency now cloud-competitive for mid-tier tasks
+- Qualcomm Snapdragon 8 Elite: 45+ TOPS; Apple M4 Neural Engine: 38 TOPS
+- **IDC forecast:** 50% of enterprise AI inference will run at the edge by 2030 (IDC, 2026)
 - **Jevons angle:** On-device capability → more AI tasks attempted → more cloud requests triggered (coordination, heavier tasks, context sync)
 - **Storage implication:** On-device models still need cloud sync for context, history, personalisation data → IC S3
 
@@ -506,13 +510,16 @@ Gemma 4 E2B on iPhone    Gemma 4 26B A4B API      GLM-5.1 754B MoE
 **Foldable — data:**
 ```html
 <details>
-  <summary>↓ Edge hardware specs reference</summary>
-  [Apple M4 Neural Engine: 38 TOPS | Qualcomm Snapdragon Gen 3: 45+ TOPS | 
-   MediaTek Dimensity 9400: 35+ TOPS | Samsung Exynos 2500: 30+ TOPS]
-  [Model fit guide: ≤2B params → on-device comfortable | 3–8B → on-device with quantisation | 
-   8–26B A4B MoE → cloud inference | 26B+ → cloud required]
+  <summary>↓ Edge hardware specs + hyperscaler capex context</summary>
+  NPU benchmarks: Apple M4 NE: 38 TOPS | Qualcomm Snapdragon 8 Elite: 45 TOPS | 
+   MediaTek Dimensity 9400: ~35 TOPS dedicated AI core (1,600 tok/sec Gemma E2B) | Apple A18 Pro: 35 TOPS
+  Model fit: ≤2B active params → on-device comfortable | 3–8B → on-device with quantisation | 
+   8–26B A4B MoE → cloud inference | 26B+ → cloud required
+  Hyperscaler context: Top-4 hyperscaler capex combined >$600B (2025–2026). Edge growth does NOT 
+   reduce cloud investment — Jevons confirmed. Amazon + Microsoft + Google + Meta still accelerating.
 </details>
 ```
+Source: `sources/reports/edge-compute-distribution-data.md`
 
 ---
 
@@ -651,7 +658,7 @@ No changes.
 | S9 | Scale/balance SVG (software vs bare-metal moat) | Hardcoded |
 | S12 | SwitchingOps context-portability cards | Hardcoded (research) |
 | S13 | Two-column layout (frontier + open-weight) | Hardcoded |
-| S15b | Spectrum diagram SVG (edge→cloud→neocloud) | Hardcoded |
+| S15b | Spectrum diagram SVG (edge→cloud→neocloud) | `sources/reports/edge-compute-distribution-data.md` |
 | S19 | Two-category R&C table (fine-tune + serving) | Hardcoded |
 | S21 | Updated flywheel (4-step with context loop) | Hardcoded |
 
@@ -681,7 +688,7 @@ const TERMS = {
 
 ## Spec Self-Review
 
-- **Placeholders:** S15b edge compute slide has one placeholder: `[TO BE ENRICHED WITH AGENT RESEARCH ON EDGE COMPUTE METRICS + AGENTIC STORAGE SIZING]` — agent 4 output pending. All other slides have specific data.
+- **Placeholders:** None. S15b enriched with agent 4 research: Gemma E2B 11 tok/sec on iPhone, 1,600 tok/sec MediaTek NPU, IDC 50% edge by 2030. S12 updated with agentic storage sizing (240 GB – 1 TB/year for 100-user enterprise without training; 2–5 TB with QLoRA runs; RAG 10× amplification effect). Source file: `sources/reports/edge-compute-distribution-data.md`.
 - **Memory & Interconnect reframe:** Title changed to "From Compute-Bound to Memory-Bound" — addresses user's concern that "new bottleneck" was inaccurate. The concept is correct, the framing was wrong.
 - **Venn slide:** Centered around 12 confirmed snippets with explicit placement logic. Animation spec is precise enough to implement.
 - **SwitchingOps:** Term not publicly indexed as a syv.ai publication — document in terms file with caveat. Concept is real and well-sourced from adjacent literature. User should confirm primary source.
