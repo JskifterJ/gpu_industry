@@ -1658,14 +1658,14 @@ details[open] .fold-summary{color:var(--muted);}
   <div class="nav-dots" id="dots"></div>
   <button class="nav-btn" id="next-btn" onclick="go(cur+1)">›</button>
 </nav>
-<div class="slide-counter"><span class="counter-cur" id="counter-cur">1</span> / <span id="counter-tot">15</span></div>
+<div class="slide-counter"><span class="counter-cur" id="counter-cur">1</span> / <span id="counter-tot">30</span></div>
 <div class="key-hint"><span class="key-badge">←</span><span class="key-badge">→</span> navigate</div>
 
 <script>
 /* ════ NAVIGATION ════ */
-const TOTAL=15;
-const ACT_DOTS=['d-a1','d-a1','d-a1','d-a1','d-a1','d-a1','d-a2','d-a2','d-a2','d-a2','d-a2','d-a3','d-a3','d-a3','d-sig'];
-const ACT_COLORS=['#6366f1','#6366f1','#6366f1','#6366f1','#6366f1','#6366f1','#10b981','#10b981','#10b981','#10b981','#10b981','#f59e0b','#f59e0b','#f59e0b','#06b6d4'];
+const TOTAL=30;
+const ACT_DOTS=['d-a1','d-a1','d-a1','d-a1','d-a1','d-a1','d-hw','d-hw','d-hw','d-hw','d-hw','d-sw','d-sw','d-sw','d-sw','d-sw','d-llm','d-llm','d-llm','d-llm','d-llm','d-market','d-market','d-market','d-market','d-icn','d-icn','d-icn','d-icn','d-icn'];
+const ACT_COLORS=['#6366f1','#6366f1','#6366f1','#6366f1','#6366f1','#6366f1','#c084fc','#c084fc','#c084fc','#c084fc','#c084fc','#2dd4bf','#2dd4bf','#2dd4bf','#2dd4bf','#2dd4bf','#fbbf24','#fbbf24','#fbbf24','#fbbf24','#fbbf24','#8898b0','#8898b0','#8898b0','#8898b0','#5AF688','#5AF688','#5AF688','#5AF688','#5AF688'];
 let cur=0;
 const SLIDES=document.querySelectorAll('.slide');
 const prog=document.getElementById('progress');
@@ -1697,7 +1697,7 @@ function toggleTheme(){
   const isLight=document.documentElement.classList.contains('light');
   if(isLight){document.documentElement.classList.remove('light');localStorage.setItem('deckTheme3','dark');document.querySelectorAll('.tl').forEach(e=>e.textContent='Dark');}
   else{document.documentElement.classList.add('light');localStorage.setItem('deckTheme3','light');document.querySelectorAll('.tl').forEach(e=>e.textContent='Light');}
-  if(cur===4)renderLifecycle();
+  if(cur===7)renderLifecycle();
   if(cur===5)renderWorkloadChart();
   if(cur===7)renderTrajectory();
   if(cur===23)renderBMMatrix();
@@ -1723,6 +1723,7 @@ function go(n){
   SLIDES[cur].classList.add('active');
   update();
   if(cur===23)setTimeout(renderBMMatrix,350);
+  if(cur===7)setTimeout(renderLifecycle,350);
 }
 
 function update(){
