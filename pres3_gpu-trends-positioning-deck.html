@@ -491,46 +491,106 @@ details[open] .fold-summary{color:var(--muted);}
   </div>
 </div>
 
-<!-- ══ S6 — INFERENCE INVERSION + AGENTIC ══ -->
+<!-- ══ S6: THE ENERGY WALL ══ -->
 <div class="slide" id="s6">
   <div class="slide-chrome">
-    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">F2 &amp; F7 · Inference Inversion · Agentic Multiplier</div></div>
-    <div class="chrome-right"><span class="act-badge a1b">ACT I · THE FORCES</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
+    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Sphere I · Hardware · The Energy Wall</div></div>
+    <div class="chrome-right"><span class="act-badge ahw">HARDWARE</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
   </div>
-  <div class="slide-body" style="flex-direction:column;padding:12px 44px 72px;gap:12px;overflow-y:auto;">
-    <div class="anim anim-1" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;flex:1;min-height:0;align-items:start;">
-      <div style="display:flex;flex-direction:column;gap:8px;height:100%;">
-        <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);border-bottom:1px solid var(--border);padding-bottom:5px;">Inference Inversion · DC Power Demand by Workload (GW)</div>
-        <div style="flex:1;min-height:220px;position:relative;"><canvas id="workload-chart" style="width:100%;height:100%;"></canvas></div>
-        <div style="display:flex;gap:12px;font-family:var(--mono);font-size:8px;color:var(--dim);">
-          <span><span style="display:inline-block;width:10px;height:10px;background:#64748b;border-radius:2px;margin-right:4px;vertical-align:middle;"></span>Non-AI</span>
-          <span><span style="display:inline-block;width:10px;height:10px;background:#6366f1;border-radius:2px;margin-right:4px;vertical-align:middle;"></span>AI Training (22% CAGR)</span>
-          <span><span style="display:inline-block;width:10px;height:10px;background:#10b981;border-radius:2px;margin-right:4px;vertical-align:middle;"></span>AI Inference (35% CAGR)</span>
-        </div>
-        <div style="font-family:var(--mono);font-size:7.5px;color:var(--dim2);">Source: McKinsey Data Center Demand Model · 2025–2030</div>
+  <div class="slide-body" style="flex-direction:row;padding:12px 44px 72px;gap:20px;overflow-y:auto;">
+    <!-- LEFT: TWh chart (55% width) -->
+    <div class="anim anim-1" style="flex:0 0 55%;display:flex;flex-direction:column;gap:8px;">
+      <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);border-bottom:1px solid var(--border);padding-bottom:5px;">Global Datacenter Electricity Demand (TWh) · IEA Base Case</div>
+      <!-- SVG stacked area chart: pre-AI vs AI era -->
+      <div style="flex:1;min-height:220px;position:relative;">
+        <svg viewBox="0 0 560 240" width="100%" height="100%" style="overflow:visible;">
+          <!-- Y axis labels -->
+          <text x="0" y="235" font-family="'JetBrains Mono',monospace" font-size="8" fill="var(--dim2)">0</text>
+          <text x="0" y="175" font-family="'JetBrains Mono',monospace" font-size="8" fill="var(--dim2)">200</text>
+          <text x="0" y="115" font-family="'JetBrains Mono',monospace" font-size="8" fill="var(--dim2)">600</text>
+          <text x="0" y="55" font-family="'JetBrains Mono',monospace" font-size="8" fill="var(--dim2)">1000</text>
+          <!-- Grid lines -->
+          <line x1="28" y1="230" x2="555" y2="230" stroke="var(--border)" stroke-width="0.5"/>
+          <line x1="28" y1="170" x2="555" y2="170" stroke="var(--border)" stroke-width="0.5"/>
+          <line x1="28" y1="110" x2="555" y2="110" stroke="var(--border)" stroke-width="0.5"/>
+          <line x1="28" y1="50" x2="555" y2="50" stroke="var(--border)" stroke-width="0.5"/>
+          <!-- Non-AI base (dim, flat ~180TWh scaled) -->
+          <polyline points="28,198 196,183 336,171 555,159" fill="none" stroke="#627080" stroke-width="1.5"/>
+          <!-- AI workloads fill (stacked on top of non-AI) -->
+          <polygon points="28,222 196,155 336,60 555,20 555,159 336,171 196,183 28,198" fill="var(--hw)" fill-opacity="0.25"/>
+          <polyline points="28,222 196,155 336,60 555,20" fill="none" stroke="var(--hw)" stroke-width="2"/>
+          <!-- X axis labels -->
+          <text x="24" y="244" font-family="'JetBrains Mono',monospace" font-size="8" fill="var(--dim2)">2020</text>
+          <text x="186" y="244" font-family="'JetBrains Mono',monospace" font-size="8" fill="var(--dim2)">2024</text>
+          <text x="326" y="244" font-family="'JetBrains Mono',monospace" font-size="8" fill="var(--dim2)">2027</text>
+          <text x="535" y="244" font-family="'JetBrains Mono',monospace" font-size="8" fill="var(--dim2)">2030</text>
+          <!-- Key annotation: AI inflection -->
+          <line x1="196" y1="155" x2="196" y2="244" stroke="var(--hw)" stroke-width="0.7" stroke-dasharray="3,2"/>
+          <text x="200" y="150" font-family="'JetBrains Mono',monospace" font-size="8" fill="var(--hw)">415 TWh</text>
+          <text x="200" y="161" font-family="'JetBrains Mono',monospace" font-size="8" fill="var(--hw)">(2024)</text>
+          <!-- 2030 label -->
+          <text x="487" y="26" font-family="'JetBrains Mono',monospace" font-size="8" fill="var(--hw)">945 TWh</text>
+          <text x="487" y="37" font-family="'JetBrains Mono',monospace" font-size="8" fill="var(--hw)">(2030 IEA)</text>
+        </svg>
       </div>
-      <div style="display:flex;flex-direction:column;gap:9px;">
-        <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);border-bottom:1px solid var(--border);padding-bottom:5px;">The Agentic Multiplier · F7</div>
-        <div style="padding:10px 13px;background:var(--bg2);border:1px solid var(--border);border-radius:5px;font-size:10.5px;color:var(--muted);line-height:1.65;">
-          One user request triggers an orchestrator agent, which spawns <strong style="color:var(--text);">5–15 sub-agents</strong> in parallel. Each sub-agent has its own KV cache, its own context window, and its own VRAM allocation.
+      <div style="display:flex;gap:12px;font-family:var(--mono);font-size:7.5px;color:var(--dim);">
+        <span><span style="display:inline-block;width:10px;height:10px;background:var(--hw);opacity:.5;border-radius:2px;margin-right:4px;vertical-align:middle;"></span>AI workloads (+30%/yr)</span>
+        <span><span style="display:inline-block;width:10px;height:10px;background:#627080;border-radius:2px;margin-right:4px;vertical-align:middle;"></span>Non-AI (+9%/yr)</span>
+      </div>
+      <div style="font-family:var(--mono);font-size:7px;color:var(--dim2);">Source: IEA Energy and AI Report, 2025</div>
+      <!-- Household comparison callout bar -->
+      <div style="padding:9px 12px;background:var(--hw-dim);border:1px solid var(--hw-b);border-radius:5px;font-family:var(--mono);font-size:8px;color:var(--muted);line-height:1.65;margin-top:4px;">
+        <strong style="color:var(--hw);">How much is 120 kW?</strong><br>
+        One GB200 NVL72 rack = <strong style="color:var(--text);">~102 average US homes</strong>, running continuously.<br>
+        A 100-rack cluster = <strong style="color:var(--text);">~10,000 homes</strong>. The Vera Rubin NVL144 (2027): ~600 kW = <strong style="color:var(--text);">~508 homes per rack</strong>.<br>
+        <span style="color:var(--dim2);font-size:7px;">Source: EIA avg household 10,332 kWh/year; NVIDIA TDP specs</span>
+      </div>
+      <!-- Foldable: pre-AI era profile -->
+      <details class="fold-detail">
+        <summary class="fold-summary">↓ Pre-AI datacenter profile vs today</summary>
+        <div class="fold-body">
+          <table style="width:100%;border-collapse:collapse;font-size:8px;">
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:3px 6px;color:var(--dim2);">2015 (storage era)</td>
+              <td style="padding:3px 6px;">CPU compute, storage arrays</td>
+              <td style="padding:3px 6px;color:var(--hw);">8–12 kW/rack</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:3px 6px;color:var(--dim2);">2020 (cloud era)</td>
+              <td style="padding:3px 6px;">Virtualised CPU, modest GPU</td>
+              <td style="padding:3px 6px;color:var(--hw);">8–25 kW/rack</td>
+            </tr>
+            <tr>
+              <td style="padding:3px 6px;color:var(--dim2);">2026 (AI era)</td>
+              <td style="padding:3px 6px;">GPU training + inference, liquid cooling</td>
+              <td style="padding:3px 6px;color:var(--hw);font-weight:600;">120–600 kW/rack</td>
+            </tr>
+          </table>
+          <div style="margin-top:5px;color:var(--dim2);font-size:7.5px;">A single GB200 NVL72 rack consumes 10–15× more power than a typical pre-AI server rack. Datacenter physical infrastructure (cooling, power distribution, UPS) must be redesigned from scratch.</div>
         </div>
-        <div style="display:flex;flex-direction:column;gap:7px;">
-          <div style="padding:8px 11px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid #ef4444;border-radius:4px;">
-            <div style="font-family:var(--mono);font-size:8px;font-weight:600;color:var(--text);margin-bottom:2px;">KV Cache Crisis</div>
-            <div style="font-size:9.5px;color:var(--muted);">N parallel agents on a single GPU exhaust VRAM in minutes without memory offload architecture. Agentic clusters require fundamentally different hardware configuration.</div>
-          </div>
-          <div style="padding:8px 11px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--h);border-radius:4px;">
-            <div style="font-family:var(--mono);font-size:8px;font-weight:600;color:var(--text);margin-bottom:2px;">GPU:CPU Ratio Shift</div>
-            <div style="font-size:9.5px;color:var(--muted);">Training clusters: 8:1 GPU-to-CPU ratio. Agentic inference clusters: shifting to 4:1 or 2:1 — agents need CPU for orchestration, memory management, and tool execution.</div>
-          </div>
-          <div style="padding:8px 11px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--n);border-radius:4px;">
-            <div style="font-family:var(--mono);font-size:8px;font-weight:600;color:var(--text);margin-bottom:2px;">New KPI: Tokens per Watt</div>
-            <div style="font-size:9.5px;color:var(--muted);">Jensen Huang at GTC 2026: "tokens per watt" as the compound efficiency metric — accounting for bandwidth, memory, storage, and networking together, not compute alone.</div>
-          </div>
-        </div>
-        <div style="padding:8px 12px;background:rgba(16,185,129,.07);border:1px solid rgba(16,185,129,.2);border-radius:5px;font-family:var(--mono);font-size:8px;color:var(--muted);line-height:1.6;border-left:3px solid var(--n);">
-          <strong style="color:var(--text);">Jevons feedback loop:</strong> Inference costs halving every 2 months → more agents deployed → total inference load explodes. Efficiency is the accelerant, not the brake.
-        </div>
+      </details>
+    </div>
+    <!-- RIGHT: 5 stat cards -->
+    <div class="anim anim-2" style="flex:1;display:flex;flex-direction:column;gap:8px;">
+      <div style="padding:9px 12px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--hw);border-radius:5px;">
+        <div style="font-family:var(--mono);font-size:8px;color:var(--hw);font-weight:600;margin-bottom:2px;">Rack Power Density</div>
+        <div style="font-size:10px;color:var(--muted);line-height:1.55;">GB200 NVL72 rack: <strong style="color:var(--text);" data-term="ppa">~120 kW</strong> continuous draw (132 kW TDP). One rack = ~102 average US homes.</div>
+      </div>
+      <div style="padding:9px 12px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--hw);border-radius:5px;">
+        <div style="font-family:var(--mono);font-size:8px;color:var(--hw);font-weight:600;margin-bottom:2px;">Frontier Cluster Scale</div>
+        <div style="font-size:10px;color:var(--muted);line-height:1.55;">Training clusters draw <strong style="color:var(--text);">40–100 MW</strong> — equivalent to a small town's electricity demand. AI-ready DC: <strong style="color:var(--text);">$10–12M per MW</strong> to build (2× conventional).</div>
+      </div>
+      <div style="padding:9px 12px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--hw);border-radius:5px;">
+        <div style="font-family:var(--mono);font-size:8px;color:var(--hw);font-weight:600;margin-bottom:2px;">Efficiency ≠ Less Demand</div>
+        <div style="font-size:10px;color:var(--muted);line-height:1.55;"><strong style="color:var(--text);" data-term="jevons-paradox">H100 → B200: 25× better tokens/watt</strong>. Jevons outcome: GPU demand ↑35% CAGR. Efficiency is the accelerant.</div>
+      </div>
+      <div style="padding:9px 12px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--hw);border-radius:5px;">
+        <div style="font-family:var(--mono);font-size:8px;color:var(--hw);font-weight:600;margin-bottom:2px;">Global Demand Trajectory</div>
+        <div style="font-size:10px;color:var(--muted);line-height:1.55;"><strong style="color:var(--text);">415 TWh (2024) → 945 TWh (2030)</strong>. AI/GPU servers: +30%/yr vs conventional: +9%/yr. Pre-AI (2020): efficiency gains were <em>flattening</em> the curve — AI reversed it.</div>
+      </div>
+      <div style="padding:9px 12px;background:var(--bg2);border:1px solid var(--hw-b);border-left:3px solid var(--hw);border-radius:5px;background:var(--hw-dim);">
+        <div style="font-family:var(--mono);font-size:8px;color:var(--hw);font-weight:600;margin-bottom:2px;" data-term="ppa">Nuclear: The New Power Strategy</div>
+        <div style="font-size:10px;color:var(--muted);line-height:1.55;">Big Tech contracted <strong style="color:var(--text);">10+ GW of US nuclear</strong> in 2025 (Microsoft TMI restart 835 MW · Amazon Susquehanna 1.9 GW · Meta 1.1 GW · Google Kairos SMR). <strong style="color:var(--text);">Power location strategy is now a primary competitive moat — above GPU procurement.</strong></div>
       </div>
     </div>
   </div>
