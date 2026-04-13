@@ -1,0 +1,61 @@
+{
+    "nvidia_architectures": [
+        {
+            "generation": "Hopper",
+            "flagship_chip": "H100",
+            "release_year": 2022,
+            "process_node": "TSMC 4N",
+            "transistor_count_billions": 80,
+            "memory_capacity_gb": 80,
+            "memory_type": "HBM3",
+            "memory_bandwidth_tbps": 3.35,
+            "fp8_tflops": 3958,
+            "relative_inference_performance": "1x",
+            "estimated_cost_per_1m_output_tokens_usd": 0.5,
+            "key_innovations": [
+                "Transformer Engine",
+                "NVLink 4.0 (900 GB/s)"
+            ]
+        },
+        {
+            "generation": "Blackwell",
+            "flagship_chip": "B200",
+            "release_year": 2024,
+            "process_node": "TSMC 4NP",
+            "transistor_count_billions": 208,
+            "memory_capacity_gb": 192,
+            "memory_type": "HBM3e",
+            "memory_bandwidth_tbps": 8.0,
+            "fp8_tflops": 10000,
+            "fp4_tflops": 20000,
+            "relative_inference_performance": "15x",
+            "estimated_cost_per_1m_output_tokens_usd": 0.05,
+            "key_innovations": [
+                "Second-Gen Transformer Engine",
+                "Dual-Die Architecture",
+                "NVLink 5.0 (1.8 TB/s)",
+                "FP4 Precision"
+            ]
+        },
+        {
+            "generation": "Vera Rubin",
+            "flagship_chip": "R200 / NVL72",
+            "release_year": 2026,
+            "process_node": "TSMC 3N (Estimated)",
+            "transistor_count_billions": 400,
+            "memory_capacity_gb": 512,
+            "memory_type": "HBM4",
+            "memory_bandwidth_tbps": 16.0,
+            "fp8_tflops": 40000,
+            "fp4_tflops": 80000,
+            "relative_inference_performance": "60x",
+            "estimated_cost_per_1m_output_tokens_usd": 0.005,
+            "key_innovations": [
+                "Native MoE Optimization",
+                "NVLink 6.0 (3.6 TB/s)",
+                "Groq-accelerated SRAM integration",
+                "Agentic AI Hardware Acceleration"
+            ]
+        }
+    ]
+}

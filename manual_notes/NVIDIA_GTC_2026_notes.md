@@ -38,3 +38,24 @@ NemoClaw: OpenClaw with enterprise security; enterprise-ready. Connect policy-en
 HuggingFace = open models
 Tokens are going to be a more prevalent access parameter for engineers than money. Tokens will be the proxy for aceess to power. As big of a deal as Linux. 
 NemoClaw
+
+## Gemini recap
+NVIDIA’s GTC 2026 keynote delivered by Jensen Huang marked a massive strategic pivot. The core narrative shifted from simply building artificial intelligence (training) to running it at industrial scale (inference, AI agents, and physical robotics). Nvidia is no longer pitching itself just as a chip company, but as an "AI infrastructure and factory operator."If you are looking to build graphs, the data below highlights the massive leaps in compute density, cost-efficiency, and market projections announced at the event.Here are the key takeaways, broken down with the hard specs and data you need.1. Market Projections (Data for Trend & Bar Graphs)Nvidia effectively doubled its market outlook, signaling that demand for compute is dramatically outpacing traditional infrastructure cycles.Market MetricPrevious Estimate (2025)GTC 2026 Revised EstimateGlobal AI Infrastructure Demand (2025–2027)$500 Billion$1 Trillion+
+
+2. The Vera Rubin Architecture (Data for Comparative Bar Charts)
+The successor to Blackwell is the Vera Rubin platform, which is purpose-built for massive Mixture-of-Experts (MoE) models and agentic AI workloads. The flagship system is the Vera Rubin NVL72, which integrates 72 Rubin GPUs and 36 Vera CPUs via the new NVLink 6 network.
+
+Here is the generational leap data you can chart against the previous Blackwell architecture:
+Performance Metric,Blackwell (Previous Gen),Vera Rubin NVL72 (New Gen),Delta / Improvement
+AI Compute Density,1x (Baseline),3x to 4x,+200% to +300%
+GPUs Required (1T-Parameter MoE),4x,1x,75% Reduction
+Cost Per Token Generation,10x,1x,90% Cost Savings
+GPU-to-CPU Data Latency,Milliseconds,Microseconds,Order of magnitude drop
+
+3. Hardware Innovations & Inference Specs (Data for Radar/Performance Charts)
+Nvidia directly addressed the bottleneck of "ultra-high-speed inference" by debuting new hardware—most notably leveraging its recent acquisition of Groq.
+Hardware Component,Core Function,Key Specifications & Graphable Data
+Vera CPU Rack,Agentic AI processing,"256 processors per rack; 2x computing efficiency over traditional CPUs; Can support 10,000+ simultaneous online agents."
+Groq 3 LPU (LP40),Ultra-high-speed inference,500MB on-chip SRAM; 35x higher inference throughput for 1-trillion parameter models at the same power level.
+Spectrum X CPO,Advanced Networking,Co-packaged optics deliver 2Tb/s single-port bandwidth; 5x improved optical power efficiency; 10x network reliability.
+Neotron 3 Super,Edge AI / Local Inference,Up to 10x performance boost for Small Language Models (SLMs) like the Nemotron Nano 9B running locally.

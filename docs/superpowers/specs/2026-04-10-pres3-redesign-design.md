@@ -53,7 +53,7 @@ Presentation date: **late next week (~Apr 16–17)**. All-hands document: **~May
 ## Slide-by-Slide Specification
 
 ### S1 — Cover
-**Chrome:** ClusterMAX™ · GPU Compute: Trends & Positioning
+**Chrome:** GPU Compute: Trends & Positioning
 **Act badge:** none (cover)
 **Content:**
 - Eyebrow: `ClusterMAX Intelligence Series · Deck 3 of 3`
