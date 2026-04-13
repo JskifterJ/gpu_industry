@@ -1342,7 +1342,9 @@ document.addEventListener('mousemove',function(e){
   const pad=10,tw=tipEl.offsetWidth,th=tipEl.offsetHeight;
   let x=e.clientX+pad,y=e.clientY-th-pad;
   if(x+tw>window.innerWidth-8)x=e.clientX-tw-pad;
+  if(x<8)x=e.clientX+pad;
   if(y<8)y=e.clientY+pad;
+  if(y+th>window.innerHeight-8)y=e.clientY-th-pad;
   tipEl.style.left=x+'px';tipEl.style.top=y+'px';
 });
 document.addEventListener('mouseleave',function(){tipEl.style.display='none';});
