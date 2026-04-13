@@ -1420,6 +1420,106 @@ details[open] .fold-summary{color:var(--muted);}
   </div>
 </div>
 
+<!-- ══ DIVIDER: ICN'S PLAY ══ -->
+<div class="slide slide-divider" id="sdiv-icn">
+  <div class="div-eyebrow">ICN</div>
+  <div class="div-title" style="color:var(--icn);">ICN'S<br>PLAY</div>
+  <div class="div-sub">How ICN navigates the three spheres. The IC coupling. The thesis. The signals that confirm it.</div>
+</div>
+
+<!-- ══ S19: ICN R&Cs ══ -->
+<div class="slide" id="s19">
+  <div class="slide-chrome">
+    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">ICN's Play · R&amp;Cs</div></div>
+    <div class="chrome-right"><span class="act-badge aicn">ICN</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
+  </div>
+  <div class="slide-body" style="flex-direction:column;padding:12px 44px 72px;gap:10px;overflow-y:auto;">
+    <div class="anim anim-1" style="display:flex;flex-direction:column;gap:3px;">
+      <div style="font-family:var(--display);font-size:30px;letter-spacing:.03em;line-height:1.1;">ICN KEY RESOURCES &amp; CAPABILITIES</div>
+      <div style="font-family:var(--mono);font-size:8.5px;color:var(--dim);">Two categories: what ICN brings standalone, and what IC coupling unlocks.</div>
+    </div>
+    <div class="anim anim-2" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;flex:1;min-height:0;overflow-y:auto;">
+      <!-- LEFT: ICN Standalone -->
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);border-bottom:2px solid var(--border);padding-bottom:4px;">ICN Standalone</div>
+        <table style="width:100%;border-collapse:collapse;font-family:var(--mono);font-size:8px;">
+          <thead><tr style="background:var(--bg3);">
+            <th style="text-align:left;padding:4px 7px;color:var(--dim2);font-size:7px;">Asset</th>
+            <th style="padding:4px 7px;color:var(--dim2);font-size:7px;">Value</th>
+          </tr></thead>
+          <tbody>
+            <tr style="border-top:1px solid var(--border);"><td style="padding:4px 7px;color:var(--muted);" data-term="mig">Blackwell 6000 MIG</td><td style="padding:4px 7px;color:var(--muted);">Dedicated inference slices — no virtualisation overhead. Predictable VRAM allocation.</td></tr>
+            <tr style="border-top:1px solid var(--border);"><td style="padding:4px 7px;color:var(--muted);" data-term="soperator">Soperator</td><td style="padding:4px 7px;color:var(--muted);">~92% goodput on open-source orchestration. Self-hostable, auditable, no vendor lock.</td></tr>
+            <tr style="border-top:1px solid var(--border);"><td style="padding:4px 7px;color:var(--muted);">Bare-metal network</td><td style="padding:4px 7px;color:var(--muted);">No hypervisor tax. InfiniBand / NVLink topology for distributed training.</td></tr>
+            <tr style="border-top:1px solid var(--border);"><td style="padding:4px 7px;color:var(--muted);">IC data center (DK)</td><td style="padding:4px 7px;color:var(--muted);">Established physical infrastructure, power, cooling. No greenfield construction risk.</td></tr>
+            <tr style="border-top:1px solid var(--border);"><td style="padding:4px 7px;color:var(--muted);" data-term="depin">ICNT / DePIN model</td><td style="padding:4px 7px;color:var(--muted);">Token-based operator incentive. Distributed supply at scale without centralised capex.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- RIGHT: IC-Coupled (two sub-sections) -->
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--icn);border-bottom:2px solid var(--icn-b);padding-bottom:4px;">IC-Coupled Assets — Fine-Tuning Play</div>
+        <table style="width:100%;border-collapse:collapse;font-family:var(--mono);font-size:8px;margin-bottom:8px;">
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border);"><td style="padding:3px 7px;color:var(--muted);">IC S3 at $7/TB</td><td style="padding:3px 7px;color:var(--muted);">4.3× cheaper than CoreWeave — data gravity for training datasets</td></tr>
+            <tr style="border-bottom:1px solid var(--border);"><td style="padding:3px 7px;color:var(--muted);">Nitro (high-perf S3)</td><td style="padding:3px 7px;color:var(--muted);">Eliminates checkpointing idle time — native Axolotl/<span data-term="qlora">QLoRA</span> backend</td></tr>
+            <tr><td style="padding:3px 7px;color:var(--muted);">1 PB anchor customer</td><td style="padding:3px 7px;color:var(--muted);">Training data on IC, compute on CoreWeave — first land-and-expand target</td></tr>
+          </tbody>
+        </table>
+        <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--icn);border-bottom:2px solid var(--icn-b);padding-bottom:4px;">IC-Coupled Assets — Model Serving / Context Play</div>
+        <table style="width:100%;border-collapse:collapse;font-family:var(--mono);font-size:8px;">
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border);"><td style="padding:3px 7px;color:var(--muted);">IC S3 as context store</td><td style="padding:3px 7px;color:var(--muted);">RAG indices, conversation history, agent session logs — at $7/TB</td></tr>
+            <tr style="border-bottom:1px solid var(--border);"><td style="padding:3px 7px;color:var(--muted);">Zero egress</td><td style="padding:3px 7px;color:var(--muted);"><span data-term="switching-ops">SwitchingOps</span>, model updates, re-embedding — no data movement cost</td></tr>
+            <tr style="border-bottom:1px solid var(--border);"><td style="padding:3px 7px;color:var(--muted);">IC customer base</td><td style="padding:3px 7px;color:var(--muted);">Enterprise storage customers → natural cross-sell for inference + fine-tune</td></tr>
+            <tr><td style="padding:3px 7px;color:var(--muted);" data-term="managed-agents">Agentic storage tier</td><td style="padding:3px 7px;color:var(--muted);">Managed Agents sessions generate durable event logs → IC S3 as long-term agent memory</td></tr>
+          </tbody>
+        </table>
+        <div style="padding:8px 10px;background:var(--icn-dim);border:1px solid var(--icn-b);border-radius:4px;font-family:var(--mono);font-size:8px;color:var(--icn);line-height:1.6;margin-top:auto;">"The IC-coupling multiplies ICN's defensibility — in both the training play and the serving play. Standalone ICN competes with hundreds of GPU resellers. IC-integrated ICN competes with almost no one on the 'context is gold' dimension."</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ S20: TWO AVENUES ══ -->
+<div class="slide" id="s20">
+  <div class="slide-chrome">
+    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">ICN's Play · Two Avenues</div></div>
+    <div class="chrome-right"><span class="act-badge aicn">ICN</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
+  </div>
+  <div class="slide-body" style="flex-direction:column;padding:14px 44px 72px;gap:14px;overflow-y:auto;">
+    <div class="anim anim-1" style="display:flex;flex-direction:column;gap:3px;">
+      <div style="font-family:var(--display);font-size:30px;letter-spacing:.03em;line-height:1.1;">TWO AVENUES</div>
+      <div style="font-family:var(--mono);font-size:8.5px;color:var(--dim);">ICN can pursue two distinct market entry paths. Both are IC-coupled. Both activate the same R&amp;Cs differently.</div>
+    </div>
+    <div class="anim anim-2" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;flex:1;min-height:0;">
+      <!-- Avenue A: Fine-Tuning SME -->
+      <div style="background:var(--bg2);border:1px solid var(--border);border-top:4px solid var(--icn);border-radius:9px;padding:16px;display:flex;flex-direction:column;gap:9px;position:relative;">
+        <div style="position:absolute;top:12px;right:14px;font-family:var(--mono);font-size:7px;background:var(--icn-dim);color:var(--icn);border:1px solid var(--icn-b);padding:2px 7px;border-radius:8px;letter-spacing:.1em;text-transform:uppercase;">Avenue A</div>
+        <div style="font-family:var(--display);font-size:22px;letter-spacing:.04em;color:var(--icn);line-height:1.1;">Fine-Tuning<br>SME Cloud</div>
+        <div style="font-size:9.5px;color:var(--dim);font-style:italic;">ICP-4: enterprise knowledge firms</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="display:flex;flex-direction:column;gap:1px;padding:6px 9px;background:var(--bg3);border-radius:4px;"><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);text-transform:uppercase;">Entry point</div><div style="font-size:9.5px;color:var(--muted);">IC's 1 PB customer — training data already on IC at $7/TB</div></div>
+          <div style="display:flex;flex-direction:column;gap:1px;padding:6px 9px;background:var(--bg3);border-radius:4px;"><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);text-transform:uppercase;">Value prop</div><div style="font-size:9.5px;color:var(--muted);">Bring compute to the data. Axolotl/<span data-term="qlora">QLoRA</span> on Blackwell 6000. Zero egress fine-tune loop.</div></div>
+          <div style="display:flex;flex-direction:column;gap:1px;padding:6px 9px;background:var(--bg3);border-radius:4px;"><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);text-transform:uppercase;">Defensibility</div><div style="font-size:9.5px;color:var(--muted);">Training dataset on IC → trained adapter on IC → inference on ICN. Flywheel deepens with usage.</div></div>
+        </div>
+      </div>
+      <!-- Avenue B: Model Serving for Context-Heavy SMEs -->
+      <div style="background:var(--bg2);border:1px solid var(--border);border-top:4px solid var(--sw);border-radius:9px;padding:16px;display:flex;flex-direction:column;gap:9px;position:relative;">
+        <div style="position:absolute;top:12px;right:14px;font-family:var(--mono);font-size:7px;background:var(--sw-dim);color:var(--sw);border:1px solid var(--sw-b);padding:2px 7px;border-radius:8px;letter-spacing:.1em;text-transform:uppercase;">Avenue B</div>
+        <div style="font-family:var(--display);font-size:22px;letter-spacing:.04em;color:var(--sw);line-height:1.1;">Context-Heavy<br>Model Serving</div>
+        <div style="font-size:9.5px;color:var(--dim);font-style:italic;">ICP-4/5: AI-first SMEs deploying agentic systems</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="display:flex;flex-direction:column;gap:1px;padding:6px 9px;background:var(--bg3);border-radius:4px;"><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);text-transform:uppercase;">Entry point</div><div style="font-size:9.5px;color:var(--muted);">SMEs deploying RAG + agent systems — context growing faster than they anticipated</div></div>
+          <div style="display:flex;flex-direction:column;gap:1px;padding:6px 9px;background:var(--bg3);border-radius:4px;"><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);text-transform:uppercase;">Value prop</div><div style="font-size:9.5px;color:var(--muted);">IC S3 for RAG indices + conversation history + agent logs. Zero egress means <span data-term="switching-ops">SwitchingOps</span> is painless.</div></div>
+          <div style="display:flex;flex-direction:column;gap:1px;padding:6px 9px;background:var(--bg3);border-radius:4px;"><div style="font-family:var(--mono);font-size:7px;color:var(--dim2);text-transform:uppercase;">Defensibility</div><div style="font-size:9.5px;color:var(--muted);">Context gravity deepens monthly. At month 12: exit cost = weeks of reprocessing. Data gravity is the moat.</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="anim anim-3" style="padding:9px 12px;background:var(--icn-dim);border:1px solid var(--icn-b);border-radius:5px;font-family:var(--mono);font-size:8.5px;color:var(--icn);line-height:1.6;">Both avenues activate the same R&amp;Cs. Avenue A drives training compute revenue. Avenue B drives serving compute + storage revenue. Together: training + serving + context = the full IC data flywheel. See S21 for the thesis.</div>
+  </div>
+</div>
+
 <!-- ══ NAV ══ -->
 <nav class="nav">
   <button class="nav-btn" id="prev-btn" onclick="go(cur-1)" disabled>‹</button>
