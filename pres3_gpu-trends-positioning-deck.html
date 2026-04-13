@@ -1315,6 +1315,38 @@ const BM_DATA={
   ]
 };
 
+/* ════ TOOLTIPS ════ */
+const TERMS={
+  'jevons-paradox':{t:'Jevons Paradox',b:'Efficiency gains increase total consumption. Inference cost ↓ 280× in 2 yrs — GPU demand ↑ 35% CAGR. Every optimisation accelerates adoption.'},
+  'sunk':{t:'SUNK',b:'CoreWeave\'s Slurm-on-Kubernetes. ~96% goodput. BlueField-3 DPU offload. Topology-aware gang scheduling. Proprietary, not open-source.'},
+  'soperator':{t:'Soperator',b:'Nebius\'s open-source SUNK equivalent. ~92% goodput. Self-hostable. Released 2025. Changed the orchestration moat equation.'},
+  'mig':{t:'MIG — Multi-Instance GPU',b:'Hardware partitioning: up to 7 isolated GPU instances per card. No virtualisation overhead. ICN PoC uses this for dedicated inference slices.'},
+  'mfu':{t:'MFU — Model FLOP Utilisation',b:'% of theoretical peak FLOPS used for valid computation. CoreWeave SUNK: ~96%. Standard VM cloud: ~80%. 16pp gap = significant commercial delta.'},
+  'goodput':{t:'Goodput',b:'GPU time producing valid computation. Excludes retries, failures, network waits. Different from "utilisation". 96% goodput at 10k GPU scale is the real moat.'},
+  'kv-cache':{t:'KV Cache',b:'Stored attention Keys+Values for all prior tokens. Dominant VRAM consumer. 1M token context on 70B model = ~260 GB. Central to agentic infrastructure.'},
+  'depin':{t:'DePIN',b:'Decentralised Physical Infrastructure Network. Token incentives attract GPU operators. ICN\'s foundational model — ICNT token on Base L2.'},
+  'switching-ops':{t:'SwitchingOps',b:'Operational discipline for replacing one production LLM with another. Covers prompt regression, cost modelling, rollback, RAG re-embedding, context migration.'},
+  'managed-agents':{t:'Claude Managed Agents',b:'Anthropic hosted agent platform (Apr 8 2026). Decouples brain (Claude + tools) from hands (containers). $0.08/session-hr. Days to production vs. months.'},
+  'moe':{t:'MoE — Mixture of Experts',b:'Only a subset of "expert" params activate per token. Gemma 4 26B A4B: 26B total, ~4B active at inference. Inference cost tracks active params, not total.'},
+  'ppa':{t:'PPA — Power Purchase Agreement',b:'Long-term energy contract. Big Tech contracted 10+ GW of US nuclear via PPAs in 2025. Power location strategy is now a primary competitive moat.'},
+  'qlora':{t:'QLoRA',b:'Quantised Low-Rank Adaptation. Fine-tunes 4-bit quantised base model + small adapter matrices. 70B model: ~46 GB VRAM. ~$6–20/run. Adapter = ~2–8 GB (not full weights).'}
+};
+const tipEl=document.getElementById('tip');
+document.addEventListener('mousemove',function(e){
+  const el=e.target.closest('[data-term]');
+  if(!el){tipEl.style.display='none';return;}
+  const key=el.dataset.term,d=TERMS[key];
+  if(!d){tipEl.style.display='none';return;}
+  tipEl.innerHTML='<div class="tip-t">'+d.t+'</div><div class="tip-b">'+d.b+'</div>';
+  tipEl.style.display='block';
+  const pad=10,tw=tipEl.offsetWidth,th=tipEl.offsetHeight;
+  let x=e.clientX+pad,y=e.clientY-th-pad;
+  if(x+tw>window.innerWidth-8)x=e.clientX-tw-pad;
+  if(y<8)y=e.clientY+pad;
+  tipEl.style.left=x+'px';tipEl.style.top=y+'px';
+});
+document.addEventListener('mouseleave',function(){tipEl.style.display='none';});
+
 function renderBMMatrix(){
   const wrap=document.getElementById('bm-matrix-wrap');
   if(!wrap)return;
