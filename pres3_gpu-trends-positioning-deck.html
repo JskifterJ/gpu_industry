@@ -433,21 +433,18 @@ details[open] .fold-summary{color:var(--muted);}
   <!-- Phase 1: scattered cards — positions set as left/top inline style -->
   <!-- Phase 2: add class 'venn-active' to #svenn to trigger animation -->
 
-  <!-- Venn circles SVG (hidden in Phase 1, fades in Phase 2) -->
+  <!-- Venn circles SVG — circles MUST overlap for the visual to work -->
   <div class="venn-circles">
     <svg viewBox="0 0 1240 600" width="100%" height="100%" style="position:absolute;inset:0;">
-      <circle cx="310" cy="450" r="230" fill="#c084fc" fill-opacity="0.10" stroke="#c084fc" stroke-opacity="0.25" stroke-width="1.5"/>
-      <circle cx="930" cy="450" r="230" fill="#2dd4bf" fill-opacity="0.10" stroke="#2dd4bf" stroke-opacity="0.25" stroke-width="1.5"/>
-      <circle cx="620" cy="220" r="230" fill="#fbbf24" fill-opacity="0.10" stroke="#fbbf24" stroke-opacity="0.25" stroke-width="1.5"/>
-      <text x="130" y="490" fill="#c084fc" fill-opacity="0.7" font-family="'Bebas Neue',sans-serif" font-size="18" letter-spacing="2">HARDWARE</text>
-      <text x="980" y="490" fill="#2dd4bf" fill-opacity="0.7" font-family="'Bebas Neue',sans-serif" font-size="18" letter-spacing="2">SOFTWARE</text>
-      <text x="560" y="48" fill="#fbbf24" fill-opacity="0.7" font-family="'Bebas Neue',sans-serif" font-size="18" letter-spacing="2">AI / MODELS</text>
+      <!-- Three overlapping circles -->
+      <circle cx="400" cy="390" r="235" fill="#c084fc" fill-opacity="0.08" stroke="#c084fc" stroke-opacity="0.22" stroke-width="1.5"/>
+      <circle cx="840" cy="390" r="235" fill="#2dd4bf" fill-opacity="0.08" stroke="#2dd4bf" stroke-opacity="0.22" stroke-width="1.5"/>
+      <circle cx="620" cy="195" r="235" fill="#fbbf24" fill-opacity="0.08" stroke="#fbbf24" stroke-opacity="0.22" stroke-width="1.5"/>
+      <!-- Labels at outer edges, away from card zones -->
+      <text x="175" y="565" fill="#c084fc" fill-opacity="0.8" font-family="'Bebas Neue',sans-serif" font-size="22" letter-spacing="3">HARDWARE</text>
+      <text x="1060" y="565" fill="#2dd4bf" fill-opacity="0.8" font-family="'Bebas Neue',sans-serif" font-size="22" letter-spacing="3">SOFTWARE</text>
+      <text x="555" y="25" fill="#fbbf24" fill-opacity="0.8" font-family="'Bebas Neue',sans-serif" font-size="22" letter-spacing="3">AI / MODELS</text>
     </svg>
-  </div>
-
-  <!-- Center callout (appears after animation) -->
-  <div class="venn-center" id="venn-center" style="left:calc(50% - 75px);top:calc(50% - 30px);">
-    "Understanding the interplay of all three forces is the key to positioning."
   </div>
 
   <!-- Phase hint -->
@@ -526,72 +523,51 @@ details[open] .fold-summary{color:var(--muted);}
     <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Foundations · Three Spheres</div></div>
     <div class="chrome-right"><span class="act-badge a1b">FOUNDATIONS</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
   </div>
-  <div class="slide-body" style="flex-direction:column;padding:14px 44px 72px;gap:12px;">
-    <div class="anim anim-1" style="display:flex;flex-direction:column;gap:4px;">
-      <div style="font-family:var(--display);font-size:clamp(18px,2.8vw,28px);letter-spacing:.04em;color:var(--text);line-height:1.1;">ZOOMING OUT: THREE SPHERES</div>
-      <div style="font-family:var(--mono);font-size:8.5px;color:var(--dim);">Each of these signals falls into one of three spheres. To understand where to position, we need to see the trajectory of all three — and where they intersect.</div>
+  <div class="slide-body" style="flex-direction:row;padding:14px 44px 72px;gap:24px;align-items:stretch;">
+    <!-- LEFT: Venn diagram (consistent with svenn) -->
+    <div class="anim anim-1" style="flex:0 0 48%;position:relative;min-height:0;">
+      <svg viewBox="0 0 520 440" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
+        <!-- Three overlapping circles — same geometry as svenn, scaled -->
+        <circle cx="210" cy="290" r="155" fill="#c084fc" fill-opacity="0.10" stroke="#c084fc" stroke-opacity="0.30" stroke-width="1.5"/>
+        <circle cx="395" cy="290" r="155" fill="#2dd4bf" fill-opacity="0.10" stroke="#2dd4bf" stroke-opacity="0.30" stroke-width="1.5"/>
+        <circle cx="300" cy="130" r="155" fill="#fbbf24" fill-opacity="0.10" stroke="#fbbf24" stroke-opacity="0.30" stroke-width="1.5"/>
+        <!-- Labels -->
+        <text x="100" y="410" fill="#c084fc" fill-opacity="0.85" font-family="'Bebas Neue',sans-serif" font-size="15" letter-spacing="2">HARDWARE</text>
+        <text x="390" y="410" fill="#2dd4bf" fill-opacity="0.85" font-family="'Bebas Neue',sans-serif" font-size="15" letter-spacing="2">SOFTWARE</text>
+        <text x="237" y="18" fill="#fbbf24" fill-opacity="0.85" font-family="'Bebas Neue',sans-serif" font-size="15" letter-spacing="2">AI / MODELS</text>
+        <!-- Zone annotations -->
+        <text x="150" y="280" fill="#c084fc" fill-opacity="0.55" font-family="'JetBrains Mono',monospace" font-size="7" text-anchor="middle">25× tokens/watt</text>
+        <text x="150" y="295" fill="#c084fc" fill-opacity="0.55" font-family="'JetBrains Mono',monospace" font-size="7" text-anchor="middle">20→90 GW by 2030</text>
+        <text x="440" y="280" fill="#2dd4bf" fill-opacity="0.55" font-family="'JetBrains Mono',monospace" font-size="7" text-anchor="middle">200× cheaper inference</text>
+        <text x="440" y="295" fill="#2dd4bf" fill-opacity="0.55" font-family="'JetBrains Mono',monospace" font-size="7" text-anchor="middle">5–15 sub-agents/task</text>
+        <text x="300" y="72" fill="#fbbf24" fill-opacity="0.55" font-family="'JetBrains Mono',monospace" font-size="7" text-anchor="middle">1.4M+ models on HF</text>
+        <text x="300" y="87" fill="#fbbf24" fill-opacity="0.55" font-family="'JetBrains Mono',monospace" font-size="7" text-anchor="middle">8-hr agentic sessions</text>
+        <!-- Center — the intersection -->
+        <text x="300" y="225" fill="var(--icn)" font-family="'JetBrains Mono',monospace" font-size="8" font-weight="600" text-anchor="middle">POSITIONING</text>
+        <text x="300" y="238" fill="var(--icn)" font-family="'JetBrains Mono',monospace" font-size="8" font-weight="600" text-anchor="middle">OPPORTUNITY</text>
+      </svg>
     </div>
-    <div class="anim anim-2" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;flex:1;">
-      <div style="background:var(--hw-dim);border:1px solid var(--hw-b);border-radius:7px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;">
-        <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--hw);">Sphere I · Hardware</div>
-        <div style="display:flex;flex-direction:column;gap:5px;">
-          <div style="display:flex;align-items:flex-start;gap:8px;">
-            <div style="font-family:var(--mono);font-size:7px;color:var(--hw);padding-top:2px;flex-shrink:0;min-width:58px;">EFFICIENCY</div>
-            <div style="font-size:9.5px;color:var(--text);line-height:1.4;">H100 → B200: <strong>25× better tokens/watt</strong></div>
-          </div>
-          <div style="width:100%;height:1px;background:var(--hw-b);margin:2px 0;"></div>
-          <div style="display:flex;align-items:flex-start;gap:8px;">
-            <div style="font-family:var(--mono);font-size:7px;color:var(--hw);padding-top:2px;flex-shrink:0;min-width:58px;">JEVONS</div>
-            <div style="font-size:9.5px;color:var(--muted);line-height:1.4;">Same CapEx → <strong style="color:var(--text);">bigger models deployed</strong>. Not less hardware needed — more.</div>
-          </div>
-          <div style="width:100%;height:1px;background:var(--hw-b);margin:2px 0;"></div>
-          <div style="display:flex;align-items:flex-start;gap:8px;">
-            <div style="font-family:var(--mono);font-size:7px;color:var(--hw);padding-top:2px;flex-shrink:0;min-width:58px;">SIGNAL</div>
-            <div style="font-size:9.5px;color:var(--muted);line-height:1.4;">US DC power: <strong style="color:var(--text);">20 GW → 90 GW by 2030</strong> (Grid Strategies 2025)</div>
-          </div>
+    <!-- RIGHT: Key insight + per-sphere Jevons summary -->
+    <div class="anim anim-2" style="flex:1;display:flex;flex-direction:column;gap:10px;">
+      <div style="font-family:var(--display);font-size:clamp(18px,2.5vw,26px);letter-spacing:.04em;color:var(--text);line-height:1.1;">ZOOMING OUT</div>
+      <div style="font-size:10px;color:var(--muted);line-height:1.6;">These signals aren't random. They cluster into three spheres — and the Jevons loop amplifies each one. To understand where to position, we need to see the trajectory of all three.</div>
+      <div style="display:flex;flex-direction:column;gap:8px;flex:1;">
+        <div style="padding:10px 13px;background:var(--hw-dim);border:1px solid var(--hw-b);border-left:3px solid var(--hw);border-radius:5px;">
+          <div style="font-family:var(--mono);font-size:7.5px;color:var(--hw);text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px;">Sphere I · Hardware</div>
+          <div style="font-size:9px;color:var(--muted);line-height:1.5;">H100 → B200: 25× tokens/watt. Same CapEx → bigger models deployed. US DC power: <strong style="color:var(--text);">20 GW → 90 GW by 2030</strong></div>
+        </div>
+        <div style="padding:10px 13px;background:var(--sw-dim);border:1px solid var(--sw-b);border-left:3px solid var(--sw);border-radius:5px;">
+          <div style="font-family:var(--mono);font-size:7.5px;color:var(--sw);text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px;">Sphere II · Software</div>
+          <div style="font-size:9px;color:var(--muted);line-height:1.5;">FlashAttention + MoE: $30 → $0.15/1M tokens. 200× cheaper → entirely new use cases. Agentic tasks spawn <strong style="color:var(--text);">5–15 sub-agent calls</strong> per request.</div>
+        </div>
+        <div style="padding:10px 13px;background:var(--llm-dim);border:1px solid var(--llm-b);border-left:3px solid var(--llm);border-radius:5px;">
+          <div style="font-family:var(--mono);font-size:7.5px;color:var(--llm);text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px;">Sphere III · AI / Models</div>
+          <div style="font-size:9px;color:var(--muted);line-height:1.5;">Gemma 4 26B: frontier quality at 4B cost. Cheaper models → <strong style="color:var(--text);">mass fine-tuning proliferation</strong>. 8-hour agentic coding = new sustained compute class.</div>
         </div>
       </div>
-      <div style="background:var(--sw-dim);border:1px solid var(--sw-b);border-radius:7px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;">
-        <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--sw);">Sphere II · Software</div>
-        <div style="display:flex;flex-direction:column;gap:5px;">
-          <div style="display:flex;align-items:flex-start;gap:8px;">
-            <div style="font-family:var(--mono);font-size:7px;color:var(--sw);padding-top:2px;flex-shrink:0;min-width:58px;">EFFICIENCY</div>
-            <div style="font-size:9.5px;color:var(--text);line-height:1.4;">FlashAttention + MoE: <strong>$30 → $0.15/1M tokens</strong> (200×)</div>
-          </div>
-          <div style="width:100%;height:1px;background:var(--sw-b);margin:2px 0;"></div>
-          <div style="display:flex;align-items:flex-start;gap:8px;">
-            <div style="font-family:var(--mono);font-size:7px;color:var(--sw);padding-top:2px;flex-shrink:0;min-width:58px;">JEVONS</div>
-            <div style="font-size:9.5px;color:var(--muted);line-height:1.4;">200× cheaper → <strong style="color:var(--text);">entirely new classes of use case</strong> become viable. Call volume explodes.</div>
-          </div>
-          <div style="width:100%;height:1px;background:var(--sw-b);margin:2px 0;"></div>
-          <div style="display:flex;align-items:flex-start;gap:8px;">
-            <div style="font-family:var(--mono);font-size:7px;color:var(--sw);padding-top:2px;flex-shrink:0;min-width:58px;">SIGNAL</div>
-            <div style="font-size:9.5px;color:var(--muted);line-height:1.4;">Agentic tasks spawn <strong style="color:var(--text);">5–15 sub-agent calls</strong> per user request. Structural demand multiplier.</div>
-          </div>
-        </div>
+      <div style="padding:9px 13px;background:var(--icn-dim);border:1px solid var(--icn-b);border-radius:5px;font-family:var(--mono);font-size:8.5px;color:var(--icn);text-align:center;">
+        The intersection of all three is where ICN's structural opportunity lives. Let's dive into each.
       </div>
-      <div style="background:var(--llm-dim);border:1px solid var(--llm-b);border-radius:7px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;">
-        <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--llm);">Sphere III · AI / Models</div>
-        <div style="display:flex;flex-direction:column;gap:5px;">
-          <div style="display:flex;align-items:flex-start;gap:8px;">
-            <div style="font-family:var(--mono);font-size:7px;color:var(--llm);padding-top:2px;flex-shrink:0;min-width:58px;">EFFICIENCY</div>
-            <div style="font-size:9.5px;color:var(--text);line-height:1.4;">Gemma 4 26B: <strong>frontier quality at 4B active-param cost</strong></div>
-          </div>
-          <div style="width:100%;height:1px;background:var(--llm-b);margin:2px 0;"></div>
-          <div style="display:flex;align-items:flex-start;gap:8px;">
-            <div style="font-family:var(--mono);font-size:7px;color:var(--llm);padding-top:2px;flex-shrink:0;min-width:58px;">JEVONS</div>
-            <div style="font-size:9.5px;color:var(--muted);line-height:1.4;">Cheaper models → <strong style="color:var(--text);">mass fine-tuning proliferation</strong> → 1,000s of deployed custom models.</div>
-          </div>
-          <div style="width:100%;height:1px;background:var(--llm-b);margin:2px 0;"></div>
-          <div style="display:flex;align-items:flex-start;gap:8px;">
-            <div style="font-family:var(--mono);font-size:7px;color:var(--llm);padding-top:2px;flex-shrink:0;min-width:58px;">SIGNAL</div>
-            <div style="font-size:9.5px;color:var(--muted);line-height:1.4;">8-hour agentic coding sessions (GLM-5.1) = <strong style="color:var(--text);">a new class of sustained compute demand</strong></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="anim anim-3" style="padding:10px 16px;background:var(--icn-dim);border:1px solid var(--icn-b);border-radius:5px;font-family:var(--mono);font-size:8.5px;color:var(--icn);text-align:center;">
-      The Jevons loop amplifies all three spheres simultaneously — and their intersection is where ICN's structural opportunity lives. Let's dive into each.
     </div>
   </div>
 </div>
@@ -2271,20 +2247,20 @@ document.addEventListener('mouseleave',function(){tipEl.style.display='none';});
 
 /* ════ VENN ANIMATION ════ */
 const VENN_TARGETS={
-  // Pure HW zone (bottom-left circle)
-  'vc-h2':{l:90,t:370},'vc-h3':{l:90,t:455},'vc-h4':{l:90,t:530},
-  // HW ↔ SW overlap (bottom center)
-  'vc-h1':{l:470,t:510},'vc-h5':{l:625,t:510},'vc-s3':{l:470,t:435},
-  // Pure SW zone (bottom-right circle)
-  'vc-s1':{l:1010,t:370},'vc-s2':{l:1010,t:455},
-  // SW ↔ AI/Models overlap (right band)
-  'vc-s4':{l:850,t:260},'vc-m4':{l:850,t:350},
-  // HW ↔ AI/Models overlap (left band)
-  'vc-m1':{l:340,t:245},'vc-ha1':{l:340,t:335},
-  // Pure AI zone (top center)
-  'vc-m5':{l:540,t:55},'vc-m2':{l:700,t:55},
-  // Center (all three — Jevons fades)
-  'vc-m3':{l:550,t:380}
+  // Pure HW (bottom-left, outer edge of HW circle)
+  'vc-h2':{l:140,t:350},'vc-h3':{l:140,t:435},'vc-h4':{l:140,t:515},
+  // Pure SW (bottom-right, outer edge of SW circle)
+  'vc-s2':{l:950,t:375},'vc-s3':{l:950,t:460},
+  // Pure AI (top, outer edge of AI circle)
+  'vc-m1':{l:435,t:55},'vc-m5':{l:600,t:55},'vc-m4':{l:765,t:55},
+  // HW ∩ SW overlap (bottom center, between the two bottom circles)
+  'vc-h5':{l:540,t:480},'vc-s1':{l:700,t:480},
+  // HW ∩ AI overlap (left-center, where HW and AI circles meet)
+  'vc-ha1':{l:355,t:230},'vc-h1':{l:355,t:315},
+  // SW ∩ AI overlap (right-center, where SW and AI circles meet)
+  'vc-s4':{l:735,t:230},'vc-m2':{l:735,t:315},
+  // Center (all three — Jevons quote stays visible)
+  'vc-m3':{l:545,t:365}
 };
 let vennPhase=0,_m3FadeTimer=null;
 
@@ -2299,9 +2275,6 @@ function triggerVennPhase2(){
     card.style.top=t.t+'px';
     card.style.transform='rotate(0deg)';
   });
-  // Hide M3 card behind center callout
-  const m3=document.getElementById('vc-m3');
-  if(m3)_m3FadeTimer=setTimeout(function(){m3.style.opacity='0';},750);
   vennPhase=1;
 }
 
@@ -2311,8 +2284,8 @@ function resetVennPhase1(){
   slide.classList.remove('venn-active');
   // Re-apply scatter positions (must match Task 3 inline styles)
   const scatter={
-    'vc-h1':{l:60,t:55,r:-3},'vc-h2':{l:350,t:45,r:2},'vc-h3':{l:640,t:38,r:-1},
-    'vc-h4':{l:900,t:75,r:4},'vc-h5':{l:450,t:490,r:-2},'vc-s1':{l:1100,t:58,r:-2},
+    'vc-h1':{l:60,t:55,r:-3},'vc-h2':{l:350,t:45,r:2},'vc-h3':{l:640,t:55,r:-1},
+    'vc-h4':{l:900,t:75,r:4},'vc-h5':{l:450,t:490,r:-2},'vc-s1':{l:1080,t:58,r:-2},
     'vc-s2':{l:90,t:290,r:3},'vc-s3':{l:390,t:275,r:-4},'vc-s4':{l:680,t:310,r:2},
     'vc-m1':{l:950,t:245,r:-3},'vc-m2':{l:175,t:510,r:4},'vc-m3':{l:580,t:505,r:-2},
     'vc-m4':{l:1040,t:475,r:3},'vc-m5':{l:180,t:165,r:2},'vc-ha1':{l:780,t:155,r:-3}
