@@ -1160,60 +1160,91 @@ details[open] .fold-summary{color:var(--muted);}
 <!-- ══ S13: OPEN-WEIGHT MEETS FRONTIER ══ -->
 <div class="slide" id="s13">
   <div class="slide-chrome">
-    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Sphere III · AI/Models · The Model Landscape</div></div>
+    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Sphere III · AI/Models · Open-Weight vs Frontier</div></div>
     <div class="chrome-right"><span class="act-badge allm">AI/MODELS</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
   </div>
   <div class="slide-body" style="flex-direction:column;padding:12px 44px 72px;gap:10px;overflow-y:auto;">
     <div class="anim anim-1" style="display:flex;flex-direction:column;gap:3px;">
       <div style="font-family:var(--display);font-size:30px;letter-spacing:.03em;line-height:1.1;">OPEN-WEIGHT MEETS FRONTIER</div>
-      <div style="font-family:var(--mono);font-size:8.5px;color:var(--dim);">Frontier labs set the ceiling. Open-weight models chase it with a 6–12 month lag, at 10–100× lower inference cost.</div>
+      <div style="font-family:var(--mono);font-size:8.5px;color:var(--dim);">Frontier labs push the ceiling. Open-weight models chase it with a ~6–12 month lag — at 10–100× lower inference cost. The gap is narrowing.</div>
     </div>
-    <div class="anim anim-2" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;flex:1;min-height:0;">
-      <!-- LEFT: Frontier / Proprietary -->
-      <div style="display:flex;flex-direction:column;gap:7px;">
-        <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--llm);border-bottom:2px solid var(--llm-b);padding-bottom:4px;">Frontier / Proprietary — Pushing the Ceiling</div>
-        <div style="padding:8px 10px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--llm);border-radius:4px;display:flex;flex-direction:column;gap:3px;">
-          <div style="font-family:var(--mono);font-size:8px;color:var(--llm);font-weight:600;" data-term="managed-agents">Anthropic — Claude Opus 4.6 + Managed Agents</div>
-          <div style="font-size:9.5px;color:var(--muted);line-height:1.55;">$15/M tokens · ~1450 ELO · Managed Agents (Apr 8 2026): fully hosted agent infra. Days to production vs. months. $0.08/session-hr.</div>
+    <!-- Timeline chart: Frontier vs Open-weight capability over time -->
+    <div class="anim anim-2" style="flex:1;min-height:0;display:flex;flex-direction:column;gap:8px;">
+      <svg viewBox="0 0 920 260" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" style="flex:1;min-height:180px;">
+        <!-- Grid -->
+        <line x1="60" y1="30" x2="60" y2="230" stroke="var(--border)" stroke-width="0.5"/>
+        <line x1="60" y1="230" x2="880" y2="230" stroke="var(--border)" stroke-width="0.5"/>
+        <line x1="60" y1="180" x2="880" y2="180" stroke="var(--border)" stroke-width="0.3" stroke-dasharray="3,3"/>
+        <line x1="60" y1="130" x2="880" y2="130" stroke="var(--border)" stroke-width="0.3" stroke-dasharray="3,3"/>
+        <line x1="60" y1="80" x2="880" y2="80" stroke="var(--border)" stroke-width="0.3" stroke-dasharray="3,3"/>
+        <line x1="60" y1="30" x2="880" y2="30" stroke="var(--border)" stroke-width="0.3" stroke-dasharray="3,3"/>
+        <!-- Y axis labels (Arena ELO) -->
+        <text x="55" y="234" text-anchor="end" font-family="'JetBrains Mono',monospace" font-size="7" fill="var(--dim2)">1100</text>
+        <text x="55" y="184" text-anchor="end" font-family="'JetBrains Mono',monospace" font-size="7" fill="var(--dim2)">1200</text>
+        <text x="55" y="134" text-anchor="end" font-family="'JetBrains Mono',monospace" font-size="7" fill="var(--dim2)">1300</text>
+        <text x="55" y="84" text-anchor="end" font-family="'JetBrains Mono',monospace" font-size="7" fill="var(--dim2)">1400</text>
+        <text x="55" y="34" text-anchor="end" font-family="'JetBrains Mono',monospace" font-size="7" fill="var(--dim2)">1500</text>
+        <text x="12" y="130" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="6" fill="var(--dim2)" transform="rotate(-90,12,130)">Arena ELO →</text>
+        <!-- X axis labels (years) -->
+        <text x="100" y="248" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="7" fill="var(--dim2)">2023</text>
+        <text x="335" y="248" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="7" fill="var(--dim2)">2024</text>
+        <text x="570" y="248" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="7" fill="var(--dim2)">2025</text>
+        <text x="805" y="248" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="7" fill="var(--dim2)">2026</text>
+        <!-- Gap shading between frontier and open-weight -->
+        <polygon points="160,170 350,130 490,105 590,80 700,65 800,40 800,100 700,80 590,105 490,130 350,170 160,220" fill="#fbbf24" fill-opacity="0.06"/>
+        <!-- Frontier line (amber, solid) -->
+        <polyline points="160,170 350,130 490,105 590,80 700,65 800,40" fill="none" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- Open-weight line (green, dashed) -->
+        <polyline points="160,220 350,170 490,130 590,105 700,80 800,50" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="6,3"/>
+        <!-- Frontier model dots + labels -->
+        <circle cx="160" cy="170" r="4" fill="#fbbf24"/>
+        <text x="160" y="163" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="6.5" fill="#fbbf24">GPT-4</text>
+        <circle cx="350" cy="130" r="4" fill="#fbbf24"/>
+        <text x="350" y="123" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="6.5" fill="#fbbf24">GPT-4o</text>
+        <circle cx="490" cy="105" r="4" fill="#fbbf24"/>
+        <text x="490" y="98" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="6.5" fill="#fbbf24">Opus 4</text>
+        <circle cx="590" cy="80" r="4" fill="#fbbf24"/>
+        <text x="590" y="73" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="6.5" fill="#fbbf24">GPT-5</text>
+        <circle cx="700" cy="65" r="4" fill="#fbbf24"/>
+        <text x="700" y="58" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="6.5" fill="#fbbf24">Gemini 3.1</text>
+        <circle cx="800" cy="40" r="4" fill="#fbbf24"/>
+        <text x="800" y="33" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="6.5" fill="#fbbf24" font-weight="600">Opus 4.6</text>
+        <!-- Open-weight model dots + labels -->
+        <circle cx="160" cy="220" r="4" fill="#10b981"/>
+        <text x="160" y="215" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="6" fill="#10b981">Llama 2</text>
+        <circle cx="350" cy="170" r="4" fill="#10b981"/>
+        <text x="330" y="184" text-anchor="end" font-family="'JetBrains Mono',monospace" font-size="6" fill="#10b981">Llama 3</text>
+        <circle cx="490" cy="130" r="4" fill="#10b981"/>
+        <text x="490" y="145" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="6" fill="#10b981">Qwen 2.5</text>
+        <circle cx="590" cy="105" r="4" fill="#10b981"/>
+        <text x="590" y="120" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="6" fill="#10b981">DeepSeek-R1</text>
+        <circle cx="700" cy="80" r="4" fill="#10b981"/>
+        <text x="700" y="95" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="6" fill="#10b981">Gemma 4 31B</text>
+        <circle cx="800" cy="50" r="4" fill="#10b981"/>
+        <text x="825" y="56" font-family="'JetBrains Mono',monospace" font-size="6" fill="#10b981" font-weight="600">GLM-5.1</text>
+        <!-- Gap annotation arrow -->
+        <line x1="490" y1="110" x2="490" y2="125" stroke="var(--dim2)" stroke-width="0.8" marker-end="url(#arw)"/>
+        <text x="505" y="120" font-family="'JetBrains Mono',monospace" font-size="6" fill="var(--dim2)">~6–12 mo lag</text>
+        <!-- Legend -->
+        <line x1="68" y1="16" x2="88" y2="16" stroke="#fbbf24" stroke-width="2"/>
+        <text x="93" y="19" font-family="'JetBrains Mono',monospace" font-size="6.5" fill="#fbbf24">Frontier (closed)</text>
+        <line x1="200" y1="16" x2="220" y2="16" stroke="#10b981" stroke-width="2" stroke-dasharray="5,2"/>
+        <text x="225" y="19" font-family="'JetBrains Mono',monospace" font-size="6.5" fill="#10b981">Open-weight</text>
+        <text x="350" y="19" font-family="'JetBrains Mono',monospace" font-size="6.5" fill="var(--dim2)">Shaded area = the capability gap (narrowing)</text>
+      </svg>
+      <!-- Bottom row: key numbers + Jevons -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+        <div style="padding:8px 10px;background:var(--llm-dim);border:1px solid var(--llm-b);border-radius:4px;text-align:center;">
+          <div style="font-family:var(--display);font-size:20px;color:var(--llm);">6–12 mo</div>
+          <div style="font-size:8px;color:var(--muted);">Gap is narrowing. Open-weight now matches last-gen frontier (Hassabis: "one step behind")</div>
         </div>
-        <div style="padding:8px 10px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--llm);border-radius:4px;display:flex;flex-direction:column;gap:3px;">
-          <div style="font-family:var(--mono);font-size:8px;color:var(--llm);font-weight:600;">OpenAI — GPT-5 class</div>
-          <div style="font-size:9.5px;color:var(--muted);line-height:1.55;">Frontier training at scale, reinforcement learning from human feedback. Sets quality benchmarks that open-weight tracks.</div>
+        <div style="padding:8px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;text-align:center;">
+          <div style="font-family:var(--display);font-size:20px;color:var(--text);">10–100×</div>
+          <div style="font-size:8px;color:var(--muted);">cheaper inference for open-weight ($15/M → $0.03–0.50/M). Drives mass deployment via Jevons.</div>
         </div>
-        <div style="padding:8px 10px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--llm);border-radius:4px;display:flex;flex-direction:column;gap:3px;">
-          <div style="font-family:var(--mono);font-size:8px;color:var(--llm);font-weight:600;">Google — Gemini 3.1 Pro</div>
-          <div style="font-size:9.5px;color:var(--muted);line-height:1.55;">Multimodal frontier. Vertex AI integration. Long context (1M+ tokens). Powers Google Workspace AI at hyperscale.</div>
-        </div>
-        <div style="padding:8px 10px;background:var(--llm-dim);border:1px solid var(--llm-b);border-radius:4px;font-family:var(--mono);font-size:8px;color:var(--llm);line-height:1.55;margin-top:auto;">Frontier labs set the ceiling — open weights chase it with 6–12 month lag, at 10–100× lower inference cost. The model layer is commoditising rapidly below frontier quality.</div>
-      </div>
-      <!-- RIGHT: Open-Weight compression (scatter chart + model cards) -->
-      <div style="display:flex;flex-direction:column;gap:7px;">
-        <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);border-bottom:2px solid var(--border);padding-bottom:4px;">Open-Weight Compression — Frontier at Fraction of Cost</div>
-        <!-- ELO vs $/M scatter (simplified as table) -->
-        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:5px;overflow:hidden;">
-          <table style="width:100%;border-collapse:collapse;font-family:var(--mono);font-size:8px;">
-            <thead><tr style="background:var(--bg3);">
-              <th style="text-align:left;padding:4px 7px;color:var(--dim2);font-size:7px;">Model</th>
-              <th style="padding:4px 7px;color:var(--dim2);font-size:7px;">Arena ELO</th>
-              <th style="padding:4px 7px;color:var(--dim2);font-size:7px;">$/M tokens</th>
-              <th style="padding:4px 7px;color:var(--dim2);font-size:7px;">Active params</th>
-            </tr></thead>
-            <tbody>
-              <tr style="border-top:1px solid var(--border);"><td style="padding:4px 7px;color:var(--muted);">Claude Opus 4.6</td><td style="padding:4px 7px;text-align:center;color:var(--llm);">~1450</td><td style="padding:4px 7px;text-align:center;color:var(--dim);">$15</td><td style="padding:4px 7px;text-align:center;color:var(--dim2);">N/A (closed)</td></tr>
-              <tr style="border-top:1px solid var(--border);"><td style="padding:4px 7px;color:var(--muted);">GLM-5.1 (Z.ai)</td><td style="padding:4px 7px;text-align:center;color:var(--llm);">~1440</td><td style="padding:4px 7px;text-align:center;color:var(--text);font-weight:600;">$0.50–2</td><td style="padding:4px 7px;text-align:center;color:var(--text);">40B (754B total)</td></tr>
-              <tr style="border-top:1px solid var(--border);"><td style="padding:4px 7px;color:var(--muted);">Gemma 4 31B</td><td style="padding:4px 7px;text-align:center;color:var(--text);">~1430</td><td style="padding:4px 7px;text-align:center;color:var(--text);font-weight:600;">$0.15–0.50</td><td style="padding:4px 7px;text-align:center;color:var(--text);">31B (dense)</td></tr>
-              <tr style="border-top:1px solid var(--border);"><td style="padding:4px 7px;color:var(--muted);" data-term="moe">Gemma 4 26B A4B</td><td style="padding:4px 7px;text-align:center;color:var(--text);">~1410</td><td style="padding:4px 7px;text-align:center;color:var(--icn);font-weight:600;">$0.03–0.08</td><td style="padding:4px 7px;text-align:center;color:var(--icn);">4B (MoE)</td></tr>
-              <tr style="border-top:1px solid var(--border);"><td style="padding:4px 7px;color:var(--muted);">DeepSeek-R1</td><td style="padding:4px 7px;text-align:center;color:var(--dim);">~1380</td><td style="padding:4px 7px;text-align:center;color:var(--text);">$0.55/1M</td><td style="padding:4px 7px;text-align:center;color:var(--dim2);">37B (671B total)</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <!-- Managed Agents callout -->
-        <div style="padding:8px 10px;background:var(--icn-dim);border:1px solid var(--icn-b);border-radius:4px;font-family:var(--mono);font-size:8px;color:var(--icn);line-height:1.6;" data-term="managed-agents">
-          <strong>Managed Agents (Anthropic, Apr 8 2026):</strong> Fully hosted agent infrastructure. "Get to production 10× faster." Session runtime at $0.08/session-hr. Signals: agent workloads are becoming infrastructure-grade, not research experiments.
-        </div>
-        <!-- Jevons marker -->
-        <div style="padding:7px 10px;background:var(--bg3);border-left:3px solid var(--llm);border-radius:4px;font-family:var(--mono);font-size:7.5px;color:var(--dim);line-height:1.55;" data-term="jevons-paradox">
-          <strong style="color:var(--llm);">Jevons:</strong> Inference cost ↓ 280× in 2 years (GPT-3.5 class: $20/M → $0.07/M). GPU demand ↑ 35% CAGR. Efficiency is the accelerant.
+        <div style="padding:8px 10px;background:var(--icn-dim);border:1px solid var(--icn-b);border-radius:4px;text-align:center;">
+          <div style="font-family:var(--display);font-size:20px;color:var(--icn);">1.4M+</div>
+          <div style="font-size:8px;color:var(--muted);">models on Hugging Face. Fine-tune open-weight → deploy on ICN → context stored on IC S3.</div>
         </div>
       </div>
     </div>
