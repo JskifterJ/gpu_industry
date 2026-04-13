@@ -377,6 +377,96 @@ details[open] .fold-summary{color:var(--muted);}
   </div>
 </div>
 
+<!-- ══ DIVIDER: SO WHAT'S GOING ON? ══ -->
+<div class="slide slide-divider" id="sdiv-venn">
+  <div class="div-eyebrow">Reading the signals</div>
+  <div class="div-title" style="color:var(--text);">SO WHAT'S<br>GOING ON?</div>
+  <div class="div-sub">Twelve signals from the people building and studying the GPU stack — right now.</div>
+</div>
+
+<!-- ══ S-VENN: INDUSTRY PULSE ══ -->
+<div class="slide" id="svenn" style="position:relative;overflow:hidden;">
+  <div class="slide-chrome">
+    <div class="chrome-left"><div class="chrome-logo">ClusterMAX™</div><div class="chrome-sep"></div><div class="chrome-title">Industry Pulse · What the Field Is Saying</div></div>
+    <div class="chrome-right"><span class="act-badge" style="background:rgba(99,102,241,0.15);color:#6366f1;">SIGNALS</span><button class="theme-toggle" onclick="toggleTheme()"><div class="toggle-track"><div class="toggle-thumb"></div></div><span class="tl">Dark</span></button></div>
+  </div>
+  <!-- Phase 1: scattered cards — positions set as left/top inline style -->
+  <!-- Phase 2: add class 'venn-active' to #svenn to trigger animation -->
+
+  <!-- Venn circles SVG (hidden in Phase 1, fades in Phase 2) -->
+  <div class="venn-circles">
+    <svg viewBox="0 0 1240 600" width="100%" height="100%" style="position:absolute;inset:0;">
+      <circle cx="310" cy="450" r="230" fill="#c084fc" fill-opacity="0.10" stroke="#c084fc" stroke-opacity="0.25" stroke-width="1.5"/>
+      <circle cx="930" cy="450" r="230" fill="#2dd4bf" fill-opacity="0.10" stroke="#2dd4bf" stroke-opacity="0.25" stroke-width="1.5"/>
+      <circle cx="620" cy="220" r="230" fill="#fbbf24" fill-opacity="0.10" stroke="#fbbf24" stroke-opacity="0.25" stroke-width="1.5"/>
+      <text x="130" y="490" fill="#c084fc" fill-opacity="0.7" font-family="'Bebas Neue',sans-serif" font-size="18" letter-spacing="2">HARDWARE</text>
+      <text x="980" y="490" fill="#2dd4bf" fill-opacity="0.7" font-family="'Bebas Neue',sans-serif" font-size="18" letter-spacing="2">SOFTWARE</text>
+      <text x="560" y="48" fill="#fbbf24" fill-opacity="0.7" font-family="'Bebas Neue',sans-serif" font-size="18" letter-spacing="2">AI / MODELS</text>
+    </svg>
+  </div>
+
+  <!-- Center callout (appears after animation) -->
+  <div class="venn-center" id="venn-center" style="left:calc(50% - 75px);top:calc(50% - 30px);">
+    "Understanding the interplay of all three forces is the key to positioning."
+  </div>
+
+  <!-- Phase hint -->
+  <div class="venn-hint" id="venn-hint">→ to see what these signals tell us</div>
+
+  <!-- 12 Snippet Cards (Phase 1 scattered positions) -->
+  <!-- HW sphere: left border #c084fc -->
+  <div class="venn-card" id="vc-h1" style="--vd:0.00s;border-left:3px solid #c084fc;left:60px;top:55px;transform:rotate(-3deg);">
+    <div>"Tokens per watt is the new performance metric for AI infrastructure."</div>
+    <div class="venn-card-attr">Jensen Huang · NVIDIA GTC 2026</div>
+  </div>
+  <div class="venn-card" id="vc-h2" style="--vd:0.04s;border-left:3px solid #c084fc;left:350px;top:45px;transform:rotate(2deg);">
+    <div>"Global AI computing capacity is doubling every 7 months. NVIDIA accounts for 60%+ of total compute."</div>
+    <div class="venn-card-attr">Epoch AI · Jan 2026</div>
+  </div>
+  <div class="venn-card" id="vc-h3" style="--vd:0.08s;border-left:3px solid #c084fc;left:640px;top:38px;transform:rotate(-1deg);">
+    <div>"Data center campuses of 1–5 GW are likely by 2030. Power is the constraint likely to bind first."</div>
+    <div class="venn-card-attr">Epoch AI · Aug 2024</div>
+  </div>
+  <div class="venn-card" id="vc-h4" style="--vd:0.12s;border-left:3px solid #c084fc;left:900px;top:75px;transform:rotate(4deg);">
+    <div>"An AI-ready DC costs $10–12M per MW — nearly double a conventional facility. Power supersedes silicon."</div>
+    <div class="venn-card-attr">SemiAnalysis · Q1 2026</div>
+  </div>
+  <!-- SW sphere: left border #2dd4bf -->
+  <div class="venn-card" id="vc-s1" style="--vd:0.16s;border-left:3px solid #2dd4bf;left:1100px;top:58px;transform:rotate(-2deg);">
+    <div>"Hypervisor virtualisation tax is no longer acceptable for frontier model pre-training."</div>
+    <div class="venn-card-attr">Hugo Shi · Saturn Cloud, Jan 2025</div>
+  </div>
+  <div class="venn-card" id="vc-s2" style="--vd:0.20s;border-left:3px solid #2dd4bf;left:90px;top:290px;transform:rotate(3deg);">
+    <div>"LiteLLM supply chain attack (Mar 2026): malware scoured SSH keys, cloud creds, AI API keys — deployed privesc across K8s clusters."</div>
+    <div class="venn-card-attr">TrendMicro · Mar/Apr 2026</div>
+  </div>
+  <div class="venn-card" id="vc-s3" style="--vd:0.24s;border-left:3px solid #2dd4bf;left:390px;top:275px;transform:rotate(-4deg);">
+    <div>"Hyperscaler egress fee is the real lock-in mechanism — not the hardware. K8s-native workloads are portable."</div>
+    <div class="venn-card-attr">Hugo Shi · Saturn Cloud, Jan 2025</div>
+  </div>
+  <div class="venn-card" id="vc-s4" style="--vd:0.28s;border-left:3px solid #2dd4bf;left:680px;top:310px;transform:rotate(2deg);">
+    <div>"Primary revenue battleground is shifting from raw aggregation to inference efficiency — L5 serving platforms capture sticky OpEx."</div>
+    <div class="venn-card-attr">SemiAnalysis / BentoML · Q1 2026</div>
+  </div>
+  <!-- AI/Models sphere: left border #fbbf24 -->
+  <div class="venn-card" id="vc-m1" style="--vd:0.32s;border-left:3px solid #fbbf24;left:950px;top:245px;transform:rotate(-3deg);">
+    <div>"Gemma 4 26B A4B MoE: frontier quality at 4B active-param cost — reprices inference industry-wide."</div>
+    <div class="venn-card-attr">Google / ICN synthesis · Apr 2026</div>
+  </div>
+  <div class="venn-card" id="vc-m2" style="--vd:0.36s;border-left:3px solid #fbbf24;left:175px;top:510px;transform:rotate(4deg);">
+    <div>"GLM-5.1 sustains 8-hour autonomous coding loops. Qualitatively different from 2-min completions — new infrastructure class."</div>
+    <div class="venn-card-attr">Z.ai · Apr 2026</div>
+  </div>
+  <div class="venn-card" id="vc-m3" style="--vd:0.40s;border-left:3px solid var(--icn);left:580px;top:505px;transform:rotate(-2deg);">
+    <div>"Every optimisation across the stack leads to more compute consumption, not less." — <em>William Stanley Jevons, 1865</em></div>
+    <div class="venn-card-attr">Applied to AI compute · GTC 2026</div>
+  </div>
+  <div class="venn-card" id="vc-m4" style="--vd:0.44s;border-left:3px solid #fbbf24;left:1040px;top:475px;transform:rotate(3deg);">
+    <div>"Knowledge firms hire frontier lab researchers to fine-tune open-weight models on proprietary data. The fine-tune is the moat."</div>
+    <div class="venn-card-attr">Lambert &amp; Raschka · Lex Fridman, 2025</div>
+  </div>
+</div>
+
 <!-- ══ S5 — GPU GENERATION LIFECYCLE ══ -->
 <div class="slide" id="s5">
   <div class="slide-chrome">
