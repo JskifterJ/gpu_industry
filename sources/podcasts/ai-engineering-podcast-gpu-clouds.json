@@ -1,0 +1,45 @@
+---
+title: AI Engineering Podcast - GPU Clouds, Aggregators, and the Economics of AI Compute
+author: AI Engineering Podcast (featuring Hugo Shi, Saturn Cloud)
+date: 2025-01-27
+source_type: podcast
+url: https://open.spotify.com/episode/2aNuZT3E6f3tAFUeB7KWhd
+sphere: hardware
+tags: [gpu-clouds, aggregators, provider-landscape, cost, orchestration, bare-metal]
+relevance: high
+deck_slide: S6, S9
+---
+
+{
+  "metadata": {
+    "source": "AI engineering podcast interviewing Hugo Shi, co-founder and CTO of Saturn Cloud [cite: 1, 9]"
+  },
+  "gpu_compute_industry": {
+    "provider_landscape": [
+      {
+        "category": "Hyperscalers",
+        "examples": ["AWS", "GCP", "Azure", "Oracle"],
+        "cost_profile": "Highest (~$10/hour for H100) [cite: 29]",
+        "characteristics": "Deepest pool of managed services. Often treated as an enterprise's 'home base' due to data gravity and existing ecosystem integration. [cite: 147, 148]"
+      },
+      {
+        "category": "Full-Service GPU Clouds",
+        "examples": ["CoreWeave", "Nebius", "Crusoe", "Lambda Labs", "Vultr"],
+        "cost_profile": "Medium-Low ($1.50 to $4.00/hour for H100) [cite: 31]",
+        "characteristics": "Specialized providers offering significantly better pricing than hyperscalers. Moving up the stack to offer managed Kubernetes, Slurm, VPCs, and load balancers. [cite: 31, 33, 34]"
+      },
+      {
+        "category": "Bare Metal / Concierge Clouds",
+        "examples": [],
+        "cost_profile": "Variable",
+        "characteristics": "Highly manual providers where capacity is secured via direct sales and wire transfers. Access is granted via SSH keys and IP addresses, and machines are often exposed directly to the public internet without VPCs. [cite: 36, 37, 103, 104]"
+      },
+      {
+        "category": "GPU Aggregators",
+        "examples": ["SF Compute", "Vast.ai", "Fluidstack", "RunPod", "Shadeform"],
+        "cost_profile": "Lowest [cite: 73]",
+        "characteristics": "Route workloads across a variety of disparate GPU providers. SF Compute uniquely operates as a financial marketplace with forward curves for reserving future capacity. [cite: 39, 42, 290, 293]"
+      }
+    ]
+  }
+}

@@ -12,7 +12,7 @@ Structured source library for GPU compute market research.
 | `linkedin/` | LinkedIn posts from industry leaders |
 | `interviews/` | Interview transcripts, podcast notes, talk summaries |
 | `academic/` | Academic papers, research preprints |
-| `podcasts/` | Podcast episode notes (see also legacy: industry_reports_and_sources/) |
+| `podcasts/` | Podcast episode notes and transcripts |
 
 ## File format
 
@@ -42,4 +42,4 @@ deck_slide: S3 | S6 | S12 | ...   # which pres3 slide this feeds
 
 ## Legacy content
 
-Older research lives in `industry_reports_and_sources/` and `gemini_research_outputs/`. Not reorganised — use as reference. New sources go here.
+Older research from `gemini_research_outputs/` can be referenced as needed. All active sources have been consolidated into this folder structure with proper metadata frontmatter.

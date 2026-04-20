@@ -65,7 +65,7 @@ Where is the GPU cloud market heading, who are the key players, how do their bus
 - [manual_notes/](manual_notes/) — primary working notes and source synthesis.
 - [gemini_research_outputs/](gemini_research_outputs/) — secondary research outputs and analyses.
 - [industry_analyst_charts/](industry_analyst_charts/) — supporting visuals from reports.
-- [industry_reports_and_sources/](industry_reports_and_sources/) — report archives and source notes.
+- [sources/](sources/) — consolidated research library with structured metadata (reports, interviews, podcasts, academic papers)
 - [claude_chat_md_files/](claude_chat_md_files/) — historical chat exports.
 - [0ld/](0ld/) — archived superseded files.
 
@@ -103,7 +103,7 @@ All three decks are:
 | `gemini_research_outputs/` | Competitor profiles and business model analysis |
 | `data_files/gpu_AI_workloads_2025-2030.json` | Demand model and workload forecasts |
 | `industry_analyst_charts/` | Epoch AI, McKinsey, and similar visuals |
-| `industry_reports_and_sources/` | ClusterMAX 2.0, Epoch AI, and related sources |
+| `sources/` | Consolidated research library: reports, interviews, podcasts, analyses (all with metadata) |
 
 ## Hosting
 
