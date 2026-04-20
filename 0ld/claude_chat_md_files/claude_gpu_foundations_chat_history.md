@@ -90,7 +90,7 @@ Status
 
 ✅ Found — layout & design system confirmed
 
-`learning_inference_compute_master_v10.html`
+`learning_inference_compute_master.html`
 
 ✅ Found — MFU charts, memory math, batching visuals
 

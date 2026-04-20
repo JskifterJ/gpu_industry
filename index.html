@@ -3,249 +3,618 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>GPU Industry Dashboard Hub</title>
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <title>GPU Industry Research Hub</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #f6f2ea;
-      --ink: #1f2a33;
-      --muted: #5f6b73;
-      --line: #d7d0c4;
-      --card: #fffdf8;
-      --track-a: #0d6e6e;
-      --track-b: #8f4e18;
-      --accent: #1d4ed8;
-      --ok: #157f55;
+      --bg: #f5efe4;
+      --card: rgba(255, 252, 247, 0.92);
+      --ink: #16212b;
+      --muted: #5c6670;
+      --line: #d8cdbd;
+      --shadow: 0 18px 50px rgba(25, 35, 45, 0.08);
+      --teal: #0d6e6e;
+      --amber: #8f4e18;
+      --green: #137a56;
+      --blue: #1d4ed8;
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: "Space Grotesk", sans-serif;
-      color: var(--ink);
-      background:
-        radial-gradient(circle at 12% 14%, rgba(13, 110, 110, 0.12), transparent 35%),
-        radial-gradient(circle at 88% 22%, rgba(143, 78, 24, 0.13), transparent 34%),
-        linear-gradient(180deg, #fdf9f2 0%, var(--bg) 100%);
       min-height: 100vh;
+      color: var(--ink);
+      font-family: "Space Grotesk", sans-serif;
+      background:
+        radial-gradient(circle at 14% 12%, rgba(13, 110, 110, 0.14), transparent 28%),
+        radial-gradient(circle at 88% 10%, rgba(143, 78, 24, 0.16), transparent 26%),
+        radial-gradient(circle at 70% 86%, rgba(19, 122, 86, 0.12), transparent 28%),
+        linear-gradient(180deg, #fffdf8 0%, var(--bg) 100%);
     }
-    .wrap {
-      max-width: 1180px;
+    .shell {
+      max-width: 1240px;
       margin: 0 auto;
-      padding: 34px 20px 56px;
+      padding: 36px 20px 56px;
+    }
+    .hero {
+      display: grid;
+      grid-template-columns: 1.5fr 0.9fr;
+      gap: 16px;
+      align-items: stretch;
+      margin-bottom: 18px;
+    }
+    .hero-main,
+    .hero-side,
+    .section,
+    .tile {
+      background: var(--card);
+      border: 1px solid rgba(216, 205, 189, 0.9);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(8px);
+    }
+    .hero-main {
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-main::before,
+    .hero-side::before {
+      content: "";
+      position: absolute;
+      inset: auto -20% -40% auto;
+      width: 260px;
+      height: 260px;
+      background: radial-gradient(circle, rgba(13, 110, 110, 0.12), transparent 70%);
+      pointer-events: none;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 18px;
+    }
+    .eyebrow::before {
+      content: "";
+      width: 28px;
+      height: 1px;
+      background: var(--teal);
+      opacity: 0.65;
     }
     h1 {
       margin: 0;
-      font-size: clamp(1.7rem, 3vw, 2.8rem);
-      line-height: 1.05;
+      font-size: clamp(2.1rem, 4.1vw, 4.2rem);
+      line-height: 0.98;
+      letter-spacing: -0.04em;
+      max-width: 11ch;
+    }
+    .hero-copy {
+      margin: 16px 0 0;
+      max-width: 68ch;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.65;
+    }
+    .hero-points {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(216, 205, 189, 0.9);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.72rem;
+      color: var(--ink);
+    }
+    .chip i {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--teal);
+      display: inline-block;
+    }
+    .hero-side {
+      padding: 22px;
+      display: grid;
+      align-content: start;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+    .side-title {
+      margin: 0;
+      font-size: 0.95rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-family: "IBM Plex Mono", monospace;
+      color: var(--muted);
+    }
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .stat {
+      padding: 14px;
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.82), rgba(255,255,255,0.54));
+      border: 1px solid rgba(216, 205, 189, 0.8);
+    }
+    .stat strong {
+      display: block;
+      font-size: 1.45rem;
+      line-height: 1;
+      margin-bottom: 6px;
+      letter-spacing: -0.03em;
+    }
+    .stat span {
+      color: var(--muted);
+      font-size: 0.84rem;
+      line-height: 1.45;
+      display: block;
+    }
+    .section {
+      padding: 18px;
+      margin-top: 16px;
+    }
+    .section-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .section-head h2 {
+      margin: 0;
+      font-size: 1.2rem;
       letter-spacing: -0.02em;
     }
-    .sub {
-      margin: 12px 0 0;
-      max-width: 860px;
+    .section-head p {
+      margin: 0;
       color: var(--muted);
-      line-height: 1.6;
-      font-size: 0.97rem;
+      max-width: 64ch;
+      font-size: 0.94rem;
+      line-height: 1.55;
     }
-    .top {
-      padding: 20px 0 24px;
-      border-bottom: 1px solid var(--line);
-      margin-bottom: 22px;
-    }
-    .grid {
+    .cards {
       display: grid;
-      gap: 16px;
-      grid-template-columns: repeat(12, 1fr);
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: 12px;
     }
-    .panel {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 14px;
+    .card {
+      grid-column: span 6;
+      padding: 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(216, 205, 189, 0.95);
+      background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,250,242,0.9));
+      min-height: 100%;
     }
-    .panel h2 {
-      margin: 0 0 8px;
+    .card.full { grid-column: span 12; }
+    .card h3 {
+      margin: 10px 0 6px;
       font-size: 1.05rem;
+      letter-spacing: -0.01em;
     }
-    .panel p {
+    .card .meta {
+      margin: 0;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--amber);
+    }
+    .card p {
       margin: 0;
       color: var(--muted);
       font-size: 0.92rem;
-      line-height: 1.55;
+      line-height: 1.6;
     }
-    .col-6 { grid-column: span 6; }
-    .col-12 { grid-column: span 12; }
-    .badge {
-      display: inline-block;
-      font-family: "IBM Plex Mono", monospace;
-      font-size: 0.68rem;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      padding: 3px 8px;
-      border-radius: 999px;
-      margin-bottom: 8px;
-      border: 1px solid;
-    }
-    .a { color: var(--track-a); border-color: rgba(13,110,110,.35); background: rgba(13,110,110,.08); }
-    .b { color: var(--track-b); border-color: rgba(143,78,24,.35); background: rgba(143,78,24,.08); }
     .card-list {
       list-style: none;
       padding: 0;
-      margin: 10px 0 0;
+      margin: 14px 0 0;
       display: grid;
       gap: 10px;
     }
     .item {
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      padding: 10px;
-      background: #fff;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(216, 205, 189, 0.85);
+      background: rgba(255, 255, 255, 0.8);
+    }
+    .item-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
     }
     .item strong {
-      display: block;
-      margin-bottom: 3px;
-      font-size: 0.95rem;
+      font-size: 0.98rem;
+      letter-spacing: -0.01em;
     }
     .item .meta {
-      font-family: "IBM Plex Mono", monospace;
-      font-size: 0.73rem;
+      font-size: 0.69rem;
       color: var(--muted);
-      margin-bottom: 5px;
+      font-family: "IBM Plex Mono", monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
     }
     .item p {
-      margin: 0 0 8px;
-      font-size: 0.88rem;
+      margin: 0;
       color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.55;
     }
     .links {
       display: flex;
-      gap: 10px;
       flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px;
     }
     a.btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
       text-decoration: none;
       font-family: "IBM Plex Mono", monospace;
       font-size: 0.72rem;
-      border-radius: 8px;
-      padding: 6px 9px;
-      border: 1px solid #bcc9d4;
-      color: var(--accent);
-      background: #f5faff;
+      border-radius: 999px;
+      padding: 8px 11px;
+      border: 1px solid rgba(29, 78, 216, 0.22);
+      color: var(--blue);
+      background: rgba(229, 239, 255, 0.7);
+      transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
     }
-    a.btn:hover { background: #e8f2ff; }
-    .mapping {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.86rem;
-      margin-top: 8px;
+    a.btn:hover {
+      transform: translateY(-1px);
+      background: rgba(217, 232, 255, 0.95);
+      border-color: rgba(29, 78, 216, 0.35);
     }
-    .mapping th,
-    .mapping td {
-      border: 1px solid var(--line);
-      padding: 8px;
-      text-align: left;
-      vertical-align: top;
+    .guide {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
     }
-    .mapping th {
+    .guide .tile {
+      padding: 16px;
+    }
+    .guide .tile h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+    .guide .tile p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+    .guide .tile .note {
+      display: inline-block;
+      margin-top: 10px;
       font-family: "IBM Plex Mono", monospace;
-      font-size: 0.72rem;
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
-      background: #f7f3eb;
+      color: var(--green);
     }
-    .ok { color: var(--ok); font-weight: 700; }
-    @media (max-width: 900px) {
-      .col-6 { grid-column: span 12; }
+    .spotlight-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .spotlight-card {
+      position: relative;
+      padding: 18px;
+      border-radius: 18px;
+      border: 1px solid rgba(216, 205, 189, 0.95);
+      background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(250,245,236,0.92));
+      overflow: hidden;
+      min-height: 100%;
+    }
+    .spotlight-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto auto 0;
+      width: 100%;
+      height: 5px;
+      background: var(--accent, var(--teal));
+    }
+    .spotlight-card::after {
+      content: "";
+      position: absolute;
+      inset: auto -25% -35% auto;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle, color-mix(in srgb, var(--accent, var(--teal)) 18%, transparent), transparent 70%);
+      pointer-events: none;
+    }
+    .spotlight-card.teal { --accent: var(--teal); }
+    .spotlight-card.amber { --accent: var(--amber); }
+    .spotlight-card.green { --accent: var(--green); }
+    .spot-index {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: color-mix(in srgb, var(--accent, var(--teal)) 65%, #ffffff);
+    }
+    .spot-file {
+      display: inline-flex;
+      margin-top: 10px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid color-mix(in srgb, var(--accent, var(--teal)) 18%, var(--line));
+      color: var(--ink);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.04em;
+      word-break: break-word;
+    }
+    .spot-title {
+      margin: 0;
+      padding-right: 40px;
+      font-size: 1.08rem;
+      letter-spacing: -0.02em;
+    }
+    .spot-copy {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.6;
+      max-width: 34ch;
+    }
+    .foot {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 0.84rem;
+      line-height: 1.6;
+    }
+    .foot a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+    .foot a:hover { text-decoration: underline; }
+    @media (max-width: 920px) {
+      .hero,
+      .guide {
+        grid-template-columns: 1fr;
+      }
+      .card { grid-column: span 12; }
+      .section-head { display: block; }
+      .section-head p { margin-top: 8px; }
     }
   </style>
 </head>
 <body>
-  <main class="wrap">
-    <section class="top">
-      <h1>GPU Industry Dashboard Hub</h1>
-      <p class="sub">
-        One launch surface for all things GPU, organized into two working modes: learning and strategy.
-        This page enables you to navigate and access all available GPU-related dashboards from a single location.
-        Have fun exploring!
-      </p>
+  <main class="shell">
+    <section class="hero">
+      <div class="hero-main">
+        <div class="eyebrow">GPU industry research repo</div>
+        <h1>Market research on GPU compute, model economics, and ICN positioning.</h1>
+        <p class="hero-copy">
+          This repository is a browser-first research workspace. It combines presentation decks, strategy dashboards, supporting notes, and structured data so the story can be explored from multiple angles: what the hardware does, how the market is structured, and where the economics are moving.
+        </p>
+        <div class="hero-points">
+          <span class="chip"><i></i> Presentation hub in <strong>index.html</strong></span>
+          <span class="chip"><i></i> Three main narrative tracks</span>
+          <span class="chip"><i></i> GitHub Pages friendly</span>
+          <span class="chip"><i></i> Built for internal walkthroughs</span>
+        </div>
+      </div>
+      <aside class="hero-side">
+        <p class="side-title">What this repo contains</p>
+        <div class="stat-grid">
+          <div class="stat">
+            <strong>3</strong>
+            <span>Primary decks: foundations, competitive landscape, trends and positioning.</span>
+          </div>
+          <div class="stat">
+            <strong>4+</strong>
+            <span>Strategy dashboards for economics, value chain, taxonomy, and intelligence.</span>
+          </div>
+          <div class="stat">
+            <strong>JSON</strong>
+            <span>Structured data files that power the interactive charts and comparisons.</span>
+          </div>
+          <div class="stat">
+            <strong>Notes</strong>
+            <span>Human research logs, interview notes, and source material for the decks.</span>
+          </div>
+        </div>
+      </aside>
     </section>
 
-    <section class="grid">
-      <article class="panel col-6">
-        <span class="badge a">Track A · Learning</span>
-        <h2>Conceptual + Technical Walkthroughs</h2>
-        <p>Use this sequence when onboarding new people or building shared technical intuition before strategic decisions.</p>
-        <ul class="card-list">
-          <li class="item">
-            <strong>Prompt-to-Answer Journey</strong>
-            <div class="meta">Foundational flow</div>
-            <p>Tokenization, memory loading, attention, KV cache, sampling, and streaming explained step by step.</p>
-            <div class="links">
-              <a class="btn" href="learning_prompt_to_answer.html" target="_blank">Open Dashboard</a>
-            </div>
-          </li>
-          <li class="item">
-            <strong>Inference Compute Deep Dive</strong>
-            <div class="meta">Long-form educational explainer · v10</div>
-            <p>Detailed compute mechanics, memory math, batching behavior, and pipeline internals.</p>
-            <div class="links">
-              <a class="btn" href="learning_inference_compute_master_v10.html" target="_blank">Open Dashboard</a>
-            </div>
-          <li class="item">
-            <strong>GPU Value Chain by Strategy</strong>
-            <div class="meta">Business model landscape</div>
-            <p>Comprehensive stack ownership map, archetypes, market views, and company-level analysis.</p>
-            <div class="links">
-              <a class="btn" href="strategy_value_chain_master.html" target="_blank">Open Dashboard</a>
-            </div>
-          </li>
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <h2>Recommended viewing order</h2>
+          <p>Start with the hub, then follow the sequence below if you want the cleanest narrative from hardware basics to market strategy.</p>
+        </div>
+      </div>
+      <div class="guide">
+        <article class="tile">
+          <h3>1. GPU Foundations</h3>
+          <p>Open the learning decks first if you want the hardware and inference story to make sense before the strategy material.</p>
+          <span class="note">Start with pres1</span>
+        </article>
+        <article class="tile">
+          <h3>2. Competitive Landscape</h3>
+          <p>Use the competitor deck and supporting notes to understand the provider map, ClusterMAX scoring, and market segmentation.</p>
+          <span class="note">Then pres2 + strategy dashboards</span>
+        </article>
+        <article class="tile">
+          <h3>3. Trends and Positioning</h3>
+          <p>Finish with pres3 and the economics material for the current thesis: where demand is going, what changes the market, and how ICN fits.</p>
+          <span class="note">End with pres3</span>
+        </article>
+      </div>
+    </section>
 
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <h2>Featured deep dives</h2>
+          <p>The three most useful files for a serious walkthrough. These are the most visual, most original pages in the repo.</p>
+        </div>
+      </div>
+      <div class="spotlight-grid">
+        <article class="spotlight-card teal">
+          <div class="spot-index">01</div>
+          <p class="meta">Learning · visual explainer</p>
+          <h3 class="spot-title">Inference Compute Master</h3>
+          <p class="spot-copy">The best single page for token flow, memory math, batching, MFU, and the prompt-to-response loop.</p>
+          <div class="spot-file">learning_inference_compute_master.html</div>
+          <div class="links" style="margin-top:12px;">
+            <a class="btn" href="learning_inference_compute_master.html">Open master</a>
+          </div>
+        </article>
+        <article class="spotlight-card amber">
+          <div class="spot-index">02</div>
+          <p class="meta">Strategy · stack map</p>
+          <h3 class="spot-title">Value Chain Master</h3>
+          <p class="spot-copy">The cleanest view of the GPU stack: who owns what, where the margins live, and how the layers fit together.</p>
+          <div class="spot-file">strategy_value_chain_master.html</div>
+          <div class="links" style="margin-top:12px;">
+            <a class="btn" href="strategy_value_chain_master.html">Open value chain</a>
+          </div>
+        </article>
+        <article class="spotlight-card green">
+          <div class="spot-index">03</div>
+          <p class="meta">Strategy · provider lens</p>
+          <h3 class="spot-title">Competitor Intelligence</h3>
+          <p class="spot-copy">The provider ranking sheet for comparing CoreWeave, Nebius, hyperscalers, and the rest of the market.</p>
+          <div class="spot-file">strategy_competitor_intelligence.html</div>
+          <div class="links" style="margin-top:12px;">
+            <a class="btn" href="strategy_competitor_intelligence.html">Open intelligence</a>
+          </div>
+        </article>
+      </div>
+    </section>
 
-          <li class="item">
-            <strong>Stack × Inference Matrix</strong>
-            <div class="meta">Layered system map</div>
-            <p>Cross-reference of stack layers versus inference stages, with model responsibility overlays.</p>
-            <div class="links">
-              <a class="btn" href="learning_stack_inference_matrix.html" target="_blank">Open Dashboard</a>
-            </div>
-          </li>
-        </ul>
-      </article>
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <h2>Featured decks</h2>
+          <p>The most useful files for a live walkthrough. These are the best entry points for an ICN teammate, partner, or new reader.</p>
+        </div>
+      </div>
+      <div class="cards">
+        <article class="card full">
+          <p class="meta">Featured presentation hub</p>
+          <h3>Launch point: the full repo map</h3>
+          <p>The landing page is the quickest way into the work. It groups the repo into learning, strategy, and supporting materials, and links directly to the most important dashboards.</p>
+          <div class="links">
+            <a class="btn" href="pres1_gpu_foundations.html">Open pres1</a>
+          </div>
+        </article>
 
-      <article class="panel col-6">
-        <span class="badge b">Track B · Strategy</span>
-        <h2>Market, Positioning, and Economics</h2>
-        <p>Use this sequence for leadership reviews, competitor analysis, and pricing/positioning decisions.</p>
-        <ul class="card-list">
-          <li class="item">
-            <strong>Cloud Competitor Intelligence</strong>
-            <div class="meta">Head-to-head and matrix views</div>
-            <p>Criteria matrix, provider comparison, and stack coverage views for direct competitor assessment.</p>
-            <div class="links">
-              <a class="btn" href="strategy_competitor_intelligence.html" target="_blank">Open Dashboard</a>
-            </div>
-          </li>
-          <li class="item">
-            <strong>Inference Economics Explorer</strong>
-            <div class="meta">Cost and hardware tradeoffs</div>
-            <p>Interactive model/GPU/network economics with throughput, latency, and total cost implications.</p>
-            <div class="links">
-              <a class="btn" href="strategy_inference_economics.html" target="_blank">Open Dashboard</a>
-            </div>
-          </li>
-          <li class="item">
-            <strong>Abstraction Layers Reference</strong>
-            <div class="meta">Taxonomy lens</div>
-            <p>WaaS/MLaaS/GPUaaS/BMaaS framing for strategic segmentation and messaging consistency.</p>
-            <div class="links">
-              <a class="btn" href="strategy_abstraction_taxonomy.html" target="_blank">Open Dashboard</a>
-            </div>
-          </li>
-        </ul>
-      </article>
+        <article class="card">
+          <p class="meta">Learning track</p>
+          <h3>GPU foundations and inference mechanics</h3>
+          <p>Introductory material on how GPUs work, how LLMs are served, and why memory bandwidth, context, and utilization dominate practical performance.</p>
+          <div class="links">
+            <a class="btn" href="pres1_gpu_foundations.html">Open pres1</a>
+            <a class="btn" href="learning_inference_compute_master.html">Open master deep dive</a>
+          </div>
+        </article>
 
+        <article class="card">
+          <p class="meta">Strategy track</p>
+          <h3>Competitor scoring and market landscape</h3>
+          <p>The market view: provider comparisons, scoring logic, business model differences, and the broader stack map that underpins positioning.</p>
+          <div class="links">
+            <a class="btn" href="pres2_gpu-competitive-landscape-deck.html">Open pres2</a>
+            <a class="btn" href="strategy_competitor_intelligence.html">Open intelligence dashboard</a>
+          </div>
+        </article>
+
+        <article class="card">
+          <p class="meta">Positioning track</p>
+          <h3>Market forces, economics, and ICN thesis</h3>
+          <p>The current strategic narrative: trends, workload growth, pricing, and the case for ICN's positioning within the GPU compute stack.</p>
+          <div class="links">
+            <a class="btn" href="pres3_gpu-trends-positioning-deck.html">Open pres3</a>
+            <a class="btn" href="strategy_inference_economics.html">Open economics</a>
+          </div>
+        </article>
+
+        <article class="card">
+          <p class="meta">Supporting materials</p>
+          <h3>Notes, source data, and archived material</h3>
+          <p>Use the notes and data folders when you want to verify claims, inspect source material, or trace a chart back to its structured inputs.</p>
+          <div class="links">
+            <a class="btn" href="manual_notes/notes.md">Open notes</a>
+            <a class="btn" href="data_files/gpu_economics_canonical_spec_v1.json">Open data</a>
+            <a class="btn" href="gemini_research_outputs/competitor_analysis.md">Open research outputs</a>
+          </div>
+        </article>
+
+        <article class="card">
+          <p class="meta">Archived / legacy</p>
+          <h3>Older drafts and superseded files</h3>
+          <p>The <span style="font-family: IBM Plex Mono, monospace;">0ld/</span> folder preserves earlier versions for reference only. It is useful for historical context, but not as the current source of truth.</p>
+          <div class="links">
+            <a class="btn" href="0ld/icn-ai-presentation.html">Open archive</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <h2>Repository map</h2>
+          <p>A condensed map of the workspace. The goal is clarity, not inventory noise.</p>
+        </div>
+      </div>
+      <div class="cards">
+        <article class="card">
+          <h3>Presentation decks</h3>
+          <p class="meta">Single-file HTML decks</p>
+          <p>pres1 for GPU foundations, pres2 for the competitive landscape, pres3 for trends and positioning.</p>
+        </article>
+        <article class="card">
+          <h3>Strategy dashboards</h3>
+          <p class="meta">Operational views</p>
+          <p>Competitor intelligence, inference economics, value chain mapping, and abstraction taxonomy.</p>
+        </article>
+        <article class="card">
+          <h3>Structured data</h3>
+          <p class="meta">Machine-readable inputs</p>
+          <p>JSON sources for workload forecasts, market positioning, GPU economics, and deck-specific data bindings.</p>
+        </article>
+        <article class="card">
+          <h3>Notes and sources</h3>
+          <p class="meta">Research material</p>
+          <p>Manual notes, Gemini research outputs, analyst charts, source transcripts, and report archives.</p>
+        </article>
+      </div>
+      <p class="foot">
+        GitHub Pages deployment is configured from <strong>main</strong>. If you want the shortest path for sharing, point people to the hub at the repository root and let them browse from there.
+      </p>
     </section>
   </main>
 </body>

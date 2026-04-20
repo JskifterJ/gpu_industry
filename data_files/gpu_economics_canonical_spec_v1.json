@@ -5,7 +5,7 @@
   "purpose": "Single source of truth for GPU inference economics constants, formulas, chart templates, and rendering instructions across HTML decks.",
   "sources": [
     {
-      "file": "learning_inference_compute_master_v10.html",
+      "file": "learning_inference_compute_master.html",
       "section": "Integrated economics (ECONX_*)",
       "notes": "Primary canonical math source for model memory, KV cache, topology penalties, decode/TTFT, and cost translation."
     },

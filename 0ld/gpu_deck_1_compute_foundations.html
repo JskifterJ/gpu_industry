@@ -2030,7 +2030,7 @@ input[type="range"] {
           <div class="rack-note">
             The highlighted shelf is where the exploded GPU on the right sits. In production, many of these shelves run in parallel.
           </div>
-          <span class="source-tag">Source tag: architecture framing inspired by learning_inference_compute_master_v10.html</span>
+          <span class="source-tag">Source tag: architecture framing inspired by learning_inference_compute_master.html</span>
         </div>
 
         <div class="gpu-blowout-wrap">
@@ -2143,7 +2143,7 @@ input[type="range"] {
             <div class="rt-num">5</div>
             <div><strong>Return stream</strong><span>Tokens stream back continuously. A 50-word response is around 67 token passes through model layers.</span></div>
           </div>
-          <span class="source-tag">Source tag: learning_inference_compute_master_v10.html (prefill/decode, KV, token loop)</span>
+          <span class="source-tag">Source tag: learning_inference_compute_master.html (prefill/decode, KV, token loop)</span>
         </div>
 
         <div class="latency-breakdown">
@@ -2191,7 +2191,7 @@ input[type="range"] {
           </div>
         </div>
 
-        <span class="source-tag">Source tag: learning_inference_compute_master_v10.html (interactive pipeline for "The capital of France is")</span>
+          <span class="source-tag">Source tag: learning_inference_compute_master.html (interactive pipeline for "The capital of France is")</span>
       </div>
     </div>
   </section>
@@ -2219,7 +2219,7 @@ input[type="range"] {
             <span class="term" data-def="Quantization stores weights with fewer bits (for example FP16 to INT8 or INT4).">Quantization</span>
             can cut this sharply. Example: 70B goes from ~140 GB (FP16) to ~70 GB (INT8) to ~35 GB (INT4), with quality trade-offs.
           </p>
-          <span class="source-tag">Source tag: learning_inference_compute_master_v10.html + canonical model tiers</span>
+          <span class="source-tag">Source tag: learning_inference_compute_master.html + canonical model tiers</span>
         </div>
 
         <div class="node-spread">
@@ -2244,7 +2244,7 @@ input[type="range"] {
             <div class="bn-row"><label>NVLink sync load</label><div class="bn-track"><div class="bn-fill" style="width:64%;background:#fbbf24;"></div></div><div class="bn-val">64%</div></div>
             <div class="bn-row"><label>PCIe fallback risk</label><div class="bn-track"><div class="bn-fill" style="width:82%;background:#f87171;"></div></div><div class="bn-val">High</div></div>
           </div>
-          <span class="source-tag">Source tag: learning_inference_compute_master_v10.html (DGX H100 section, NVLink 900 GB/s framing)</span>
+          <span class="source-tag">Source tag: learning_inference_compute_master.html (DGX H100 section, NVLink 900 GB/s framing)</span>
         </div>
       </div>
 
@@ -2283,7 +2283,7 @@ input[type="range"] {
         </div>
 
         <div class="gpu-cards-grid" id="cfgGpuGrid"></div>
-        <span class="source-tag">Source tag: learning_inference_compute_master_v10.html (GPU array pattern) + data_files/gpu_economics_canonical_spec_v1.json</span>
+        <span class="source-tag">Source tag: learning_inference_compute_master.html (GPU array pattern) + data_files/gpu_economics_canonical_spec_v1.json</span>
       </div>
     </div>
   </section>
@@ -2436,7 +2436,7 @@ input[type="range"] {
         <div class="shift-caption">Interpretation: memory friction decreases per token with newer HBM systems, but interconnect and then full-platform scheduling/storage become the dominant constraints at cluster scale.</div>
       </div>
 
-      <span class="source-tag">Source tag: data_files/gpu_economics_canonical_spec_v1.json + learning_inference_compute_master_v10.html + PCIe generation throughput conventions.</span>
+      <span class="source-tag">Source tag: data_files/gpu_economics_canonical_spec_v1.json + learning_inference_compute_master.html + PCIe generation throughput conventions.</span>
     </div>
   </section>
 
@@ -2448,7 +2448,7 @@ input[type="range"] {
     <div class="slide-body">
       <div class="sec-label anim a1">Next reading path</div>
       <div class="learn-links anim a2">
-        <a class="learn-link" href="learning_inference_compute_master_v10.html" target="_blank">
+        <a class="learn-link" href="learning_inference_compute_master.html" target="_blank">
           <strong>Deep technical walkthrough</strong>
           <span>Detailed compute, memory math, and pipeline internals.</span>
         </a>
