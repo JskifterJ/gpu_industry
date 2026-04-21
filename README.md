@@ -8,6 +8,8 @@ Purpose: market research, competitive intelligence, and strategic positioning fo
 
 If you want the fastest path through the repo, open [index.html](index.html). It is the launch page and groups the main materials by narrative track.
 
+For live European electricity grid data — the operational companion to this research — see the [EU Grid Dashboard](https://eu-grid-dashboard.onrender.com/) ([source repo](https://github.com/jskifter/eu-grid-dashboard)).
+
 Featured deep dives:
 
 1. [learning_inference_compute_master.html](learning_inference_compute_master.html) for the most visual inference and memory explainer.
