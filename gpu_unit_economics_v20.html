@@ -1,0 +1,2470 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<title>GPU Unit Economics</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#F7F6F4; --sb:#EFECEA; --card:#FFFFFF; --border:#E2DDD8; --border2:#CBC5BE;
+  --text:#1C1917; --muted:#78716C; --faint:#C4BDB6; --inset:#F0EDE9;
+  --accent:#1D4ED8; --accent-bg:#EFF6FF; --accent-border:#BFDBFE;
+  --pos:#15803D; --pos-bg:#F0FDF4; --neg:#B91C1C; --neg-bg:#FEF2F2;
+  --wrn:#B45309; --wrn-bg:#FFFBEB;
+  --font:'JetBrains Mono','Fira Code','Cascadia Code',ui-monospace,monospace;
+}
+[data-theme="dark"]{
+  --bg:#0E0E0C; --sb:#161613; --card:#1E1E1B; --border:#2C2A27; --border2:#3D3A36;
+  --text:#F2F0EC; --muted:#A09890; --faint:#4A4540; --inset:#252320;
+  --accent:#3B82F6; --accent-bg:#1E3A5F; --accent-border:#1E40AF;
+  --pos:#22C55E; --pos-bg:#052E16; --neg:#EF4444; --neg-bg:#450A0A;
+  --wrn:#F59E0B; --wrn-bg:#422006;
+}
+
+/* ── APP LAYOUT ── */
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font);font-size:13px;}
+.app{display:flex;height:100vh;overflow:hidden;}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:320px;min-width:320px;background:var(--sb);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.sb-head{
+  padding:16px 18px 14px;border-bottom:1px solid var(--border);
+  display:flex;align-items:baseline;justify-content:space-between;flex-shrink:0;
+}
+.sb-title{font-size:13px;font-weight:700;letter-spacing:.02em;color:var(--text);}
+.sb-actions{display:flex;gap:6px;}
+.btn-sm{
+  background:var(--card);border:1px solid var(--border);color:var(--muted);
+  font-family:var(--font);font-size:10px;font-weight:600;padding:4px 9px;
+  border-radius:4px;cursor:pointer;letter-spacing:.03em;white-space:nowrap;
+}
+.btn-sm:hover{border-color:var(--border2);color:var(--text);}
+.sb-body{flex:1;overflow-y:auto;padding:0 0 24px;}
+.sb-section{padding:16px 18px 0;}
+.sb-label{
+  font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px;
+}
+.sb-label::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* GPU PICKER */
+.gpu-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+.gp{
+  background:var(--card);border:1px solid var(--border);border-radius:5px;
+  padding:8px 10px;cursor:pointer;transition:border-color .1s,background .1s;
+  user-select:none;
+}
+.gp:hover{border-color:var(--border2);}
+.gp.sel{border-color:var(--accent);background:var(--accent-bg);}
+.gp .gn{font-size:11px;font-weight:700;color:var(--text);line-height:1.2;}
+.gp .gv{font-size:9px;color:var(--muted);margin:2px 0;}
+.gp .gp2{font-size:11px;font-weight:700;color:var(--wrn);}
+.gp .gr{font-size:9px;color:var(--pos);}
+
+/* PILLS */
+.pill-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px;}
+.pill{
+  background:var(--card);border:1px solid var(--border);border-radius:4px;
+  padding:5px 10px;cursor:pointer;font-size:11px;font-weight:600;
+  color:var(--muted);transition:all .1s;white-space:nowrap;
+}
+.pill:hover{border-color:var(--border2);color:var(--text);}
+.pill.sel{border-color:var(--accent);background:var(--accent-bg);color:var(--accent);}
+.pill.sel-chassis{border-color:var(--wrn);background:var(--wrn-bg);color:var(--wrn);}
+
+/* SLIDER ROW */
+.sr{margin-bottom:12px;}
+.sr-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;}
+.sr-label{font-size:10px;color:var(--muted);letter-spacing:.03em;}
+.sr-val{font-size:13px;font-weight:700;color:var(--text);}
+.sr-sub{font-size:9px;color:var(--faint);margin-top:2px;}
+input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;height:3px;}
+select{
+  width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);
+  font-family:var(--font);font-size:12px;padding:6px 8px;border-radius:4px;
+  appearance:auto;
+}
+select:focus{outline:2px solid var(--accent);outline-offset:1px;}
+
+/* DEMAND TOGGLE */
+.dtog{
+  display:flex;background:var(--inset);border:1px solid var(--border);
+  border-radius:5px;padding:2px;gap:2px;margin-bottom:12px;
+}
+.dtog-btn{
+  flex:1;background:none;border:none;font-family:var(--font);font-size:10px;
+  font-weight:700;letter-spacing:.03em;padding:6px 4px;border-radius:3px;
+  cursor:pointer;color:var(--muted);transition:all .1s;text-align:center;
+}
+.dtog-btn.active{background:var(--card);color:var(--text);border:1px solid var(--border);}
+
+/* ACCORDION */
+details{border-top:1px solid var(--border);margin-top:4px;}
+details summary{
+  padding:12px 18px;font-size:10px;font-weight:700;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--muted);cursor:pointer;
+  list-style:none;display:flex;align-items:center;justify-content:space-between;
+}
+details summary::after{content:'▼';font-size:8px;transition:transform .2s;}
+details[open] summary::after{transform:rotate(180deg);}
+details summary::-webkit-details-marker{display:none;}
+.adv-body{padding:0 18px 16px;}
+
+/* ── MAIN PANEL ── */
+.main{flex:1;overflow-y:auto;padding:20px 24px;}
+
+/* KPI STRIP */
+.kpi-strip{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:20px;}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:12px 14px;}
+.kpi .kl{font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.kpi .kv{font-size:18px;font-weight:800;line-height:1;color:var(--text);}
+.kpi .ks{font-size:9px;color:var(--muted);margin-top:3px;}
+.kpi.k-pos .kv{color:var(--pos);}
+.kpi.k-neg .kv{color:var(--neg);}
+.kpi.k-wrn .kv{color:var(--wrn);}
+.kpi.k-accent .kv{color:var(--accent);}
+
+/* SECTION DIVIDERS */
+.ms{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--muted);margin:20px 0 10px;display:flex;align-items:center;gap:8px;}
+.ms::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* CHARTS */
+.chart-box{background:var(--card);border:1px solid var(--border);border-radius:6px;
+           padding:14px 16px;margin-bottom:12px;}
+.chart-title{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+             color:var(--muted);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;}
+.chart-title .ct-detail{font-size:10px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--text);}
+.ch{position:relative;width:100%;}
+.ch-sm{height:220px;}
+.ch-md{height:280px;}
+.ch-lg{height:340px;}
+.chart-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;font-size:10px;color:var(--muted);}
+.chart-legend span{display:flex;align-items:center;gap:4px;}
+.lsw{width:10px;height:10px;border-radius:2px;display:inline-block;flex-shrink:0;}
+
+/* P&L / LTV TABLES */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;}
+.data-table{background:var(--card);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+.dt-head{padding:10px 14px;font-size:10px;font-weight:700;letter-spacing:.06em;
+         text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);}
+.dt-section{padding:5px 14px 4px;font-size:9px;font-weight:700;letter-spacing:.09em;
+            text-transform:uppercase;color:var(--muted);background:var(--inset);
+            border-bottom:1px solid var(--border);border-top:1px solid var(--border);}
+.dt-section:first-child{border-top:none;}
+/* Hard framework separator — visually distinct major block header */
+.dt-framework{
+  padding:7px 14px 5px;font-size:9px;font-weight:800;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--text);background:var(--border);
+  border-bottom:2px solid var(--border2);border-top:3px solid var(--border2);
+  margin-top:0;
+}
+.dt-framework:first-child{border-top:none;}
+.dt-bridge{
+  padding:5px 14px;font-size:10px;color:var(--muted);
+  background:var(--inset);border-bottom:1px solid var(--border);
+  font-style:italic;line-height:1.5;
+}
+.dt-row{display:flex;justify-content:space-between;align-items:center;
+        padding:7px 14px;border-bottom:1px solid var(--border);font-size:11px;}
+.dt-row:last-child{border-bottom:none;}
+.dt-row.dt-sub{background:var(--inset);font-weight:700;}
+.dt-row.dt-total{background:var(--inset);font-weight:800;font-size:12px;border-top:2px solid var(--border2);}
+.dt-row.dt-warn{background:var(--neg-bg);}
+.dt-row.dt-ok{background:var(--pos-bg);}
+.dt-indent{padding-left:22px;}
+.dl{color:var(--muted);}
+.dv{font-weight:700;}
+
+/* COLOR UTILITIES */
+.pos{color:var(--pos);} .neg{color:var(--neg);} .wrn{color:var(--wrn);} .acc{color:var(--accent);}
+
+/* FINANCING SECTION */
+.fin-wrap{margin-top:24px;}
+.ftbl{width:100%;border-collapse:collapse;font-size:11px;}
+.ftbl th{background:var(--inset);color:var(--muted);font-size:9px;letter-spacing:.07em;
+         text-transform:uppercase;padding:8px 10px;border:1px solid var(--border);
+         text-align:left;font-weight:700;}
+.ftbl td{padding:7px 10px;border:1px solid var(--border);vertical-align:top;}
+.ftbl .flbl{background:var(--inset);color:var(--muted);font-size:10px;font-weight:600;}
+.ftbl .finp{background:var(--card);}
+.ftbl .finp input[type=range]{width:100%;display:block;margin:3px 0 2px;}
+.ftbl .finp select{font-size:10px;padding:3px 4px;}
+.fbest{background:var(--pos-bg)!important;}
+.fworst{background:var(--neg-bg)!important;}
+.fval{font-weight:700;font-size:11px;}
+.snm{font-size:10px;font-weight:700;}
+.tag{display:inline-block;font-size:8px;padding:1px 4px;border-radius:2px;
+     margin-left:3px;vertical-align:middle;font-weight:700;}
+.ta{background:var(--accent-bg);color:var(--accent);}
+.tb{background:#F5F3FF;color:#5B21B6;}
+.tc{background:var(--wrn-bg);color:var(--wrn);}
+.td{background:var(--pos-bg);color:var(--pos);}
+[data-theme="dark"] .tb{background:#1E1B4B;color:#A78BFA;}
+
+/* TABS (main panel) */
+.main-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:20px;flex-shrink:0;}
+.mtab{background:none;border:none;font-family:var(--font);font-size:11px;font-weight:700;
+      letter-spacing:.04em;padding:10px 20px;cursor:pointer;color:var(--muted);
+      border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s;}
+.mtab:hover{color:var(--text);}
+.mtab.active{color:var(--accent);border-bottom-color:var(--accent);}
+.mpane{display:none;}
+.mpane.active{display:block;}{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin:6px 0 3px;}
+.lbar-fill{height:100%;border-radius:3px;transition:width .3s;}
+
+/* cost of capital toggle */
+.coc-row{display:flex;align-items:center;justify-content:space-between;margin-top:10px;margin-bottom:2px;}
+.npv-tog{background:var(--inset);border:1.5px solid var(--border);border-radius:20px;font-family:var(--font);font-size:10px;font-weight:700;letter-spacing:.05em;padding:5px 14px;cursor:pointer;color:var(--muted);transition:all .2s;display:flex;align-items:center;gap:6px;}
+.npv-tog.on{background:var(--accent-bg);border-color:var(--accent);color:var(--accent);}
+/* CoC prominent box */
+.coc-box{background:var(--card);border:2px solid var(--accent-border);border-radius:8px;padding:14px 16px;transition:all .2s;}
+.coc-box.npv-on{border-color:var(--accent);background:var(--accent-bg);}
+.coc-box-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;gap:8px;}
+.coc-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:3px;}
+.coc-bigval{font-size:22px;font-weight:800;color:var(--accent);line-height:1;}
+.npv-main-tog{flex-shrink:0;display:flex;align-items:center;gap:6px;background:var(--inset);border:1.5px solid var(--border2);border-radius:6px;font-family:var(--font);font-size:11px;font-weight:700;letter-spacing:.03em;padding:8px 13px;cursor:pointer;color:var(--muted);transition:all .15s;}
+.npv-main-tog.on{background:var(--accent);border-color:var(--accent);color:#fff;}
+.npv-tog-dot{width:7px;height:7px;border-radius:50%;background:var(--faint);flex-shrink:0;transition:background .15s;}
+.npv-main-tog.on .npv-tog-dot{background:rgba(255,255,255,.8);}
+.coc-preview{display:flex;gap:0;margin-top:10px;border:1px solid var(--border);border-radius:5px;overflow:hidden;}
+.cp-item{flex:1;padding:7px 10px;border-right:1px solid var(--border);background:var(--inset);}
+.cp-item:last-child{border-right:none;}
+.cp-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);display:block;}
+.cp-val{font-size:14px;font-weight:800;color:var(--muted);display:block;margin-top:2px;}
+.cp-val.active{color:var(--text);}
+.cp-val.pos{color:var(--pos);} .cp-val.neg{color:var(--neg);} .cp-val.wrn{color:var(--wrn);}
+.coc-box.npv-on .coc-preview{border-color:var(--accent-border);}
+.coc-box.npv-on .cp-item{border-color:var(--accent-border);background:transparent;}
+/* NPV active banner */
+.npv-banner{display:none;background:var(--accent-bg);border:1.5px solid var(--accent-border);border-radius:6px;padding:10px 14px;margin-bottom:14px;}
+.npv-banner.show{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.nb-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--accent);white-space:nowrap;}
+.nb-metric{display:flex;flex-direction:column;gap:2px;min-width:80px;}
+.nb-val{font-size:16px;font-weight:800;color:var(--text);}
+.nb-sub{font-size:9px;color:var(--muted);}
+.nb-sep{width:1px;height:32px;background:var(--accent-border);}
+/* SPV section */
+.spv-section{background:var(--bg);border:1.5px dashed var(--border2);border-radius:6px;padding:12px 14px;margin-top:4px;}
+.spv-section.active{background:var(--wrn-bg);border-color:var(--wrn);border-style:solid;}
+.spv-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+/* Sensitivity table */
+.stbl{border-collapse:collapse;width:100%;font-size:10px;font-family:var(--font);}
+.stbl th{background:var(--inset);padding:6px 8px;border:1px solid var(--border);font-weight:700;text-align:center;color:var(--muted);}
+.stbl td{padding:6px 8px;border:1px solid var(--border);text-align:center;font-weight:700;font-variant-numeric:tabular-nums;cursor:default;}
+.stbl .row-lbl{background:var(--inset);color:var(--muted);text-align:right;padding-right:10px;}
+.stbl .cur-row td,.stbl td.cur-col{outline:2px solid var(--accent);outline-offset:-2px;}
+.sc5{background:#DCFCE7;color:#15803D;}[data-theme="dark"] .sc5{background:#052E16;color:#86EFAC;}
+.sc4{background:#ECFDF5;color:#15803D;}[data-theme="dark"] .sc4{background:#064E3B;color:#6EE7B7;}
+.sc3{background:#FEF9C3;color:#854D0E;}[data-theme="dark"] .sc3{background:#422006;color:#FDE68A;}
+.sc2{background:#FFEDD5;color:#9A3412;}[data-theme="dark"] .sc2{background:#431407;color:#FDBA74;}
+.sc1{background:#FEE2E2;color:#B91C1C;}[data-theme="dark"] .sc1{background:#450A0A;color:#FCA5A5;}
+/* Break-even display */
+.be-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px;}
+.be-card{background:var(--card);border:1.5px solid var(--border);border-radius:6px;padding:12px 14px;}
+.be-card.be-ok{border-color:var(--pos);} .be-card.be-warn{border-color:var(--wrn);} .be-card.be-bad{border-color:var(--neg);}
+.be-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:4px;}
+.be-val{font-size:18px;font-weight:800;color:var(--text);}
+.be-sub{font-size:9px;color:var(--muted);margin-top:3px;}
+.kpi-npv{display:none;} .kpi-npv.show{display:block;}
+.kpi-spv{display:none;} .kpi-spv.show{display:block;}
+.wf-mode-note{font-size:9px;color:var(--accent);margin-left:6px;font-weight:600;letter-spacing:.03em;}
+
+/* Flow diagram */
+.flow-diagram{background:var(--card);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:10px;}
+.flow-diagram-hdr{display:flex;align-items:center;justify-content:space-between;
+                  padding:8px 14px;border-bottom:1px solid var(--border);
+                  font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);}
+.flow-diagram-body{padding:12px 14px;}
+
+/* Toggle buttons (used for CF chart, lifecycle, flow diagram) */
+.cf-toggle-btn{background:none;border:1px solid var(--border);border-radius:4px;
+               padding:2px 8px;font-size:10px;cursor:pointer;color:var(--muted);
+               display:inline-flex;align-items:center;gap:4px;font-family:inherit;}
+.cf-toggle-btn:hover{border-color:var(--text);color:var(--text);}
+
+/* Dashboard section dividers */
+.dash-section{
+  margin:20px 0 8px;padding:0 0 6px;
+  border-bottom:2px solid var(--border2);
+  font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
+}
+
+@media(max-width:900px){
+  .app{flex-direction:column;height:auto;overflow:visible;}
+  .sidebar{width:100%;min-width:0;height:auto;overflow:visible;border-right:none;border-bottom:1px solid var(--border);}
+  .sb-body{overflow-y:visible;}
+  .main{overflow-y:visible;}
+  .kpi-strip{grid-template-columns:1fr 1fr 1fr;}
+}
+
+/* ── INTRO MODAL ── */
+.intro-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(3px);
+  z-index:9000;display:flex;align-items:center;justify-content:center;
+  opacity:1;transition:opacity .2s;
+}
+.intro-overlay.hidden{opacity:0;pointer-events:none;}
+.intro-modal{
+  background:var(--card);border:1px solid var(--border2);border-radius:14px;
+  padding:28px 32px;max-width:660px;width:calc(100% - 40px);
+  box-shadow:0 24px 60px rgba(0,0,0,.35);position:relative;max-height:90vh;overflow-y:auto;
+}
+.intro-modal h2{margin:0 0 4px;font-size:20px;font-weight:800;color:var(--text);}
+.intro-modal .intro-sub{font-size:12px;color:var(--muted);margin-bottom:20px;}
+.intro-steps{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px;}
+@media(max-width:600px){.intro-steps{grid-template-columns:1fr;}}
+.intro-step{border:1px solid var(--border2);border-radius:8px;padding:12px 14px;background:var(--inset);}
+.intro-step-num{font-size:20px;font-weight:900;color:var(--accent);line-height:1;margin-bottom:6px;}
+.intro-step-title{font-size:11px;font-weight:700;color:var(--text);margin-bottom:3px;}
+.intro-step-desc{font-size:10px;color:var(--muted);line-height:1.5;}
+.intro-divider{height:1px;background:var(--border);margin:16px 0;}
+.intro-defaults{font-size:10px;color:var(--muted);line-height:1.7;margin-bottom:20px;}
+.intro-defaults strong{color:var(--text);}
+.intro-footer{display:flex;justify-content:space-between;align-items:center;gap:12px;}
+.intro-dismiss{background:var(--accent);color:#fff;border:none;border-radius:7px;
+               padding:10px 24px;font-size:13px;font-weight:700;cursor:pointer;
+               transition:opacity .15s;}
+.intro-dismiss:hover{opacity:.88;}
+.intro-skip{font-size:10px;color:var(--muted);cursor:pointer;text-decoration:underline;}
+.intro-skip:hover{color:var(--text);}
+.intro-help-btn{position:fixed;bottom:18px;right:18px;background:var(--accent);color:#fff;
+                border:none;border-radius:50%;width:36px;height:36px;font-size:16px;
+                cursor:pointer;z-index:8000;box-shadow:0 4px 12px rgba(0,0,0,.3);
+                display:flex;align-items:center;justify-content:center;}
+</style>
+</head>
+<body>
+
+<!-- ── INTRO MODAL ── -->
+<div class="intro-overlay" id="introOverlay">
+  <div class="intro-modal">
+    <h2>⚡ GPU Infrastructure Economics</h2>
+    <div class="intro-sub">Model the unit economics of GPU cluster financing — from CAPEX through revenue, P&L, and investor returns. Defaults are set to a realistic baseline: 8× H100 nodes, 55% LTV bank financing, SPV with a 70% investor pool.</div>
+
+    <div class="intro-steps">
+      <div class="intro-step">
+        <div class="intro-step-num">1</div>
+        <div class="intro-step-title">Configure the sidebar</div>
+        <div class="intro-step-desc">Pick your GPU, toggle <strong>New vs Refurbished</strong> (adjusts price and AFR automatically), set fleet size, choose demand mode (offtake / spot / blended), and adjust financing terms. The <strong>SPV / investor pool</strong> is off by default — toggle it on in the sidebar to model a preferred/junior equity split between pool investors and the operator.</div>
+      </div>
+      <div class="intro-step">
+        <div class="intro-step-num">2</div>
+        <div class="intro-step-title">Read the fund flow diagram</div>
+        <div class="intro-step-desc">The illustration at the top shows how money moves between Lender, Operator, Pool Investors, the GPU Project, and Customer — with live amounts on every arrow.</div>
+      </div>
+      <div class="intro-step">
+        <div class="intro-step-num">3</div>
+        <div class="intro-step-title">Check the KPI strip</div>
+        <div class="intro-step-desc">CAPEX, EBITDA margin, equity ROI, break-even price, payback month, and DSCR update on every change. The <strong>break-even price</strong> shows the minimum $/hr needed to cover your equity cost.</div>
+      </div>
+      <div class="intro-step">
+        <div class="intro-step-num">4</div>
+        <div class="intro-step-title">Inspect the P&amp;L</div>
+        <div class="intro-step-desc">Five numbered blocks: ① accounting P&amp;L (EBIT), ② operating cash flow, ③ terminal / exit, ④ equity return (with pool split), ⑤ NPV &amp; IRR. Numbers always reconcile — pool + operator = total equity CF.</div>
+      </div>
+      <div class="intro-step">
+        <div class="intro-step-num">5</div>
+        <div class="intro-step-title">Run sensitivity analysis</div>
+        <div class="intro-step-desc">Table 1: price × contract duration → ROI. Table 2: LTV × interest rate → ROI. Toggle NPV mode for risk-adjusted heatmaps. Current assumption is outlined in each table.</div>
+      </div>
+      <div class="intro-step">
+        <div class="intro-step-num">6</div>
+        <div class="intro-step-title">Compare financing scenarios</div>
+        <div class="intro-step-desc">The <strong>Financing</strong> tab shows 4 scenarios side-by-side: bank IO, ABS amortizing, token-collateral vault, and self-finance — all with the same operating assumptions.</div>
+      </div>
+    </div>
+
+    <div class="intro-divider"></div>
+    <div class="intro-defaults">
+      <strong>Baseline defaults:</strong> 8 nodes × 8 GPUs (H100 SXM5, $32k/card new) · $2.00/hr offtake · 55% LTV @ 10% IO ·
+      SPV / investor pool off by default · <strong>New cards</strong> selected (4% AFR) — toggle to Refurbished for ~45% lower price, ~9% AFR ·
+      24-month contract · 50% residual · 1mo ramp-up delay<br>
+      <strong>Note:</strong> Per Ornn Compute, GPUs depreciate 40–70% over 24mo. The residual price floor can be secured via a <strong>Residual Value Swap (RVS)</strong> with Ornn Compute — this reduces lender risk, enabling lower interest rates and higher LTV. See the residual slider in advanced settings.
+    </div>
+
+    <div class="intro-footer">
+      <button class="intro-dismiss" onclick="dismissIntro()">Start modelling →</button>
+      <span class="intro-skip" onclick="dismissIntro()">dismiss (press Esc)</span>
+    </div>
+  </div>
+</div>
+
+<!-- Persistent help button (bottom-right) -->
+<button class="intro-help-btn" id="helpBtn" onclick="showIntro()" title="Show guide">?</button>
+
+<div class="app">
+
+<!-- ══════════════════════════════ SIDEBAR ══ -->
+<div class="sidebar">
+  <div class="sb-head">
+    <span class="sb-title">GPU Economics</span>
+    <div class="sb-actions">
+      <button class="btn-sm" onclick="fetchLivePrices()" id="fetchBtn">⟳ live prices</button>
+      <button class="btn-sm" onclick="toggleTheme()" id="themeBtn">☾</button>
+    </div>
+  </div>
+
+  <div class="sb-body">
+
+    <!-- GPU CARD -->
+    <div class="sb-section">
+      <div class="sb-label">GPU card</div>
+      <div class="gpu-grid" id="gpuPicker"></div>
+      <div style="display:flex;gap:6px;margin:8px 0 4px;align-items:center">
+        <span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">condition:</span>
+        <button class="npv-tog on" id="condNewBtn" onclick="setGPUCondition('new')" style="font-size:9px;padding:2px 8px">🟢 new</button>
+        <button class="npv-tog" id="condRefurbBtn" onclick="setGPUCondition('refurb')" style="font-size:9px;padding:2px 8px">🔄 refurbished</button>
+      </div>
+      <div style="font-size:9px;color:var(--muted);padding:2px 2px 0;line-height:1.5" id="condNote">Prices are <strong style="color:var(--text)">new / near-new</strong> reference points. <span id="condAfrNote">New-card AFRs: 2–4% p.a. (inference/mixed workload).</span></div>
+      <div class="sr" style="margin-top:10px">
+        <div class="sr-header">
+          <span class="sr-label">price / card (USD)</span>
+          <span class="sr-val" id="unitPriceV">$32,000</span>
+        </div>
+        <input type="range" id="unitPrice" min="5000" max="80000" step="500" value="32000">
+        <div class="sr-sub" id="unitPriceNote">H100 SXM5 — market ref: $30–40k</div>
+      </div>
+      <input type="hidden" id="powerW" value="700">
+      <span style="display:none" id="powerWV">700 W</span>
+      <span style="display:none" id="powerNote"></span>
+    </div>
+
+    <!-- FLEET SIZE -->
+    <div class="sb-section" style="margin-top:12px">
+      <div class="sb-label">fleet</div>
+      <div class="sr">
+        <div class="sr-header">
+          <span class="sr-label">nodes</span>
+          <span class="sr-val" id="numNodesV">8 nodes</span>
+        </div>
+        <input type="range" id="numNodes" min="1" max="200" step="1" value="8">
+        <div class="sr-sub" id="numGPUsV">64 GPUs · $2.6M CAPEX est.</div>
+      </div>
+      <div style="margin-bottom:8px">
+        <div class="sr-label" style="margin-bottom:5px">node configuration</div>
+        <div class="pill-row" id="ncfgPicker"></div>
+        <input type="hidden" id="gpuPerNode" value="8">
+        <span style="display:none" id="gpnNote"></span>
+      </div>
+      <div>
+        <div class="sr-label" style="margin-bottom:5px">chassis / system</div>
+        <div class="pill-row" id="chassisPicker"></div>
+        <input type="hidden" id="chassisCost" value="20000">
+        <span style="display:none" id="chassisCostV">$20,000</span>
+        <span style="display:none" id="chassisNote"></span>
+      </div>
+      <div class="sr" style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border)">
+        <div class="sr-header">
+          <span class="sr-label">annual failure rate (AFR)</span>
+          <span class="sr-val" id="afrV">4.0%</span>
+        </div>
+        <input type="range" id="afr" min="0" max="20" step="0.5" value="4">
+        <div class="sr-sub" id="afrNote">H100 SXM5 new AFR: 4% p.a. (inference/mixed) — failed cards deducted from resale at 5% scrap</div>
+      </div>
+    </div>
+
+    <!-- DEMAND -->
+    <div class="sb-section" style="margin-top:14px">
+      <div class="sb-label">demand / pricing</div>
+      <div class="dtog">
+        <button class="dtog-btn active" id="modeBtn-offtake" onclick="setDemandMode('offtake')">Offtake</button>
+        <button class="dtog-btn" id="modeBtn-blended" onclick="setDemandMode('blended')">Blended</button>
+        <button class="dtog-btn" id="modeBtn-spot" onclick="setDemandMode('spot')">Spot</button>
+      </div>
+
+      <div id="panel-offtake">
+        <div class="sr">
+          <div class="sr-header">
+            <span class="sr-label">contracted rate ($/GPU/hr)</span>
+            <span class="sr-val" id="offtakeRateV">$2.00</span>
+          </div>
+          <input type="range" id="offtakeRate" min="0.25" max="8.00" step="0.05" value="2.00">
+          <div class="sr-sub">100% of fleet · take-or-pay · guaranteed from day 1</div>
+        </div>
+        <div class="sr">
+          <div class="sr-header">
+            <span class="sr-label">contract duration</span>
+            <span class="sr-val" id="contractMoV">24 mo</span>
+          </div>
+          <input type="range" id="contractMo" min="12" max="36" step="1" value="24">
+        </div>
+      </div>
+
+      <div id="panel-spot" style="display:none">
+        <div class="sr">
+          <div class="sr-header">
+            <span class="sr-label">spot rate ($/GPU/hr)</span>
+            <span class="sr-val" id="spotRateV">$2.50</span>
+          </div>
+          <input type="range" id="spotRate" min="0.25" max="8.00" step="0.05" value="2.50">
+          <div class="sr-sub" id="spotRateNote">H100 on-demand: $2.17–3.47/hr</div>
+        </div>
+        <div class="sr">
+          <div class="sr-header">
+            <span class="sr-label">target utilization</span>
+            <span class="sr-val" id="spotUtilV">70%</span>
+          </div>
+          <input type="range" id="spotUtil" min="0" max="100" step="5" value="70">
+        </div>
+        <div class="sr">
+          <div class="sr-header">
+            <span class="sr-label">ramp period</span>
+            <span class="sr-val" id="rampV">2 mo</span>
+          </div>
+          <input type="range" id="ramp" min="0" max="6" step="1" value="2">
+        </div>
+        <div class="sr">
+          <div class="sr-header">
+            <span class="sr-label">contract duration</span>
+            <span class="sr-val" id="contractMoV2">24 mo</span>
+          </div>
+          <input type="range" id="contractMo2" min="12" max="36" step="1" value="24">
+        </div>
+      </div>
+
+      <div id="panel-blended" style="display:none">
+        <div class="sr">
+          <div class="sr-header">
+            <span class="sr-label">offtake rate (contracted)</span>
+            <span class="sr-val" id="offtakeRate2V">$2.00</span>
+          </div>
+          <input type="range" id="offtakeRate2" min="0.25" max="8.00" step="0.05" value="2.00">
+        </div>
+        <div class="sr">
+          <div class="sr-header">
+            <span class="sr-label">offtake coverage</span>
+            <span class="sr-val" id="offtakePctV">80%</span>
+          </div>
+          <input type="range" id="offtakePct" min="5" max="95" step="5" value="80">
+        </div>
+        <div class="sr">
+          <div class="sr-header">
+            <span class="sr-label">spot rate (uncontracted)</span>
+            <span class="sr-val" id="spotRate2V">$2.50</span>
+          </div>
+          <input type="range" id="spotRate2" min="0.25" max="8.00" step="0.05" value="2.50">
+        </div>
+        <div class="sr">
+          <div class="sr-header">
+            <span class="sr-label">spot utilization</span>
+            <span class="sr-val" id="spotUtil2V">60%</span>
+          </div>
+          <input type="range" id="spotUtil2" min="0" max="100" step="5" value="60">
+        </div>
+        <div class="sr">
+          <div class="sr-header">
+            <span class="sr-label">spot ramp</span>
+            <span class="sr-val" id="ramp2V">2 mo</span>
+          </div>
+          <input type="range" id="ramp2" min="0" max="6" step="1" value="2">
+        </div>
+        <div class="sr">
+          <div class="sr-header">
+            <span class="sr-label">contract duration</span>
+            <span class="sr-val" id="contractMoV3">24 mo</span>
+          </div>
+          <input type="range" id="contractMo3" min="12" max="36" step="1" value="24">
+        </div>
+      </div>
+    </div>
+
+    <!-- FINANCING -->
+    <div class="sb-section" style="margin-top:14px">
+      <div class="sb-label">financing</div>
+      <div class="sr">
+        <div class="sr-header">
+          <span class="sr-label">LTV (% of CAPEX debt-financed)</span>
+          <span class="sr-val" id="ltvV">55%</span>
+        </div>
+        <input type="range" id="ltv" min="0" max="90" step="5" value="55">
+        <div class="sr-sub" id="ltvDebtV"></div>
+      </div>
+      <div class="sr">
+        <div class="sr-header">
+          <span class="sr-label">interest rate (% p.a.)</span>
+          <span class="sr-val" id="intRateV">10.0%</span>
+        </div>
+        <input type="range" id="intRate" min="4" max="22" step="0.5" value="10">
+      </div>
+      <div class="sr">
+        <div class="sr-label" style="margin-bottom:5px">loan structure</div>
+        <select id="loanType">
+          <option value="io">interest-only (debt repayment at maturity)</option>
+          <option value="amort">amortizing (equal principal)</option>
+        </select>
+        <div class="sr-sub" id="loanNote" style="margin-top:4px">principal due at maturity</div>
+      </div>
+    </div>
+
+    <!-- COST OF CAPITAL — PROMINENT STANDALONE -->
+    <div class="sb-section" style="margin-top:14px">
+      <div class="sb-label">cost of capital</div>
+      <!-- CoC section — always visible, prominent -->
+      <div class="coc-box" id="cocBox">
+        <div class="coc-box-head">
+          <div>
+            <div class="coc-title">cost of capital / hurdle rate</div>
+            <div class="coc-bigval"><span id="cocV">8.0%</span> p.a.</div>
+          </div>
+          <button class="npv-main-tog" id="npvTogBtn" onclick="toggleNPV()">
+            <span class="npv-tog-dot" id="npvTogDot"></span>
+            <span id="npv-tog-txt">NPV off</span>
+          </button>
+        </div>
+        <input type="range" id="coc" min="0" max="30" step="0.5" value="8">
+        <div class="coc-preview">
+          <div class="cp-item"><span class="cp-lbl">NPV</span><span class="cp-val" id="cp-npv">—</span></div>
+          <div class="cp-item"><span class="cp-lbl">IRR</span><span class="cp-val" id="cp-irr">—</span></div>
+          <div class="cp-item"><span class="cp-lbl">vs hurdle</span><span class="cp-val" id="cp-vs">—</span></div>
+        </div>
+        <div class="sr-sub" id="npvNote" style="margin-top:6px">toggle ON to discount cashflows at hurdle rate — waterfall and KPIs update</div>
+      </div>
+    </div>
+
+    <!-- SPV / INVESTOR POOL -->
+    <div class="sb-section" style="margin-top:14px">
+      <div class="sb-label">SPV / investor pool</div>
+      <div class="spv-section" id="spvSection">
+        <div class="spv-row">
+          <div>
+            <div style="font-size:11px;font-weight:700;color:var(--text)">Separate entity + investor pool</div>
+            <div class="sr-sub" style="margin-top:1px">pool contributes equity at a preferred coupon; operator gets residual</div>
+          </div>
+          <button class="npv-tog" id="spvTogBtn" onclick="toggleSPV()">off</button>
+        </div>
+        <div id="spvInputs" style="display:none">
+          <div class="sr">
+            <div class="sr-header">
+              <span class="sr-label">pool equity share (% of total equity)</span>
+              <span class="sr-val" id="poolPctV">70%</span>
+            </div>
+            <input type="range" id="poolPct" min="10" max="95" step="5" value="70">
+            <div class="sr-sub" id="poolSplitNote">—</div>
+          </div>
+          <div class="sr">
+            <div class="sr-header">
+              <span class="sr-label">pool preferred coupon (% p.a.)</span>
+              <span class="sr-val" id="poolRateV">12.0%</span>
+            </div>
+            <input type="range" id="poolRate" min="4" max="25" step="0.5" value="12">
+            <div class="sr-sub">cash coupon paid to pool investors monthly; operator gets residual after debt + coupon</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADVANCED ACCORDION -->
+    <details>
+      <summary>advanced settings</summary>
+      <div class="adv-body">
+
+        <div style="margin-bottom:14px">
+          <div class="sr-label" style="margin-bottom:6px;font-weight:700;text-transform:uppercase;letter-spacing:.06em">deployment costs &amp; timeline</div>
+          <div class="sr">
+            <div class="sr-header"><span class="sr-label">shipping &amp; freight ($/node)</span><span class="sr-val" id="shippingV">$800</span></div>
+            <input type="range" id="shipping" min="0" max="5000" step="100" value="800">
+            <div class="sr-sub">international air freight + customs; added to CAPEX</div>
+          </div>
+          <div class="sr">
+            <div class="sr-header"><span class="sr-label">installation &amp; config ($/node)</span><span class="sr-val" id="installV">$400</span></div>
+            <input type="range" id="install" min="0" max="3000" step="100" value="400">
+            <div class="sr-sub">rack, cable, burn-in, driver setup; added to CAPEX</div>
+          </div>
+          <div class="sr">
+            <div class="sr-header"><span class="sr-label">ramp-up delay (months offline)</span><span class="sr-val" id="rampDelayV">1 mo</span></div>
+            <input type="range" id="rampDelay" min="0" max="4" step="1" value="1">
+            <div class="sr-sub">months before first revenue — procurement → shipping → install → acceptance; no revenue during this period</div>
+          </div>
+        </div>
+
+        <div style="margin-bottom:14px">
+          <div class="sr-label" style="margin-bottom:6px;font-weight:700;text-transform:uppercase;letter-spacing:.06em">operational costs (all fixed)</div>
+          <div class="sr">
+            <div class="sr-header"><span class="sr-label">electricity ($/kWh)</span><span class="sr-val" id="kwhV">$0.100</span></div>
+            <input type="range" id="kwh" min="0.05" max="0.25" step="0.005" value="0.10">
+          </div>
+          <div class="sr">
+            <div class="sr-header"><span class="sr-label">PUE</span><span class="sr-val" id="pueV">1.30</span></div>
+            <input type="range" id="pue" min="1.0" max="2.2" step="0.05" value="1.30">
+          </div>
+          <div class="sr">
+            <div class="sr-header"><span class="sr-label">colo / hosting ($/GPU/mo)</span><span class="sr-val" id="hostingV">$120</span></div>
+            <input type="range" id="hosting" min="0" max="600" step="10" value="120">
+          </div>
+          <div class="sr">
+            <div class="sr-header"><span class="sr-label">maintenance (% HW value / yr)</span><span class="sr-val" id="maintV">2.5%</span></div>
+            <input type="range" id="maint" min="0" max="8" step="0.5" value="2.5">
+          </div>
+          <div class="sr">
+            <div class="sr-header"><span class="sr-label">insurance (% HW value / yr)</span><span class="sr-val" id="insuranceV">1.0%</span></div>
+            <input type="range" id="insurance" min="0" max="4" step="0.25" value="1.0">
+          </div>
+        </div>
+
+        <div style="margin-bottom:14px">
+          <div class="sr-label" style="margin-bottom:6px;font-weight:700;text-transform:uppercase;letter-spacing:.06em">networking CAPEX (per fleet)</div>
+          <div class="sr">
+            <div class="sr-header"><span class="sr-label">IB / fabric switch ($/node)</span><span class="sr-val" id="ibSwitchV">$1,500</span></div>
+            <input type="range" id="ibSwitch" min="0" max="8000" step="100" value="1500">
+          </div>
+          <div class="sr">
+            <div class="sr-header"><span class="sr-label">NIC / HCA ($/node)</span><span class="sr-val" id="nicCostV">$800</span></div>
+            <input type="range" id="nicCost" min="0" max="5000" step="100" value="800">
+          </div>
+          <div class="sr">
+            <div class="sr-header"><span class="sr-label">ToR switch ($/rack)</span><span class="sr-val" id="torSwitchV">$3,000</span></div>
+            <input type="range" id="torSwitch" min="0" max="15000" step="500" value="3000">
+          </div>
+          <div class="sr">
+            <div class="sr-header"><span class="sr-label">cables &amp; SFPs ($/node)</span><span class="sr-val" id="cablesV">$400</span></div>
+            <input type="range" id="cables" min="0" max="2000" step="50" value="400">
+          </div>
+          <div class="sr">
+            <div class="sr-header"><span class="sr-label">nodes per rack</span><span class="sr-val" id="nodesPerRackV">4</span></div>
+            <input type="range" id="nodesPerRack" min="1" max="20" step="1" value="4">
+          </div>
+          <div class="sr">
+            <div class="sr-header"><span class="sr-label">net gear maint (% / yr)</span><span class="sr-val" id="netMaintV">3.0%</span></div>
+            <input type="range" id="netMaint" min="0" max="8" step="0.5" value="3.0">
+          </div>
+        </div>
+
+        <div>
+          <div class="sr-label" style="margin-bottom:6px;font-weight:700;text-transform:uppercase;letter-spacing:.06em">depreciation &amp; exit</div>
+          <div class="sr">
+            <div class="sr-header"><span class="sr-label">GPU useful life (years)</span><span class="sr-val" id="usefulLifeV">4.0 yrs</span></div>
+            <input type="range" id="usefulLife" min="2" max="6" step="0.5" value="4">
+          </div>
+          <div class="sr">
+            <div class="sr-header"><span class="sr-label">net gear useful life (years)</span><span class="sr-val" id="netLifeV">5.0 yrs</span></div>
+            <input type="range" id="netLife" min="2" max="8" step="0.5" value="5">
+          </div>
+          <div class="sr">
+            <div class="sr-header"><span class="sr-label">GPU resale at exit (% of cost)</span><span class="sr-val" id="residualV">50%</span></div>
+            <input type="range" id="residual" min="5" max="80" step="5" value="50">
+            <div class="sr-sub">H100 ref: ~50–60% after 2yrs at current prices</div>
+            <div class="sr-sub" style="margin-top:4px;padding:5px 8px;background:var(--inset);border:1px solid var(--border);border-radius:4px;line-height:1.6">
+              <strong style="color:var(--text)">Ornn Compute evaluation:</strong> GPUs depreciate 40–70% over 24 months. This residual floor can be secured via a <strong style="color:var(--accent)">Residual Value Swap (RVS)</strong> with Ornn Compute — locking in a guaranteed exit price reduces lender risk, enabling lower interest rates and higher LTV.
+            </div>
+          </div>
+          <div class="sr">
+            <div class="sr-label" style="margin-bottom:4px">depreciation method</div>
+            <select id="depMethod">
+              <option value="sl">straight-line</option>
+              <option value="ddb">double-declining (DDB)</option>
+            </select>
+            <div class="sr-sub" id="depNote" style="margin-top:3px">affects EBIT only — not cash return</div>
+          </div>
+        </div>
+      </div>
+    </details>
+
+  </div><!-- /sb-body -->
+</div><!-- /sidebar -->
+
+
+<!-- ══════════════════════════════ MAIN ══ -->
+<div class="main">
+
+  <div class="main-tabs">
+    <button class="mtab active" id="mtab-results" onclick="switchMain('results',this)">results</button>
+    <button class="mtab" id="mtab-financing" onclick="switchMain('financing',this)">financing</button>
+    <button class="mtab" id="mtab-sensitivity" onclick="switchMain('sensitivity',this)">sensitivity &amp; break-even</button>
+  </div>
+
+  <!-- ── RESULTS PANE ── -->
+  <div class="mpane active" id="mpane-results">
+
+    <!-- NPV active banner -->
+    <div class="npv-banner" id="npvBanner">
+      <span class="nb-label">NPV mode</span>
+      <div class="nb-sep"></div>
+      <div class="nb-metric"><span class="nb-val" id="nb-npv">—</span><span class="nb-sub" id="nb-npv-lbl">NPV</span></div>
+      <div class="nb-sep"></div>
+      <div class="nb-metric"><span class="nb-val" id="nb-irr">—</span><span class="nb-sub" id="nb-irr-lbl">IRR vs hurdle</span></div>
+      <div class="nb-sep"></div>
+      <div class="nb-metric"><span class="nb-val" id="nb-coc">—</span><span class="nb-sub">cost of capital</span></div>
+    </div>
+
+    <div class="kpi-strip" id="kpiStrip" style="grid-template-columns:repeat(auto-fill,minmax(145px,1fr))">
+      <div class="kpi"><div class="kl">total CAPEX</div><div class="kv" id="k-capex">—</div><div class="ks" id="k-capex-sub">—</div></div>
+      <div class="kpi"><div class="kl">break-even <span style="font-size:8px;font-weight:400">(w/ resale)</span></div><div class="kv" id="k-bePrice">—</div><div class="ks" id="k-bePrice-sub">min $/hr ROI ≥ 0</div></div>
+      <div class="kpi"><div class="kl">break-even <span style="font-size:8px;font-weight:400">(no resale)</span></div><div class="kv" id="k-bePriceNR">—</div><div class="ks" id="k-bePriceNR-sub">min $/hr ops CF ≥ 0</div></div>
+      <div class="kpi"><div class="kl">monthly revenue</div><div class="kv" id="k-rev">—</div><div class="ks" id="k-rev-sub">—</div></div>
+      <div class="kpi"><div class="kl">EBITDA margin</div><div class="kv" id="k-ebitda">—</div><div class="ks" id="k-ebitda-sub">—</div></div>
+      <div class="kpi" id="kpi-roi"><div class="kl" id="k-roi-lbl">equity ROI</div><div class="kv" id="k-roi">—</div><div class="ks" id="k-roi-sub">—</div></div>
+      <div class="kpi kpi-npv" id="kpi-npv" style="border-color:var(--accent)"><div class="kl" id="k-npv-lbl">NPV</div><div class="kv" id="k-npv">—</div><div class="ks" id="k-npv-sub">—</div></div>
+      <div class="kpi kpi-npv" id="kpi-irr" style="border-color:var(--accent)"><div class="kl">IRR</div><div class="kv" id="k-irr">—</div><div class="ks" id="k-irr-sub">—</div></div>
+      <div class="kpi"><div class="kl">payback month</div><div class="kv" id="k-be">—</div><div class="ks">ops CF ≥ equity</div></div>
+      <div class="kpi"><div class="kl">DSCR</div><div class="kv" id="k-dscr">—</div><div class="ks">avg monthly</div></div>
+    </div>
+
+    <div class="dash-section">structure</div>
+
+    <!-- LIFECYCLE TABLE -->
+    <div class="flow-diagram" id="lifecycleDiagram">
+      <div class="flow-diagram-hdr">
+        <span>contract lifecycle — from sourcing to termination</span>
+        <button class="cf-toggle-btn" id="lcTogBtn" onclick="toggleLC()" style="margin:0">▶ show</button>
+      </div>
+      <div id="lcCollapse" style="display:none;padding:10px 14px 12px">loading…</div>
+    </div>
+
+    <!-- FUND FLOW DIAGRAM -->
+    <div class="flow-diagram" id="flowDiagram">
+      <div class="flow-diagram-hdr">
+        <span>fund flow structure — live from assumptions</span>
+        <button class="cf-toggle-btn" id="ffTogBtn" onclick="toggleFF()" style="margin:0">▼ hide</button>
+      </div>
+      <div id="ffCollapse" style="display:block">
+        <div class="flow-diagram-body" id="flowDiagramBody">loading…</div>
+      </div>
+    </div>
+
+    <div class="dash-section">cash flow analysis</div>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0">
+      <div class="ms" style="margin-bottom:0">monthly cashflow waterfall</div>
+      <button class="cf-toggle-btn" id="cfTogBtn" onclick="toggleCfChart()" style="margin-bottom:0">▶ show</button>
+    </div>
+    <div id="cfCollapse" style="display:none">
+    <div class="chart-box" style="margin-top:8px">
+      <div class="chart-title">
+        <span>equity balance from investor perspective — each bar = net contribution that period</span>
+        <span class="ct-detail" id="cfDetail">—</span>
+      </div>
+      <div class="ch ch-md"><canvas id="cfChart" role="img" aria-label="Monthly cashflow waterfall">Loading...</canvas></div>
+      <div class="chart-legend">
+        <span><span class="lsw" style="background:rgba(185,28,28,.85)"></span>equity invested (t=0)</span>
+        <span><span class="lsw" style="background:rgba(22,163,74,.8)"></span>positive month</span>
+        <span><span class="lsw" style="background:rgba(220,38,38,.75)"></span>negative month</span>
+        <span><span class="lsw" style="background:rgba(15,118,110,.8)"></span>exit / resale</span>
+        <span style="color:var(--muted)">bar = change in equity balance that period · zero line = breakeven · dashed line = breakeven month · hover for component detail</span>
+      </div>
+    </div>
+    </div><!-- /cfCollapse -->
+
+    <div class="ms">contract total waterfall — 9-step lifecycle view</div>
+    <div class="chart-box">
+      <div class="chart-title">
+        <span>equity in → revenue → costs → resale → net return</span>
+        <span class="ct-detail" id="wfHeader">—</span>
+      </div>
+      <div class="ch ch-lg"><canvas id="wfChart" role="img" aria-label="Investment waterfall chart">Loading...</canvas></div>
+      <div class="chart-legend" id="wfLegend"></div>
+    </div>
+
+    <div class="dash-section">P&amp;L &amp; LTV analysis</div>
+    <div class="two-col">
+      <div class="data-table"><div class="dt-head">P&amp;L — contract total (fleet)</div><div id="pl"></div></div>
+      <div class="data-table"><div class="dt-head">LTV &amp; offtake coverage</div><div id="ltvp"></div></div>
+    </div>
+
+  </div><!-- /mpane-results -->
+
+  <!-- ── FINANCING PANE ── -->
+  <div class="mpane" id="mpane-financing">
+    <p style="font-size:11px;color:var(--muted);margin-bottom:16px">
+      All four scenarios use the same operating assumptions from the sidebar (GPU card, fleet, demand pricing, OPEX).
+      Only financing terms differ. Best metric per row <span class="pos">green ✓</span>, worst <span class="neg">red</span>.
+    </p>
+    <div id="finInputWrap" style="margin-bottom:12px"></div>
+    <div id="finOutputWrap" style="margin-bottom:16px"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="chart-box">
+        <div class="chart-title">equity ROI &amp; DSCR by scenario</div>
+        <div class="ch ch-sm"><canvas id="finBarChart" role="img" aria-label="Equity ROI and DSCR by scenario">Loading...</canvas></div>
+        <div class="chart-legend" id="finBarLeg"></div>
+      </div>
+      <div class="chart-box">
+        <div class="chart-title">cumulative cashflow by scenario</div>
+        <div class="ch ch-sm"><canvas id="finLineChart" role="img" aria-label="Cumulative cashflow by scenario">Loading...</canvas></div>
+        <div style="margin-top:10px;font-size:10px;color:var(--muted);line-height:1.7;background:var(--inset);border-radius:4px;padding:8px 10px;">
+          <strong style="color:var(--text)">Why does scenario B (ABS amortizing) look low?</strong><br>
+          Amortizing loans require monthly principal repayments during the contract — this cash leaves the operator immediately rather than sitting as equity. IO debt note loans only pay interest monthly and return the bulk at exit (bullet). So amortizing <em>cumulative ops cashflow</em> is always lower than IO, even at the same LTV. The difference is timing: amortizing equity return is spread across the contract; IO is concentrated at exit. Both are valid — check the equity ROI chart for the true comparison.
+        </div>
+      </div>
+    </div>
+  </div><!-- /mpane-financing -->
+
+  <!-- ── SENSITIVITY PANE ── -->
+  <div class="mpane" id="mpane-sensitivity">
+    <p style="font-size:11px;color:var(--muted);margin-bottom:16px">
+      All values use current assumptions from the sidebar. Highlighted cell = current assumption.
+      Break-even figures update live as you move sliders.
+    </p>
+
+    <div class="ms" style="margin-top:0">break-even &amp; minimum viable pricing</div>
+    <div class="be-grid" id="beGrid" style="grid-template-columns:1fr 1fr 1fr 1fr">
+      <div class="be-card"><div class="be-label">min offtake / spot rate</div><div class="be-val" id="be-price">—</div><div class="be-sub" id="be-price-sub">for ROI ≥ 0%</div></div>
+      <div class="be-card"><div class="be-label">min rate for DSCR ≥ 1.25×</div><div class="be-val" id="be-dscr">—</div><div class="be-sub" id="be-dscr-sub">lender coverage threshold</div></div>
+      <div class="be-card"><div class="be-label">min utilization (spot)</div><div class="be-val" id="be-util">—</div><div class="be-sub">% fleet-hours billed</div></div>
+      <div class="be-card"><div class="be-label">max OPEX headroom</div><div class="be-val" id="be-opex">—</div><div class="be-sub" id="be-opex-sub">OPEX can rise by this before ROI = 0</div></div>
+    </div>
+    <div style="background:var(--inset);border:1px solid var(--border);border-radius:6px;padding:10px 14px;margin-bottom:20px;font-size:10px;color:var(--muted);line-height:1.7" id="beNotes">—</div>
+
+    <div class="ms">sensitivity — ROI by offtake price × contract duration</div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:14px;margin-bottom:16px;overflow-x:auto">
+      <div style="font-size:9px;color:var(--muted);margin-bottom:8px">Rows = contracted price ($/GPU/hr) · Columns = contract duration (months) · highlighted = current assumption · % = equity ROI</div>
+      <div id="sens1Wrap"></div>
+    </div>
+
+    <div class="ms">sensitivity — ROI by LTV × interest rate</div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:14px;margin-bottom:16px;overflow-x:auto">
+      <div style="font-size:9px;color:var(--muted);margin-bottom:8px">Rows = LTV (%) · Columns = interest rate (% p.a.) · % = equity ROI</div>
+      <div id="sens2Wrap"></div>
+    </div>
+  </div><!-- /mpane-sensitivity -->
+
+</div><!-- /main -->
+</div><!-- /app -->
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const fmtM=n=>{const a=Math.abs(n);const s=a>=1e6?(a/1e6).toFixed(2)+'M':a>=1e3?(a/1e3).toFixed(0)+'k':a.toFixed(0);return(n<0?'-$':'$')+s;};
+const fmtA=v=>{const a=Math.abs(v);return(v<0?'-':'')+(a>=1e6?'$'+(a/1e6).toFixed(1)+'M':a>=1e3?'$'+(a/1e3).toFixed(0)+'k':'$'+a.toFixed(0));};
+const pct=(n,d=1)=>(n*100).toFixed(d)+'%';
+const cl=n=>n>=0?'pos':'neg';
+
+function toggleTheme(){
+  const t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',t);
+  $('themeBtn').textContent=t==='dark'?'☀':'☾';
+  if(cfChart){cfChart.destroy();cfChart=null;}
+  if(wfChart){wfChart.destroy();wfChart=null;}
+  recalc();
+}
+
+// ── main tab switching ──
+let activeMainTab='results';
+
+// ── demand mode ──
+let demandMode='offtake';
+function setDemandMode(m){
+  demandMode=m;
+  ['offtake','spot','blended'].forEach(x=>{
+    $('modeBtn-'+x).className='dtog-btn'+(x===m?' active':'');
+    const p=$('panel-'+x); if(p) p.style.display=x===m?'':'none';
+  });
+  recalc();
+}
+function getDemandParams(){
+  if(demandMode==='offtake'){
+    return{offtakeRate:+$('offtakeRate').value,offtakePct:1.0,spotRate:0,spotUtil:0,rampMo:0,contractMo:+$('contractMo').value};
+  } else if(demandMode==='spot'){
+    return{offtakeRate:0,offtakePct:0,spotRate:+$('spotRate').value,spotUtil:+$('spotUtil').value/100,rampMo:+$('ramp').value,contractMo:+$('contractMo2').value};
+  } else {
+    return{offtakeRate:+$('offtakeRate2').value,offtakePct:+$('offtakePct').value/100,spotRate:+$('spotRate2').value,spotUtil:+$('spotUtil2').value/100,rampMo:+$('ramp2').value,contractMo:+$('contractMo3').value};
+  }
+}
+
+// ── catalogues ──
+const GPU_CARDS=[
+  // newAfr = inference/mixed workload AFR for factory-new cards
+  // refurbAfr = estimated AFR for refurbished cards (HBM wear, no infant mortality benefit)
+  // refurbDiscount = typical price discount off new (0.35 = 35% cheaper); null = no secondary market
+  {id:'gb300nvl',name:'GB300 NVL72',vram:'576GB HBM3e',price:55000,rate:12.00,power:2700,newAfr:0.05,refurbAfr:null,refurbDiscount:null,ref:'$53k equiv. (rack) · $8–18/hr cloud',cool:'liquid'},
+  {id:'b300sxm', name:'B300 SXM',   vram:'288GB HBM3e',price:65000,rate:7.00, power:1400,newAfr:0.04,refurbAfr:null,refurbDiscount:null,ref:'$55–75k new · $4.50–9.24/hr cloud',cool:'liquid'},
+  {id:'b200sxm', name:'B200 SXM',   vram:'192GB HBM3e',price:70000,rate:6.00, power:1000,newAfr:0.03,refurbAfr:0.07,refurbDiscount:0.25,ref:'$60–80k new · est. early-ramp',cool:'liquid'},
+  {id:'h200sxm', name:'H200 SXM',   vram:'141GB HBM3e',price:45000,rate:3.50, power:700, newAfr:0.04,refurbAfr:0.08,refurbDiscount:0.35,ref:'$40–55k new · $29–36k refurb',cool:'air/liquid'},
+  {id:'h100sxm', name:'H100 SXM5',  vram:'80GB HBM3',  price:32000,rate:2.50, power:700, newAfr:0.04,refurbAfr:0.09,refurbDiscount:0.45,ref:'$30–40k new · $17–22k refurb',cool:'air/liquid'},
+  {id:'h100pcie',name:'H100 PCIe',   vram:'80GB HBM2e', price:25000,rate:1.80, power:350, newAfr:0.03,refurbAfr:0.07,refurbDiscount:0.40,ref:'$25–30k new · $15–18k refurb',cool:'air'},
+  {id:'a100sxm', name:'A100 SXM4',  vram:'80GB HBM2e', price:13000,rate:1.50, power:400, newAfr:0.03,refurbAfr:0.06,refurbDiscount:0.50,ref:'$10–18k new · $5–9k refurb',cool:'air/liquid'},
+  {id:'a100pcie',name:'A100 PCIe',   vram:'80GB HBM2e', price:10000,rate:1.20, power:300, newAfr:0.03,refurbAfr:0.06,refurbDiscount:0.50,ref:'$8–14k new · $4–7k refurb',cool:'air'},
+  {id:'l40s',    name:'L40S',        vram:'48GB GDDR6X',price:8500, rate:0.95, power:350, newAfr:0.02,refurbAfr:0.05,refurbDiscount:0.10,ref:'$7–11k new · ~$7k refurb',cool:'air'},
+  {id:'b6000',   name:'RTX B6000',   vram:'96GB GDDR7', price:9000, rate:0.90, power:300, newAfr:0.02,refurbAfr:0.04,refurbDiscount:0.10,ref:'$7–12k new · limited secondary mkt',cool:'air'},
+];
+let gpuCondition = 'new'; // 'new' or 'refurb'
+const NODE_CFGS=[
+  {id:'hgx8',name:'HGX 8×',gpn:8},{id:'dgx4',name:'DGX 4×',gpn:4},
+  {id:'pcie4',name:'PCIe 4×',gpn:4},{id:'pcie2',name:'PCIe 2×',gpn:2},{id:'single',name:'1×',gpn:1},
+];
+const CHASSIS=[
+  {id:'bare',name:'Bare cards',cost:0},{id:'oem',name:'OEM server',cost:20000},
+  {id:'hgx',name:'HGX board',cost:40000},{id:'dgx',name:'DGX turnkey',cost:120000},
+];
+let selGPU=GPU_CARDS.find(g=>g.id==='h100sxm')||GPU_CARDS[4],selChassis=CHASSIS[1],selNCfg=NODE_CFGS[0];
+
+function getGPUPrice(g){ return gpuCondition==='refurb' && g.refurbDiscount!==null ? Math.round(g.price*(1-g.refurbDiscount)) : g.price; }
+function getGPUAfr(g){ return gpuCondition==='refurb' && g.refurbAfr!==null ? g.refurbAfr : g.newAfr; }
+function hasRefurb(g){ return g.refurbDiscount !== null && g.refurbAfr !== null; }
+
+function setGPUCondition(cond){
+  gpuCondition = cond;
+  $('condNewBtn').className    = 'npv-tog' + (cond==='new'    ? ' on':'');
+  $('condRefurbBtn').className = 'npv-tog' + (cond==='refurb' ? ' on':'');
+  const noRefurb = !hasRefurb(selGPU);
+  if(cond==='refurb'){
+    $('condNote').innerHTML = noRefurb
+      ? '<strong style="color:var(--neg)">⚠ No refurbished market</strong> for '+selGPU.name+' yet — using new pricing and AFR. Select a card with an established secondary market (H100, A100) for refurb modelling.'
+      : '<strong style="color:var(--wrn)">Refurbished</strong> pricing: ~'+(selGPU.refurbDiscount*100).toFixed(0)+'% off new. <span id="condAfrNote">Higher AFR due to HBM wear from prior training cycles. No OEM warranty — reseller warranty 1–3yr typical.</span>';
+  } else {
+    $('condNote').innerHTML = 'Prices are <strong style="color:var(--text)">new / near-new</strong> reference points. <span id="condAfrNote">New-card AFRs: 2–5% p.a. (inference/mixed workload). Sources: Meta Llama 3, Cui et al. SC\'25.</span>';
+  }
+  // Re-apply selected GPU with new condition pricing
+  const price = getGPUPrice(selGPU);
+  const afr   = getGPUAfr(selGPU);
+  $('unitPrice').value=price; $('unitPriceV').textContent='$'+price.toLocaleString();
+  $('unitPriceNote').textContent=selGPU.name+' ('+cond+') — '+selGPU.ref;
+  if($('afr')){$('afr').value=(afr*100).toFixed(1);$('afrV').textContent=(afr*100).toFixed(1)+'%';
+    $('afrNote').textContent=selGPU.name+' '+cond+' AFR: '+(afr*100).toFixed(1)+'% p.a.';}
+  buildGPUPicker(); recalc();
+}
+
+function buildGPUPicker(){
+  const p=$('gpuPicker');p.innerHTML='';
+  GPU_CARDS.forEach(g=>{
+    const price = getGPUPrice(g);
+    const afr   = getGPUAfr(g);
+    const d=document.createElement('div');
+    d.className='gp'+(g.id===selGPU.id?' sel':'');
+    const refurbBadge = gpuCondition==='refurb' && !hasRefurb(g) ? ' <span style="color:var(--neg);font-size:7px">⚠ new only</span>' : '';
+    const coolBadge = g.cool==='liquid' ? ' · <span style="color:var(--accent)">💧</span>' : '';
+    d.innerHTML=`<div class="gn">${g.name}</div><div class="gv">${g.vram}${coolBadge}${refurbBadge}</div><div class="gp2">$${price.toLocaleString()}</div><div class="gr">$${g.rate.toFixed(2)}/hr · AFR ${(afr*100).toFixed(0)}%</div>`;
+    d.onclick=()=>{
+      selGPU=g;
+      const cp = getGPUPrice(g);
+      const ca = getGPUAfr(g);
+      $('unitPrice').value=cp;$('unitPriceV').textContent='$'+cp.toLocaleString();
+      $('unitPriceNote').textContent=g.name+' ('+gpuCondition+') — '+g.ref;
+      $('powerW').value=g.power;
+      if($('afr')){$('afr').value=(ca*100).toFixed(1);$('afrV').textContent=(ca*100).toFixed(1)+'%';$('afrNote').textContent=g.name+' '+gpuCondition+' AFR: '+(ca*100).toFixed(1)+'% p.a.';}
+      const r=g.rate,o=(g.rate*0.82).toFixed(2);
+      ['offtakeRate','offtakeRate2'].forEach(id=>{if($(id)){$(id).value=o;$(id+'V').textContent='$'+o;}});
+      ['spotRate','spotRate2'].forEach(id=>{if($(id)){$(id).value=r;$(id+'V').textContent='$'+r.toFixed(2);}});
+      buildGPUPicker();recalc();
+    };
+    p.appendChild(d);
+  });
+}
+function buildNCfgPicker(){
+  const p=$('ncfgPicker');p.innerHTML='';
+  NODE_CFGS.forEach(n=>{
+    const d=document.createElement('div');
+    d.className='pill'+(n.id===selNCfg.id?' sel':'');
+    d.textContent=n.name;
+    d.onclick=()=>{selNCfg=n;$('gpuPerNode').value=n.gpn;buildNCfgPicker();recalc();};
+    p.appendChild(d);
+  });
+}
+function buildChassisPicker(){
+  const p=$('chassisPicker');p.innerHTML='';
+  CHASSIS.forEach(c=>{
+    const d=document.createElement('div');
+    d.className='pill'+(c.id===selChassis.id?' sel-chassis':'');
+    d.textContent=c.name+(c.cost>0?' +$'+(c.cost/1000).toFixed(0)+'k':'');
+    d.onclick=()=>{selChassis=c;$('chassisCost').value=c.cost;buildChassisPicker();recalc();};
+    p.appendChild(d);
+  });
+}
+
+// ── slider wiring ──
+const SLIDERS=[
+  ['unitPrice',v=>'$'+Number(v).toLocaleString()],
+  ['offtakeRate',v=>'$'+Number(v).toFixed(2)],['offtakeRate2',v=>'$'+Number(v).toFixed(2)],
+  ['offtakePct',v=>v+'%'],
+  ['spotRate',v=>'$'+Number(v).toFixed(2)],['spotRate2',v=>'$'+Number(v).toFixed(2)],
+  ['spotUtil',v=>v+'%'],['spotUtil2',v=>v+'%'],
+  ['ramp',v=>v+' mo'],['ramp2',v=>v+' mo'],
+  ['contractMo',v=>v+' mo'],['contractMo2',v=>v+' mo'],['contractMo3',v=>v+' mo'],
+  ['ltv',v=>v+'%'],['intRate',v=>Number(v).toFixed(1)+'%'],
+  ['kwh',v=>'$'+Number(v).toFixed(3)],['pue',v=>Number(v).toFixed(2)],
+  ['hosting',v=>'$'+v],['maint',v=>v+'%'],['insurance',v=>Number(v).toFixed(2)+'%'],
+  ['netMaint',v=>v+'%'],['ibSwitch',v=>'$'+Number(v).toLocaleString()],
+  ['nicCost',v=>'$'+Number(v).toLocaleString()],['torSwitch',v=>'$'+Number(v).toLocaleString()],
+  ['cables',v=>'$'+Number(v).toLocaleString()],['nodesPerRack',v=>v],
+  ['usefulLife',v=>Number(v).toFixed(1)+' yrs'],['netLife',v=>Number(v).toFixed(1)+' yrs'],
+  ['residual',v=>v+'%'],
+  ['coc',v=>Number(v).toFixed(1)+'%'],
+  ['afr',v=>Number(v).toFixed(1)+'%'],
+  ['shipping',v=>'$'+Number(v).toLocaleString()],
+  ['install',v=>'$'+Number(v).toLocaleString()],
+  ['rampDelay',v=>v+' mo'],
+];
+SLIDERS.forEach(([id,fn])=>{const e=$(id),o=$(id+'V');if(e&&o)e.addEventListener('input',()=>{o.textContent=fn(e.value);recalc();});});
+['depMethod','loanType'].forEach(id=>{const e=$(id);if(e)e.addEventListener('change',recalc);});
+$('numNodes').addEventListener('input',()=>recalc());
+
+// ── capex calcs ──
+function calcNetCapex(nodes){
+  const racks=Math.ceil(nodes/(+$('nodesPerRack').value||4));
+  return +$('ibSwitch').value*nodes + +$('nicCost').value*nodes + +$('torSwitch').value*racks + +$('cables').value*nodes;
+}
+
+// ── baseParams ──
+function baseParams(){
+  const n=+$('numNodes').value,g=+$('gpuPerNode').value||8;
+  const dp=getDemandParams();
+  return{
+    unitPrice:+$('unitPrice').value,numGPU:n*g,numNodes:n,
+    contractMo:dp.contractMo,
+    offtakeRate:dp.offtakeRate,offtakePct:dp.offtakePct,
+    spotRate:dp.spotRate,spotUtil:dp.spotUtil,rampMo:dp.rampMo,
+    powerW:+$('powerW').value||700,kwhCost:+$('kwh').value,pue:+$('pue').value,
+    hosting:+$('hosting').value,maintPct:+$('maint').value/100,
+    insurancePct:+$('insurance').value/100,
+    usefulLife:+$('usefulLife').value,netLife:+$('netLife').value,
+    residualPct:+$('residual').value/100,
+    ltvPct:+$('ltv').value/100,intRate:+$('intRate').value/100,
+    depMethod:$('depMethod').value,loanType:$('loanType').value,
+    netCapex:calcNetCapex(n),chassisCapex:+$('chassisCost').value*n,
+    netMaintPct:+$('netMaint').value/100,
+    coc:+($('coc')?.value||8)/100,
+    afr:+($('afr')?.value||4)/100,
+    shippingPerNode:+($('shipping')?.value||800),
+    installPerNode:+($('install')?.value||400),
+    rampDelay:+($('rampDelay')?.value||1),
+    spvEnabled,
+    poolPct: spvEnabled ? +(($('poolPct')?.value)||70)/100 : 0,
+    poolRate: spvEnabled ? +(($('poolRate')?.value)||12)/100 : 0,
+  };
+}
+
+// ── simulate ──
+function simulate(p){
+  const{unitPrice,numGPU,contractMo,offtakeRate,offtakePct,spotRate,spotUtil,rampMo,
+    powerW,kwhCost,pue,hosting,maintPct,insurancePct,usefulLife,netLife,
+    residualPct,ltvPct,intRate,depMethod,loanType,netCapex,chassisCapex,netMaintPct}=p;
+  const afr = p.afr || 0;
+  const shippingCapex = (p.shippingPerNode||0) * (p.numNodes||p.numGPU/8);
+  const installCapex  = (p.installPerNode||0)  * (p.numNodes||p.numGPU/8);
+  const rampDelay = p.rampDelay || 0;
+  const gpuCapex=unitPrice*numGPU,totalCapex=gpuCapex+netCapex+chassisCapex+shippingCapex+installCapex;
+  const loanAmt=totalCapex*ltvPct,equity=totalCapex-loanAmt,moR=intRate/12;
+  const princMo=loanType==='amort'?loanAmt/contractMo:0;
+  const bullet=loanType==='io'?loanAmt:0;
+
+  // AFR-adjusted resale: surviving cards get full residual, failed cards get 5% scrap
+  const contractYrs = contractMo / 12;
+  const survivingFrac = Math.pow(1 - afr, contractYrs);
+  const survivingGPUs = numGPU * survivingFrac;
+  const failedGPUs    = numGPU - survivingGPUs;
+  const gpuResale = survivingGPUs * unitPrice * residualPct + failedGPUs * unitPrice * 0.05;
+  const resale    = gpuResale + netCapex * 0.10 + chassisCapex * 0.15;
+  const netResaleNet = resale - bullet;
+
+  let labels=[],rev=[],opx=[],dbt=[],cum=[],intArr=[],princArr=[];
+  let tRev=0,tOpex=0,tDep=0,tInt=0,tPrinc=0,tRevOft=0,tRevSpot=0;
+  for(let m=0;m<contractMo;m++){
+    const online = m >= rampDelay;                              // no revenue during install delay
+    const ofRev=online?numGPU*offtakePct*offtakeRate*24*30:0;
+    const spEff=rampMo>0?Math.min(1,(m-rampDelay+1)/rampMo)*spotUtil:spotUtil;
+    const spRev=online?numGPU*(1-offtakePct)*Math.max(0,spEff)*spotRate*24*30:0;
+    const nRev=ofRev+spRev;
+    const power=(powerW/1000)*24*30*pue*kwhCost*numGPU;
+    const opex=power+hosting*numGPU+(gpuCapex*maintPct)/12+(gpuCapex*insurancePct)/12+(netCapex*netMaintPct)/12;
+    const gpuDep=depMethod==='sl'?gpuCapex/(usefulLife*12):gpuCapex*Math.pow(1-2/(usefulLife*12),m)*(2/(usefulLife*12));
+    const dep=gpuDep+netCapex/(netLife*12)+chassisCapex/(usefulLife*12);
+    const lb=loanType==='amort'?loanAmt-princMo*m:loanAmt;
+    const iP=lb*moR,ds=iP+princMo;
+    tRev+=nRev;tRevOft+=ofRev;tRevSpot+=spRev;tOpex+=opex;tDep+=dep;tInt+=iP;tPrinc+=princMo;
+    labels.push('M'+(m+1));
+    rev.push(+nRev.toFixed(0));
+    opx.push(+(-opex).toFixed(0));
+    dbt.push(+(-ds).toFixed(0));
+    intArr.push(+(-iP).toFixed(0));       // negative: monthly interest outflow
+    princArr.push(+(-princMo).toFixed(0)); // negative: monthly principal (0 for IO)
+    cum.push(+(( cum.length>0?cum[cum.length-1]:0)+nRev-opex-ds).toFixed(0));
+  }
+  const tDebt=tInt+tPrinc,totNet=cum[cum.length-1];
+  const ebitda=tRev-tOpex,ebit=ebitda-tDep;
+  const totReturn=totNet+netResaleNet;
+  const roi=equity>0?(totReturn-equity)/equity:0;
+  const dscr=tDebt/contractMo>0?(tRev-tOpex)/contractMo/(tDebt/contractMo):999;
+  const be=cum.findIndex(v=>v>=equity);
+  const terminalShortfall=bullet-resale;
+  const blendedRate=tRev>0&&numGPU>0?tRev/(numGPU*24*30*contractMo):0;
+
+  // ── NPV & IRR ──
+  // Equity cashflow series: t=0 outflow of equity; t=1..contractMo monthly net ops CF; terminal netResaleNet at t=contractMo
+  const coc = p.coc || 0;
+  const moCoC = coc / 12;
+  let npv = -equity;
+  // reconstruct monthly net CFs from cum array, discount each
+  let prevCum = 0;
+  for (let m = 0; m < contractMo; m++) {
+    const cf = cum[m] - prevCum;
+    npv += moCoC > 0 ? cf / Math.pow(1 + moCoC, m + 1) : cf;
+    prevCum = cum[m];
+  }
+  const terminalDiscount = moCoC > 0 ? Math.pow(1 + moCoC, contractMo) : 1;
+  npv += netResaleNet / terminalDiscount;
+  // If coc=0, npv = totReturn - equity (same as nominal return)
+
+  // IRR via bisection (find annual rate where NPV = 0)
+  let irr = null;
+  const npvFn = annR => {
+    const r = annR / 12;
+    let v = -equity;
+    let pc = 0;
+    for (let m = 0; m < contractMo; m++) {
+      const cf = cum[m] - pc;
+      v += r > -1 ? cf / Math.pow(1 + r, m + 1) : cf;
+      pc = cum[m];
+    }
+    v += netResaleNet / (r > -1 ? Math.pow(1 + r, contractMo) : 1);
+    return v;
+  };
+  if (npvFn(-0.99) * npvFn(10) < 0) {
+    let lo = -0.99, hi = 10;
+    for (let i = 0; i < 80; i++) {
+      const mid = (lo + hi) / 2;
+      if (npvFn(mid) > 0) lo = mid; else hi = mid;
+    }
+    irr = (lo + hi) / 2;
+  } else if (npvFn(10) > 0) {
+    irr = 10; // IRR > 1000% — effectively infinite
+  }
+
+  // ── SPV / Investor pool — proper distribution waterfall ──
+  const poolEquity     = equity * p.poolPct;
+  const operatorEquity = equity * (1 - p.poolPct);
+  const poolCouponMo   = poolEquity * p.poolRate / 12;
+  // Walk monthly cashflows: pay pool coupon first, operator gets residual each month
+  let poolCouponPaid = 0, poolCouponAccrued = 0, opCumCF = 0, prevCum2 = 0;
+  for (let m = 0; m < contractMo; m++) {
+    const mCF = cum[m] - prevCum2; prevCum2 = cum[m];
+    if (mCF >= poolCouponMo) {
+      poolCouponPaid += poolCouponMo; opCumCF += mCF - poolCouponMo;
+    } else {
+      const partial = Math.max(0, mCF);
+      poolCouponPaid += partial; poolCouponAccrued += poolCouponMo - partial;
+      opCumCF += mCF - partial; // may be negative if OPEX > revenue in a month
+    }
+  }
+  // Terminal settlement: pool principal draws from TOTAL equity cash (totReturn),
+  // not from netResaleNet alone. netResaleNet can be negative for IO loans (bullet > resale)
+  // but the project may still have sufficient total cash to return pool principal.
+  // Pool is senior preferred: gets principal + any accrued coupon from remaining cash.
+  const poolOwedAtExit    = poolEquity + poolCouponAccrued;
+  const remainAfterCoupon = totReturn - poolCouponPaid; // total equity cash minus coupon already paid
+  const poolTerminalGets  = Math.max(0, Math.min(remainAfterCoupon, poolOwedAtExit));
+  const poolShortfall     = Math.max(0, poolOwedAtExit - poolTerminalGets);
+  const poolTotalReturn   = poolCouponPaid + poolTerminalGets;
+  const poolROI           = poolEquity > 0 ? (poolTotalReturn - poolEquity) / poolEquity : 0;
+  const operatorReturn    = totReturn - poolTotalReturn;  // residual after all pool claims
+  const operatorROI       = operatorEquity > 0 ? (operatorReturn - operatorEquity) / operatorEquity : 0;
+  const opTerminalGets    = operatorReturn - opCumCF;     // informational: can be negative (escrow model)
+  const totalPoolCoupon   = poolCouponMo * contractMo;
+
+  return{labels,rev,opx,dbt,intArr,princArr,cum,totalCapex,gpuCapex,netCapex,chassisCapex,shippingCapex,installCapex,
+    loanAmt,equity,bullet,resale,netResaleNet,
+    tRev,tRevOft,tRevSpot,tOpex,tDep,tInt,tPrinc,tDebt,totNet,
+    ebitda,ebit,totReturn,roi,dscr,be,numGPU,terminalShortfall,blendedRate,
+    survivingGPUs,failedGPUs,survivingFrac,
+    npv,irr,coc:p.coc,contractMo,rampDelay,
+    poolEquity,operatorEquity,poolCouponMo,totalPoolCoupon,
+    poolCouponPaid,poolCouponAccrued,poolShortfall,poolROI,poolTerminalGets,
+    operatorReturn,operatorROI,opCumCF,opTerminalGets};
+}
+
+function isDark(){return document.documentElement.getAttribute('data-theme')==='dark';}
+
+let useNPV = false;
+function toggleNPV(){
+  useNPV = !useNPV;
+  const btn = $('npvTogBtn');
+  btn.className = 'npv-main-tog' + (useNPV ? ' on' : '');
+  $('npv-tog-txt').textContent = useNPV ? 'NPV on' : 'NPV off';
+  $('cocBox').classList.toggle('npv-on', useNPV);
+  document.querySelectorAll('.kpi-npv').forEach(el => el.classList.toggle('show', useNPV));
+  $('npvNote').textContent = useNPV
+    ? '▶ discounted cashflows active — waterfall and KPIs reflect PV at hurdle rate'
+    : 'toggle ON to discount cashflows at hurdle rate — waterfall and KPIs update';
+  recalc();
+}
+
+let spvEnabled = false;   // off by default — toggle on in sidebar
+function toggleSPV(){
+  spvEnabled = !spvEnabled;
+  const btn = $('spvTogBtn');
+  btn.textContent   = spvEnabled ? 'on' : 'off';
+  btn.className     = 'npv-tog' + (spvEnabled ? ' on' : '');
+  $('spvInputs').style.display = spvEnabled ? '' : 'none';
+  $('spvSection').className    = 'spv-section' + (spvEnabled ? ' active' : '');
+  document.querySelectorAll('.kpi-spv').forEach(el => el.classList.toggle('show', spvEnabled));
+  recalc();
+}
+// Wire SPV sliders
+[['poolPct',v=>v+'%'],['poolRate',v=>Number(v).toFixed(1)+'%']].forEach(([id,fn])=>{
+  const e=$(id),o=$(id+'V'); if(e&&o) e.addEventListener('input',()=>{o.textContent=fn(e.value);recalc();});
+});
+function cc(){
+  return isDark()
+    ?{rev:'#22C55E',opx:'#EF4444',dbt:'#F59E0B',cum:'#3B82F6',grid:'#1e1e1b',tick:'#57534E'}
+    :{rev:'#15803D',opx:'#B91C1C',dbt:'#B45309',cum:'#1D4ED8',grid:'#EDE9E3',tick:'#A09890'};
+}
+
+let cfChart=null,wfChart=null;
+
+function recalc(){
+  const p=baseParams(),r=simulate(p);
+  $('depNote').textContent=p.depMethod==='sl'?'straight-line — uniform monthly charge':'DDB — accelerated, front-loaded';
+  $('loanNote').textContent=p.loanType==='io'?'principal due at maturity':'equal principal each month';
+  $('ltvDebtV').textContent='debt '+fmtM(r.loanAmt)+' · equity '+fmtM(r.equity);
+
+  // node display
+  const n=+$('numNodes').value,g=+$('gpuPerNode').value||8;
+  $('numNodesV').textContent=n+' node'+(n!==1?'s':'');
+  $('numGPUsV').textContent=(n*g).toLocaleString()+' GPUs · '+fmtM(r.totalCapex)+' total CAPEX';
+
+  // KPIs
+  const moRev=r.tRev/p.contractMo;
+  $('k-capex').textContent=fmtM(r.totalCapex);
+  $('k-capex-sub').textContent=`GPU ${fmtM(r.gpuCapex)} · chassis ${fmtM(r.chassisCapex)} · net ${fmtM(r.netCapex)}`;
+  $('k-rev').textContent=fmtM(moRev);
+  $('k-rev-sub').textContent=`${fmtM(r.tRev)} over ${p.contractMo}mo · $${r.blendedRate.toFixed(2)}/GPU/hr blended`;
+  const ebitdaPct=r.tRev>0?(r.ebitda/r.tRev*100).toFixed(0):0;
+  $('k-ebitda').textContent=ebitdaPct+'%';
+  $('k-ebitda').className='kv'+(+ebitdaPct>=50?' k-pos':+ebitdaPct>=30?' k-wrn':' k-neg');
+  $('k-ebitda-sub').textContent=`EBITDA ${fmtM(r.ebitda)} · ${fmtM(r.ebitda/p.contractMo)}/mo`;
+  $('k-roi').textContent=pct(r.roi,1);
+  $('k-roi').className='kv'+(r.roi>=0.15?' k-pos':r.roi>=0?' k-wrn':' k-neg');
+  $('k-roi-sub').textContent=`equity ${fmtM(r.equity)} · return ${fmtM(r.totReturn-r.equity)}`;
+
+  // CoC preview — always visible in sidebar box
+  if($('cp-npv')){
+    const npvCls = r.npv>0?'pos':r.npv<0?'neg':'wrn';
+    $('cp-npv').textContent = fmtM(r.npv);
+    $('cp-npv').className = 'cp-val'+(useNPV?' '+npvCls:'');
+    const irrDisp = r.irr===null?'n/a':r.irr>=10?'>1000%':pct(r.irr,1);
+    $('cp-irr').textContent = irrDisp;
+    $('cp-irr').className = 'cp-val'+(useNPV?(r.irr!==null&&r.irr>r.coc?' pos':r.irr!==null&&r.irr>=0?' wrn':' neg'):'');
+    const vsStr = r.irr!==null ? (r.irr>r.coc?'▲ above':'▼ below') : 'n/a';
+    $('cp-vs').textContent = vsStr;
+    $('cp-vs').className = 'cp-val'+(useNPV?(r.irr!==null&&r.irr>r.coc?' pos':' neg'):'');
+  }
+
+  // NPV / IRR cards
+  $('k-npv-lbl').textContent=`NPV @ ${(r.coc*100).toFixed(1)}% CoC`;
+  $('k-npv').textContent=fmtM(r.npv);
+  $('k-npv').className='kv'+(r.npv>0?' k-pos':r.npv===0?' k-wrn':' k-neg');
+  $('k-npv-sub').textContent=r.npv>0?'value-creative above hurdle':r.npv<0?'destroys value at this CoC':'breaks even exactly';
+  if(r.irr!==null){
+    const irrPct=r.irr>=10?'>1000%':pct(r.irr,1);
+    $('k-irr').textContent=irrPct;
+    $('k-irr').className='kv'+(r.irr>r.coc?' k-pos':r.irr>=0?' k-wrn':' k-neg');
+    $('k-irr-sub').textContent=`vs ${(r.coc*100).toFixed(1)}% CoC · ${r.irr>r.coc?'exceeds':'below'} hurdle`;
+  } else {
+    $('k-irr').textContent='n/a';
+    $('k-irr').className='kv k-neg';
+    $('k-irr-sub').textContent='no positive IRR found';
+  }
+
+  // NPV banner (prominent callout when mode is on)
+  const banner=$('npvBanner');
+  banner.classList.toggle('show', useNPV);
+  if(useNPV){
+    $('nb-npv').textContent=fmtM(r.npv);
+    $('nb-npv').style.color=r.npv>=0?'var(--pos)':'var(--neg)';
+    $('nb-npv-lbl').textContent=`NPV @ ${(r.coc*100).toFixed(1)}% CoC`;
+    const irrStr=r.irr===null?'n/a':r.irr>=10?'>1000%':pct(r.irr,1);
+    $('nb-irr').textContent=irrStr;
+    $('nb-irr').style.color=r.irr!==null&&r.irr>r.coc?'var(--pos)':r.irr!==null&&r.irr>=0?'var(--wrn)':'var(--neg)';
+    $('nb-irr-lbl').textContent=`IRR vs ${(r.coc*100).toFixed(1)}% hurdle`;
+    $('nb-coc').textContent=(r.coc*100).toFixed(1)+'% p.a.';
+  }
+
+  // SPV sidebar split note (poolSplitNote element still exists in sidebar)
+  if(spvEnabled){
+    if($('poolSplitNote')) $('poolSplitNote').textContent=`op. equity: ${fmtM(r.operatorEquity)} · pool: ${fmtM(r.poolEquity)} · coupon: ${fmtM(r.poolCouponMo)}/mo · accrued: ${fmtM(r.poolCouponAccrued)}`;
+  }
+  $('k-be').textContent=r.be>=0?'M'+(r.be+1):'>'+p.contractMo;
+  $('k-be').className='kv'+(r.be>=0&&r.be<p.contractMo?' k-pos':' k-neg');
+  const dscrN=isFinite(r.dscr)?r.dscr:999;
+  $('k-dscr').textContent=dscrN>=9.99?'>9.9x':r.dscr.toFixed(2)+'x';
+  $('k-dscr').className='kv'+(dscrN>=1.25?' k-pos':dscrN>=1?' k-wrn':' k-neg');
+  $('cfDetail').textContent=`${fmtM(moRev)}/mo revenue · ${fmtM(r.tOpex/p.contractMo)}/mo OPEX · ${fmtM(r.tDebt/p.contractMo)}/mo debt service`;
+
+  // Break-even price WITH resale (ROI ≥ 0)
+  const _bePriceKey = demandMode==='spot'?'spotRate':'offtakeRate';
+  const _beCheck = rate=>{ const pp={...p,[_bePriceKey]:rate}; return useNPV?simulate(pp).npv:simulate(pp).roi; };
+  // Break-even price WITHOUT resale (ops CF ≥ equity, i.e. totNet ≥ equity)
+  const _beCheckNR = rate=>{ const pp={...p,[_bePriceKey]:rate}; const rr=simulate(pp); return rr.totNet - rr.equity; };
+  const curContractedRate = demandMode==='spot'?p.spotRate:p.offtakeRate;
+
+  function bisect(fn, lo=0.10, hi=9.00){
+    if(fn(hi)<0) return null;
+    if(fn(lo)>=0) return lo;
+    for(let i=0;i<44;i++){ const m=(lo+hi)/2; if(fn(m)>=0)hi=m;else lo=m; if(hi-lo<0.001)break; }
+    return +hi.toFixed(2);
+  }
+  const bePriceWR = bisect(_beCheck);
+  const bePriceNR = bisect(_beCheckNR);
+
+  if(bePriceWR!==null){
+    $('k-bePrice').textContent='$'+bePriceWR.toFixed(2)+'/hr';
+    $('k-bePrice').className='kv'+(bePriceWR<=curContractedRate?' k-pos':' k-neg');
+    $('k-bePrice-sub').textContent=(useNPV?'NPV≥0 · ':'ROI≥0 · ')+(bePriceWR<=curContractedRate?'✓ $'+(curContractedRate-bePriceWR).toFixed(2)+' headroom':'⚠ rate below BE');
+  } else { $('k-bePrice').textContent='>$9/hr'; $('k-bePrice').className='kv k-neg'; $('k-bePrice-sub').textContent='no solution in range'; }
+
+  if(bePriceNR!==null){
+    $('k-bePriceNR').textContent='$'+bePriceNR.toFixed(2)+'/hr';
+    $('k-bePriceNR').className='kv'+(bePriceNR<=curContractedRate?' k-pos':' k-neg');
+    $('k-bePriceNR-sub').textContent='ops CF only · '+(bePriceNR<=curContractedRate?'✓ $'+(curContractedRate-bePriceNR).toFixed(2)+' headroom':'⚠ rate below BE');
+  } else { $('k-bePriceNR').textContent='>$9/hr'; $('k-bePriceNR').className='kv k-neg'; $('k-bePriceNR-sub').textContent='no solution in range'; }
+
+  _lastR = r; _lastP = p;
+  renderLifecycle(r, p);
+  renderFlowDiagram(r, p);
+
+  // ── P&L — four framework blocks ──
+  const preIncome   = r.ebit - r.tInt;                 // accounting profit after interest
+  const opsCV       = r.totNet;                         // EBITDA − cash financing = ops cashflow
+  const netFromExit = r.netResaleNet;                   // resale − bullet
+  const ebitdaMgn   = r.tRev>0 ? (r.ebitda/r.tRev*100).toFixed(1) : '0';
+  const ebitMgn     = r.tRev>0 ? (r.ebit/r.tRev*100).toFixed(1)   : '0';
+  const irrDisp     = r.irr===null?'n/a':r.irr>=10?'>1000%':pct(r.irr,1);
+  // OPEX component breakdown (derived)
+  const opPower  = (p.powerW/1000)*24*30*p.pue*p.kwhCost*r.numGPU*p.contractMo;
+  const opHost   = p.hosting*r.numGPU*p.contractMo;
+  const opMaintIns = (r.gpuCapex*p.maintPct/12 + r.gpuCapex*p.insurancePct/12 + r.netCapex*p.netMaintPct/12)*p.contractMo;
+
+  $('pl').innerHTML=`
+
+    <!-- ══ BLOCK 1: ACCOUNTING P&L ══ -->
+    <div class="dt-framework">① accounting P&amp;L — accrual basis</div>
+
+    <div class="dt-section">revenue (${p.contractMo} months)</div>
+    ${r.tRevOft>0?`<div class="dt-row"><span class="dl dt-indent">offtake / take-or-pay</span><span class="dv pos">+${fmtM(r.tRevOft)}</span></div>`:''}
+    ${r.tRevSpot>0?`<div class="dt-row"><span class="dl dt-indent">spot market</span><span class="dv pos">+${fmtM(r.tRevSpot)}</span></div>`:''}
+    <div class="dt-row dt-sub"><span class="dl">total revenue</span><span class="dv pos">${fmtM(r.tRev)}</span></div>
+
+    <div class="dt-section">operating costs (all fixed — do not vary with utilisation)</div>
+    <div class="dt-row"><span class="dl dt-indent">power + cooling</span><span class="dv neg">−${fmtM(opPower)}</span></div>
+    <div class="dt-row"><span class="dl dt-indent">hosting / colo</span><span class="dv neg">−${fmtM(opHost)}</span></div>
+    <div class="dt-row"><span class="dl dt-indent">maintenance + insurance</span><span class="dv neg">−${fmtM(opMaintIns)}</span></div>
+    <div class="dt-row dt-sub"><span class="dl">total OPEX</span><span class="dv neg">−${fmtM(r.tOpex)}</span></div>
+    <div class="dt-row dt-total"><span class="dl">EBITDA</span><span class="dv ${cl(r.ebitda)}">${fmtM(r.ebitda)} <span style="font-size:10px;font-weight:400;color:var(--muted)">(${ebitdaMgn}%)</span></span></div>
+
+    <div class="dt-section">non-cash charges</div>
+    <div class="dt-row"><span class="dl dt-indent">depreciation — hardware book value</span><span class="dv wrn">−${fmtM(r.tDep)}</span></div>
+    ${p.afr>0?`<div class="dt-row"><span class="dl dt-indent">AFR resale write-down (${(p.afr*100).toFixed(1)}%/yr · ${r.failedGPUs.toFixed(1)} failed GPUs)</span><span class="dv wrn">−${fmtM(r.failedGPUs*(p.unitPrice*p.residualPct - p.unitPrice*0.05))}</span></div>`:''}
+    <div class="dt-row dt-total"><span class="dl">EBIT</span><span class="dv ${cl(r.ebit)}">${fmtM(r.ebit)} <span style="font-size:10px;font-weight:400;color:var(--muted)">(${ebitMgn}%)</span></span></div>
+
+    <div class="dt-section">interest expense</div>
+    <div class="dt-row"><span class="dl dt-indent">interest paid (${(p.intRate*100).toFixed(1)}% × ${fmtM(r.loanAmt)} × ${p.contractMo}mo)</span><span class="dv neg">−${fmtM(r.tInt)}</span></div>
+    ${r.tPrinc>0?`<div class="dt-row"><span class="dl dt-indent">principal amortized</span><span class="dv neg">−${fmtM(r.tPrinc)}</span></div>`:''}
+    <div class="dt-row dt-total"><span class="dl">pre-tax income</span><span class="dv ${cl(preIncome)}">${fmtM(preIncome)}</span></div>
+
+    <!-- ══ BLOCK 2: CASH FLOW FROM OPERATIONS ══ -->
+    <div class="dt-framework">② operating cash flow — cash basis</div>
+    <div class="dt-bridge">Adds back depreciation (non-cash: ${fmtM(r.tDep)}) — cash ≠ accounting profit.<br>Bullet repayment is a balance sheet item, not an operating cost → shown in Block ③.</div>
+
+    <div class="dt-row dt-sub"><span class="dl">EBITDA (from above)</span><span class="dv ${cl(r.ebitda)}">${fmtM(r.ebitda)}</span></div>
+    <div class="dt-row"><span class="dl dt-indent">less: interest paid</span><span class="dv neg">−${fmtM(r.tInt)}</span></div>
+    ${r.tPrinc>0?`<div class="dt-row"><span class="dl dt-indent">less: amortized principal</span><span class="dv neg">−${fmtM(r.tPrinc)}</span></div>`:''}
+    <div class="dt-row dt-total ${cl(opsCV)}"><span class="dl">operating cash flow</span><span class="dv ${cl(opsCV)}">${fmtM(opsCV)} <span style="font-size:10px;font-weight:400;color:var(--muted)">${opsCV>=0?'positive — ops recoverable without resale':'negative — requires resale to break even'}</span></span></div>
+
+    <!-- ══ BLOCK 3: TERMINAL VALUE ══ -->
+    <div class="dt-framework">③ terminal value — balance sheet / exit</div>
+    <div class="dt-bridge">Bullet repayment = return of principal (balance sheet). Resale = asset liquidation at contract end.</div>
+
+    <div class="dt-row"><span class="dl dt-indent">gross resale proceeds</span><span class="dv pos">+${fmtM(r.resale)}</span></div>
+    ${p.afr>0?`<div class="dt-row" style="font-size:10px;color:var(--muted);padding:3px 14px 3px 24px;background:var(--inset)">${r.survivingGPUs.toFixed(1)} surviving × $${Number(p.unitPrice).toLocaleString()} × ${(p.residualPct*100).toFixed(0)}% + ${r.failedGPUs.toFixed(1)} failed × 5% scrap (AFR ${(p.afr*100).toFixed(1)}%/yr)</div>`:''}
+    ${r.bullet>0?`<div class="dt-row"><span class="dl dt-indent">less: debt repayment (return of ${fmtM(r.loanAmt)} principal)</span><span class="dv neg">−${fmtM(r.bullet)}</span></div>`:''}
+    ${r.terminalShortfall>0?`<div class="dt-row dt-warn"><span class="dl neg">⚠ terminal shortfall — bullet ${fmtM(r.bullet)} exceeds resale ${fmtM(r.resale)}</span><span class="dv neg">−${fmtM(r.terminalShortfall)}</span></div>`:''}
+    <div class="dt-row dt-total"><span class="dl">net from exit</span><span class="dv ${cl(netFromExit)}">${fmtM(netFromExit)}</span></div>
+
+    <!-- ══ BLOCK 4: EQUITY RETURN ══ -->
+    <div class="dt-framework">④ equity return${spvEnabled?' — total · then split by investor':''}${''}</div>
+
+    <div class="dt-row"><span class="dl dt-indent">operating cash flow (Block ②)</span><span class="dv ${cl(opsCV)}">${fmtM(opsCV)}</span></div>
+    <div class="dt-row"><span class="dl dt-indent">net from exit (Block ③)</span><span class="dv ${cl(netFromExit)}">${fmtM(netFromExit)}</span></div>
+    <div class="dt-row dt-sub"><span class="dl">total cash return</span><span class="dv pos">= ${fmtM(r.totReturn)}</span></div>
+    <div class="dt-row"><span class="dl dt-indent">less: equity invested</span><span class="dv">− ${fmtM(r.equity)}</span></div>
+    <div class="dt-row dt-total"><span class="dl">net equity return</span><span class="dv ${cl(r.totReturn-r.equity)}">${fmtM(r.totReturn-r.equity)}</span></div>
+    <div class="dt-row"><span class="dl">ROE (total, not annualised)</span><span class="dv ${cl(r.roi)}">${pct(r.roi,1)}</span></div>
+    <div class="dt-row"><span class="dl">payback month</span><span class="dv ${r.be>=0?'pos':'neg'}">${r.be>=0?'M'+(r.be+1):'>'+p.contractMo+'mo'}</span></div>
+    <div class="dt-row"><span class="dl">DSCR (avg monthly)</span><span class="dv ${dscrN>=1.25?'pos':dscrN>=1?'wrn':'neg'}">${isFinite(r.dscr)?r.dscr.toFixed(2)+'x':'∞'}</span></div>
+
+    ${spvEnabled ? `
+    <div class="dt-section">equity structure — total ${fmtM(r.equity)} split</div>
+    <div class="dt-bridge">Pool = preferred/senior: fixed ${pct(p.poolRate,1)} coupon paid first from monthly ops CF; principal returned from total cash at exit. Operator = residual/junior: keeps the rest. Numbers below must sum to totals above.</div>
+    <div class="dt-row"><span class="dl dt-indent">operator equity in (${((1-p.poolPct)*100).toFixed(0)}%)</span><span class="dv neg">− ${fmtM(r.operatorEquity)}</span></div>
+    <div class="dt-row"><span class="dl dt-indent">pool equity in (${(p.poolPct*100).toFixed(0)}%)</span><span class="dv neg">− ${fmtM(r.poolEquity)}</span></div>
+
+    <div class="dt-section">pool investor — ${pct(p.poolRate,1)} preferred coupon</div>
+    <div class="dt-row"><span class="dl dt-indent">coupon received (monthly, from ops CF)</span><span class="dv pos">+ ${fmtM(r.poolCouponPaid)}</span></div>
+    ${r.poolCouponAccrued>0?`<div class="dt-row dt-warn"><span class="dl wrn dt-indent">⚠ accrued coupon (ops CF insufficient each month)</span><span class="dv wrn">+ ${fmtM(r.poolCouponAccrued)} carried to exit</span></div>`:''}
+    <div class="dt-row"><span class="dl dt-indent">principal + accrued returned at exit</span><span class="dv ${r.poolTerminalGets>0?'pos':'wrn'}">+ ${fmtM(r.poolTerminalGets)}</span></div>
+    ${r.poolShortfall>0?`<div class="dt-row dt-warn"><span class="dl wrn dt-indent">⚠ shortfall — total project cash insufficient to return full principal</span><span class="dv neg">− ${fmtM(r.poolShortfall)} not recovered</span></div>`:''}
+    <div class="dt-row dt-sub"><span class="dl">pool total received</span><span class="dv pos">= ${fmtM(r.poolCouponPaid+r.poolTerminalGets)}</span></div>
+    <div class="dt-row dt-total ${cl(r.poolROI)}"><span class="dl">pool net return · ROI</span><span class="dv ${cl(r.poolROI)}">${fmtM(r.poolCouponPaid+r.poolTerminalGets-r.poolEquity)} · ${pct(r.poolROI,1)}</span></div>
+
+    <div class="dt-section">operator — residual after pool claim</div>
+    <div class="dt-row"><span class="dl dt-indent">total equity cash (Block ② + ③)</span><span class="dv pos">+ ${fmtM(r.totReturn)}</span></div>
+    <div class="dt-row"><span class="dl dt-indent">less: pool total claim (coupon + principal)</span><span class="dv neg">− ${fmtM(r.poolCouponPaid+r.poolTerminalGets)}</span></div>
+    <div class="dt-row dt-sub"><span class="dl">operator total received</span><span class="dv pos">= ${fmtM(r.operatorReturn)}</span></div>
+    <div class="dt-row"><span class="dl dt-indent">less: operator equity in</span><span class="dv">− ${fmtM(r.operatorEquity)}</span></div>
+    <div class="dt-row dt-total ${cl(r.operatorROI)}"><span class="dl">operator net return · ROI</span><span class="dv ${cl(r.operatorROI)}">${fmtM(r.operatorReturn-r.operatorEquity)} · ${pct(r.operatorROI,1)}</span></div>
+
+    <div class="dt-section">reconciliation — all numbers add up</div>
+    <div class="dt-row"><span class="dl dt-indent">pool: coupon + principal</span><span class="dv pos">+${fmtM(r.poolCouponPaid+r.poolTerminalGets)}</span></div>
+    <div class="dt-row"><span class="dl dt-indent">operator: ops CF + terminal</span><span class="dv ${cl(r.operatorReturn)}">+${fmtM(r.operatorReturn)}</span></div>
+    <div class="dt-row dt-sub"><span class="dl">sum = total cash return</span><span class="dv pos">=${fmtM(r.poolCouponPaid+r.poolTerminalGets+r.operatorReturn)} ${Math.abs(r.poolCouponPaid+r.poolTerminalGets+r.operatorReturn-r.totReturn)<0.01?'✓':'⚠'}</span></div>
+    <div class="dt-row" style="font-size:9px;color:var(--muted);padding:3px 14px;background:var(--inset)">Total equity ROI ${pct(r.roi,1)} is unchanged by SPV structure — SPV redistributes who receives the return, not the total amount</div>
+    ` : ''}
+
+    <!-- ══ BLOCK 5: RISK-ADJUSTED ══ -->
+    <div class="dt-framework" style="background:var(--accent-bg);color:var(--accent);border-color:var(--accent-border)">⑤ risk-adjusted returns @ ${(p.coc*100).toFixed(1)}% hurdle rate</div>
+    <div class="dt-row" style="background:var(--accent-bg)"><span class="dl acc">NPV</span><span class="dv ${r.npv>=0?'pos':'neg'}" style="font-size:16px">${fmtM(r.npv)}</span></div>
+    <div class="dt-row" style="background:var(--accent-bg)"><span class="dl acc">IRR</span><span class="dv ${r.irr!==null&&r.irr>p.coc?'pos':r.irr!==null&&r.irr>=0?'wrn':'neg'}" style="font-size:16px">${irrDisp} <span style="font-size:10px;font-weight:400;color:var(--muted)">${r.irr!==null?`(${r.irr>p.coc?'+':''}${pct(r.irr-p.coc,1)} vs hurdle)`:''}</span></span></div>
+    <div class="dt-bridge" style="background:var(--accent-bg);border-top:none">IRR (${irrDisp}) vs annualised ROE (${pct(Math.pow(1+r.roi,12/p.contractMo)-1,1)}/yr): IRR is higher because positive monthly CFs return capital throughout the contract — effective capital at risk shrinks each month. Annualised ROE = (1+ROE)^(12/months)−1. IRR rewards early return of capital; ROE measures total regardless of timing.</div>` ;
+
+  // LTV
+  const lN=p.ltvPct*100,rCov=r.loanAmt>0?r.tRev/r.loanAmt:999;
+  const oCov=r.loanAmt>0?r.tRevOft/r.loanAmt:999;
+  const lOnR=r.resale>0?(r.loanAmt/r.resale*100):0;
+  const ltvVsRes=lN-p.residualPct*100;
+  const lbarCol=lN<=55?'var(--pos)':lN<=65?'var(--wrn)':'var(--neg)';
+  $('ltvp').innerHTML=`
+    <div class="dt-row"><span class="dl">LTV</span><span class="dv" style="color:${lbarCol}">${lN.toFixed(0)}%</span></div>
+    <div style="padding:4px 14px 8px"><div class="lbar-wrap"><div class="lbar-fill" style="width:${Math.min(lN,100)}%;background:${lbarCol}"></div></div>
+      <span style="font-size:9px;color:var(--muted)">${lN<=55?'conservative — IO debt note viable if residual ≥ LTV':lN<=65?'moderate — revenue assignment recommended':'aggressive — requires take-or-pay ABS'}</span></div>
+    <div class="dt-row"><span class="dl">loan amount</span><span class="dv">${fmtM(r.loanAmt)}</span></div>
+    <div class="dt-row"><span class="dl">equity down</span><span class="dv">${fmtM(r.equity)}</span></div>
+    <div class="dt-row"><span class="dl">total rev / loan</span><span class="dv ${rCov>=1.5?'pos':rCov>=1?'wrn':'neg'}">${rCov.toFixed(2)}x</span></div>
+    <div class="dt-row"><span class="dl">DSCR (avg monthly)</span><span class="dv ${dscrN>=1.25?'pos':dscrN>=1?'wrn':'neg'}">${isFinite(r.dscr)?r.dscr.toFixed(2)+'x':'∞'}</span></div>
+    <div class="dt-row"><span class="dl">offtake-only rev / loan</span><span class="dv ${cl(oCov-1)}">${oCov.toFixed(2)}x</span></div>
+    <div class="dt-row"><span class="dl">resale value</span><span class="dv">${fmtM(r.resale)}</span></div>
+    <div class="dt-row"><span class="dl">LTV on resale collateral</span><span class="dv ${lOnR<=100?'pos':'neg'}">${lOnR.toFixed(1)}%</span></div>
+    ${ltvVsRes>0
+      ?`<div class="dt-row dt-warn"><span class="dl neg">⚠ LTV ${lN.toFixed(0)}% > residual ${(p.residualPct*100).toFixed(0)}% — IO debt note shortfall ${fmtM(r.terminalShortfall)}</span></div>`
+      :`<div class="dt-row dt-ok"><span class="dl pos">✓ residual covers LTV — IO debt note structurally sound</span></div>`}
+    <div class="dt-row dt-total"><span class="dl">offtake-only worst-case CF</span><span class="dv ${cl(r.tRevOft-r.tOpex-r.tDebt)}">${fmtM(r.tRevOft-r.tOpex-r.tDebt)}</span></div>
+    <div class="dt-row"><span class="dl">payback month</span><span class="dv ${r.be>=0?'pos':'neg'}">${r.be>=0?'M'+(r.be+1):'>'+p.contractMo}</span></div>`;
+
+  // ── MONTHLY CASHFLOW WATERFALL — floating bars showing running equity balance ──
+  const nMo = p.contractMo;
+  const dk = isDark();
+  const cf_c = cc();
+
+  // Build waterfall data: each bar = [runBefore, runAfter] from equity investor perspective
+  const wfCFLabels = ['Invest.'];
+  const wfCFData   = [];
+  const wfCFColors = [];
+  const wfCFTooltips = [];
+
+  // Color palette
+  const Cw = {
+    invest: dk?'rgba(239,68,68,.85)':'rgba(185,28,28,.85)',   // equity in — red (cost)
+    up:     dk?'rgba(134,239,172,.85)':'rgba(22,163,74,.80)',  // positive month — green
+    down:   dk?'rgba(248,113,113,.80)':'rgba(220,38,38,.75)',  // negative month — red
+    exit:   dk?'rgba(45,212,191,.85)':'rgba(15,118,110,.80)',  // exit + resale — teal
+    exitNeg:dk?'rgba(239,68,68,.75)':'rgba(185,28,28,.70)',    // exit negative
+    zero:   dk?'rgba(107,114,128,.4)':'rgba(107,114,128,.3)',  // at zero
+  };
+
+  let running = 0;
+
+  // Bar 0: equity invested — goes from 0 to -equity
+  wfCFData.push([0, -r.equity]);
+  wfCFColors.push(Cw.invest);
+  wfCFTooltips.push(`Equity in: −${fmtM(r.equity)} | Debt financed: +${fmtM(r.loanAmt)} | CAPEX: ${fmtM(r.totalCapex)}`);
+  running = -r.equity;
+
+  // Monthly bars
+  for(let m = 0; m < nMo; m++){
+    const netCF = r.rev[m] + r.opx[m] + r.intArr[m] + r.princArr[m];
+    const prev = running;
+    running += netCF;
+    wfCFLabels.push(r.labels[m]);
+    wfCFData.push([prev, running]);
+    wfCFColors.push(netCF > 0 ? Cw.up : netCF < 0 ? Cw.down : Cw.zero);
+    wfCFTooltips.push(
+      `Net CF: ${netCF>=0?'+':''}${fmtA(netCF)} | Rev: +${fmtA(r.rev[m])} | OPEX: ${fmtA(r.opx[m])} | Int: ${fmtA(r.intArr[m])} | Princ: ${fmtA(r.princArr[m])} | Balance: ${fmtA(running)}`
+    );
+  }
+
+  // Exit bar: resale - bullet
+  wfCFLabels.push('Exit');
+  const prev = running;
+  running += r.netResaleNet;
+  wfCFData.push([prev, running]);
+  wfCFColors.push(r.netResaleNet >= 0 ? Cw.exit : Cw.exitNeg);
+  wfCFTooltips.push(`Resale: +${fmtM(r.resale)}${r.bullet>0?' | Bullet: −'+fmtM(r.bullet):''} | Net: ${fmtM(r.netResaleNet)} | Final equity return: ${fmtA(running)}`);
+
+  const beIdx = r.be >= 0 ? r.be + 1 : -1; // +1 offset for the "Invest." bar
+
+  if(cfChart) cfChart.destroy();
+  cfChart = new Chart($('cfChart'), {
+    type:'bar',
+    data:{
+      labels: wfCFLabels,
+      datasets:[{
+        label:'equity balance',
+        data: wfCFData,
+        backgroundColor: wfCFColors,
+        borderColor: wfCFColors.map(c => c.replace(/[\d.]+\)$/,'1)')),
+        borderWidth: 1,
+        borderSkipped: false,
+      }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{
+          label: ctx => wfCFTooltips[ctx.dataIndex],
+          title: ctx => wfCFLabels[ctx[0].dataIndex]
+        }}
+      },
+      scales:{
+        x:{ticks:{color:cf_c.tick,font:{size:9},autoSkip:true,maxTicksLimit:16},grid:{color:cf_c.grid}},
+        y:{ticks:{color:cf_c.tick,font:{size:9},callback:fmtA},grid:{color:cf_c.grid},
+           title:{display:true,text:'equity balance ($)',color:cf_c.tick,font:{size:9}}}
+      }
+    },
+    plugins:[{
+      id:'wfCFExtras',
+      afterDatasetsDraw(chart){
+        const{ctx,scales:{x,y}}=chart;
+        ctx.save();
+
+        // ── zero line (breakeven reference) ──
+        const y0 = y.getPixelForValue(0);
+        ctx.strokeStyle = dk?'rgba(255,255,255,.25)':'rgba(0,0,0,.2)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([]);
+        ctx.beginPath(); ctx.moveTo(x.left, y0); ctx.lineTo(x.right, y0); ctx.stroke();
+
+        // ── breakeven marker ──
+        if(beIdx >= 0){
+          const xBE = x.getPixelForValue(beIdx);
+          ctx.strokeStyle = dk?'rgba(134,239,172,.6)':'rgba(22,163,74,.5)';
+          ctx.lineWidth = 1.5;
+          ctx.setLineDash([5,3]);
+          ctx.beginPath(); ctx.moveTo(xBE, y.top); ctx.lineTo(xBE, y.bottom); ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.font = `700 9px monospace`;
+          ctx.fillStyle = dk?'rgba(134,239,172,.9)':'rgba(22,163,74,.9)';
+          ctx.textAlign = 'center';
+          ctx.fillText('breakeven', xBE, y.top + 10);
+        }
+
+        // ── bar value labels ──
+        chart.data.datasets[0].data.forEach(([s,e],i)=>{
+          const v = e - s;
+          if(Math.abs(v) < r.totalCapex * 0.015) return; // skip tiny bars
+          const xp = x.getPixelForValue(i);
+          const above = v >= 0;
+          const yEdge = y.getPixelForValue(above ? e : s);
+          ctx.font = `700 9px monospace`;
+          ctx.fillStyle = dk?'rgba(255,255,255,.80)':'rgba(0,0,0,.70)';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = above ? 'bottom' : 'top';
+          ctx.fillText((v>=0?'+':'')+fmtA(v), xp, yEdge + (above?-2:2));
+        });
+
+        ctx.restore();
+      }
+    }]
+  });
+  $('cfDetail').textContent = `equity ${fmtA(r.equity)} · debt ${fmtA(r.loanAmt)} · revenue ${fmtA(r.tRev)} · OPEX ${fmtA(r.tOpex)} · interest ${fmtA(r.tInt)} · resale ${fmtA(r.resale)}${r.failedGPUs>0?' · '+r.failedGPUs.toFixed(1)+' failed GPUs (AFR)':''}`;
+
+  // ── CONTRACT TOTAL WATERFALL ──
+  if(wfChart) wfChart.destroy();
+
+  // PV-discount: amortizing principal at mid-contract, bullet and resale at end
+  const moCoCr = r.coc / 12;
+  let wfRevV, wfOpexV, wfIntV, wfPrincV, wfBulletV, wfResaleV;
+  if(useNPV && r.coc > 0){
+    const midDf = Math.pow(1 + moCoCr, p.contractMo / 2);
+    const endDf = Math.pow(1 + moCoCr, p.contractMo);
+    wfRevV   = r.tRev    / midDf;
+    wfOpexV  = r.tOpex   / midDf;
+    wfIntV   = r.tInt    / midDf;
+    wfPrincV = r.tPrinc  / midDf;  // amortizing principal — during contract
+    wfBulletV= r.bullet  / endDf;  // bullet — terminal balance sheet item
+    wfResaleV= r.resale  / endDf;
+  } else {
+    wfRevV   = r.tRev;
+    wfOpexV  = r.tOpex;
+    wfIntV   = r.tInt;
+    wfPrincV = r.tPrinc;  // amortizing only (0 for IO during contract)
+    wfBulletV= r.bullet;  // IO debt repayment at maturity
+    wfResaleV= r.resale;
+  }
+
+  // Sequential steps — ORDER MATTERS for consistency with Block ② operating CF
+  let lvl = 0;
+  const wfSteps = [];
+  const ws = (label, delta, cat) => {
+    const lo = Math.min(lvl, lvl + delta);
+    const hi = Math.max(lvl, lvl + delta);
+    wfSteps.push({label, lo, hi, delta, cat});
+    lvl += delta;
+  };
+  // ── Capital structure (cancels to zero) ──
+  ws('Equity\nin',              +r.equity,       'equity');
+  ws('Debt\ninflow',            +r.loanAmt,      'debt');
+  ws('CAPEX\n(out)',            -r.totalCapex,   'capex');  // → back to 0
+  // ── Operating P&L ──
+  ws('Revenue',                 +wfRevV,         'income');
+  ws('OPEX',                    -wfOpexV,        'cost');
+  ws('Interest',                -wfIntV,         'cost');
+  if(wfPrincV > 0) ws('Principal\n(amort.)',     -wfPrincV, 'princ');
+  // ── Ops P&L result bar ──
+  const opsPlLevel = lvl;
+  wfSteps.push({label:'Ops\nCF', lo:Math.min(0,opsPlLevel), hi:Math.max(0,opsPlLevel), delta:opsPlLevel, cat:'opspl'});
+  // ── Terminal: debt repayment + equity deduction BEFORE resale ──
+  if(wfBulletV > 0) ws('Debt\nrepaymt',          -wfBulletV, 'bullet');  // IO only
+  ws('Less:\nequity',           -r.equity,       'equity_deduct');
+  // ── Then resale proceeds ──
+  ws('Resale\nproceeds',        +wfResaleV,      'resale');
+  // ── Net equity return ──
+  const wfNetEquity = lvl;
+  wfSteps.push({label:'Net equity\nreturn', lo:Math.min(0,wfNetEquity), hi:Math.max(0,wfNetEquity), delta:wfNetEquity, cat:'result'});
+
+  const pctCap = v => r.totalCapex > 0 ? (Math.abs(v)/r.totalCapex*100).toFixed(1)+'%' : '—';
+  const wfColorMap = {
+    equity:       'rgba(34,197,94,.8)',
+    equity_deduct:dk?'rgba(107,114,128,.55)':'rgba(107,114,128,.50)',
+    debt:         dk?'rgba(59,130,246,.8)':'rgba(29,78,216,.8)',
+    capex:        dk?'rgba(239,68,68,.9)' :'rgba(185,28,28,.9)',
+    income:       dk?'rgba(134,239,172,.85)':'rgba(22,163,74,.8)',
+    cost:         dk?'rgba(248,113,113,.8)':'rgba(220,38,38,.75)',
+    princ:        dk?'rgba(251,146,60,.8)' :'rgba(234,88,12,.75)',
+    bullet:       dk?'rgba(239,68,68,.85)' :'rgba(185,28,28,.85)',  // terminal BS repayment
+    resale:       dk?'rgba(45,212,191,.85)':'rgba(15,118,110,.8)',
+    opspl:        opsPlLevel>=0?(dk?'rgba(59,130,246,.7)':'rgba(29,78,216,.7)'):(dk?'rgba(239,68,68,.7)':'rgba(185,28,28,.7)'),
+    result:       wfNetEquity>=0?(dk?'rgba(34,197,94,.9)':'rgba(21,128,61,.9)'):(dk?'rgba(239,68,68,.9)':'rgba(185,28,28,.9)'),
+  };
+
+  wfChart = new Chart($('wfChart'), {
+    type:'bar',
+    data:{
+      labels: wfSteps.map(s=>s.label),
+      datasets:[{
+        data: wfSteps.map(s=>[s.lo, s.hi]),
+        backgroundColor: wfSteps.map(s=>wfColorMap[s.cat]),
+        borderColor: wfSteps.map(s=>wfColorMap[s.cat].replace(/[\d.]+\)$/,'1)')),
+        borderWidth:1, borderSkipped:false
+      }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{
+          label:ctx=>{
+            const s=wfSteps[ctx.dataIndex];
+            const v=s.delta;
+            return`${v>=0?'+':''}${fmtA(v)}  ·  ${pctCap(v)} of CAPEX${s.cat==='opspl'?' [ops cash result before resale]':s.cat==='equity_deduct'?' [equity cost — deducted to show investor net return]':s.cat==='result'?' [net equity return = totReturn − equity]':''}`;
+          },
+          title:ctx=>wfSteps[ctx[0].dataIndex].label.replace(/\n/g,' ')
+        }}
+      },
+      scales:{
+        x:{ticks:{color:cf_c.tick,font:{size:9},callback:function(v){return this.getLabelForValue(v).split('\n');}},grid:{color:cf_c.grid}},
+        y:{ticks:{color:cf_c.tick,font:{size:9},callback:fmtA},grid:{color:cf_c.grid}}
+      }
+    },
+    plugins:[{id:'wfl',afterDatasetsDraw(chart){
+      const{ctx,data,scales:{x,y}}=chart;
+      ctx.save(); ctx.textAlign='center';
+      data.datasets[0].data.forEach(([s,e],i)=>{
+        const v=e-s;
+        if(Math.abs(v)<r.totalCapex*0.003) return;
+        const xp=x.getPixelForValue(i), above=v>=0;
+        const yEdge=y.getPixelForValue(above?e:s);
+        ctx.font=`700 9px monospace`;
+        ctx.fillStyle=dk?'rgba(255,255,255,.88)':'rgba(0,0,0,.75)';
+        ctx.textBaseline=above?'bottom':'top';
+        ctx.fillText((v>=0?'+':'')+fmtA(v), xp, yEdge+(above?-2:2));
+        ctx.font=`8px monospace`;
+        ctx.fillStyle=dk?'rgba(255,255,255,.45)':'rgba(0,0,0,.4)';
+        ctx.fillText(pctCap(v), xp, yEdge+(above?-12:12));
+      });
+      // ── Zero / break-even line ──
+      const y0 = y.getPixelForValue(0);
+      const x0 = chart.chartArea.left, x1 = chart.chartArea.right;
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(x0, y0); ctx.lineTo(x1, y0);
+      ctx.strokeStyle = dk ? 'rgba(250,204,21,.75)' : 'rgba(202,138,4,.8)';
+      ctx.lineWidth   = 2;
+      ctx.setLineDash([]);
+      ctx.stroke();
+      // Label
+      ctx.font = '700 9px system-ui,sans-serif';
+      ctx.fillStyle = dk ? 'rgba(250,204,21,.9)' : 'rgba(202,138,4,.95)';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'bottom';
+      ctx.fillText('zero', x0 + 4, y0 - 2);
+      ctx.restore();
+    }}]
+  });
+  // wfNetEquity = lvl after "Less: equity" step = totReturn - equity (correct net return to investor)
+  const wfHdr = useNPV && r.coc > 0
+    ? `NPV: ${fmtA(r.npv)} @ ${(r.coc*100).toFixed(1)}% CoC · IRR: ${r.irr!==null?pct(r.irr,1):'n/a'} · ops CF: ${fmtA(opsPlLevel)}`
+    : `equity ${fmtA(r.equity)} in · ops CF ${fmtA(opsPlLevel)} · net equity return ${fmtA(wfNetEquity)} · ROI ${pct(r.roi,1)}`;
+  $('wfHeader').textContent = wfHdr;
+  const legendColors = ['equity','debt','capex','income','cost','princ','bullet','resale','equity_deduct','opspl','result'];
+  const legendLabels = ['equity in','debt in','CAPEX','revenue','OPEX / interest','princ (amort.)','debt repaymt (terminal)','resale','less: equity','ops CF = Block ②','net equity return'];
+  $('wfLegend').innerHTML = legendLabels.map((l,i)=>`<span><span class="lsw" style="background:${wfColorMap[legendColors[i]]}"></span>${l}</span>`).join('')
+    + `<span style="color:var(--muted)">· Ops P&L bar = EBITDA − interest − amort.principal = Block ② operating CF · dep ${fmtA(r.tDep)} non-cash (excluded)${useNPV&&r.coc>0?' · <span class="wf-mode-note">PV @ '+(r.coc*100).toFixed(1)+'%</span>':''}</span>`;
+
+  // mark financing as needing rebuild; rebuild sensitivity if active
+  finNeedsRebuild = true;
+  if(activeMainTab==='financing')  renderFin();
+  if(activeMainTab==='sensitivity') buildSensitivity();
+}
+
+let finNeedsRebuild = true;
+function switchMain(id, btn){
+  activeMainTab = id;
+  document.querySelectorAll('.mtab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.mpane').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  $('mpane-'+id).classList.add('active');
+  if(id==='financing')   { if(finNeedsRebuild) buildFin(); }
+  if(id==='sensitivity') buildSensitivity();
+}
+
+// ── SENSITIVITY TABLES ──
+function roiCell(roi){
+  const pctStr=(roi*100).toFixed(1)+'%';
+  const cls=roi>=0.25?'sc5':roi>=0.12?'sc4':roi>=0?'sc3':roi>=-0.05?'sc2':'sc1';
+  return`<td class="${cls}">${pctStr}</td>`;
+}
+
+function buildSensitivity(){
+  const p=baseParams();
+  const refCapex = p.unitPrice * p.numGPU + p.netCapex + p.chassisCapex; // for NPV normalisation
+  const showNPV = useNPV && p.coc > 0;
+  // Helper: get metric value and cell class
+  const cellVal = rr => showNPV ? rr.npv : rr.roi;
+  const fmtCell = val => showNPV ? fmtA(val) : (val*100).toFixed(1)+'%';
+  const cellCls = val => {
+    if(showNPV){
+      const v = refCapex > 0 ? val/refCapex : 0; // NPV as fraction of CAPEX
+      return v>=0.15?'sc5':v>=0.05?'sc4':v>=0?'sc3':v>=-0.05?'sc2':'sc1';
+    }
+    return val>=0.25?'sc5':val>=0.12?'sc4':val>=0?'sc3':val>=-0.05?'sc2':'sc1';
+  };
+  // Table 1: price × contract duration
+  const curRate = demandMode==='spot'?p.spotRate:p.offtakeRate;
+  const curDur  = p.contractMo;
+  const rateStep= curRate>2?0.4:curRate>1?0.25:0.15;
+  const rates   = [-3,-2,-1,0,1,2,3].map(d=>Math.max(0.25,+(curRate+d*rateStep).toFixed(2)));
+  const durVals = [12, 18, 24, 30, 36]; // contract duration in months
+
+  const metricLbl = showNPV ? `NPV @ ${(p.coc*100).toFixed(1)}%` : 'equity ROI';
+  let t1=`<table class="stbl"><thead><tr><th>$/hr ↓ / contract→ · ${metricLbl}</th>${durVals.map(d=>`<th>${d}mo</th>`).join('')}</tr></thead><tbody>`;
+  rates.forEach(rate=>{
+    const isCurRow=Math.abs(rate-curRate)<0.001;
+    t1+=`<tr class="${isCurRow?'cur-row':''}"><td class="row-lbl">$${rate.toFixed(2)}</td>`;
+    durVals.forEach((dur,ci)=>{
+      const pp={...p, contractMo:dur,
+        [demandMode==='spot'?'spotRate':'offtakeRate']:rate};
+      const rr=simulate(pp); const val=cellVal(rr);
+      const isCurCol=dur===curDur;
+      t1+=`<td class="${cellCls(val)}${isCurRow||isCurCol?' cur-col':''}">${fmtCell(val)}</td>`;
+    });
+    t1+='</tr>';
+  });
+  t1+='</tbody></table>';
+  $('sens1Wrap').innerHTML=t1;
+
+  const ltvVals=[0,25,40,55,65,75,85];
+  const rateVals=[5,7,8.5,10,12,14,18];
+  let t2=`<table class="stbl"><thead><tr><th>LTV % ↓ / rate→ · ${metricLbl}</th>${rateVals.map(r=>`<th>${r}%</th>`).join('')}</tr></thead><tbody>`;
+  ltvVals.forEach(ltv=>{
+    const isCurRow=ltv===Math.round(p.ltvPct*100/5)*5;
+    t2+=`<tr class="${isCurRow?'cur-row':''}"><td class="row-lbl">${ltv}%</td>`;
+    rateVals.forEach((ir,ci)=>{
+      const pp={...p,ltvPct:ltv/100,intRate:ir/100};
+      const rr=simulate(pp); const val=cellVal(rr);
+      const isCurCol=Math.abs(ir-p.intRate*100)<0.1;
+      t2+=`<td class="${cellCls(val)}${isCurRow||isCurCol?' cur-col':''}">${fmtCell(val)}</td>`;
+    });
+    t2+='</tr>';
+  });
+  t2+='</tbody></table>';
+  $('sens2Wrap').innerHTML=t2;
+
+  // Break-even
+  buildBreakEven(p);
+}
+
+function buildBreakEven(p){
+  // 1. Min offtake/spot rate for ROI ≥ 0 (binary search)
+  const targetROI = useNPV ? 'npv' : 'roi';
+  const bePrice=(()=>{
+    const check=rate=>{
+      const pp={...p,[demandMode==='spot'?'spotRate':'offtakeRate']:rate};
+      const rr=simulate(pp);
+      return targetROI==='npv'?rr.npv:rr.roi;
+    };
+    if(check(0.10)>=0) return 0.10;
+    if(check(8.00)<0)  return null;
+    let lo=0.10,hi=8.00;
+    for(let i=0;i<60;i++){const mid=(lo+hi)/2;check(mid)>=0?hi=mid:lo=mid;}
+    return (lo+hi)/2;
+  })();
+
+  // 2. Min rate for DSCR ≥ 1.25x (lender coverage threshold)
+  const beDSCR=(()=>{
+    const check=rate=>{
+      const pp={...p,[demandMode==='spot'?'spotRate':'offtakeRate']:rate};
+      return simulate(pp).dscr-1.25;
+    };
+    if(check(0.10)>=0) return 0.10;
+    if(check(8.00)<0)  return null;
+    let lo=0.10,hi=8.00;
+    for(let i=0;i<60;i++){const mid=(lo+hi)/2;check(mid)>=0?hi=mid:lo=mid;}
+    return (lo+hi)/2;
+  })();
+
+  // 3. Min spot utilization for ROI ≥ 0
+  const beUtil=(()=>{
+    if(demandMode==='offtake') return null;
+    const check=u=>{const pp={...p,spotUtil:u};return simulate(pp).roi;};
+    if(check(1)>=0) return null; // already profitable at 100%? return lowest
+    if(check(0.01)<0 && check(1)<0) return null;
+    let lo=0.01,hi=1;
+    for(let i=0;i<60;i++){const mid=(lo+hi)/2;check(mid)>=0?hi=mid:lo=mid;}
+    return (lo+hi)/2;
+  })();
+
+  // 3. Max OPEX headroom
+  const curOpex=simulate(p).tOpex;
+  const beOpex=(()=>{
+    const check=mult=>{const pp={...p,maintPct:p.maintPct*mult,insurancePct:p.insurancePct*mult,hosting:p.hosting*mult};return simulate(pp).roi;};
+    if(check(1)<0) return null;
+    let lo=1,hi=5;
+    for(let i=0;i<60;i++){const mid=(lo+hi)/2;check(mid)>=0?lo=mid:hi=mid;}
+    return (simulate({...p,maintPct:p.maintPct*lo,insurancePct:p.insurancePct*lo,hosting:p.hosting*lo}).tOpex-curOpex);
+  })();
+
+  // Render
+  const priceEl=$('be-price'),utilEl=$('be-util'),opexEl=$('be-opex'),dscrEl=$('be-dscr');
+  const curRateDisplay=demandMode==='spot'?p.spotRate:p.offtakeRate;
+  if(beDSCR!==null){
+    dscrEl.textContent='$'+beDSCR.toFixed(2)+'/hr';
+    dscrEl.parentElement.className='be-card'+(beDSCR<curRateDisplay?' be-ok':' be-warn');
+    $('be-dscr-sub').textContent='DSCR ≥ 1.25× · current: $'+curRateDisplay.toFixed(2)+'/hr'+(beDSCR<curRateDisplay?' ✓ '+((curRateDisplay-beDSCR)/beDSCR*100).toFixed(1)+'% headroom':'');
+  } else if(simulate(p).dscr>=1.25){
+    dscrEl.textContent='already met'; dscrEl.parentElement.className='be-card be-ok';
+    $('be-dscr-sub').textContent=`DSCR ${simulate(p).dscr.toFixed(2)}× at current pricing`;
+  } else {
+    dscrEl.textContent='n/a'; dscrEl.parentElement.className='be-card be-bad';
+    $('be-dscr-sub').textContent='no rate found to achieve DSCR ≥ 1.25×';
+  }
+  if(bePrice!==null){
+    priceEl.textContent='$'+bePrice.toFixed(2)+'/hr';
+    priceEl.parentElement.className='be-card'+(bePrice<curRateDisplay?' be-ok':' be-warn');
+    $('be-price-sub').textContent=(useNPV?'for NPV ≥ 0':'for ROI ≥ 0')+' · current: $'+curRateDisplay.toFixed(2)+'/hr'+(bePrice<curRateDisplay?' ✓ margin: $'+(curRateDisplay-bePrice).toFixed(2):'');
+  } else {
+    priceEl.textContent='n/a'; priceEl.parentElement.className='be-card be-bad';
+    $('be-price-sub').textContent='no break-even found in range';
+  }
+  if(beUtil!==null){
+    utilEl.textContent=(beUtil*100).toFixed(1)+'%';
+    utilEl.parentElement.className='be-card'+(p.spotUtil>beUtil?' be-ok':' be-warn');
+  } else if(demandMode==='offtake'){
+    utilEl.textContent='N/A'; utilEl.parentElement.className='be-card';
+    utilEl.nextElementSibling.textContent='offtake mode — 100% contracted';
+  } else {
+    utilEl.textContent='>100%'; utilEl.parentElement.className='be-card be-bad';
+  }
+  if(beOpex!==null){
+    $('be-opex').textContent=fmtM(beOpex);
+    $('be-opex').parentElement.className='be-card'+(beOpex>0?' be-ok':' be-bad');
+    $('be-opex-sub').textContent='total OPEX can rise by '+fmtM(beOpex)+' before ROI hits 0';
+  } else {
+    $('be-opex').textContent='n/a'; $('be-opex').parentElement.className='be-card be-bad';
+    $('be-opex-sub').textContent='already at or below break-even';
+  }
+
+  const r=simulate(p);
+  $('beNotes').innerHTML=`
+    <strong style="color:var(--text)">Current position:</strong>
+    ${fmtM(r.tRev)} revenue · ${fmtM(r.tOpex)} OPEX · equity ROI ${pct(r.roi,1)}${useNPV?` · NPV ${fmtM(r.npv)} @ ${(r.coc*100).toFixed(1)}% CoC`:''}
+    ${bePrice!==null&&bePrice<curRateDisplay?` · <span class="pos">✓ ${pct((curRateDisplay-bePrice)/curRateDisplay,1)} price margin above break-even</span>`:''}
+    <br><span style="color:var(--muted)">Sensitivity colour scale: 
+    <span class="sc5" style="padding:1px 5px;border-radius:2px;">≥25%</span>
+    <span class="sc4" style="padding:1px 5px;border-radius:2px;">12–25%</span>
+    <span class="sc3" style="padding:1px 5px;border-radius:2px;">0–12%</span>
+    <span class="sc2" style="padding:1px 5px;border-radius:2px;">-5–0%</span>
+    <span class="sc1" style="padding:1px 5px;border-radius:2px;"><−5%</span>
+    · outlined cell = current assumption</span>`;
+}
+
+// ── CF CHART TOGGLE ──
+let cfChartVisible = false;
+function toggleCfChart(){
+  cfChartVisible = !cfChartVisible;
+  const wrap = $('cfCollapse');
+  const btn  = $('cfTogBtn');
+  wrap.style.display = cfChartVisible ? 'block' : 'none';
+  btn.textContent    = cfChartVisible ? '▼ hide' : '▶ show';
+  if(cfChartVisible && cfChart){
+    // Chart.js canvas may have rendered at 0×0 while hidden — force resize
+    requestAnimationFrame(()=>{ if(cfChart) cfChart.resize(); });
+  }
+}
+// No DOMContentLoaded needed — chart starts hidden, recalc() renders into hidden canvas which is OK
+
+// ── COLLAPSIBLE TOGGLES ──
+let lcVisible = false, ffVisible = true;
+function toggleLC(){
+  lcVisible = !lcVisible;
+  $('lcCollapse').style.display = lcVisible ? 'block' : 'none';
+  $('lcTogBtn').textContent = lcVisible ? '▼ hide' : '▶ show';
+  if(lcVisible && _lastR && _lastP) renderLifecycle(_lastR, _lastP);
+}
+function toggleFF(){
+  ffVisible = !ffVisible;
+  $('ffCollapse').style.display = ffVisible ? 'block' : 'none';
+  $('ffTogBtn').textContent = ffVisible ? '▼ hide' : '▶ show';
+}
+let _lastR = null, _lastP = null; // cache for lazy render
+
+// ── LIFECYCLE TABLE ──
+function renderLifecycle(r, p) {
+  const el = $('lcCollapse'); if(!el || !lcVisible) return;
+  const rampMo     = p.rampDelay || 0;
+  const contractMo = p.contractMo || 24;
+  const dk = isDark();
+  const MU = dk?'#94a3b8':'#64748b';
+  const BD = dk?'rgba(255,255,255,.06)':'rgba(0,0,0,.03)';
+
+  const phases = [
+    { label:'Sourcing & Contracting', col: dk?'#2dd4bf':'#0d9488', steps:[
+      {name:'Demand LOI / Contract',  who:'Customer',           detail:`Customer signs ${p.offtakePct===1?'take-or-pay offtake':'LOI / partial offtake'} before cash flows`},
+      {name:'GPU Procurement',         who:'ICN / Supplier',     detail:`OEM order; lead ~4–8wk; $${(p.unitPrice||32000).toLocaleString()}/unit × ${p.numGPU||64} GPUs`},
+      {name:'Colocator Agreement',     who:'ICN / DC Operator',  detail:`Power, cage & cross-connect; hosting $${p.hosting||120}/GPU/mo`},
+    ]},
+    { label:`Deployment (${rampMo}mo offline)`, col: dk?'#fbbf24':'#b45309', steps:[
+      {name:'Shipping & Freight',      who:'Logistics',          detail:`Intl. freight + customs; ~$${(p.shippingPerNode||800).toLocaleString()}/node`},
+      {name:'Rack, Cable & Burn-in',   who:'Colo / ICN',         detail:`Install + config + drivers; ~$${(p.installPerNode||400).toLocaleString()}/node · ${rampMo}mo before 1st revenue`},
+    ]},
+    { label:`Operations (${contractMo}mo)`, col: dk?'#4ade80':'#15803d', steps:[
+      {name:'Revenue Generation',      who:'Customer → ICN SPV', detail:`$${(p.offtakeRate||2).toFixed(2)}/GPU/hr · ${p.numGPU||64} GPUs · ${contractMo}mo`},
+      {name:'Debt Service',            who:'ICN SPV → Lender',   detail:`${(p.intRate*100||10).toFixed(1)}% interest${p.loanType==='amort'?' + monthly amort':' (IO — debt repayment at maturity)'}`},
+      {name:'Pool Coupon Payments',    who:'ICN SPV → Investors',detail:`${(p.poolRate*100||12).toFixed(1)}% p.a. preferred coupon from ops CF`},
+    ]},
+    { label:'Exit', col: dk?'#f87171':'#dc2626', steps:[
+      {name:'Debt Repayment',          who:'ICN SPV → Lender',   detail:`Return $${r&&r.loanAmt?((r.loanAmt/1e6).toFixed(1)+'M'):''} principal`},
+      {name:'GPU Resale',              who:'ICN SPV → Market',   detail:`Secondary mkt; ~${((p.residualPct||.5)*100).toFixed(0)}% residual · est. ${r?('$'+(r.resale/1e6).toFixed(1)+'M'):''}`},
+      {name:'Return of Capital',       who:'ICN SPV → Investors',detail:`Pool principal returned; operator receives residual equity`},
+    ]},
+  ];
+
+  let stepNum = 0;
+  let rows = '';
+  phases.forEach(ph => {
+    rows += `<tr><td colspan="5" style="background:${ph.col}18;border-top:2px solid ${ph.col};padding:5px 10px;font-size:9px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:${ph.col}">${ph.label}</td></tr>`;
+    ph.steps.forEach(s => {
+      stepNum++;
+      const bg = stepNum%2===0 ? BD : 'transparent';
+      rows += `<tr style="background:${bg}">
+        <td style="padding:4px 8px;font-size:11px;font-weight:800;color:${ph.col};text-align:center;width:28px">${stepNum}</td>
+        <td style="padding:4px 8px;font-size:10px;font-weight:600;color:var(--text);white-space:nowrap">${s.name}</td>
+        <td style="padding:4px 8px;font-size:9px;color:${MU};white-space:nowrap">${s.who}</td>
+        <td style="padding:4px 8px;font-size:9px;color:${MU}">${s.detail}</td>
+      </tr>`;
+    });
+  });
+
+  el.innerHTML = `<table style="width:100%;border-collapse:collapse;font-family:inherit">
+    <thead><tr style="border-bottom:1px solid var(--border)">
+      <th style="padding:3px 8px;font-size:8px;color:${MU};font-weight:600;text-align:center;width:28px">#</th>
+      <th style="padding:3px 8px;font-size:8px;color:${MU};font-weight:600;text-align:left">step</th>
+      <th style="padding:3px 8px;font-size:8px;color:${MU};font-weight:600;text-align:left">party</th>
+      <th style="padding:3px 8px;font-size:8px;color:${MU};font-weight:600;text-align:left">detail</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+// ── FLOW DIAGRAM ──
+
+function renderFlowDiagram(r, p) {
+  const el = $('flowDiagramBody');
+  if (!el) return;
+  const dk  = isDark();
+  const useSPV = spvEnabled && p.poolPct > 0;
+  const hasDebt = r.loanAmt > 0;
+  const isIO    = p.loanType === 'io';
+  const curRate = demandMode === 'spot' ? p.spotRate : p.offtakeRate;
+  const demLbl  = demandMode === 'spot' ? `spot (${(p.spotUtil*100).toFixed(0)}%)`
+                : demandMode === 'blended' ? 'blended' : 'offtake';
+
+  const fa  = v => { const a=Math.abs(v); return '$'+(a>=1e6?(a/1e6).toFixed(1)+'M':a>=1e3?(a/1e3).toFixed(0)+'k':a.toFixed(0)); };
+  const pd  = v => (v*100).toFixed(1)+'%';
+  const posCol = v => v>=0 ? (dk?'#4ade80':'#15803d') : (dk?'#f87171':'#dc2626');
+
+  const gpuName  = (typeof selGPU !== 'undefined' && selGPU.name) ? selGPU.name : 'GPU';
+  const gpuCount = (p.numNodes||8) + '×' + (p.numNodes>0?Math.round(p.numGPU/p.numNodes):8);
+
+  // Theme
+  const TX=dk?'#f1f5f9':'#0f172a', MU=dk?'#94a3b8':'#64748b', BG=dk?'#0f172a':'#f8fafc';
+  const DC=dk?'#60a5fa':'#2563eb',  DB=dk?'rgba(30,58,95,.55)':'#dbeafe';
+  const EC=dk?'#4ade80':'#15803d',  EB=dk?'rgba(20,83,45,.55)':'#dcfce7';
+  const PC=dk?'#fbbf24':'#b45309',  PB=dk?'rgba(69,26,3,.55)':'#fef3c7';
+  const CC=dk?'#2dd4bf':'#0d9488',  CB=dk?'rgba(19,49,48,.55)':'#ccfbf1';
+  const PRC=dk?'#a78bfa':'#7c3aed', PRB=dk?'rgba(46,16,101,.55)':'#ede9fe';
+  const RC=dk?'#94a3b8':'#475569',  RB=dk?'rgba(30,41,59,.6)':'#f1f5f9';
+
+  // ── Layout: 3-column with generous gaps ──
+  const W=1060;
+  const LX=10, LW=185;         // left boxes
+  const GAP1=195;               // left gap for arrow labels
+  const CX=LX+LW+GAP1;         // = 390
+  const CW=270;                 // center box
+  const GAP2=160;               // right gap
+  const RX=CX+CW+GAP2;         // = 820
+  const RW=185;                 // right boxes
+  const TH=26, RH=16;
+
+  const mkr = (id,c) =>
+    `<marker id="a${id}" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,.5 L0,6.5 L7,3.5 z" fill="${c}"/></marker>`;
+
+  // ── Box renderer ──
+  function box(x, y, w, rows, title, col, bg) {
+    const h = TH + rows.length * RH + 10;
+    let s = `<rect x="${x+2}" y="${y+2}" width="${w}" height="${h}" rx="6" fill="${col}15"/>`;
+    s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="6" fill="${bg}" stroke="${col}" stroke-width="1.4"/>`;
+    s += `<rect x="${x}" y="${y}" width="${w}" height="${TH}" rx="6" fill="${col}50"/>`;
+    s += `<rect x="${x}" y="${y+TH-6}" width="${w}" height="6" fill="${col}50"/>`;
+    s += `<text x="${x+w/2}" y="${y+17}" text-anchor="middle" font-size="10.5" font-weight="700" fill="${col}">${title}</text>`;
+    rows.forEach(([lbl,val,vc],i)=>{
+      const ry = y + TH + 4 + i*RH;
+      if(lbl==='---'){ s+=`<line x1="${x+6}" y1="${ry+8}" x2="${x+w-6}" y2="${ry+8}" stroke="${col}40" stroke-width=".7" stroke-dasharray="3,2"/>`; return; }
+      s+=`<text x="${x+8}" y="${ry+11}" font-size="8.5" fill="${MU}">${lbl}</text>`;
+      s+=`<text x="${x+w-8}" y="${ry+11}" font-size="9" font-weight="600" fill="${vc||TX}" text-anchor="end">${val}</text>`;
+    });
+    return {s, h, mid:y+h/2, top:y, bot:y+h};
+  }
+
+  // ── Horizontal arrow (purely horizontal, no L-bending) ──
+  // y1 = departure Y, y2 = arrival Y
+  // If y1 !== y2, draws a gentle L-route with the bend at a specified bendX
+  function arrow(x1, y1, x2, y2, label, col, id, bendX) {
+    let d;
+    if (Math.abs(y1-y2)<2) {
+      d = `M${x1},${y1} H${x2}`;
+    } else {
+      const bx = bendX !== undefined ? bendX : (x1+x2)/2;
+      d = `M${x1},${y1} H${bx} V${y2} H${x2}`;
+    }
+    let s = `<path d="${d}" fill="none" stroke="${col}" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#a${id})"/>`;
+    if (label) {
+      // Label at the horizontal midpoint of the longest horizontal segment
+      const lx = (x1+x2)/2;
+      const ly = Math.abs(y1-y2)<2 ? y1-7 : (y1<y2 ? y1-7 : y2-7);
+      s += `<text x="${lx}" y="${ly}" text-anchor="middle" font-size="8" font-weight="600"
+              stroke="${BG}" stroke-width="3.5" paint-order="stroke fill"
+              fill="${col}">${label}</text>`;
+    }
+    return s;
+  }
+
+  const ebitdaM = r.tRev>0 ? (r.ebitda/r.tRev*100).toFixed(0)+'%' : '—';
+  let svg='', defs='', H=0;
+
+  // ── Center box (always present) ──
+  const projRows = useSPV ? [
+    ['GPU', `${gpuCount} ${gpuName}`],
+    ['CAPEX', fa(r.totalCapex)],
+    ['---',''],
+    ['revenue', fa(r.tRev), CC],
+    ['EBITDA', `${fa(r.ebitda)} (${ebitdaM})`, posCol(r.ebitda)],
+    ['ops CF', fa(r.totNet), posCol(r.totNet)],
+    ['---',''],
+    ['total eq. CF', fa(r.totReturn), posCol(r.totReturn)],
+    ['pool claim', `−${fa(r.poolCouponPaid+r.poolTerminalGets)}`, PC],
+    ['op. residual', fa(r.operatorReturn), posCol(r.operatorReturn)],
+  ] : [
+    ['GPU', `${gpuCount} ${gpuName}`],
+    ['CAPEX', fa(r.totalCapex)],
+    ['contract', `${p.contractMo}mo · ${demLbl}`],
+    ['---',''],
+    ['revenue', fa(r.tRev), CC],
+    ['OPEX', `−${fa(r.tOpex)}`],
+    ['EBITDA', `${fa(r.ebitda)} (${ebitdaM})`, posCol(r.ebitda)],
+    ['interest', `−${fa(r.tInt)}`],
+    ['ops CF', fa(r.totNet), posCol(r.totNet)],
+    ['---',''],
+    ['total eq. CF', fa(r.totReturn), posCol(r.totReturn)],
+  ];
+  const proj = box(CX, 20, CW, projRows, '⚡ ICN SPV', PRC, PRB);
+  svg += proj.s;
+
+  // ── Right column: Customer + Resale ──
+  const cust = box(RX, 25, RW, [
+    ['rate', `$${curRate.toFixed(2)}/GPU/hr`, CC],
+    ['mode', demLbl, MU],
+    ['revenue', fa(r.tRev), CC],
+  ], '🏢 Customer', CC, CB);
+  svg += cust.s;
+
+  const resaleY = cust.bot + 24;
+  const resale = box(RX, resaleY, RW, [
+    ['proceeds', fa(r.resale), posCol(r.resale)],
+    ['residual', ((p.residualPct||.5)*100).toFixed(0)+'% of cost', MU],
+  ], '🔄 GPU Resale', RC, RB);
+  svg += resale.s;
+
+  if (!useSPV) {
+    // LEFT: Lender + Equity
+    let ld = null;
+    if (hasDebt) {
+      ld = box(LX, 25, LW, [
+        ['loan', fa(r.loanAmt), DC],
+        ['type', isIO?'IO debt note':'amortizing', MU],
+        ['rate', (p.intRate*100).toFixed(1)+'% p.a.', MU],
+        ['tenor', p.contractMo+'mo', MU],
+      ], '🏦 Lender', DC, DB);
+      svg += ld.s;
+    }
+    const eqY = ld ? ld.bot + 24 : 25;
+    const eq = box(LX, eqY, LW, [
+      ['equity in', fa(r.equity), EC],
+      ['total CF', fa(r.totReturn), posCol(r.totReturn)],
+      ['net return', fa(r.totReturn-r.equity), posCol(r.roi)],
+      ['ROI', pd(r.roi), posCol(r.roi)],
+      ['payback', r.be>=0?'M'+(r.be+1):'>'+p.contractMo+'mo', MU],
+    ], '💼 Equity Investor (ICN)', EC, EB);
+    svg += eq.s;
+
+    // Direct horizontal routing — each pair at its own box's Y level
+    if (ld) {
+      svg += arrow(LX+LW, ld.mid-6,  CX, ld.mid-6,   fa(r.loanAmt)+' loan', DC, 'dc1');
+      const rl = isIO ? `int ${fa(r.tInt)} + repaymt ${fa(r.bullet)}` : `repaymt ${fa(r.tInt+r.tPrinc)}`;
+      svg += arrow(CX,    ld.mid+10,  LX+LW, ld.mid+10, rl, DC, 'dc2');
+    }
+    svg += arrow(LX+LW, eq.mid-6,  CX, eq.mid-6,   fa(r.equity)+' equity', EC, 'ec1');
+    svg += arrow(CX,    eq.mid+10, LX+LW, eq.mid+10, `CF ${fa(r.totNet)}`,  EC, 'ec2');
+    svg += arrow(RX,    cust.mid,  CX+CW, cust.mid,  fa(r.tRev)+' revenue', CC, 'cc');
+    svg += arrow(CX+CW, resale.mid, RX, resale.mid,  `resale ${fa(r.resale)}`, RC, 're1');
+
+    defs = [['dc1',DC],['dc2',DC],['ec1',EC],['ec2',EC],['cc',CC],['re1',RC]].map(([i,c])=>mkr(i,c)).join('');
+    H = Math.max(eq.bot, proj.bot, resale.bot) + 25;
+
+  } else {
+    // LEFT: Lender + Operator + Pool
+    const ld = box(LX, 20, LW, [
+      ['loan', fa(r.loanAmt), DC],
+      ['rate', (p.intRate*100).toFixed(1)+'% · '+(isIO?'IO':'amort'), MU],
+    ], '🏦 Lender', DC, DB);
+    svg += ld.s;
+
+    const op = box(LX, ld.bot + 22, LW, [
+      ['equity in', `${fa(r.operatorEquity)} (${((1-p.poolPct)*100).toFixed(0)}%)`, EC],
+      ['receives', fa(r.operatorReturn), posCol(r.operatorReturn)],
+      ['ROI', pd(r.operatorROI), posCol(r.operatorROI)],
+    ], '🔧 Operator', EC, EB);
+    svg += op.s;
+
+    const poolTot = r.poolCouponPaid + r.poolTerminalGets;
+    const pool = box(LX, op.bot + 22, LW, [
+      ['equity in', `${fa(r.poolEquity)} (${(p.poolPct*100).toFixed(0)}%)`, PC],
+      ['coupon', pd(p.poolRate)+' preferred', MU],
+      ['receives', fa(poolTot), posCol(r.poolROI)],
+      ['ROI', pd(r.poolROI)+(r.poolShortfall>0?' ⚠':''), posCol(r.poolROI)],
+    ], '👥 Pool Investors', PC, PB);
+    svg += pool.s;
+
+    // Direct horizontal for lender & operator (same Y range as center box)
+    svg += arrow(LX+LW, ld.mid-6,    CX, ld.mid-6,   fa(r.loanAmt)+' loan',          DC, 'dc1');
+    svg += arrow(CX,    ld.mid+10,    LX+LW, ld.mid+10, `int ${fa(r.tInt)}+repaymt`,  DC, 'dc2');
+    svg += arrow(LX+LW, op.mid-6,    CX, op.mid-6,   fa(r.operatorEquity)+' equity',  EC, 'ec1');
+    svg += arrow(CX,    op.mid+10,    LX+LW, op.mid+10, `${fa(r.operatorReturn)} res.`,EC, 'ec2');
+    // Pool is below center box — L-route: go right then bend up to center box bottom
+    const poolAnchor = proj.bot - 14;  // connect near bottom of center box
+    const poolBendX  = LX+LW + GAP1*0.4;
+    svg += arrow(LX+LW, pool.mid-6,  CX, poolAnchor-8, fa(r.poolEquity)+' pref. eq.',  PC, 'pc1', poolBendX);
+    svg += arrow(CX,    poolAnchor+8, LX+LW, pool.mid+10,`${fa(poolTot)} cpn+prin`,    PC, 'pc2', poolBendX + GAP1*0.2);
+    // Right side: direct horizontal
+    svg += arrow(RX,    cust.mid,     CX+CW, cust.mid,  fa(r.tRev)+' revenue',         CC, 'cc');
+    svg += arrow(CX+CW, resale.mid,  RX, resale.mid,   `resale ${fa(r.resale)}`,       RC, 're2');
+
+    defs = [['dc1',DC],['dc2',DC],['ec1',EC],['ec2',EC],['pc1',PC],['pc2',PC],['cc',CC],['re2',RC]].map(([i,c])=>mkr(i,c)).join('');
+    H = Math.max(pool.bot, proj.bot, resale.bot) + 25;
+  }
+
+  el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg"
+      style="width:100%;max-width:80%;display:block;margin:0 auto;font-family:system-ui,-apple-system,sans-serif">
+    <defs>${defs}</defs>
+    <rect width="${W}" height="${H}" fill="${BG}" rx="8"/>
+    ${svg}
+  </svg>`;
+}
+
+// ── INTRO MODAL ──
+function dismissIntro(){
+  const o=$('introOverlay');
+  o.classList.add('hidden');
+  setTimeout(()=>{ o.style.display='none'; }, 200);
+}
+function showIntro(){
+  const o=$('introOverlay');
+  o.style.display='flex';
+  requestAnimationFrame(()=>o.classList.remove('hidden'));
+}
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') dismissIntro(); });
+
+// init — called after all definitions below
+function init(){ buildGPUPicker();buildNCfgPicker();buildChassisPicker();recalc();buildFin(); }
+// CF chart starts hidden — chart was rendered by recalc() above into the hidden container
+// (Chart.js renders fine into display:none containers since dimensions come from CSS .ch-md)
+
+// ── FINANCING COMPARISON ──
+const SCENARIOS=[
+  {id:'A',name:'Bank institutional',    tag:'ta',ltv:55,rate:8.5, loan:'io',   color:'#1D4ED8',dkColor:'#3B82F6'},
+  {id:'B',name:'ABS / retail notes',    tag:'tb',ltv:65,rate:12.0,loan:'amort',color:'#5B21B6',dkColor:'#A78BFA'},
+  {id:'C',name:'Token-collat. vault',   tag:'tc',ltv:60,rate:14.0,loan:'io',   color:'#B45309',dkColor:'#F59E0B'},
+  {id:'D',name:'Self-finance (equity)', tag:'td',ltv:0, rate:0,   loan:'io',   color:'#15803D',dkColor:'#22C55E'},
+];
+let fBarC=null,fLinC=null;
+
+function buildFin(){
+  finNeedsRebuild=false;
+  const wrap=$('finInputWrap');wrap.innerHTML='';
+  const t=document.createElement('table');t.className='ftbl';
+  const thead=t.createTHead();const hr=thead.insertRow();
+  ['Assumption',...SCENARIOS.map(s=>`<span class="snm">${s.name}<span class="tag ${s.tag}">${s.id}</span></span>`)].forEach((h,i)=>{
+    const th=document.createElement('th');th.innerHTML=h;hr.appendChild(th);
+  });
+  const tbody=t.createTBody();
+  [{label:'LTV (%)',key:'ltv',min:0,max:90,step:5,fmt:v=>v+'%'},
+   {label:'rate (% p.a.)',key:'rate',min:0,max:24,step:0.5,fmt:v=>Number(v).toFixed(1)+'%'},
+   {label:'structure',key:'loan',type:'select',opts:[['io','IO debt note'],['amort','amortizing']]}
+  ].forEach(row=>{
+    const tr=tbody.insertRow();
+    const lc=tr.insertCell();lc.className='flbl';lc.textContent=row.label;
+    SCENARIOS.forEach(s=>{
+      const td=tr.insertCell();td.className='finp';
+      if(row.type==='select'){
+        const sel=document.createElement('select');sel.id=`fin_${s.id}_${row.key}`;
+        row.opts.forEach(([v,l])=>{const o=new Option(l,v);if(v===s[row.key])o.selected=true;sel.add(o);});
+        sel.addEventListener('change',renderFin);td.appendChild(sel);
+      } else {
+        const vd=document.createElement('div');vd.style.cssText='font-size:10px;font-weight:700;color:var(--text)';
+        vd.id=`fin_${s.id}_${row.key}V`;vd.textContent=row.fmt(s[row.key]);
+        const inp=document.createElement('input');inp.type='range';
+        inp.id=`fin_${s.id}_${row.key}`;inp.min=row.min;inp.max=row.max;inp.step=row.step;inp.value=s[row.key];
+        inp.addEventListener('input',()=>{vd.textContent=row.fmt(inp.value);renderFin();});
+        td.appendChild(vd);td.appendChild(inp);
+      }
+    });
+  });
+  wrap.appendChild(t);renderFin();
+}
+
+function renderFin(){
+  const base=baseParams();
+  const results=SCENARIOS.map(s=>{
+    const lE=$(`fin_${s.id}_ltv`),rE=$(`fin_${s.id}_rate`),lnE=$(`fin_${s.id}_loan`);
+    if(!lE)return null;
+    return simulate({...base,ltvPct:+lE.value/100,intRate:+rE.value/100,loanType:lnE.value});
+  });
+  const ow=$('finOutputWrap');ow.innerHTML='';
+  const t=document.createElement('table');t.className='ftbl';
+  const th2=t.createTHead();const hr2=th2.insertRow();
+  ['Metric',...SCENARIOS.map(s=>`<span class="snm">${s.name}<span class="tag ${s.tag}">${s.id}</span></span>`)].forEach((h,i)=>{const c=document.createElement('th');c.innerHTML=h;hr2.appendChild(c);});
+  const tb2=t.createTBody();
+  [{l:'total CAPEX',fn:r=>fmtM(r.totalCapex),b:'none'},
+   {l:'equity required',fn:r=>fmtM(r.equity),nm:r=>r.equity,b:'low'},
+   {l:'total interest',fn:r=>fmtM(r.tInt),nm:r=>r.tInt,b:'low'},
+   {l:'EBITDA',fn:r=>fmtM(r.ebitda),nm:r=>r.ebitda,b:'high'},
+   {l:'net cashflow (ops)',fn:r=>fmtM(r.totNet),nm:r=>r.totNet,b:'high'},
+   {l:'total equity return',fn:r=>fmtM(r.totReturn-r.equity),nm:r=>r.totReturn-r.equity,b:'high'},
+   {l:'equity ROI',fn:r=>pct(r.roi,1),nm:r=>r.roi,b:'high'},
+   {l:'DSCR',fn:r=>isFinite(r.dscr)?r.dscr.toFixed(2)+'x':'∞',nm:r=>Math.min(r.dscr,20),b:'high'},
+   {l:'payback month',fn:r=>r.be>=0?'M'+(r.be+1):'>'+base.contractMo,nm:r=>r.be>=0?r.be:base.contractMo+1,b:'low'},
+  ].forEach(row=>{
+    const tr=tb2.insertRow();const lc=tr.insertCell();lc.className='flbl';lc.textContent=row.l;
+    const nums=row.nm?results.map(r=>row.nm(r)):null;
+    results.forEach((r,i)=>{
+      const td=tr.insertCell();
+      if(nums&&row.b!=='none'){
+        const best=row.b==='high'?Math.max(...nums):Math.min(...nums);
+        const worst=row.b==='high'?Math.min(...nums):Math.max(...nums);
+        if(nums[i]===best)td.className='fbest';
+        else if(nums[i]===worst&&best!==worst)td.className='fworst';
+      }
+      const tick=nums&&row.b!=='none'&&nums[i]===(row.b==='high'?Math.max(...nums):Math.min(...nums))?' ✓':'';
+      td.innerHTML=`<span class="fval">${row.fn(r)}${tick}</span>`;
+    });
+  });
+  ow.appendChild(t);
+  const dk=isDark();const sc=SCENARIOS.map(s=>dk?s.dkColor:s.color);
+  const c=cc();
+  if(fBarC)fBarC.destroy();
+  fBarC=new Chart($('finBarChart'),{type:'bar',
+    data:{labels:SCENARIOS.map(s=>s.name),datasets:[
+      {label:'equity ROI (%)',data:results.map(r=>+(r.roi*100).toFixed(1)),backgroundColor:sc.map(c=>c+'cc'),yAxisID:'y'},
+      {label:'DSCR',data:results.map(r=>+Math.min(r.dscr,9.99).toFixed(2)),type:'line',borderColor:dk?'#fff':'#111',backgroundColor:'transparent',borderWidth:2,pointRadius:5,pointBackgroundColor:sc,yAxisID:'y2'}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},
+      scales:{x:{ticks:{color:c.tick,font:{size:9}},grid:{color:c.grid}},
+        y:{ticks:{color:c.tick,font:{size:9},callback:v=>v+'%'},grid:{color:c.grid}},
+        y2:{position:'right',ticks:{color:c.tick,font:{size:9},callback:v=>v+'x'},grid:{display:false}}}}
+  });
+  $('finBarLeg').innerHTML=SCENARIOS.map((s,i)=>`<span><span class="lsw" style="background:${sc[i]}"></span>${s.name} (${s.id})</span>`).join('')+'<span style="color:var(--muted)">— DSCR line</span>';
+  if(fLinC)fLinC.destroy();
+  fLinC=new Chart($('finLineChart'),{type:'line',
+    data:{labels:results[0].labels,datasets:SCENARIOS.map((s,i)=>({label:s.name,data:results[i].cum,borderColor:sc[i],backgroundColor:'transparent',borderWidth:2,pointRadius:0,tension:0.2}))},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false,callbacks:{label:({dataset,raw})=>`${dataset.label}: ${fmtA(raw)}`}}},
+      scales:{x:{ticks:{color:c.tick,font:{size:9},autoSkip:true,maxTicksLimit:13},grid:{color:c.grid}},
+        y:{ticks:{color:c.tick,font:{size:9},callback:fmtA},grid:{color:c.grid}}}}
+  });
+}
+
+// ── LIVE PRICES ──
+async function fetchLivePrices(){
+  const btn=$('fetchBtn');btn.disabled=true;btn.textContent='⟳ fetching…';
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,
+        tools:[{type:'web_search_20250305',name:'web_search'}],
+        messages:[{role:'user',content:`Search current GPU prices April 2026. Return ONLY JSON array, no markdown:
+[{"id":"h100sxm","name":"H100 SXM","buy_low":30000,"buy_high":40000,"rent_low":2.17,"rent_high":3.47},
+ {"id":"h100pcie","name":"H100 PCIe","buy_low":0,"buy_high":0,"rent_low":0,"rent_high":0},
+ {"id":"h200sxm","name":"H200 SXM","buy_low":0,"buy_high":0,"rent_low":0,"rent_high":0},
+ {"id":"a100sxm","name":"A100 SXM","buy_low":0,"buy_high":0,"rent_low":0,"rent_high":0},
+ {"id":"a100pcie","name":"A100 PCIe","buy_low":0,"buy_high":0,"rent_low":0,"rent_high":0},
+ {"id":"l40s","name":"L40S","buy_low":0,"buy_high":0,"rent_low":0,"rent_high":0},
+ {"id":"b200sxm","name":"B200 SXM","buy_low":0,"buy_high":0,"rent_low":0,"rent_high":0}]
+Fill all values with current market data. JSON only.`}]})});
+    const data=await res.json();
+    const txt=data.content.filter(b=>b.type==='text').map(b=>b.text).join('');
+    const m=txt.match(/\[[\s\S]*\]/);
+    if(m){
+      const prices=JSON.parse(m[0]);
+      prices.forEach(pr=>{
+        const card=GPU_CARDS.find(g=>g.id===pr.id);
+        if(card){
+          card.price=Math.round((pr.buy_low+pr.buy_high)/2)||card.price;
+          card.rate=Math.round(((pr.rent_low+pr.rent_high)/2)*100)/100||card.rate;
+        }
+      });
+      buildGPUPicker();
+      if(selGPU){
+        const u=GPU_CARDS.find(g=>g.id===selGPU.id);
+        if(u){const cp=getGPUPrice(u);$('unitPrice').value=cp;$('unitPriceV').textContent='$'+cp.toLocaleString();}
+      }
+      recalc();
+    }
+  }catch(e){console.error(e);}
+  btn.disabled=false;btn.textContent='⟳ live prices';
+}
+
+init();
+</script>
+</body>
+</html>
