@@ -191,9 +191,19 @@ Data validation on column D: list validation from a named range.
 For each of the 7 archetypes, compute:
 
 ```
-Stack_Fit = SUMPRODUCT(user_coverage_values, archetype_component_weights)
-          / SUMPRODUCT(max_coverage_values, archetype_component_weights)
+Stack_Fit = Σ(posture_match_score_i) / Σ(max_possible_match_i)
+```
 
+Where `posture_match_score` compares user's actual posture against archetype's recommended posture:
+- Exact match (e.g., recommended=Own, actual=Own): 3 points
+- One level off (e.g., recommended=Own, actual=Control): 2 points
+- Two levels off (e.g., recommended=Own, actual=Use): 1 point
+- Mismatch (e.g., recommended=Own, actual=Outsource or N/A): 0 points
+- Recommended=N/A: excluded from calculation (not penalized)
+
+Over-investment penalty: If recommended=Outsource but actual=Own, flag as capital-inefficient but still score 2 (partial credit — owning is not wrong, just suboptimal).
+
+```
 Resource_Fit = SUMPRODUCT(user_resource_values, archetype_resource_weights)
              / SUMPRODUCT(max_resource_values, archetype_resource_weights)
 
@@ -201,18 +211,22 @@ Overall_Fit = (Stack_Fit × 0.5) + (Resource_Fit × 0.3) + (Capability_Fit × 0.
 ```
 
 Displayed as:
-| Archetype | Stack Fit % | Resource Fit % | Capability Fit % | Overall Fit % | Rank |
+| Archetype | Stack Fit % | Resource Fit % | Capability Fit % | Overall Fit % | Rank | Flags |
+
+Where Flags column shows:
+- "Over-invested in N components" (owning things the archetype should outsource)
+- "Under-invested in N components" (outsourcing things the archetype should own)
 
 Conditional formatting: top 2 archetypes highlighted green.
 
 **E2. Gap Analysis (rows 78-95)**
 
 For the top-ranked archetype, list all stack components where:
-- Archetype importance weight ≥ 2 (beneficial or essential) AND
-- User coverage ≤ 1 (Use or below)
+- Archetype recommended posture = Own or Partner AND
+- User actual posture = Outsource or N/A
 
 Each gap row shows:
-| Component | Required level | Current level | Gap severity | Acquisition difficulty (1-3) | Bridgeable? |
+| Component | Recommended posture | Actual posture | Gap type (Under/Over) | Acquisition difficulty (1-3) | Bridgeable? |
 
 Acquisition difficulty comes from the Stack Taxonomy tab:
 - 1 = Acquirable in 6-12 months (hire, license, partner)
@@ -315,8 +329,22 @@ Where interaction effects come from the Trend Interactions tab. This is the v1.1
 | J | P(Regression) | 0.00-1.00 |
 | K | Scoring Q: Exposure | 2-4 discriminating questions for scorers |
 | L | Scoring Q: Alignment | 2-4 discriminating questions for scorers |
-| M | Last Updated | Date of most recent evidence refresh |
-| N | Status | Active / Under Review / Retired |
+| M | Hyperscaler Implication | How AWS/Azure/GCP decisions amplify or dampen this trend for non-hyperscaler entrants |
+| N | Citation Keys | Comma-separated keys referencing Source Registry (e.g., "CW2025, SA-CM2") |
+| O | Last Updated | Date of most recent evidence refresh |
+| P | Status | Active / Under Review / Retired |
+
+**Hyperscaler Implication examples:**
+
+| Trend | Hyperscaler Implication |
+|---|---|
+| S-1 Energy wall | Google/MSFT/Amazon securing GW-scale nuclear + solar PPAs. Raises the energy bar for entrants but validates the energy-first model. |
+| S-6 Neocloud bifurcation | Hyperscalers rent neocloud capacity as sustained supply diversification (not temporary bridge) while building own ASIC capacity in parallel. Creates durable demand floor for well-capitalized neoclouds. |
+| M-3 ASIC diversification | Google TPU, AWS Trainium, MSFT Maia accelerate multi-silicon adoption. Reduces NVIDIA pricing power, benefiting orchestrators who support multi-silicon. |
+| D-3 Enterprise ML proliferation | Hyperscaler managed ML platforms (SageMaker, Vertex) are primary competition for Full-Stack Neoclouds in enterprise segment. |
+| M-1 Orchestration commoditization | Hyperscaler K8s services (EKS, GKE, AKS) commoditize orchestration from above; open-source Soperator commoditizes from below. |
+
+**Scope delimitation:** This framework evaluates market entry strategies for non-hyperscaler GPU cloud participants. Hyperscaler behavior is modeled as an environmental input — the single largest exogenous variable affecting trend probabilities and archetype viability — not as a competing archetype. Hyperscalers span L0-L7 with fundamentally different economics (platform lock-in, cross-subsidization, trillion-dollar balance sheets) that make direct archetype comparison methodologically unsound.
 
 **Data validation:**
 - Time Horizon: list validation (Near-term, Medium, Structural)
@@ -357,7 +385,17 @@ Where interaction effects come from the Trend Interactions tab. This is the v1.1
 | E | Example implementations (e.g., "NVIDIA Quantum-2 InfiniBand, Arista 7800R") |
 | F | Acquisition Difficulty (1-3) |
 | G | Acquisition Difficulty Rationale |
-| H-N | Per-archetype importance weight (0=irrelevant, 1=optional, 2=beneficial, 3=essential) — 7 columns |
+| H-N | Per-archetype **recommended posture** — 7 columns, one per archetype |
+
+**Recommended posture values per component per archetype:**
+- **Own** (3): Core to the archetype's value proposition. Outsourcing this undermines competitive position.
+- **Partner** (2): Important but acquirable through strategic partnerships. Owning is optional; reliable access is essential.
+- **Outsource** (1): Not a differentiator for this archetype. Owning is capital-inefficient.
+- **N/A** (0): Irrelevant to this archetype's business model.
+
+The Self-Assessment compares the user's *actual* posture against the *recommended* posture for their target archetype. Mismatches flag in both directions:
+- **Under-investment**: Outsourcing something the archetype should own (strategic vulnerability)
+- **Over-investment**: Owning something the archetype should outsource (capital inefficiency)
 
 **Initial component list (~30 items):**
 
@@ -372,7 +410,7 @@ L1 - Physical Infrastructure
   L1.3  Cooling systems (liquid / immersion)          Difficulty: 2
   L1.4  Rack & server design (custom / OEM)           Difficulty: 2
   L1.5  InfiniBand / high-speed networking HW         Difficulty: 2
-  L1.6  Storage hardware (NVMe, object storage)       Difficulty: 1
+  L1.6  Storage hardware (block / file / object)       Difficulty: 1
 
 L2 - Low-Level Software
   L2.1  GPU driver & firmware management              Difficulty: 1
@@ -401,7 +439,8 @@ L5 - Model Serving & Data
   L5.2  Fine-tuning platform                          Difficulty: 2
   L5.3  Model registry & serving infrastructure       Difficulty: 1
   L5.4  KV cache management system                    Difficulty: 2
-  L5.5  High-performance object storage               Difficulty: 2
+  L5.5  Storage architecture (block, file, object,    Difficulty: 2
+         checkpoint, KV offload tiers)
   L5.6  Serverless inference endpoints                Difficulty: 2
 
 L6-L7 - Middleware & Applications
@@ -564,7 +603,47 @@ Generator pre-populates headers and formatting. Users append rows manually as th
    - Aggregator × M-4 Multi-Cloud Abstraction (high Exp, negative Ali)
    - Infrastructure Enabler × S-6 Neocloud Bifurcation (medium EQ discount)
 
-### 3.12 Expansion Guide
+### 3.12 Source Registry
+
+**Purpose:** Formal citation index enabling traceability from any score back to its evidence chain. Each trend's "Citation Keys" column (Trend Definitions, col N) references entries here.
+
+**Columns:**
+
+| Col | Header |
+|-----|--------|
+| A | Citation Key (e.g., CW2025, SA-CM2, GS-PWR) |
+| B | Source Type (Report / Filing / Article / Podcast / Dataset / Interview) |
+| C | Author / Organization |
+| D | Title |
+| E | Date Published |
+| F | URL or location |
+| G | Trends Supported (comma-separated trend IDs this source is evidence for) |
+| H | Key Data Points (specific numbers or claims extracted) |
+| I | Last Verified (date someone confirmed the source is still accessible and accurate) |
+
+**Pre-populated sources (initial registry):**
+
+| Key | Source | Trends |
+|-----|--------|--------|
+| CW-10K | CoreWeave 10-K FY2025 | S-6, M-6 |
+| SA-CM2 | SemiAnalysis ClusterMAX 2.0 | All (benchmarking baseline) |
+| GS-PWR | Goldman Sachs "Powering the AI Era" | S-1, D-6 |
+| CW-2025 | Cushman & Wakefield DC Market 2025 | S-1 |
+| HH-BIF | Ariel Deschapell "AI Factories vs Neoclouds" | S-6, M-1, M-2 |
+| HH-GRD | Ariel Deschapell "Compute Grading" | S-3 |
+| NEB-FIN | Nebius $4.3B raise press release | S-6 |
+| GLM-51 | Z.ai GLM-5.1 release | D-2, S-4 |
+| GEM-4 | Google DeepMind Gemma 4 release | D-4, D-5 |
+| NIST-AI | NIST AI Action Plan | M-5, S-3 |
+| LITELLM | LiteLLM PyPI attack post-mortem | M-5 |
+| SACRA | Sacra neocloud revenue reports | S-6, M-2 |
+| EPO-AI | Epoch AI scaling & capacity reports | D-6, D-1 |
+| SIL-DAT | Silicon Data GPU secondary market | S-2, S-3 |
+| STR-NAD | Stratechery Nadella interview (2026) | Hyperscaler context |
+
+**Evidence chain requirement:** Every cell with Evidence Quality = 2 or 3 must have at least one citation key in the corresponding trend's Citation Keys field. EQ = 1 (inference only) does not require a citation but should note the reasoning basis.
+
+### 3.13 Expansion Guide
 
 **Purpose:** How to maintain and evolve the tool.
 
@@ -577,7 +656,7 @@ Generator pre-populates headers and formatting. Users append rows manually as th
 5. **Merging overlapping trends** — correlation threshold and merge protocol
 6. **Updating scores** — EQ-first principle
 7. **Semi-annual review protocol** — the 4-phase checklist (Evidence refresh → Trend assessment → Scoring update → Validation)
-8. **Source registry** — 10+ key sources with URLs and what to look for
+8. **Source registry maintenance** — how to add new sources, verify existing ones, retire stale ones
 9. **Version history** — changelog
 
 ---
@@ -673,7 +752,8 @@ gpu_industry/strategy/tool/
 │   ├── stack_taxonomy.json
 │   ├── resources.json
 │   ├── trend_interactions.json
-│   └── playbook.json
+│   ├── playbook.json
+│   └── sources.json             # Citation registry
 ├── generator/
 │   ├── __init__.py
 │   ├── build_workbook.py        # CLI entry point
@@ -692,6 +772,7 @@ gpu_industry/strategy/tool/
 │       ├── trend_interactions.py
 │       ├── resource_playbook.py
 │       ├── decision_journal.py
+│       ├── source_registry.py
 │       ├── methodology.py
 │       └── expansion_guide.py
 ├── output/
@@ -722,6 +803,8 @@ gpu_industry/strategy/tool/
       "exposure": "Does this archetype own/operate physical DC infrastructure? Is power a top-3 cost driver?",
       "alignment": "Does the trend create entry barriers that protect this archetype? Can it monetize energy scarcity?"
     },
+    "hyperscaler_implication": "Google/MSFT/Amazon securing GW-scale nuclear + solar PPAs. Raises the energy bar for entrants but validates the energy-first model.",
+    "citation_keys": ["CW-2025", "GS-PWR"],
     "status": "Active",
     "last_updated": "2026-06-21"
   }
@@ -750,8 +833,10 @@ gpu_industry/strategy/tool/
     "examples": "Equinix colo, self-built DC, modular containerized DC",
     "acquisition_difficulty": 3,
     "difficulty_rationale": "Requires capital, permits, power contracts. 18-36 month lead time.",
-    "archetype_weights": {
-      "A1": 3, "A2": 2, "A3": 0, "A4": 0, "A5": 0, "A6": 3, "A7": 0
+    "archetype_posture": {
+      "A1": "Own",      "A2": "Partner",  "A3": "N/A",
+      "A4": "N/A",      "A5": "N/A",      "A6": "Own",
+      "A7": "N/A"
     }
   }
 ]
