@@ -59,9 +59,9 @@ Knowledge-intensive firms are hiring AI researchers and setting up proprietary f
 **Implication:** Fine-tuning SMEs are a strong ICP for ICN/IC. They need: a modest number of GPUs (8–64), high-speed storage for training datasets, competitive pricing relative to hyperscalers, and a simple developer experience. All of these intersect with IC's storage + ICN's GPU positioning.
 
 ### Force 9 — Metric Evolution (Tokens/Watt, TCO over card-hour)
-Buyers are moving from card-hour pricing to tokens-per-dollar and TCO evaluation. Data egress fees — often invisible at small scale — become a major cost driver as training data and model artefacts scale to petabytes. CoreWeave charges ~$30/TB/month for storage. Hyperscaler egress fees compound on top.
+Buyers are moving from card-hour pricing to tokens-per-dollar and TCO evaluation. Data egress fees — often invisible at small scale — become a major cost driver as training data and model artefacts scale to petabytes. CoreWeave warm-tier object storage is ~$31/TB/month and is now zero-egress (since Nov 2025); the egress contrast holds against AWS S3 (~$23/TB + $0.05–0.09/GB egress) and GCS (~$20/TB + $0.08–0.12/GB egress).
 
-**Implication:** TCO framing is ICN/IC's strongest commercial narrative. IC at ~$7/TB with zero egress vs CoreWeave at ~$30/TB creates a 4x storage cost difference. At 1 PB of training data, this is $23,000/month in savings on storage alone — before any egress savings.
+**Implication:** TCO framing is ICN/IC's strongest commercial narrative. IC at ~$7/TB vs CoreWeave warm-tier at ~$31/TB creates a ~4× storage cost difference; at 1 PB of training data this is ~$24,000/month in savings on storage alone. The egress moat is structural *vs hyperscalers* (AWS / GCS still charge per-GB egress); it no longer differentiates IC from CoreWeave on object storage. Lead with TCO + storage price, not egress, when the comparison set is neoclouds.
 
 ---
 
@@ -90,7 +90,7 @@ The GPU compute market is best understood through four distinct business model t
 
 **Neoclouds (CoreWeave, Lambda, Nebius, Voltage Park)** — Stack L1–L4
 - Moat: bare-metal performance, InfiniBand networking, no egress, OEM partnerships, MFU
-- Weakness: capital intensity ($10–12M per MW), geographic constraints, concentrated customer risk
+- Weakness: capital intensity ($25–40M/MW for AI-ready DC, ~2–3× conventional hyperscale at $10–15M/MW per Cushman 2025), geographic constraints, concentrated customer risk
 - Direction: becoming wholesale foundries for hyperscalers; massive debt financing; robotics/physical AI
 
 **Orchestrators (Run:ai, Together AI, Anyscale, SkyPilot)** — Stack L3–L5
@@ -145,7 +145,7 @@ The GPU compute market is best understood through four distinct business model t
 ## 4. Emerging Business Models and Vying Plays
 
 ### Storage-Adjacent Compute (IC's Reverse Playbook)
-Adding GPU compute adjacent to an existing large-scale object storage platform. The thesis: data gravity pulls compute toward data, not the other way around. If training datasets and model artefacts live in S3, bringing compute to the data eliminates egress costs and reduces latency. IC's existing customer (600TB → 1PB on CoreWeave) is the clearest validation signal: they are already paying CoreWeave $30/TB/month for storage that could sit on IC at $7/TB.
+Adding GPU compute adjacent to an existing large-scale object storage platform. The thesis: data gravity pulls compute toward data, not the other way around. If training datasets and model artefacts live in S3, bringing compute to the data reduces switching cost (PB-scale data is expensive to move) and locks the customer into the storage relationship. IC's existing customer (600TB → 1PB on CoreWeave) is the clearest validation signal: they are paying CoreWeave warm-tier ~$31/TB/month on storage that could sit on IC at $7/TB — a 4× per-TB delta.
 
 ### Inference-First / Model Serving Specialists
 Providers like Together AI, Groq (ASICs for inference), and Fireworks AI are building businesses entirely on inference optimisation rather than training clusters. These providers extract margin through software efficiency rather than hardware scale.
@@ -177,7 +177,7 @@ Rapid-iteration teams building coding copilots, vertical AI apps, open-weight fi
 
 ### ICP-3 — Foundation Model Lab / Deep Tech Researcher
 Capitalized research labs and academic consortia running large-scale pre-training or multi-thousand-GPU fine-tuning.
-- **Pain:** hardware underutilisation (<70% MFU), network bottlenecks, provisioning delays
+- **Pain:** hardware underutilisation (commodity K8s typically lands ~35–45% MFU vs ~50–52% on bare-metal Slurm), network bottlenecks, provisioning delays
 - **Expectation:** bare metal, non-blocking InfiniBand or 400–800 Gbps RoCE, MFU metrics, dedicated cluster
 - **ICN fit:** Low-medium currently. PoC-scale (12 GPUs) is too small. Network and InfiniBand capability unclear. Not the priority ICP.
 
@@ -229,7 +229,7 @@ ICP-2 (AI-native startups) and ICP-4 (fine-tuning SMEs). Both want: zero egress,
 
 ### The Core Thesis: Data Gravity + Zero Egress = TCO Weapon
 
-IC already hosts training data at ~$7/TB/month with zero egress. CoreWeave charges ~$30/TB/month. At 1 PB of training data:
+IC already hosts training data at ~$7/TB/month with zero egress. CoreWeave warm-tier object storage is ~$31/TB/month (also zero-egress since Nov 2025). At 1 PB of training data:
 - CoreWeave storage cost: **$30,000/month**
 - IC storage cost: **$7,000/month**
 - Monthly saving: **$23,000** — before any egress fees on data movement

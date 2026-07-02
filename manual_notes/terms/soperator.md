@@ -31,7 +31,7 @@ Nebius made Soperator open-source as a strategic move:
 | Open source | ✗ (proprietary) | ✓ (GitHub) |
 | Hardware | BlueField-3 DPU offload | Standard InfiniBand/RDMA |
 | Storage | CAIOS (DPU-linked) | Shared root filesystem (Lustre/NFS) |
-| MFU | ~96% | ~92% |
+| Goodput | ~96% | ~92% |
 | Self-hostable | ✗ | ✓ |
 | Gang scheduling | ✓ | ✓ |
 

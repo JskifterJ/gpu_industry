@@ -15,19 +15,26 @@ MFU = (Observed throughput in FLOP/s) / (Peak theoretical FLOP/s of hardware)
 
 A cluster achieving 50% MFU is using half its theoretical compute capacity for model work — the rest is lost to memory transfers, communication overhead, kernel launch latency, load imbalance, and framework overhead.
 
-## Typical MFU benchmarks
+## Two metrics commonly conflated
 
-| Setup | MFU |
-|-------|-----|
-| Consumer DePIN / distributed | ~55–70% |
-| Standard virtualised cloud | ~75–82% |
-| Industry average bare metal | ~85–90% |
-| Nebius Soperator | ~92% |
-| CoreWeave SUNK | ~95–96% |
+**MFU** (this term) measures FLOPS efficiency — how much of the GPU's theoretical compute is being used for valid model math. **Goodput** measures *time* efficiency — what fraction of GPU-seconds are productive (not failed jobs, retries, waiting for stragglers). They are independent: a cluster can have 96% goodput and still only 50% MFU if its kernels are memory-bound or its tensor parallelism is poorly tuned.
+
+The "96% / 80% / 70%" numbers commonly cited for SUNK / standard cloud / DePIN are **goodput**, not MFU. They came from CoreWeave's August 2025 training benchmarks whitepaper.
+
+## Typical published numbers
+
+| Setup | Goodput | MFU |
+|-------|---------|-----|
+| Bare-metal Slurm w/ topology-aware scheduling (CoreWeave) | ~96% | ~50–52% (Llama 70B, H100, FP8) |
+| Nebius Soperator (open-source, MLPerf submission) | ~92% | ~45–50% (estimated) |
+| Standard virtualised K8s | ~80% | ~35–45% |
+| Consumer DePIN / distributed | unmeasured publicly | unmeasured publicly |
+
+NVIDIA's own DGXC reference for Llama 3.1 70B FP8 on 64×H100 is 35.21% MFU. CoreWeave's claim of ~52% MFU is "20% above public benchmarks" of 35–45%.
 
 ## Why it matters commercially
 
-A 20% MFU gap (80% vs 96%) translates to ~20% more throughput per dollar of hardware — which at $30,000/month per H100 cluster means real money. For a $1M/year training contract, a 16% MFU gap is ~$160,000/year in effective compute cost difference.
+A goodput gap of 16 percentage points (80% → 96%) translates to ~20% more productive GPU time per dollar of hardware, which at scale is real money. For a $1M/year training contract, a 16-pp goodput gap is ~$160,000/year in effective compute cost difference. The MFU gap is smaller in *percentage* terms (35–45% → 50–52%) but compounds with goodput because they multiply: total productive FLOPs = goodput × MFU × peak.
 
 The MFU gap comes from:
 - **Hypervisor overhead**: virtualisation steals ~5–15% of FLOPS

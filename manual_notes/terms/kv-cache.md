@@ -21,17 +21,17 @@ KV cache VRAM consumption scales with:
 
 **Example — Llama 3.1 70B, BF16, 128K context, batch=1:**
 ```
-KV cache = 2 × layers × heads × head_dim × context_len × bytes_per_element
-         ≈ 2 × 80 × 64 × 128 × 131,072 × 2 bytes
-         ≈ ~34 GB
+KV cache = 2 × layers × kv_heads × head_dim × context_len × bytes_per_element
+         ≈ 2 × 80 × 8 × 128 × 131,072 × 2 bytes        (Llama 3.1 70B uses GQA: 8 KV heads, not 64)
+         ≈ ~40 GB
 ```
-Model weights alone: 140 GB. Total VRAM needed: ~174 GB — requires 3× H100 or 1× H200.
+Model weights alone: 140 GB. Total VRAM needed: ~180 GB — requires 3× H100 (240 GB) or 2× H200 (282 GB).
 
 ## KV cache and agentic workloads
 
 Agentic inference (8-hour autonomous sessions, 200K–1M token contexts) makes KV cache the dominant infrastructure challenge:
 
-- **Size**: a 1M token context with Llama 3.1 70B uses ~260 GB of KV cache — more than the model weights themselves
+- **Size**: a 1M token context with Llama 3.1 70B uses ~310 GB of KV cache (BF16, batch=1) — more than the model weights themselves
 - **Persistence**: agentic sessions must persist KV cache between tool calls and sub-tasks (unlike stateless REST inference)
 - **Eviction strategy**: when VRAM fills, KV cache must be offloaded to CPU DRAM or storage — creating latency spikes unless storage is fast
 
